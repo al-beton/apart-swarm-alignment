@@ -21,8 +21,9 @@ def summary(sha, status):
 class FakeGh:
     """Answers the commands `merge` runs; records every one."""
 
-    def __init__(self, checks="pass", unresolved=0, stacked=(102,), review="abc"):
+    def __init__(self, checks=("success",), unresolved=0, stacked=(102,), review="abc"):
         self.calls = []
+        # blocking-checks runs for the head commit, oldest first, by conclusion.
         self.checks = checks
         self.unresolved = unresolved
         self.stacked = stacked
@@ -50,8 +51,16 @@ class FakeGh:
         if args[0] == "api" and args[1].endswith("/comments"):
             done = [summary(self.review, "completed")] if self.review else []
             return json.dumps([{"body": "@codex review"}, *done])
-        if args[:2] == ("pr", "checks"):
-            return f"blocking-checks\t{self.checks}\t3s\turl\n"
+        if args[0] == "api" and "/check-runs" in args[1]:
+            runs = [
+                {"name": "blocking-checks", "conclusion": c, "started_at": f"t{i}"}
+                for i, c in enumerate(self.checks)
+            ]
+            runs = runs[::-1]  # newest first, like GitHub
+            # Without filter=all, GitHub answers only the latest run per name.
+            if "filter=all" not in args[1]:
+                runs = runs[:1]
+            return json.dumps({"check_runs": runs})
         return json.dumps(answers[args[:2]]) if args[:2] in answers else ""
 
     def index(self, *prefix):
@@ -113,9 +122,21 @@ class DeliverTests(unittest.TestCase):
         self.assertLess(dispatch, watch)
         self.assertIn("--exit-status", gh.calls[watch])
 
+    def test_merge_when_clean_a_pass_counts_despite_a_later_skipped_run(self):
+        # Marking a pull request ready right after a push starts a run whose
+        # payload still says draft, so it is skipped, and it can start after
+        # the run that passed.
+        gh = FakeGh(checks=("skipped", "success", "skipped"))
+        merge(101, gh, pause=lambda seconds: None)
+        self.assertTrue([c for c in gh.calls if c[:2] == ("pr", "merge")])
+        self.assertIn("abc/check-runs", gh.calls[gh.index("api")][1])
+
     def test_merge_when_clean_refuses_red_checks_open_threads_or_no_codex_review(self):
         for gh in (
-            FakeGh(checks="fail"),
+            FakeGh(checks=("failure",)),
+            FakeGh(checks=("success", "failure")),
+            FakeGh(checks=("skipped",)),
+            FakeGh(checks=()),
             FakeGh(unresolved=1),
             FakeGh(review=None),
             FakeGh(review="old"),

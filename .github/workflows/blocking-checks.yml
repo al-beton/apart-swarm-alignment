@@ -13,11 +13,14 @@ on:
     branches: [main]
   workflow_dispatch:
 
-# A newer run for the same pull request cancels the one in progress. Every
-# other run (main, after a merge) is its own group, so none is cancelled or
-# dropped from a queue: each merger waits for its own run.
+# A newer run for the same pull request cancels the one in progress. A run
+# whose payload says draft is in a group of its own, because the job would
+# only skip it (see its `if`), and a push or edit just before "ready" starts
+# one: in the pull request's group it would cancel the ready run, running or
+# queued. Every other run (main, after a merge) is its own group too, so none
+# is cancelled or dropped from a queue: each merger waits for its own run.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
+  group: ${{ github.workflow }}-${{ (github.event_name == 'pull_request' && !github.event.pull_request.draft && github.event.pull_request.number) || github.run_id }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:

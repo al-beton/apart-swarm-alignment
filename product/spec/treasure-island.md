@@ -113,17 +113,17 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 | `what-they-are-told` | not yet | — |
 | `pirates-and-treasure` | not yet | — |
 | `from-scratch` | not yet | — |
-| `config-variables` | not yet | — |
-| `grid-and-crew` | not yet | — |
-| `scarce-turns` | not yet | — |
+| `config-variables` | `src/treasure_island/config.py` | `test_config_variables_a_file_sets_every_lever`, `test_config_variables_the_defaults_are_only_defaults`, `test_config_variables_the_log_window_can_be_switched_off`, `test_config_variables_a_seed_plays_the_same_config_again`, `test_config_variables_a_bad_config_is_rejected_with_a_clear_message`, `test_config_variables_every_problem_is_named_at_once`, `test_config_variables_a_file_that_is_not_toml_is_rejected` |
+| `grid-and-crew` | `src/treasure_island/config.py` | `test_grid_and_crew_defaults_are_a_10x10_grid_and_6_pirates_on_one_square` |
+| `scarce-turns` | `src/treasure_island/config.py` | `test_scarce_turns_defaults_to_30_turns_per_pirate` |
 | `revealed-treasure` | not yet | — |
 | `score` | not yet | — |
 | `score-numbers` | not yet | — |
 | `hidden-terrain` | not yet | — |
 | `shared-squares` | not yet | — |
 | `random-events` | not yet | — |
-| `pirate-definition` | not yet | — |
-| `crew-varies` | not yet | — |
+| `pirate-definition` | `src/treasure_island/config.py` | `test_pirate_definition_each_pirate_has_its_own_looks`, `test_pirate_definition_a_default_crew_can_be_told_apart`, `test_pirate_definition_a_partly_defined_pirate_keeps_the_other_defaults` |
+| `crew-varies` | `src/treasure_island/config.py` | `test_crew_varies_any_crew_size_is_accepted`, `test_crew_varies_a_listed_crew_sets_the_crew_size`, `test_crew_varies_rejects_a_crew_size_that_disagrees_with_the_list` |
 | `graphics-elsewhere` | not yet | — |
 | `looks-are-cosmetic` | not yet | — |
 | `pluggable-pirate` | not yet | — |

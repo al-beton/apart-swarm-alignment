@@ -21,6 +21,9 @@ COMMAND = Path(sys.executable).parent / "treasure-island"
 CONFIGS = ["s-sweep", "say-a-number"]
 # Two seeds that place the treasure on different squares.
 SEED, OTHER_SEED = 7, 8
+# Two hash seeds that order the pirates' names differently. Most pairs don't for a
+# crew this small, and then a game leaning on that order would pass here unnoticed.
+HASH_SEED, OTHER_HASH_SEED = 1, 7
 
 
 def command(*arguments, cwd, hash_seed):
@@ -51,10 +54,34 @@ def contents(folder):
     return {path.name: path.read_bytes() for path in folder.iterdir()}
 
 
+def orders(hash_seed):
+    """How a process with this hash seed orders each crew's names, and their sets."""
+    script = """
+crews = [[f"pirate-{n}" for n in range(1, size + 1)] for size in (2, 3)]
+print([[sorted(crew, key=hash), list(set(crew))] for crew in crews])
+"""
+    env = {**os.environ, "PYTHONHASHSEED": str(hash_seed)}
+    done = subprocess.run(
+        [sys.executable, "-c", script],
+        env=env,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    return json.loads(done.stdout.replace("'", '"'))
+
+
+def test_same_in_every_process_the_hash_seeds_really_reorder_the_crew():
+    first, other = orders(HASH_SEED), orders(OTHER_HASH_SEED)
+    for crew, other_crew in zip(first, other, strict=True):
+        for order, other_order in zip(crew, other_crew, strict=True):
+            assert order != other_order
+
+
 @pytest.mark.parametrize("name", CONFIGS)
 def test_same_in_every_process_every_file_but_the_manifest_s_times(name, tmp_path):
-    first = played(name, SEED, tmp_path / "a", hash_seed=1)
-    second = played(name, SEED, tmp_path / "b", hash_seed=2)
+    first = played(name, SEED, tmp_path / "a", hash_seed=HASH_SEED)
+    second = played(name, SEED, tmp_path / "b", hash_seed=OTHER_HASH_SEED)
     files, others = contents(first), contents(second)
     assert set(files) == set(others)
     manifest = files.pop("manifest.json")
@@ -72,7 +99,7 @@ def test_same_in_every_process_every_file_but_the_manifest_s_times(name, tmp_pat
 @pytest.mark.parametrize("name", CONFIGS)
 def test_same_in_every_process_the_gif_too(name, tmp_path):
     gifs = []
-    for hash_seed, where in ((1, "a"), (2, "b")):
+    for hash_seed, where in ((HASH_SEED, "a"), (OTHER_HASH_SEED, "b")):
         folder = played(name, SEED, tmp_path / where, hash_seed)
         out = tmp_path / f"{where}.gif"
         command(
@@ -85,10 +112,12 @@ def test_same_in_every_process_the_gif_too(name, tmp_path):
 
 @pytest.mark.parametrize("name", CONFIGS)
 def test_same_in_every_process_another_seed_is_another_valid_game(name, tmp_path):
-    first = contents(played(name, SEED, tmp_path / "a", hash_seed=1))
-    other_folder = played(name, OTHER_SEED, tmp_path / "b", hash_seed=1)
+    first = contents(played(name, SEED, tmp_path / "a", hash_seed=HASH_SEED))
+    other_folder = played(name, OTHER_SEED, tmp_path / "b", hash_seed=HASH_SEED)
     other = contents(other_folder)
     for file in ("events.jsonl", "story.txt", "config.json"):
         assert first[file] != other[file], file
     assert log_errors(other_folder / "events.jsonl") == []
-    assert command("replay", other_folder, cwd=tmp_path / "b", hash_seed=2)
+    assert command(
+        "replay", other_folder, cwd=tmp_path / "b", hash_seed=OTHER_HASH_SEED
+    )

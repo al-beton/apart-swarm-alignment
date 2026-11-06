@@ -3,7 +3,7 @@
 
 A reproducible sandbox for asking when a swarm of LLM agents whistleblows, and what in their environment changes that. Pirates dig for one buried treasure on a grid, with too few turns for any one of them to search it alone and a short shared log as their only channel. One of them will be handed a secret. We watch what it does. It's our entry to Apart's multi-agent oversight and control track.
 
-Each committed run replays offline with no API keys, so anyone can clone this and check it. Rebuilding every graphic from committed runs is planned.
+Each committed run replays offline with no API keys, so anyone can clone this and check it. Every named figure rebuilds from those committed runs, also with no keys.
 
 ![A whole game: three pirates sweep the grid and find the treasure](examples/s-sweep/game.gif)
 
@@ -28,17 +28,20 @@ Each committed run replays offline with no API keys, so anyone can clone this an
 | Bake a game into an animated GIF, from the same drawing code | `uv run treasure-island render runs/s-sweep-seed-7` |
 | All the art is drawn in code: one command redraws every PNG in `assets/` | `make assets` |
 | Every pirate walks in all four directions, in one GIF (`assets/catwalk.gif`), which each pull request's art comment shows | `make catwalk` |
+| Every named figure, rebuilt from committed runs with no keys, each with its two lines: the command that rebuilds it and the command that plays the game again | `make figures` |
 | The game's command and what it can do | `uv run treasure-island --help` |
 
 A test runs or checks each of these commands, so this table can't go stale.
 
 Each pull request also gets a comment linking a GIF of a whole game at its latest commit, so a change can be seen without running anything.
 
+`make figures` writes into `figures/`, and `make figure NAME=sweep-game` builds just one. CI builds them all on every pull request: open the `blocking-checks` run on the Actions tab and download the `figures` artifact.
+
 A model's replies are reused from earlier runs, so a repeat spends nothing. `run` takes `--no-watch` to skip the browser, as CI does, and `--no-cache` to ask for every reply again.
 
 **How the real game is built:** `src/treasure_island/game_loop.py` plays a whole game from a config, with every lever a variable (`config.py`), the pirates' log with its free window and paid reads (`pirates_log.py`) and the score (`score.py`). A saved game holds `story.txt` (the game to read, one line per turn), `pirates-log.txt` (all the pirates can see), `events.jsonl` (the full record), `config.json`, `replies.jsonl` and `manifest.json`. Configs without a `brain`, such as `configs/sweep.toml`, still play the small stand-in game.
 
-**Planned:** an HTML page that steps through a game with the arrow keys, LLM pirates that replay from cached replies, the exploit that hands one pirate the answer, and the figures for the paper.
+**Planned:** an HTML page that steps through a game with the arrow keys, LLM pirates that replay from cached replies, the exploit that hands one pirate the answer, and the stills for the paper.
 
 ## Commands
 

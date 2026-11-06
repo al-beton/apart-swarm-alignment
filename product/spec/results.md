@@ -20,8 +20,8 @@
 | `examples-small` | `src/treasure_island/examples.py` | `test_examples_small_each_gif_is_under_2_mb` |
 | `examples-stay-true` | `src/treasure_island/examples.py`, `src/treasure_island/saved_game.py` | `test_examples_stay_true_every_log_replays_byte_identical`, `test_examples_stay_true_every_gif_matches_what_is_drawn_now`, `test_examples_stay_true_a_stale_example_says_how_to_remake_it` |
 | `examples-on-every-pr` | `.github/workflows/game-gif.yml` | `test_examples_on_every_pr_shows_each_gif_inline_with_its_ending`, `test_examples_on_every_pr_reads_the_commit_without_running_its_code`, `test_examples_on_every_pr_lists_examples_from_that_commit` |
-| `result-folder` | not yet | — |
-| `results-are-runs` | not yet | — |
-| `results-listed` | not yet | — |
-| `results-stay-checkable` | not yet | — |
-| `sample-result` | not yet | — |
+| `result-folder` | `results/**` | `test_result_folder_each_holds_run_folders_and_says_what_it_found` |
+| `results-are-runs` | `results/**` | `test_results_are_runs_with_the_same_files`, `test_results_are_runs_the_same_commands_work` |
+| `results-listed` | `results/README.md` | `test_results_listed_in_the_index_exactly_once_each` |
+| `results-stay-checkable` | `results/**`, `.github/workflows/blocking-checks.yml` | `test_results_stay_checkable_replaying_with_no_keys_or_network` |
+| `sample-result` | `results/sample-sweep-seeds/**` | `test_sample_result_is_a_scripted_game_that_cost_nothing` |

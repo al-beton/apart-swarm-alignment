@@ -53,7 +53,7 @@ def test_readme_commands_run_each_feature_command_works(command, tmp_path, monke
         f"Can't check {command!r}: feature commands are make targets or "
         "uv run treasure-island ..."
     )
-    for folder in ("configs", "runs", "examples"):
+    for folder in ("configs", "runs", "examples", "results"):
         shutil.copytree(ROOT / folder, tmp_path / folder)
     monkeypatch.chdir(tmp_path)
     if words[3] == "watch":  # it serves until stopped, so check it can start

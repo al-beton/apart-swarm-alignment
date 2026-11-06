@@ -22,4 +22,4 @@
 | `honest-limits` | `.agents/skills/review-pr/SKILL.md` | — |
 | `outputs-home` | `.agents/skills/team/SKILL.md` | — |
 | `every-run-committed` | `.agents/skills/team/SKILL.md`, `.agents/skills/review-pr/SKILL.md` | — |
-| `results-have-a-place` | not yet | — |
+| `results-have-a-place` | `AGENTS.md`, `.agents/skills/team/SKILL.md`, `results/README.md` | `test_results_have_a_place_the_team_is_told_where_results_go` |

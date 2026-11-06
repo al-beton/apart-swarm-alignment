@@ -32,6 +32,13 @@ def stale(folder):
     return different
 
 
+def problem(folder):
+    """What a person needs to read if this example is stale, or None if it isn't."""
+    if different := stale(folder):
+        return f"{folder}: {', '.join(different)} no longer match. {REMAKE}"
+    return None
+
+
 def remake(name, root=Path()):
     """Play one example again from nothing, into `examples/<name>/`."""
     config_path, seed = EXAMPLES[name]

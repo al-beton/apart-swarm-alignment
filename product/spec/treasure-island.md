@@ -142,9 +142,9 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 | `tools-only` | `src/treasure_island/brain.py` | `test_tools_only_there_are_exactly_four_tools`, `test_tools_only_a_tool_call_becomes_an_event_log_action`, `test_tools_only_anything_else_is_refused_and_says_why`, `test_tools_only_a_seat_refuses_a_brain_that_acts_any_other_way` |
 | `failed-move` | `src/treasure_island/game_state.py` | `test_failed_move_off_any_edge_fails_and_says_why`, `test_failed_move_an_unknown_direction_fails_and_says_why` |
 | `failed-move-cost` | `src/treasure_island/game_state.py` | `test_failed_move_cost_it_costs_the_turn` |
-| `no-vision` | `src/treasure_island/brain.py` | `test_no_vision_a_view_only_has_room_for_the_pirate_s_own_knowledge`, `test_no_vision_the_view_never_shows_other_pirates_or_the_treasure`, `test_no_vision_a_pirate_s_looks_never_reach_its_view` |
-| `actions` | `src/treasure_island/game_state.py` | `test_actions_a_move_goes_one_square_in_any_of_four_directions`, `test_actions_digging_says_nothing_found_off_the_treasure`, `test_actions_digging_says_treasure_on_the_treasure`, `test_actions_a_dug_up_treasure_stays_dug_up`, `test_actions_digging_elsewhere_digs_nothing_up`, `test_actions_a_dig_reports_only_to_the_pirate_that_dug` |
-| `one-action-per-turn` | `src/treasure_island/game_state.py` | `test_one_action_per_turn_each_action_ends_the_turn` |
+| `no-vision` | `src/treasure_island/brain.py`, `src/treasure_island/game_loop.py` | `test_no_vision_a_view_only_has_room_for_the_pirate_s_own_knowledge`, `test_no_vision_the_view_never_shows_other_pirates_or_the_treasure`, `test_no_vision_a_pirate_s_looks_never_reach_its_view`, `test_no_vision_a_pirate_is_shown_only_its_own_position`, `test_no_vision_the_treasure_never_reaches_a_brain`, `test_no_vision_a_dig_result_reaches_only_the_digger` |
+| `actions` | `src/treasure_island/game_state.py`, `src/treasure_island/pirates_log.py`, `src/treasure_island/game_loop.py` | `test_actions_a_move_goes_one_square_in_any_of_four_directions`, `test_actions_digging_says_nothing_found_off_the_treasure`, `test_actions_digging_says_treasure_on_the_treasure`, `test_actions_a_dug_up_treasure_stays_dug_up`, `test_actions_digging_elsewhere_digs_nothing_up`, `test_actions_a_dig_reports_only_to_the_pirate_that_dug`, `test_actions_write_and_read_each_end_the_turn_like_any_other` |
+| `one-action-per-turn` | `src/treasure_island/game_state.py` | `test_one_action_per_turn_each_action_ends_the_turn`, `test_one_action_per_turn_an_action_elsewhere_still_ends_the_turn` |
 | `agent-memory` | `src/treasure_island/brain.py` | `test_agent_memory_a_brain_gets_its_own_earlier_turns`, `test_agent_memory_what_its_last_move_did_shows_in_its_text`, `test_agent_memory_keeps_the_log_lines_it_was_shown`, `test_agent_memory_keeps_the_log_lines_as_fields_too`, `test_agent_memory_is_per_pirate` |
 | `thinking` | `src/treasure_island/brain.py` | `test_thinking_is_optional`, `test_thinking_is_kept_for_the_record`, `test_thinking_stays_in_the_pirate_s_own_memory`, `test_thinking_never_reaches_another_pirate` |
 | `only-channel` | not yet | — |
@@ -153,7 +153,7 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 | `reading-costs` | `src/treasure_island/pirates_log.py` | `test_reading_costs_a_read_spends_the_turn_on_a_blank_line`, `test_reading_costs_a_read_outside_the_log_still_spends_the_turn` |
 | `read-size` | `src/treasure_island/pirates_log.py` | `test_read_size_returns_the_3_lines_around_a_line_by_default`, `test_read_size_stays_full_at_either_end_of_the_log`, `test_read_size_is_a_plain_value`, `test_read_size_a_log_shorter_than_a_read_returns_all_of_it`, `test_read_size_a_line_outside_the_log_gets_a_clear_answer_and_no_data`, `test_read_size_reading_an_empty_log_gets_a_clear_answer` |
 | `story-record` | `src/treasure_island/game_loop.py` | `test_story_record_says_who_did_what_in_plain_words`, `test_story_record_says_why_when_the_brain_gave_a_reason`, `test_story_record_is_a_file_with_one_line_per_turn_and_the_ending`, `test_story_record_keeps_a_note_on_one_line` |
-| `two-logs` | not yet | — |
+| `two-logs` | `src/treasure_island/game_loop.py` | `test_two_logs_every_record_passes_the_validator`, `test_two_logs_every_turn_adds_one_line_to_the_pirates_log`, `test_two_logs_the_pirates_log_holds_only_what_pirates_can_see`, `test_two_logs_our_record_shows_what_each_turn_was_shown`, `test_two_logs_a_read_shows_the_lines_it_found_and_its_turn_is_spent`, `test_two_logs_the_same_config_and_seed_are_byte_identical` |
 | `exploit-later` | not yet | — |
 | `previous-session` | not yet | — |
 | `same-treasure` | not yet | — |
@@ -168,7 +168,7 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 | `what-counts` | not yet | — |
 | `measured-share` | not yet | — |
 | `run-count` | not yet | — |
-| `toggles` | not yet | — |
+| `toggles` | `src/treasure_island/game_loop.py` | `test_toggles_the_crew_size_changes_through_the_config_alone`, `test_toggles_the_log_length_changes_through_the_config_alone` |
 | `prompt-variants` | not yet | — |
 | `sudoku-last` | not yet | — |
 | `model-backends` | not yet | — |
@@ -184,5 +184,5 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 | `everything-cached` | not yet | — |
 | `one-line-replay` | not yet | — |
 | `python-stack` | not yet | — |
-| `no-token-strategies` | not yet | — |
+| `no-token-strategies` | `src/treasure_island/game_loop.py` | `test_no_token_strategies_a_whole_game_needs_no_network` |
 | `gif-per-change` | not yet | — |

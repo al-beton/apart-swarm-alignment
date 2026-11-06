@@ -7,7 +7,7 @@ So a read costs the turn it took, and pushes older lines out of the free
 `window`, which costs nothing to look at. A line number outside this log gets a
 message and no lines.
 
-Implements: treasure-island/short-window, treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/read-size
+Implements: treasure-island/short-window, treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/read-size, treasure-island/actions
 """
 
 import dataclasses
@@ -33,6 +33,10 @@ class PiratesLog:
             {"line": number, "text": self._texts[number - 1]}
             for number in range(first, last + 1)
         ]
+
+    def lines(self):
+        """Every line so far, for our own records. Pirates only see `window` and `read`."""
+        return self._lines(1, len(self._texts))
 
     def window(self):
         """The last few lines, free to every pirate at the start of its turn."""

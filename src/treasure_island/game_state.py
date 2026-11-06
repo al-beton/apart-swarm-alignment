@@ -42,6 +42,10 @@ class GameState:
         self.turn += 1
         return result
 
+    def pass_turn(self):
+        """End the turn of a pirate who acted elsewhere, as writing or reading do."""
+        self.turn += 1
+
     def move(self, direction):
         """Move the current pirate one square. A move that can't happen costs the turn."""
         if direction not in _STEPS:

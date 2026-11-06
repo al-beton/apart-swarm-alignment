@@ -133,11 +133,11 @@ def test_crowds_fan_out_stays_on_the_board_and_never_stacks(count, square):
     assert all(0 <= x <= far and 0 <= y <= far for x, y in spots)
 
 
-@pytest.mark.parametrize("count", [2, 3, 6])
+@pytest.mark.parametrize("count", [2, 3, 6, 20])
 @pytest.mark.parametrize("acting", [0, -1])
 def test_crowds_fan_out_every_label_shows_on_the_landing_square(count, acting):
     """Nothing, not the acting pirate or its bubble, covers anyone's label."""
-    agents, together = crowd_of(count, square=(0, 0))
+    _, together = crowd_of(count, square=(0, 0))
     turn = list(range(count))[acting]
     image = viewer.frame(together, turn, 5).convert("RGB")
     looks = parse_config({"crew_size": count}).pirates

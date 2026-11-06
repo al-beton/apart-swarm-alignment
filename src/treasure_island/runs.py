@@ -102,7 +102,7 @@ def _earlier_replies():
     return {row["key"]: row["reply"] for row in rows}
 
 
-def _new_folder(name):
+def new_folder(name):
     """runs/<name>, or runs/<name>-2 and so on if that's already taken."""
     RUNS.mkdir(exist_ok=True)
     folder, tries = RUNS / name, 1
@@ -134,7 +134,7 @@ def run(config_path, seed, use_cache=True, on_start=None, pace=0):
     config = Config(**tomllib.loads(Path(config_path).read_text()))
     backend = backend_for(config.model)
     earlier = _earlier_replies() if use_cache else {}
-    folder = _new_folder(f"{Path(config_path).stem}-seed-{seed}")
+    folder = new_folder(f"{Path(config_path).stem}-seed-{seed}")
     saved = {**dataclasses.asdict(config), "seed": seed}
     (folder / "config.json").write_bytes(_line(saved))
     replies = Replies(folder / "replies.jsonl", backend, earlier)

@@ -25,11 +25,18 @@ def _serve_until_interrupted():
 
 def _run(args):
     if saved_game.is_real_config(args.config):
-        print(saved_game.play_saved(args.config, args.seed))
-        return 0
-    use_cache = not args.no_cache
+
+        def play(on_start=None, pace=0):
+            return saved_game.play_saved(args.config, args.seed, on_start, pace)
+
+    else:
+
+        def play(on_start=None, pace=0):
+            use_cache = not args.no_cache
+            return runs.run(args.config, args.seed, use_cache, on_start, pace)
+
     if args.no_watch:
-        print(runs.run(args.config, args.seed, use_cache))
+        print(play())
         return 0
 
     def open_the_view(folder):
@@ -39,7 +46,7 @@ def _run(args):
         print(f"Watching {folder} at {url}", flush=True)
         webbrowser.open(url)
 
-    runs.run(args.config, args.seed, use_cache, open_the_view, runs.PACE_SECONDS)
+    play(open_the_view, runs.PACE_SECONDS)
     if sys.stdin.isatty():
         _serve_until_interrupted()
     return 0

@@ -13,7 +13,7 @@ Implements: treasure-island/sweeper, treasure-island/say-a-number, treasure-isla
 from pathlib import Path
 
 from treasure_island.brain import Decision, tool_call
-from treasure_island.config import ConfigError, load_config
+from treasure_island.config import ConfigError, load_config, save_config
 from treasure_island.game_loop import write_game
 from treasure_island.game_state import TREASURE_FOUND
 
@@ -77,6 +77,7 @@ REFERENCE_GAMES = ("s-sweep", "say-a-number")
 def write_reference(name, folder, root=Path()):
     """Play a reference game from its config in `root` into `folder`."""
     config = load_config(Path(root) / "configs" / f"{name}.toml")
+    save_config(config, Path(folder) / "config.json")
     write_game(config, brains_for(config.brain, config), folder)
 
 

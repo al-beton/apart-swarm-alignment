@@ -32,7 +32,7 @@ Each committed run replays offline with no API keys, so anyone can clone this an
 
 A test runs or checks each of these commands, so this table can't go stale.
 
-Each pull request also gets a comment linking a GIF of a whole game at its latest commit, so a change can be seen without running anything.
+Each pull request also gets a comment showing every example game's GIF at its latest commit, so a change can be seen without running anything.
 
 A model's replies are reused from earlier runs, so a repeat spends nothing. `run` takes `--no-watch` to skip the browser, as CI does, and `--no-cache` to ask for every reply again.
 

@@ -1,4 +1,4 @@
-# Implements: treasure-island/gif-per-change, results/examples-on-every-pr
+# Implements: treasure-island/gif-per-change, results/examples-on-every-pr, results/result-on-its-pr
 name: game-gif
 
 # Keeps one comment on each pull request showing every example game's GIF at its
@@ -78,6 +78,39 @@ jobs:
           **$name:** $ending
 
           ![$name]($raw/game.gif)
+          "
+          done
+          # A result this pull request adds or changes shows what it found, how each
+          # of its games ended and its GIF.
+          results=$(gh api --paginate "repos/$REPO/pulls/$PR/files" --jq '.[].filename' \
+            | sed -n 's#^results/\([^/]*\)/.*#\1#p' | sort -u)
+          if [ -n "$results" ]; then
+            shown="$shown
+          **Results in this pull request**
+          "
+          fi
+          for result in $results; do
+            raw="https://raw.githubusercontent.com/$REPO/$SHA/results/$result"
+            if ! curl --silent --fail --head --output /dev/null "$raw/README.md"; then
+              continue
+            fi
+            found=$(curl --silent --fail "$raw/README.md" \
+              | awk '/^## What it shows/ {on = 1; next} /^## / {on = 0} on')
+            games=$(gh api "repos/$REPO/contents/results/$result?ref=$SHA" \
+              --jq '.[] | select(.type == "dir") | .name')
+            endings=""
+            for game in $games; do
+              ending=$(curl --silent --fail "$raw/$game/story.txt" | tail -n 1)
+              endings="$endings
+          - \`$game\`: $ending"
+            done
+            shown="$shown
+          ### $result
+
+          $found
+          $endings
+
+          ![$result]($raw/game.gif)
           "
           done
           body="$marker

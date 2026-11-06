@@ -192,9 +192,9 @@ def treasure_in(folder, records):
     if game_over:
         return tuple(game_over["treasure"])
     path = Path(folder) / "config.json"
-    saved = json.loads(path.read_text()) if path.exists() else {}
-    if "grid_size" not in saved:  # the walking skeleton saves no such thing
+    if not path.exists():
         return None
+    saved = json.loads(path.read_text())
     state = GameState(
         saved["grid_size"], saved["crew_size"], saved["landing_square"], saved["seed"]
     )

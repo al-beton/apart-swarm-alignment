@@ -251,7 +251,7 @@ def test_no_vision_a_pirate_is_shown_only_its_own_position():
     # Pirate 2 stays on the landing square; pirate 1 walks away from it.
     walker = Steps(move("east"), move("east"), move("south"), DIG)
     sitter = Steps(DIG)
-    play(off_the_treasure(landing_square=[0, 0]), walker, sitter)
+    play(config(landing_square=[0, 0]), walker, sitter)
     for view in sitter.views:
         assert view.position == (0, 0)
         assert "(2, 1)" not in view.as_text()

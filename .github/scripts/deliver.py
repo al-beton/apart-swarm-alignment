@@ -17,9 +17,11 @@ Usage: `python3 .github/scripts/deliver.py <command> ...`
   some, 1 on timeout.
 - `threads PR` prints the unresolved review threads as JSON lines.
 - `resolve THREAD_ID REPLY` replies in a thread, then resolves it.
-- `merge PR` squash-merges when blocking-checks is green, Codex has finished
-  reviewing the latest commit and every thread is resolved, keeping the
-  closing block. Pull requests stacked on its branch
+- `merge PR` squash-merges when blocking-checks is green on the latest
+  commit, Codex has finished reviewing it and every thread is resolved,
+  keeping the closing block. Green means the commit's last real run passed:
+  a draft run that started later and was skipped (marking a pull request
+  ready right after a push starts one) doesn't hide it. Pull requests stacked on its branch
   move to main first, the branch is deleted on the remote only (a worktree
   can't check out main), and main's checks run again and must pass.
 
@@ -186,11 +188,26 @@ def resolve(thread, reply, run=run_command):
     )
 
 
+def checks_green(check_runs):
+    """Whether the last blocking-checks run that wasn't skipped passed."""
+    real = sorted(
+        (r for r in check_runs if r["conclusion"] != "skipped"),
+        key=lambda r: r["started_at"],
+    )
+    return bool(real) and real[-1]["conclusion"] == "success"
+
+
 def merge(number, run=run_command, pause=time.sleep):
     pr = _view(number, run)
-    checks = run("pr", "checks", str(number))
-    if not re.search(r"^blocking-checks\tpass\b", checks, re.MULTILINE):
-        raise MergeRefused("blocking-checks isn't green.")
+    checks = json.loads(
+        run(
+            "api",
+            f"repos/{{owner}}/{{repo}}/commits/{pr['headRefOid']}/check-runs"
+            "?check_name=blocking-checks",
+        )
+    )
+    if not checks_green(checks["check_runs"]):
+        raise MergeRefused("blocking-checks isn't green on the latest commit.")
     if not review_finished(review_state(_comments(number, run)), pr["headRefOid"]):
         raise MergeRefused("Codex hasn't finished reviewing the latest commit.")
     if open_threads := unresolved_threads(number, run):

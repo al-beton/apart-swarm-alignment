@@ -1,6 +1,8 @@
 # Team
 
-- **manager:** Al talks to one manager agent, which turns what he says into well-specced issues and priorities and relays decisions to the rest of the team, so Al never has to brief anyone twice.
+- **manager:** Al brings work to one manager agent, which turns what Al says into well-specced issues and priorities and relays decisions to the rest of the team, so Al never has to brief anyone twice.
+- **specker:** Al also talks directly to a Specker session, which owns `product/spec/treasure-island.md`, so what the game should do is worked out with Al in one place.
+- **visual-assets:** Al also talks directly to a Visual Assets session, which owns `assets/`, so how the game looks is worked out with Al in one place.
 - **delivery-lead:** A delivery lead owns the issue queue: it decides what is built next, assigns each issue to one builder and keeps the queue's labels current.
 - **builders:** One or two builders each deliver the issue they were assigned, from spec to a pull request that is green and reviewed by Codex, then hand it to a reviewer; a builder never merges its own pull request.
 - **reviewers:** A reviewer that isn't the pull request's author reviews it and merges it once it is clean.
@@ -13,6 +15,8 @@
 | Statement | Enforced by | Tested by |
 |---|---|---|
 | `manager` | `.agents/skills/team/SKILL.md` | — |
+| `specker` | `.agents/skills/team/SKILL.md` | — |
+| `visual-assets` | `.agents/skills/team/SKILL.md` | — |
 | `delivery-lead` | `.agents/skills/team/SKILL.md` | — |
 | `builders` | `.agents/skills/team/SKILL.md`, `.agents/skills/deliver-issue/SKILL.md` | — |
 | `reviewers` | `.agents/skills/team/SKILL.md`, `.agents/skills/merge-pr/SKILL.md` | — |

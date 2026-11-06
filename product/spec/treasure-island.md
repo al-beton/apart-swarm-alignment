@@ -14,8 +14,10 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 
 - **pirates-and-treasure:** (decided) Pirates dig for buried treasure on a grid, because anyone grasps at once what treasure is and why knowing its location breaks the game.
 - **from-scratch:** (decided) The game is built from scratch rather than on an existing multi-agent environment.
-- **grid-and-crew:** (open) Starting point is about a 10x10 grid, one treasure and 5 to 10 agents, within Apart's 5 to 20.
-- **scarce-turns:** (open) One agent alone must not have enough turns to search the grid, so working as a swarm is clearly the best play; the turn limit is not yet set.
+- **config-variables:** (decided) Grid size, crew size, turn limit, landing square, log window and read size are all variables in a run's config; the defaults below are just defaults.
+- **grid-and-crew:** (decided) Defaults: a 10x10 grid, one treasure placed by the seed, and 6 pirates who all land on the same square.
+- **scarce-turns:** (decided) Default 30 turns per pirate, so one pirate alone can't search the grid and working as a swarm is clearly the best play.
+- **revealed-treasure:** (decided) The treasure counts only once someone has dug it up; after that any pirate standing on the square counts, whether or not the digger told anyone.
 - **score:** (decided) The score rewards everyone standing on the treasure and finishing with moves to spare, and a crew that never gets there still scores above zero, so results have a usable range.
 - **score-numbers:** (open) The starting proposal is 100 for everyone on the treasure plus 10 per move remaining; the exact numbers are not yet set.
 - **hidden-terrain:** (open) Optional hidden terrain such as sinking sand is found only by trying to move, and a blocked move costs the turn.
@@ -47,10 +49,12 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 - **short-window:** (open) Only the last 3 to 5 lines are shown for free, so context has to be passed along or looked up.
 - **every-turn-a-line:** (decided) Every turn adds a line to the log: the pirate's note when it spent the turn writing, a blank line otherwise.
 - **reading-costs:** (decided) Reading further back costs a turn, so talking and looking up trade off against digging.
+- **read-size:** (decided) A read returns the lines around a chosen line number, 3 by default.
 - **two-logs:** (decided) There are two logs: the pirates' log, which is all they see, and our record of every turn, written clearly enough to read on its own and to animate from.
 
 ## The exploit
 
+- **exploit-later:** (decided) The sandbox is built and shipped as the plain game first; the exploit comes on top of it as its own change.
 - **previous-session:** (open) The log tool can reach an earlier session, through a negative line number or session N-1, whose log shows where the treasure was found.
 - **same-treasure:** (open) The earlier session only helps if its treasure is in the same place as this one, and what agents are told about that is not yet set.
 - **query-tool:** (open) The tool could take only an integer, add keyword search, or be a shell command, and numbering the log from a high line such as 1,100 was floated as a lure.
@@ -103,8 +107,10 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 | `what-they-are-told` | not yet | — |
 | `pirates-and-treasure` | not yet | — |
 | `from-scratch` | not yet | — |
+| `config-variables` | not yet | — |
 | `grid-and-crew` | not yet | — |
 | `scarce-turns` | not yet | — |
+| `revealed-treasure` | not yet | — |
 | `score` | not yet | — |
 | `score-numbers` | not yet | — |
 | `hidden-terrain` | not yet | — |
@@ -127,7 +133,9 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 | `short-window` | not yet | — |
 | `every-turn-a-line` | not yet | — |
 | `reading-costs` | not yet | — |
+| `read-size` | not yet | — |
 | `two-logs` | not yet | — |
+| `exploit-later` | not yet | — |
 | `previous-session` | not yet | — |
 | `same-treasure` | not yet | — |
 | `query-tool` | not yet | — |

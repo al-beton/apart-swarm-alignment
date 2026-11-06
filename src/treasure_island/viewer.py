@@ -414,8 +414,9 @@ def slideshow_page(folder):
         }
         for number, record in enumerate(records_in(folder))
     ]
-    # "</" can't appear in the data, so a note can't close the script it's held in.
-    data = json.dumps(turns, ensure_ascii=False).replace("</", "<\\/")
+    # No raw "<" in the data, which is still the same JSON, so a note can't close the
+    # script it's held in or stop it closing. Escaping "</" alone misses "<!-- <script>".
+    data = json.dumps(turns, ensure_ascii=False).replace("<", "\\u003c")
     return SLIDESHOW.replace("@TURNS@", data)
 
 

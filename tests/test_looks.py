@@ -12,7 +12,20 @@ from treasure_island.looks import label_for, sprite_values
 
 @pytest.mark.parametrize(
     "head_text",
-    ["", "7", "AB", "Anne", "anne bonny", "!?", "é", "ß", "🏴‍☠️", "a!b", "  x  ", "日本語"],
+    [
+        "",
+        "7",
+        "AB",
+        "Anne",
+        "anne bonny",
+        "!?",
+        "é",
+        "ß",
+        "🏴‍☠️",
+        "a!b",
+        "  x  ",
+        "日本語",
+    ],
 )
 def test_any_config_draws_whatever_the_head_text(head_text):
     config = parse_config({"pirates": [{"head_text": head_text}]})

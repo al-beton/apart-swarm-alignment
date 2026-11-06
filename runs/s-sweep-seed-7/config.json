@@ -1,0 +1,11 @@
+{
+  "brain": "s-sweep",
+  "crew_size": 3,
+  "grid_size": 5,
+  "landing_square": [
+    0,
+    0
+  ],
+  "seed": 7,
+  "turns_per_pirate": 20
+}

@@ -15,8 +15,8 @@
 | Statement | Enforced by | Tested by |
 |---|---|---|
 | `manager` | `.agents/skills/team/SKILL.md` | — |
-| `specker` | not yet | — |
-| `visual-assets` | not yet | — |
+| `specker` | `.agents/skills/team/SKILL.md` | — |
+| `visual-assets` | `.agents/skills/team/SKILL.md` | — |
 | `delivery-lead` | `.agents/skills/team/SKILL.md` | — |
 | `builders` | `.agents/skills/team/SKILL.md`, `.agents/skills/deliver-issue/SKILL.md` | — |
 | `reviewers` | `.agents/skills/team/SKILL.md`, `.agents/skills/merge-pr/SKILL.md` | — |

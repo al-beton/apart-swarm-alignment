@@ -13,6 +13,7 @@ The game itself is still to be built; what it should do goes in `product/spec/`.
 | `make lint` | runs the ruff lint and format checks |
 | `make test` | runs every test, in parallel |
 | `make spec-check` | checks that the spec, the code and the tests point at each other |
+| `uv run treasure-island --help` | shows what the game's command can do |
 
 ## How we work
 

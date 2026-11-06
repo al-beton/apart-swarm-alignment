@@ -1,4 +1,4 @@
-# Implements: ci/ci-minutes, ci/one-gate, ci/ci-runs-everything, ci/no-model-calls, tooling/how-we-work, specs-and-docs/folder-guides, agent-setup/reuse-old-work
+# Implements: assets/sheet-on-every-pr, ci/ci-minutes, ci/one-gate, ci/ci-runs-everything, ci/no-model-calls, tooling/how-we-work, specs-and-docs/folder-guides, agent-setup/reuse-old-work
 """The gate, and the few files a newcomer starts from, are what the spec says."""
 
 import re
@@ -23,9 +23,11 @@ def runs():
 
 def test_ci_minutes_the_gate_is_one_job():
     # Every gating check is a step of one job, whose name is the status
-    # deliver.py's merge waits for.
+    # deliver.py's merge waits for. No other workflow runs a job of that name.
     assert list(workflow()["jobs"]) == ["blocking-checks"]
-    assert [p.name for p in WORKFLOWS.glob("*.yml")] == ["blocking-checks.yml"]
+    for path in WORKFLOWS.glob("*.yml"):
+        if path.name != "blocking-checks.yml":
+            assert "blocking-checks" not in yaml.safe_load(path.read_text())["jobs"]
 
 
 def test_ci_minutes_tests_run_in_parallel_with_cached_dependencies():
@@ -71,6 +73,48 @@ def test_no_model_calls_no_secret_but_the_github_token():
     for path in WORKFLOWS.glob("*.yml"):
         secrets = set(re.findall(r"secrets\.(\w+)", path.read_text()))
         assert secrets <= {"GITHUB_TOKEN"}, (path, secrets)
+
+
+def sheet_workflow():
+    return yaml.safe_load((WORKFLOWS / "asset-sheet.yml").read_text())
+
+
+def sheet_steps():
+    return sheet_workflow()["jobs"]["asset-sheet"]["steps"]
+
+
+def test_sheet_on_every_pr_runs_on_pull_request_and_never_pull_request_target():
+    # PyYAML reads the bare key `on` as true.
+    triggers = sheet_workflow()[True]
+    assert list(triggers) == ["pull_request"]
+    assert "types" not in (triggers["pull_request"] or {})
+
+
+def test_sheet_on_every_pr_can_only_write_pull_requests():
+    assert sheet_workflow()["permissions"] == {"pull-requests": "write"}
+    assert "permissions" not in sheet_workflow()["jobs"]["asset-sheet"]
+
+
+def test_sheet_on_every_pr_runs_no_code_from_the_branch():
+    assert not [step for step in sheet_steps() if "uses" in step]
+    assert "checkout" not in (WORKFLOWS / "asset-sheet.yml").read_text()
+
+
+def test_sheet_on_every_pr_skips_forks_and_never_gates():
+    job = sheet_workflow()["jobs"]["asset-sheet"]
+    assert "head.repo.full_name == github.repository" in job["if"]
+    assert "blocking-checks" not in sheet_workflow()["jobs"]
+
+
+def test_sheet_on_every_pr_shows_the_latest_commit_s_sheet_in_one_comment():
+    step = sheet_steps()[0]
+    run = step["run"]
+    assert step["env"]["SHA"] == "${{ github.event.pull_request.head.sha }}"
+    assert "raw.githubusercontent.com/$REPO/$SHA/assets/sheet.png" in run
+    # It finds its own comment by a marker, so it never edits another
+    # workflow's comment and a later push updates this one.
+    assert "<!-- asset-sheet -->" in run
+    assert "--method PATCH" in run
 
 
 def test_how_we_work_is_five_lines_and_points_agents_to_agents_md():

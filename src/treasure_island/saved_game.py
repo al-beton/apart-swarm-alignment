@@ -9,7 +9,7 @@ varies between identical runs).
 `differences` plays the game again from that folder, in a temporary folder and
 with nothing but what's saved, and names any log that doesn't match byte for byte.
 
-Implements: treasure-island/named-runs, treasure-island/everything-cached, runs/plays-live
+Implements: treasure-island/named-runs, treasure-island/everything-cached, runs/plays-live, results/examples-stay-true
 """
 
 import datetime

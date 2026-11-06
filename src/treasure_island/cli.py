@@ -97,11 +97,6 @@ def _render(args):
     return 0
 
 
-def _slideshow(args):
-    print(viewer.slideshow(args.folder, args.out))
-    return 0
-
-
 def _figure(args):
     names = list(figures.FIGURES) if args.all else [args.name]
     for name in names:
@@ -158,12 +153,6 @@ def main(argv=None):
     render.add_argument("folder", help="a run folder, such as runs/<name>")
     render.add_argument("--out", help="where to write it; default runs/<name>.gif")
     render.set_defaults(handler=_render)
-    slideshow = commands.add_parser(
-        "slideshow", help="write one HTML file that steps through a run, offline"
-    )
-    slideshow.add_argument("folder", help="a run folder, such as runs/<name>")
-    slideshow.add_argument("--out", help="where to write it; default runs/<name>.html")
-    slideshow.set_defaults(handler=_slideshow)
     figure = commands.add_parser(
         "figure", help="build a named figure from a committed run, with no keys"
     )

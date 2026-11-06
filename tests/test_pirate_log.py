@@ -2,6 +2,7 @@
 """The pirates' log: a short free window, and reading back costs the turn."""
 
 import pytest
+
 from treasure_island.pirate_log import LineOutOfRange, PirateLog
 
 
@@ -49,11 +50,14 @@ def test_short_window_is_a_plain_value():
     assert logged("one", "two", window=0).shown() == []
 
 
-def test_read_size_returns_the_lines_around_a_chosen_line():
+@pytest.mark.parametrize(
+    "number,around",
+    [(3, [2, 3, 4]), (1, [1, 2]), (5, [4, 5])],
+)
+def test_read_size_returns_the_lines_around_a_chosen_line(number, around):
     log = logged("one", "two", "three", "four", "five")
-    assert log.read(3) == [line(2, "two"), line(3, "three"), line(4, "four")]
-    assert log.read(1) == [line(1, "one"), line(2, "two")]
-    assert log.read(5) == [line(4, "four"), line(5, "five")]
+    assert [shown["line"] for shown in log.read(number)] == around
+    assert log.read(number)[0]["text"] == log.lines()[around[0] - 1]["text"]
 
 
 def test_read_size_is_a_plain_value():

@@ -322,3 +322,19 @@ def test_paced_from_cache_a_cached_game_plays_turn_by_turn_too(
     assert cli.main(["run", str(config), "--seed", "1"]) == 0
     assert model.calls == asked
     assert watching["turns"] == list(range(1, 13))
+
+
+def test_cache_across_runs_a_longer_game_keeps_a_scripted_agent_s_memory(
+    tmp_path, monkeypatch, capsys
+):
+    monkeypatch.chdir(tmp_path)
+    short = tmp_path / "short.toml"
+    short.write_text('size = 3\npirates = 1\nturns = 2\nmodel = "scripted/counter"\n')
+    long = tmp_path / "long.toml"
+    long.write_text('size = 3\npirates = 1\nturns = 4\nmodel = "scripted/counter"\n')
+    played(short, capsys)
+    folder = played(long, capsys)
+    events = [json.loads(line) for line in (folder / "events.jsonl").open()]
+    assert [e["did"][0]["text"] for e in events] == ["1", "2", "3", "4"]
+    manifest = manifest_of(folder)
+    assert (manifest["cache_hits"], manifest["cache_misses"]) == (2, 2)

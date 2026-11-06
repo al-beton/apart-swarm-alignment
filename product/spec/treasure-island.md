@@ -99,6 +99,7 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 - **log-at-bottom:** (decided) The pirates' log scrolls along the bottom of the replay, so a reader sees what the crew could see.
 - **slideshow:** (decided) An HTML page replays a whole game as a slideshow, stepping through turns with the arrow keys.
 - **paper-figures:** (open) Since a paper can't embed an animation, it gets a sequence of about 4 stills with arrows showing where agents went.
+- **brain-in-config:** (decided) A config names the brain its crew plays with, so one command can play any game and a saved game says what played it.
 - **named-runs:** (decided) Every run is named and saved, with its config, seed, both logs and every model response, so it can be uploaded, shared and replayed.
 - **everything-cached:** (decided) Every model response is cached in the run, so replaying a run never spends tokens, and turning the cache off plays it live again.
 - **one-line-replay:** (open) A reader runs one command after `git clone` to replay a whole game, possibly in the browser; default, Al to confirm: one Python command renders a saved run to the GIF and the HTML slideshow, and replaying in the browser alone can come later.
@@ -184,8 +185,9 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 | `log-at-bottom` | not yet | — |
 | `slideshow` | not yet | — |
 | `paper-figures` | not yet | — |
-| `named-runs` | not yet | — |
-| `everything-cached` | not yet | — |
+| `brain-in-config` | `src/treasure_island/config.py`, `src/treasure_island/strategies.py`, `configs/s-sweep.toml`, `configs/say-a-number.toml` | `test_brain_in_config_picks_what_plays`, `test_brain_in_config_refuses_one_it_does_not_know` |
+| `named-runs` | `src/treasure_island/saved_game.py`, `src/treasure_island/cli.py`, `runs/s-sweep-seed-7/**` | `test_named_runs_save_config_seed_both_logs_and_replies`, `test_named_runs_are_named_after_config_and_seed_and_never_overwrite`, `test_named_runs_the_seed_on_the_command_line_decides_the_game`, `test_named_runs_the_committed_game_replays_byte_identical` |
+| `everything-cached` | `src/treasure_island/saved_game.py`, `src/treasure_island/cli.py` | `test_everything_cached_replay_is_byte_identical_with_no_keys_or_network`, `test_everything_cached_replay_fails_if_a_log_changed`, `test_everything_cached_replay_fails_if_the_config_changed`, `test_everything_cached_replay_leaves_the_folder_untouched` |
 | `one-line-replay` | not yet | — |
 | `python-stack` | not yet | — |
 | `no-token-strategies` | `src/treasure_island/game_loop.py`, `src/treasure_island/strategies.py` | `test_no_token_strategies_a_whole_game_needs_no_network` |

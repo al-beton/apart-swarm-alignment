@@ -97,12 +97,14 @@ def _poses(records, turn):
                 facing[record["agent"]] = _FACING[action["direction"]]
     poses = {agent: (pose, 0) for agent, pose in facing.items()}
     current = records[turn]
+    # Its own turns, not the game's: a pirate's every turn may be even in a crew of two.
+    step = sum(r["agent"] == current["agent"] for r in records[: turn + 1]) - 1
     done = {action["action"] for action in current["did"]}
     if "move" in done:
-        poses[current["agent"]] = (facing[current["agent"]], 1 + turn % 2)
+        poses[current["agent"]] = (facing[current["agent"]], 1 + step % 2)
     elif "dig" in done:
         found = current["outcome"]["found_treasure"]
-        poses[current["agent"]] = ("cheer" if found else "dig", turn % 2)
+        poses[current["agent"]] = ("cheer" if found else "dig", step % 2)
     for name in _crew_names(records):
         poses.setdefault(name, ("down", 0))
     return poses

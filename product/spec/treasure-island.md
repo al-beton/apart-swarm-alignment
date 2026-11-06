@@ -113,7 +113,7 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 | `research-question` | not yet | — |
 | `sandbox-counts` | not yet | — |
 | `principals` | not yet | — |
-| `what-they-are-told` | not yet | — |
+| `what-they-are-told` | `src/treasure_island/brain.py` | `test_what_they_are_told_the_prompt_says_it_is_a_study_and_they_are_scored` |
 | `pirates-and-treasure` | `src/treasure_island/game_state.py` | `test_pirates_and_treasure_the_same_seed_places_it_on_the_same_square`, `test_pirates_and_treasure_the_seed_decides_where_it_is`, `test_pirates_and_treasure_it_is_always_on_the_grid` |
 | `from-scratch` | not yet | — |
 | `config-variables` | `src/treasure_island/config.py` | `test_config_variables_a_file_sets_every_lever`, `test_config_variables_the_defaults_are_only_defaults`, `test_config_variables_the_log_window_can_be_switched_off`, `test_config_variables_a_seed_plays_the_same_config_again`, `test_config_variables_a_bad_config_is_rejected_with_a_clear_message`, `test_config_variables_every_problem_is_named_at_once`, `test_config_variables_a_file_that_is_not_toml_is_rejected` |
@@ -132,18 +132,18 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 | `crew-varies` | `src/treasure_island/config.py` | `test_crew_varies_any_crew_size_is_accepted`, `test_crew_varies_a_listed_crew_sets_the_crew_size`, `test_crew_varies_rejects_a_crew_size_that_disagrees_with_the_list` |
 | `graphics-elsewhere` | not yet | — |
 | `looks-are-cosmetic` | not yet | — |
-| `pluggable-pirate` | not yet | — |
+| `pluggable-pirate` | `src/treasure_island/brain.py` | `test_pluggable_pirate_any_brain_takes_a_turn_through_one_interface`, `test_pluggable_pirate_a_view_as_text_says_everything_a_model_needs` |
 | `sweeper` | not yet | — |
 | `turn-order` | `src/treasure_island/game_state.py` | `test_turn_order_is_fixed_and_comes_round_again` |
-| `turn-view` | not yet | — |
-| `tools-only` | not yet | — |
+| `turn-view` | `src/treasure_island/brain.py` | `test_turn_view_holds_the_rules_position_turns_left_and_log_lines`, `test_turn_view_system_prompt_gives_the_rules_and_every_action`, `test_turn_view_a_blank_log_line_reads_as_blank` |
+| `tools-only` | `src/treasure_island/brain.py` | `test_tools_only_there_are_exactly_four_tools`, `test_tools_only_a_tool_call_becomes_an_event_log_action`, `test_tools_only_anything_else_is_refused_and_says_why`, `test_tools_only_a_seat_refuses_a_brain_that_acts_any_other_way` |
 | `failed-move` | `src/treasure_island/game_state.py` | `test_failed_move_off_any_edge_fails_and_says_why`, `test_failed_move_an_unknown_direction_fails_and_says_why` |
 | `failed-move-cost` | `src/treasure_island/game_state.py` | `test_failed_move_cost_it_costs_the_turn` |
-| `no-vision` | not yet | — |
+| `no-vision` | `src/treasure_island/brain.py` | `test_no_vision_a_view_only_has_room_for_the_pirate_s_own_knowledge`, `test_no_vision_the_view_never_shows_other_pirates_or_the_treasure`, `test_no_vision_a_pirate_s_looks_never_reach_its_view` |
 | `actions` | `src/treasure_island/game_state.py` | `test_actions_a_move_goes_one_square_in_any_of_four_directions`, `test_actions_digging_says_nothing_found_off_the_treasure`, `test_actions_digging_says_treasure_on_the_treasure`, `test_actions_a_dug_up_treasure_stays_dug_up`, `test_actions_digging_elsewhere_digs_nothing_up`, `test_actions_a_dig_reports_only_to_the_pirate_that_dug` |
 | `one-action-per-turn` | `src/treasure_island/game_state.py` | `test_one_action_per_turn_each_action_ends_the_turn` |
-| `agent-memory` | not yet | — |
-| `thinking` | not yet | — |
+| `agent-memory` | `src/treasure_island/brain.py` | `test_agent_memory_a_brain_gets_its_own_earlier_turns`, `test_agent_memory_what_a_pirate_dug_shows_in_its_text`, `test_agent_memory_is_per_pirate` |
+| `thinking` | `src/treasure_island/brain.py` | `test_thinking_is_optional`, `test_thinking_is_kept_for_the_record`, `test_thinking_stays_in_the_pirate_s_own_memory`, `test_thinking_never_reaches_another_pirate` |
 | `only-channel` | not yet | — |
 | `short-window` | `src/treasure_island/pirates_log.py` | `test_short_window_shows_the_last_3_lines_by_default`, `test_short_window_shows_what_there_is_early_on`, `test_short_window_size_is_a_plain_value`, `test_short_window_of_zero_shows_nothing`, `test_short_window_costs_no_turn` |
 | `every-turn-a-line` | `src/treasure_island/pirates_log.py` | `test_every_turn_a_line_a_written_note_is_the_line`, `test_every_turn_a_line_any_other_turn_adds_a_blank_line`, `test_every_turn_a_line_a_note_stays_on_one_line`, `test_every_turn_a_line_lines_fit_the_event_log_format` |

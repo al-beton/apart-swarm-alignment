@@ -45,7 +45,7 @@ _ACTIONS = {
 }
 
 
-def _is_action(value):
+def is_action(value):
     if not isinstance(value, dict) or not _is_text(value.get("action")):
         return False
     check = _ACTIONS.get(value["action"])
@@ -58,7 +58,7 @@ def _did_errors(did):
     return [
         f"did[{i}] is not a valid action: {json.dumps(action)}"
         for i, action in enumerate(did)
-        if not _is_action(action)
+        if not is_action(action)
     ]
 
 

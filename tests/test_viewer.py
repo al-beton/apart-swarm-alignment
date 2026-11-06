@@ -1,8 +1,10 @@
-# Implements: event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder
+# Implements: event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/crowds-fan-out, treasure-island/pokemon-style
 """Watching a run in the browser and rendering it to a GIF from one renderer."""
 
 import io
 import json
+import subprocess
+import sys
 import threading
 import urllib.request
 from pathlib import Path
@@ -10,7 +12,10 @@ from pathlib import Path
 import pytest
 from PIL import Image, ImageChops, ImageStat
 
+from assets.pirates import pirate
 from treasure_island import cli, viewer
+from treasure_island.config import parse_config
+from treasure_island.looks import sprite_values
 
 
 def record(turn, agent, start, end, **rest):
@@ -64,9 +69,9 @@ def test_one_renderer_the_gif_holds_exactly_the_frames_the_page_serves(
     drawn = []
     draw = viewer.frame
 
-    def counted(records, turn, size):
+    def counted(records, turn, size, pirates=None):
         drawn.append(turn)
-        return draw(records, turn, size)
+        return draw(records, turn, size, pirates)
 
     monkeypatch.setattr(viewer, "frame", counted)
     frames = list(png_frames(viewer.gif(folder)))
@@ -101,17 +106,200 @@ def test_crew_positions_a_frame_shows_a_pirate_before_its_first_turn():
     assert scene["bubble"] == "move east"
 
 
-@pytest.mark.parametrize("crowd", [2, 5, 6])
-def test_frame_shows_the_swarm_pirates_on_one_square_are_all_visible(crowd):
-    agents = [f"pirate-{letter}" for letter in "abcdef"[:crowd]]
-    together = [
-        record(turn, agent, [1, 1], [1, 1], crew={a: [1, 1] for a in agents})
+def crowd_of(count, square=(1, 1)):
+    agents = [f"pirate-{number + 1}" for number in range(count)]
+    return agents, [
+        record(turn, agent, [*square], [*square], crew={a: [*square] for a in agents})
         for turn, agent in enumerate(agents)
     ]
-    image = viewer.frame(together, crowd - 1, 3).convert("RGB")
-    colours = {image.getpixel((x, y)) for x in range(144) for y in range(144)}
-    for agent in agents:
-        assert viewer.rgb(viewer.COLOURS[ord(agent[-1]) - ord("a")]) in colours
+
+
+@pytest.mark.parametrize("count", [2, 5, 6])
+def test_crowds_fan_out_every_pirate_on_one_square_shows(count):
+    _, together = crowd_of(count)
+    image = viewer.frame(together, count - 1, 5).convert("RGB")
+    board = image.crop((0, 0, 5 * viewer.TILE, 5 * viewer.TILE))
+    colours = {colour for _, colour in board.getcolors(1 << 24)}
+    for pirate_look in parse_config({"crew_size": count}).pirates:
+        assert viewer.rgb(sprite_values(pirate_look)[1]) in colours
+
+
+@pytest.mark.parametrize("count", [2, 6, 20])
+@pytest.mark.parametrize("square", [(0, 0), (4, 4), (2, 2)])
+def test_crowds_fan_out_stays_on_the_board_and_never_stacks(count, square):
+    spots = viewer.fanned(count, square, size=5)
+    assert len(set(spots)) == count
+    far = 5 * viewer.TILE - viewer.TILE
+    assert all(0 <= x <= far and 0 <= y <= far for x, y in spots)
+
+
+def test_crowds_fan_out_a_lone_pirate_stands_on_its_square():
+    assert viewer.fanned(1, (2, 3), size=5) == [(2 * viewer.TILE, 3 * viewer.TILE)]
+
+
+def tile_at(image, x, y):
+    box = (x * viewer.TILE, y * viewer.TILE)
+    return image.crop((*box, box[0] + viewer.TILE, box[1] + viewer.TILE)).convert("RGB")
+
+
+def art(name):
+    return Image.open(viewer.ASSETS / f"{name}.png").convert("RGBA")
+
+
+def sand_tiles():
+    return [art(f"tiles/{n}").convert("RGB").tobytes() for n in viewer.SAND_TILES]
+
+
+def on_ground(image, x, y, sprite):
+    """Whether the square at (x, y) is exactly this sprite on some sand tile."""
+    shown = tile_at(image, x, y).tobytes()
+    for name in viewer.SAND_TILES:
+        ground = art(f"tiles/{name}").copy()
+        ground.alpha_composite(sprite)
+        if ground.convert("RGB").tobytes() == shown:
+            return True
+    return False
+
+
+def alone(turn=0, did=(), found=False):
+    return record(
+        turn,
+        "pirate-1",
+        [1, 1],
+        [1, 1],
+        crew={"pirate-1": [1, 1]},
+        did=list(did),
+        found=found,
+    )
+
+
+def look(**settings):
+    return parse_config({"pirates": [settings]}).pirates[0]
+
+
+def test_art_folder_every_empty_square_is_a_sand_tile_from_the_assets():
+    image = viewer.frame([alone()], 0, 3)
+    for x, y in [(0, 0), (2, 0), (0, 2), (2, 2)]:
+        assert tile_at(image, x, y).tobytes() in sand_tiles()
+
+
+def test_art_folder_a_pirate_is_exactly_its_sprite_and_never_a_shape():
+    image = viewer.frame([alone()], 0, 3)
+    only = parse_config({"crew_size": 1}).pirates[0]
+    assert on_ground(image, 1, 1, pirate(*sprite_values(only), "down", 0))
+
+
+def test_art_folder_a_dug_square_and_a_found_treasure_use_their_art():
+    dig = alone(0, [{"action": "dig"}])
+    moved = record(
+        1,
+        "pirate-1",
+        [1, 1],
+        [2, 1],
+        crew={"pirate-1": [1, 1]},
+        did=[{"action": "move", "direction": "east"}],
+    )
+    image = viewer.frame([dig, moved], 1, 3)
+    assert tile_at(image, 1, 1).tobytes() == art("tiles/dug").convert("RGB").tobytes()
+    found = alone(0, [{"action": "dig"}], found=True)
+    gone = {**moved, "turn": 1}
+    image = viewer.frame([found, gone], 1, 3)
+    ground = art("tiles/dug").copy()
+    ground.alpha_composite(art("treasure/mark-x"))
+    assert tile_at(image, 1, 1).tobytes() == ground.convert("RGB").tobytes()
+
+
+def test_art_folder_missing_art_is_an_error_not_a_different_picture(
+    folder, monkeypatch
+):
+    monkeypatch.setattr(viewer, "ASSETS", Path("/nowhere"))
+    with pytest.raises(FileNotFoundError):
+        viewer.frame_png(folder, 0)
+
+
+def test_art_folder_the_art_loads_from_outside_the_repository(tmp_path):
+    subprocess.run(
+        [sys.executable, "-c", "import assets.pirates, treasure_island.viewer"],
+        cwd=tmp_path,
+        check=True,
+    )
+
+
+def test_sprite_from_definition_uses_the_configured_look(folder):
+    wanted = {"personality": 7, "head_text": "Anne", "colour": [10, 200, 30]}
+    saved = json.loads((folder / "config.json").read_text())
+    saved["pirates"] = [wanted, {"personality": 2}]
+    (folder / "config.json").write_text(json.dumps(saved))
+    first, second = parse_config({"pirates": saved["pirates"]}).pirates
+    pirates = viewer.pirates_in(folder, viewer.records_in(folder))
+    assert pirates == {
+        "pirate-a": sprite_values(first),
+        "pirate-b": sprite_values(second),
+    }
+    assert pirates["pirate-a"] == (7, "#0ac81e", "AN")
+
+
+def test_sprite_from_definition_a_run_that_does_not_say_gets_the_default_crew(folder):
+    default = parse_config({"crew_size": 2}).pirates
+    assert viewer.pirates_in(folder, viewer.records_in(folder)) == {
+        "pirate-a": sprite_values(default[0]),
+        "pirate-b": sprite_values(default[1]),
+    }
+
+
+def test_sprite_from_definition_the_frame_draws_the_given_look():
+    chosen = (7, "#0ac81e", "AN")
+    image = viewer.frame([alone()], 0, 3, {"pirate-1": chosen})
+    assert on_ground(image, 1, 1, pirate(*chosen, "down", 0))
+
+
+@pytest.mark.parametrize(
+    "direction,pose",
+    [("north", "up"), ("south", "down"), ("east", "right"), ("west", "left")],
+)
+def test_sprite_follows_action_a_pirate_faces_the_way_it_moves(direction, pose):
+    moving = alone(0, [{"action": "move", "direction": direction}])
+    assert viewer.scene([moving], 0, 3)["poses"]["pirate-1"] == (pose, 1)
+
+
+def test_sprite_follows_action_it_keeps_facing_that_way_and_stands_still():
+    moved = alone(0, [{"action": "move", "direction": "west"}])
+    wrote = alone(1, [{"action": "write", "text": "hello"}])
+    assert viewer.scene([moved, wrote], 1, 3)["poses"]["pirate-1"] == ("left", 0)
+
+
+def test_sprite_follows_action_walking_alternates_its_feet():
+    moves = [alone(t, [{"action": "move", "direction": "east"}]) for t in range(2)]
+    feet = [viewer.scene(moves, t, 3)["poses"]["pirate-1"][1] for t in range(2)]
+    assert feet == [1, 2]
+
+
+def test_sprite_follows_action_digging_and_finding_the_treasure():
+    dig = alone(0, [{"action": "dig"}])
+    assert viewer.scene([dig], 0, 3)["poses"]["pirate-1"][0] == "dig"
+    found = alone(0, [{"action": "dig"}], found=True)
+    assert viewer.scene([found], 0, 3)["poses"]["pirate-1"][0] == "cheer"
+    only = parse_config({"crew_size": 1}).pirates[0]
+    image = viewer.frame([dig], 0, 3)
+    assert on_ground_dug(image, 1, 1, pirate(*sprite_values(only), "dig", 0))
+
+
+def on_ground_dug(image, x, y, sprite):
+    ground = art("tiles/dug").copy()
+    ground.alpha_composite(sprite)
+    return tile_at(image, x, y).tobytes() == ground.convert("RGB").tobytes()
+
+
+def test_sprite_follows_action_others_stay_as_they_were():
+    agents, together = crowd_of(2)
+    moved = {**together[0], "did": [{"action": "move", "direction": "east"}]}
+    poses = viewer.scene([moved, together[1]], 1, 3)["poses"]
+    assert poses[agents[0]] == ("right", 0)
+    assert poses[agents[1]] == ("down", 0)
+
+
+def test_one_renderer_rendering_twice_gives_an_identical_gif(folder):
+    assert viewer.gif(folder) == viewer.gif(folder)
 
 
 def test_frame_shows_the_swarm_as_an_image_with_grid_panel_and_log(folder):
@@ -171,17 +359,3 @@ def test_render_gif_writes_where_asked(folder, tmp_path):
     out = tmp_path / "elsewhere" / "game.gif"
     assert cli.main(["render", str(folder), "--out", str(out)]) == 0
     assert out.read_bytes()[:6] in (b"GIF87a", b"GIF89a")
-
-
-def test_art_folder_the_viewer_draws_without_art(folder, monkeypatch):
-    monkeypatch.setattr(viewer, "ASSETS", Path("/nowhere"))
-    assert viewer.frame_png(folder, 0)[:8] == b"\x89PNG\r\n\x1a\n"
-
-
-def test_art_folder_art_is_drawn_when_it_exists(folder, tmp_path, monkeypatch):
-    plain = viewer.frame_png(folder, 0)
-    art = tmp_path / "assets"
-    (art / "tiles").mkdir(parents=True)
-    Image.new("RGB", (8, 8), "magenta").save(art / "tiles" / "sand.png")
-    monkeypatch.setattr(viewer, "ASSETS", art)
-    assert viewer.frame_png(folder, 0) != plain

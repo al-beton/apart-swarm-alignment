@@ -38,7 +38,7 @@ from pathlib import Path
 
 DOMAINS = ("product", "experiments", "contributing")
 PROMPTS = "prompts/"
-RUNS = ("runs/", "examples/")  # output the game wrote
+RUNS = ("runs/", "examples/", "results/")  # output the game wrote
 MAX_LINES = 300
 TABLE_HEADING = "## Where this is enforced"
 _NAME = r"[a-z0-9]+(?:-[a-z0-9]+)*"

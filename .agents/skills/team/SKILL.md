@@ -3,7 +3,7 @@ name: team
 description: Who does what on Treasure Island - manager, Specker, Visual Assets, delivery lead, builders, reviewers, Codex, researcher - and how the issue queue's labels move. Use when starting as any of these roles, or when handing work between them.
 ---
 
-<!-- Implements: agent-setup/shared-skills, agent-setup/skills-hold-the-process, team/manager, team/specker, team/visual-assets, team/delivery-lead, team/builders, team/reviewers, team/codex, team/researcher, team/queue-labels, research/outputs-home, research/every-run-committed, research/hypothesis-first, research/pilot-first, research/spend-caps, research/loop-closes -->
+<!-- Implements: agent-setup/shared-skills, agent-setup/skills-hold-the-process, team/manager, team/specker, team/visual-assets, team/delivery-lead, team/builders, team/reviewers, team/codex, team/researcher, team/queue-labels, research/outputs-home, research/results-have-a-place, research/every-run-committed, research/hypothesis-first, research/pilot-first, research/spend-caps, research/loop-closes -->
 
 # The team
 
@@ -38,6 +38,7 @@ The lead checks the queue (`gh issue list --label ready`, `--label in-review`, â
 
 - An experiment's questions and hypotheses: `experiments/spec/<experiment>.md` (`write-spec-change`).
 - Its runs: `runs/<experiment>/`, every one committed with `D commit --runs` (scratch smoke runs aside).
+- A finding worth keeping: `results/<name>/`, its run folders moved there beside a `README.md`, and one line in `results/README.md`. Unlike `examples/`, the fixed set of games remade with the code, nobody remakes a result.
 - Its findings notes: `experiments/`, committed. Generated pages are not committed, so share them as files or artifacts.
 
 ## Research loop

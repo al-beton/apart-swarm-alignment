@@ -140,6 +140,19 @@ class SpecCheckTests(unittest.TestCase):
             warnings_for(**files),
         )
 
+    def test_runs_are_evidence_a_result_folder_is_homed_by_a_table_row(self):
+        spec = SPEC.replace(
+            "`.github/scripts/pr_gate.py`, reviewer",
+            "`.github/scripts/pr_gate.py`, `results/**`",
+        )
+        files = {
+            "contributing/spec/pull-requests.md": spec,
+            "results/README.md": "# Results\n",
+            "results/a-finding/README.md": "# A finding\n",
+            "results/a-finding/seed-1/story.txt": "Turn 0.\n",
+        }
+        self.assertEqual(warnings_for(**files), [])
+
     def test_runs_are_evidence_jsonl_never_asked_for_implements_lines(self):
         spec = SPEC.replace(
             "`.github/scripts/pr_gate.py`, reviewer",

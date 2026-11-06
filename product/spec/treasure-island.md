@@ -19,10 +19,10 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 - **scarce-turns:** (decided) Default 30 turns per pirate, so one pirate alone can't search the grid and working as a swarm is clearly the best play.
 - **revealed-treasure:** (decided) The treasure counts only once someone has dug it up; after that any pirate standing on the square counts, whether or not the digger told anyone.
 - **score:** (decided) The score rewards everyone standing on the treasure and finishing with moves to spare, and a crew that never gets there still scores above zero, so results have a usable range.
-- **score-numbers:** (open) The starting proposal is 100 for everyone on the treasure plus 10 per move remaining; the exact numbers are not yet set.
+- **score-numbers:** (open) Default, Al to confirm: 100 for everyone on the treasure plus 10 per move remaining, with the moves counted as the turns left to the pirate who got there last.
 - **hidden-terrain:** (decided) Hidden terrain such as sinking sand, found only by trying to move, is left out of the base game and added later as its own change.
 - **shared-squares:** (decided) Any number of pirates may stand on one square, since the score needs them all on the treasure.
-- **random-events:** (open) Game events such as a clue washing ashore were floated as a reason to look back through the log.
+- **random-events:** (open) Game events such as a clue washing ashore were floated as a reason to look back through the log; default, Al to confirm: none in the base game.
 
 ## The pirates
 
@@ -39,7 +39,7 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 - **turn-view:** (decided) Each turn a pirate sees its system prompt with the rules and its actions, its own position, and the last few log lines (3 by default).
 - **tools-only:** (decided) A pirate acts only through a small set of tool calls (move, dig, write, read), so a brain of any kind plugs into the same interface.
 - **failed-move:** (decided) An impossible move, such as left from the left edge, fails and the response tells the pirate why.
-- **failed-move-cost:** (open) Whether a failed move costs the turn may depend on why it failed (walking off the map against hitting hidden terrain), and is not yet set.
+- **failed-move-cost:** (open) Whether a failed move costs the turn may depend on why it failed (walking off the map against hitting hidden terrain); default, Al to confirm: in the base game every failed move costs the turn.
 - **no-vision:** (decided) Pirates have no vision: a pirate knows only its own position and what it has dug, and learns about the others only through the log.
 - **actions:** (decided) The actions are move in one of 4 directions, dig, write to the log and read the log; digging and searching a square are the same action.
 - **one-action-per-turn:** (decided) A turn is exactly one action, so writing a note costs a turn that could have been a move or a dig.
@@ -49,7 +49,7 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 ## The log
 
 - **only-channel:** (decided) The log is the only channel between agents, and turning that constraint off is a lever.
-- **short-window:** (open) Only the last 3 to 5 lines are shown for free, so context has to be passed along or looked up.
+- **short-window:** (open) Only the last few lines are shown for free, so context has to be passed along or looked up; default, Al to confirm: 3, as a config variable.
 - **every-turn-a-line:** (decided) Every turn adds a line to the log: the pirate's note when it spent the turn writing, a blank line otherwise.
 - **reading-costs:** (decided) Reading further back costs a turn, so talking and looking up trade off against digging.
 - **read-size:** (decided) A read returns the lines around a chosen line number, 3 by default.
@@ -94,7 +94,7 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 - **paper-figures:** (open) Since a paper can't embed an animation, it gets a sequence of about 4 stills with arrows showing where agents went.
 - **named-runs:** (decided) Every run is named and saved, with its config, seed, both logs and every model response, so it can be uploaded, shared and replayed.
 - **everything-cached:** (decided) Every model response is cached in the run, so replaying a run never spends tokens, and turning the cache off plays it live again.
-- **one-line-replay:** (open) A reader runs one command after `git clone` to replay a whole game, possibly in the browser; whether the browser can do it is not yet set.
+- **one-line-replay:** (open) A reader runs one command after `git clone` to replay a whole game, possibly in the browser; default, Al to confirm: one Python command renders a saved run to the GIF and the HTML slideshow, and replaying in the browser alone can come later.
 
 ## Deterministic first
 

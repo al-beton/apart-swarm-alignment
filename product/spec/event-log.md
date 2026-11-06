@@ -13,11 +13,11 @@
 
 | Statement | Enforced by | Tested by |
 |---|---|---|
-| `one-record-per-turn` | not yet | — |
-| `who-acted` | not yet | — |
-| `what-they-saw` | not yet | — |
-| `what-they-did` | not yet | — |
-| `what-the-log-showed` | not yet | — |
-| `the-outcome` | not yet | — |
-| `room-to-grow` | not yet | — |
-| `validator` | not yet | — |
+| `one-record-per-turn` | `src/treasure_island/event_log.py` | `test_one_record_per_turn_accepts_a_log_counting_up_from_zero`, `test_one_record_per_turn_rejects_turns_out_of_order`, `test_one_record_per_turn_rejects_a_turn_that_is_not_a_number`, `test_one_record_per_turn_rejects_an_empty_log` |
+| `who-acted` | `src/treasure_island/event_log.py` | `test_who_acted_needs_a_named_agent` |
+| `what-they-saw` | `src/treasure_island/event_log.py` | `test_what_they_saw_needs_a_position_and_a_prompt` |
+| `what-they-did` | `src/treasure_island/event_log.py` | `test_what_they_did_accepts_each_action`, `test_what_they_did_accepts_a_turn_with_no_action`, `test_what_they_did_rejects_a_malformed_action`, `test_what_they_did_must_be_a_list` |
+| `what-the-log-showed` | `src/treasure_island/event_log.py` | `test_what_the_log_showed_needs_numbered_lines`, `test_what_the_log_showed_can_reach_an_earlier_session` |
+| `the-outcome` | `src/treasure_island/event_log.py` | `test_the_outcome_needs_a_position_and_whether_treasure_was_found` |
+| `room-to-grow` | `src/treasure_island/event_log.py` | `test_room_to_grow_allows_extra_fields` |
+| `validator` | `src/treasure_island/event_log.py` | `test_validator_accepts_a_good_record`, `test_validator_rejects_a_bad_record_and_says_what_is_wrong`, `test_validator_rejects_a_record_that_is_not_an_object`, `test_validator_names_the_line_a_log_is_wrong_on`, `test_validator_reports_a_line_that_is_not_json` |

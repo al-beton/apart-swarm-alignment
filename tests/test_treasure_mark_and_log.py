@@ -12,6 +12,7 @@ from treasure_island import viewer
 from treasure_island.brain import Decision
 from treasure_island.config import parse_config
 from treasure_island.game_loop import Game, write_game
+from treasure_island.pirates_log import PiratesLog
 
 ROOT = Path(__file__).resolve().parents[1]
 SAVED = ROOT / "runs/s-sweep-seed-7"
@@ -143,6 +144,15 @@ def test_log_at_bottom_holds_only_the_lines_written_so_far():
     written = [{"action": "write", "text": "ahoy"}]
     records = [record(0, written), record(1), record(2, written)]
     assert viewer.scene(records, 1, 3)["log_so_far"] == [(1, "ahoy"), (2, "")]
+
+
+def test_log_at_bottom_a_note_on_two_lines_reads_as_it_did_in_the_log():
+    written = [{"action": "write", "text": "first\nsecond"}]
+    log = PiratesLog()
+    log.write(written[0]["text"])
+    assert viewer.scene([record(0, written)], 0, 3)["log_so_far"] == [
+        (1, log.lines()[0]["text"])
+    ]
 
 
 def test_log_at_bottom_runs_along_under_the_board_at_a_fixed_height():

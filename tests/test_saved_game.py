@@ -70,6 +70,27 @@ def test_named_runs_the_committed_game_replays_byte_identical(capsys):
     assert "Score 150" in (COMMITTED / "story.txt").read_text()
 
 
+def test_named_runs_save_every_lever_even_the_defaults(tmp_path, monkeypatch, capsys):
+    monkeypatch.chdir(tmp_path)
+    path = tmp_path / "plain.toml"
+    path.write_text('brain = "say-a-number"\nturns_per_pirate = 2\n')
+    folder = played(path, capsys, seed=1)
+    saved = json.loads((folder / "config.json").read_text())
+    assert saved["grid_size"] == 10
+    assert saved["crew_size"] == 6
+    assert saved["log_window"] == 3
+    assert len(saved["pirates"]) == 6
+    assert saved["pirates"][0]["personality"] == 1
+    assert cli.main(["replay", str(folder)]) == 0
+
+
+def test_named_runs_the_viewer_can_render_one(config, capsys):
+    folder = played(config, capsys)
+    out = folder.parent / "game.gif"
+    assert cli.main(["render", str(folder), "--out", str(out)]) == 0
+    assert out.read_bytes().startswith(b"GIF")
+
+
 def test_everything_cached_replay_is_byte_identical_with_no_keys_or_network(
     config, capsys, monkeypatch
 ):

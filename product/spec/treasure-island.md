@@ -186,7 +186,7 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 | `slideshow` | not yet | — |
 | `paper-figures` | not yet | — |
 | `brain-in-config` | `src/treasure_island/config.py`, `src/treasure_island/strategies.py`, `configs/s-sweep.toml`, `configs/say-a-number.toml` | `test_brain_in_config_picks_what_plays`, `test_brain_in_config_refuses_one_it_does_not_know` |
-| `named-runs` | `src/treasure_island/saved_game.py`, `src/treasure_island/cli.py`, `runs/s-sweep-seed-7/**` | `test_named_runs_save_config_seed_both_logs_and_replies`, `test_named_runs_are_named_after_config_and_seed_and_never_overwrite`, `test_named_runs_the_seed_on_the_command_line_decides_the_game`, `test_named_runs_the_committed_game_replays_byte_identical` |
+| `named-runs` | `src/treasure_island/saved_game.py`, `src/treasure_island/cli.py`, `runs/s-sweep-seed-7/**` | `test_named_runs_save_config_seed_both_logs_and_replies`, `test_named_runs_are_named_after_config_and_seed_and_never_overwrite`, `test_named_runs_the_seed_on_the_command_line_decides_the_game`, `test_named_runs_the_committed_game_replays_byte_identical`, `test_named_runs_save_every_lever_even_the_defaults`, `test_named_runs_the_viewer_can_render_one` |
 | `everything-cached` | `src/treasure_island/saved_game.py`, `src/treasure_island/cli.py` | `test_everything_cached_replay_is_byte_identical_with_no_keys_or_network`, `test_everything_cached_replay_fails_if_a_log_changed`, `test_everything_cached_replay_fails_if_the_config_changed`, `test_everything_cached_replay_leaves_the_folder_untouched` |
 | `one-line-replay` | not yet | — |
 | `python-stack` | not yet | — |

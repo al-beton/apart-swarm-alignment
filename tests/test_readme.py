@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from treasure_island import cli
+from treasure_island import cli, viewer
 
 ROOT = Path(__file__).resolve().parents[1]
 _SECTION = "## What you can do today"
@@ -28,6 +28,17 @@ def make_targets():
     return set(re.findall(r"^([\w-]+):", (ROOT / "Makefile").read_text(), re.MULTILINE))
 
 
+def test_readme_commands_run_list_the_viewer_on_a_committed_run():
+    commands = feature_commands()
+    for verb in ("render", "watch"):
+        (folder,) = [
+            shlex.split(command)[-1]
+            for command in commands
+            if command.startswith(f"uv run treasure-island {verb} ")
+        ]
+        assert (ROOT / folder / "events.jsonl").is_file(), folder
+
+
 def test_readme_commands_run_the_feature_list_exists():
     assert feature_commands()
 
@@ -45,6 +56,9 @@ def test_readme_commands_run_each_feature_command_works(command, tmp_path, monke
     for folder in ("configs", "runs"):
         shutil.copytree(ROOT / folder, tmp_path / folder)
     monkeypatch.chdir(tmp_path)
+    if words[3] == "watch":  # it serves until stopped, so check it can start
+        viewer.server(words[4], 0).server_close()
+        return
     try:
         code = cli.main(words[3:])
     except SystemExit as exit:  # argparse's --help

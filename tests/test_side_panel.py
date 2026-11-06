@@ -37,7 +37,7 @@ def record(turn, agent="pirate-1", **rest):
         "crew": CREW,
         "outcome": {"position": at, "found_treasure": rest.get("found", False)},
     }
-    for optional in ("thinking", "story"):
+    for optional in ("thinking", "story", "happened"):
         if optional in rest:
             made[optional] = rest[optional]
     return made
@@ -53,12 +53,11 @@ def panel_of(image, size=4):
 
 
 def test_side_panel_says_what_the_pirate_did_in_plain_words():
-    story = "Turn 3: pirate-1 at (0, 0) dug at (0, 0) and found nothing. Why: looking"
-    made = record(0, story=story, thinking="looking")
+    made = record(0, happened="dug at (0, 0) and found nothing.")
     assert shown([made])["did"] == "dug at (0, 0) and found nothing."
 
 
-def test_side_panel_falls_back_on_the_action_for_a_run_with_no_story():
+def test_side_panel_falls_back_on_the_action_for_a_record_that_does_not_say():
     assert shown([record(0)])["did"] == "dig"
 
 
@@ -120,9 +119,7 @@ def test_side_panel_draws_text_the_pixel_font_does_not_have():
 
 def test_side_panel_fits_whatever_is_said_inside_the_frame():
     wall = "word " * 200
-    records = [
-        record(0, thinking=wall, story=f'Turn 0: pirate-1 at (0, 0) wrote "{wall}".')
-    ]
+    records = [record(0, thinking=wall, happened=f'wrote "{wall}".')]
     image = viewer.frame(records, 0, 1)
     assert image.height == viewer.frame([record(0)], 0, 1).height
 

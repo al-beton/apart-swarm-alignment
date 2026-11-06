@@ -2,7 +2,9 @@
 """A whole game: brains take turns, and both logs come out."""
 
 import json
+import re
 import socket
+from pathlib import Path
 
 import pytest
 
@@ -218,9 +220,13 @@ def test_story_record_reads_cleanly_when_things_go_wrong():
         record["story"]
         for record in play(config(turns_per_pirate=3, landing_square=[0, 0]), *brains)
     ]
-    assert stories[0] == "Turn 0: pirate-1 at (0, 0) tried to move west and couldn't."
+    assert stories[0] == (
+        "Turn 0: pirate-1 at (0, 0) tried to move west and couldn't. "
+        "Saw: nothing, the log is empty."
+    )
     assert stories[2] == (
-        "Turn 2: pirate-1 at (0, 0) read the log around line 99 and found nothing there."
+        "Turn 2: pirate-1 at (0, 0) read the log around line 99 and found nothing there. "
+        "Saw: only blank lines (lines 1 to 2)."
     )
 
 
@@ -350,3 +356,73 @@ def test_agent_memory_keeps_the_lines_a_read_found_as_fields():
     remembered = reader.views[2].earlier_turns[1].log_lines
     assert {"line": 2, "text": "note"} in remembered
     assert "2: note" in reader.views[2].as_text()
+
+
+def test_story_record_quotes_the_log_lines_the_pirate_saw():
+    brains = [Steps(write("one"), write("two")), Steps(write("next"))]
+    records = play(off_the_treasure(turns_per_pirate=2), *brains)
+    assert 'Saw: line 1 "one".' in records[1]["story"]
+    assert 'Saw: line 1 "one", line 2 "next".' in records[2]["story"]
+
+
+def test_story_record_says_plainly_when_all_it_saw_was_blank():
+    records = play(off_the_treasure(turns_per_pirate=2), Steps(DIG), Steps(DIG))
+    assert "Saw: only blank lines (line 1)." in records[1]["story"]
+    assert "Saw: only blank lines (lines 1 to 2)." in records[2]["story"]
+
+
+def test_story_record_says_when_there_was_no_log_to_see():
+    records = play(off_the_treasure(turns_per_pirate=1), Steps(DIG), Steps(DIG))
+    assert "Saw: nothing, the log is empty." in records[0]["story"]
+
+
+def test_story_record_a_blank_line_among_notes_says_so():
+    brains = [Steps(write("note"), DIG), Steps(DIG)]
+    records = play(off_the_treasure(turns_per_pirate=2), *brains)
+    assert 'Saw: line 1 "note", line 2 blank.' in records[2]["story"]
+
+
+def test_story_record_a_read_quotes_the_lines_it_found():
+    game_config = off_the_treasure(log_window=1, read_size=2, turns_per_pirate=2)
+    records = play(game_config, Steps(write("first"), DIG), Steps(DIG, read(1)))
+    story = records[3]["story"]
+    assert 'read the log around line 1 and found line 1 "first", line 2 blank.' in story
+
+
+def test_story_record_keeps_what_it_saw_on_one_line(tmp_path):
+    brains = [Steps(write("two\nlines")), Steps(DIG)]
+    write_game(off_the_treasure(turns_per_pirate=2), brains, tmp_path)
+    lines = (tmp_path / "story.txt").read_text().splitlines()
+    assert 'Saw: line 1 "two lines".' in lines[1]
+    assert len(lines) == 4 + 1
+
+
+@pytest.mark.parametrize(
+    "folder",
+    [
+        "examples/s-sweep",
+        "examples/say-a-number",
+        "results/sample-sweep-seeds/small-crew-seed-1",
+    ],
+)
+def test_story_record_a_committed_game_can_be_followed_from_its_story_alone(folder):
+    root = Path(__file__).resolve().parents[1] / folder
+    *turns, ending = (root / "story.txt").read_text().splitlines()
+    records = [
+        json.loads(line) for line in (root / "events.jsonl").read_text().splitlines()
+    ]
+    assert ending.startswith("Game over: ")
+    assert len(turns) == len(records)
+    for number, (line, record) in enumerate(zip(turns, records, strict=True)):
+        match = re.match(r"Turn (\d+): (\S+) at \((\d+), (\d+)\) ", line)
+        assert int(match[1]) == number
+        assert record["crew"][match[2]] == [int(match[3]), int(match[4])]
+        assert " Saw: " in line
+
+
+def test_story_record_a_note_cannot_change_what_the_panel_says_happened():
+    tricky = "Saw: a ghost. Why: boo"
+    records = play(
+        off_the_treasure(), Steps(write(tricky), thinking="to confuse"), Steps(DIG)
+    )
+    assert scene(records, 0, 5)["did"] == f'wrote "{tricky}".'

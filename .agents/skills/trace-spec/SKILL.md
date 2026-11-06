@@ -1,6 +1,6 @@
 ---
 name: trace-spec
-description: Connect collusion-lab spec statements to the code that enforces them and the tests that prove them. Use after building anything that implements, changes or removes a spec statement, or when spec-check warns.
+description: Connect Treasure Island spec statements to the code that enforces them and the tests that prove them. Use after building anything that implements, changes or removes a spec statement, or when spec-check warns.
 ---
 
 <!-- Implements: agent-setup/shared-skills, agent-setup/skills-hold-the-process -->
@@ -11,9 +11,9 @@ Every statement says where it's enforced and how it's tested, and every file it 
 
 1. **Fill the statement's row** in its spec file's `## Where this is enforced` table:
    - *Enforced by:* the files (`` `path` `` or a `` `glob/**` ``), and/or `reviewer`, and/or a setting such as `GitHub (…)`. Use `not yet` only while it's unbuilt.
-   - *Tested by:* the names of the tests that prove it (`` `test_seeded_runs_replay_exactly` ``), or `—`.
+   - *Tested by:* the names of the tests that prove it (`` `test_ci_minutes_the_gate_is_one_job` ``), or `—`.
 2. **Point back from each file** with an `Implements:` line listing `area/statement` names, in the file's comment syntax:
-   - Python, YAML, TOML, Makefile: `# Implements: runs/one-config, runs/overrides`
+   - Python, YAML, TOML, Makefile: `# Implements: ci/one-gate, ci/ci-minutes`
    - Markdown: `<!-- Implements: … -->`, after any front matter.
 
    Files that can't hold comments (JSON, lockfiles, symlinks) are homed by their table row alone, and so are prompts in `prompts/`: models read them verbatim, so they never carry an `Implements:` line.

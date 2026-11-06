@@ -1,6 +1,6 @@
 ---
 name: address-review
-description: Address review findings on a collusion-lab pull request (from an automatic reviewer or a person) and resolve each one. Use when a pull request has unresolved review comments.
+description: Address review findings on a Treasure Island pull request (from an automatic reviewer or a person) and resolve each one. Use when a pull request has unresolved review comments.
 ---
 
 <!-- Implements: agent-setup/shared-skills, agent-setup/skills-hold-the-process, commits/grooming-optional, review/every-reviewer-counts, review/resolve-with-commit, review/bounded-rounds, workflow/prototype-pace -->

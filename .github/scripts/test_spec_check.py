@@ -85,7 +85,7 @@ class SpecCheckTests(unittest.TestCase):
         )
         files = {
             "contributing/spec/pull-requests.md": spec,
-            "prompts/system/neutral.md": "You set prices for Firm $agent.\n",
+            "prompts/system/neutral.md": "You are pirate $agent.\n",
         }
         self.assertEqual(warnings_for(**files), [])
 
@@ -118,7 +118,7 @@ class SpecCheckTests(unittest.TestCase):
         config = "# Implements: pull-requests/closing-block\nname: survey\n"
         warnings = warnings_for(**{"runs/survey/seed-0/config.yaml": config})
         self.assertIn(
-            "runs/survey/seed-0/config.yaml is run output the lab wrote: home it "
+            "runs/survey/seed-0/config.yaml is run output the game wrote: home it "
             "with a spec table row, not an Implements: line.",
             warnings,
         )

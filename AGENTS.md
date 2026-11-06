@@ -1,12 +1,12 @@
-<!-- Implements: agent-setup/entry-point, review/spec-first, safety/no-secrets, workflow/al-only, workflow/prototype-pace, workflow/one-routine -->
-# collusion-lab: agent guide
+<!-- Implements: agent-setup/entry-point, agent-setup/reuse-old-work, review/spec-first, safety/no-secrets, workflow/al-only, workflow/prototype-pace, workflow/one-routine -->
+# Treasure Island: agent guide
 
-collusion-lab is a small, quickly iterable environment for studying collusion between LLM agents in simulated markets, built for the Apart AI Collusion Research Sprint. A run is a config: the market, each agent's model, prompt and temperature, and a seed. Any run can be replayed exactly, and a sweep is one command.
+Treasure Island is a reproducible sandbox for asking when a swarm of LLM agents whistleblows, and what in their environment changes that. It's our entry to Apart's multi-agent oversight and control track.
 
 ## Where things are
 
-- **Spec (intent, read first):** `product/spec/` (the lab), `experiments/spec/` (what we're finding out with it) and `contributing/spec/` (how we build it). One file per area. Each ends with "Where this is enforced", which says which files enforce each statement and which tests prove it.
-- **Code:** `src/collusion_lab/`, tests in `tests/`, CI in `.github/`. Prompts in `prompts/` are sent to models verbatim, so they carry no comments; their spec rows trace them. Every file names the statements it implements on an `Implements:` line (files that can't hold comments, such as JSON, lockfiles and symlinks, are traced by their table row). Docs are the comments and docstrings next to the code.
+- **Spec (intent, read first):** `product/spec/` (the game), `experiments/spec/` (what we're finding out with it) and `contributing/spec/` (how we build it). One file per area. Each ends with "Where this is enforced", which says which files enforce each statement and which tests prove it.
+- **Code:** tests in `tests/`, CI in `.github/`. Every file names the statements it implements on an `Implements:` line (files that can't hold comments, such as JSON, lockfiles and symlinks, are traced by their table row). Docs are the comments and docstrings next to the code.
 - **How to do each step:** the skills in `.agents/skills/` (also linked as `.claude/skills/`): `deliver-issue` (the whole routine, issue to merged), and the steps it chains: `build-issue`, `write-spec-change`, `trace-spec`, `open-pr`, `review-pr`, `address-review`, `merge-pr`. Who does what (manager, delivery lead, builders, reviewers, Codex, researcher) and the queue labels are in `team`.
 - **Work** is tracked as GitHub issues on this repository.
 
@@ -14,7 +14,7 @@ Al handles accounts, API keys and spending. Agents never put keys in code, confi
 
 ## Pace
 
-This is a hackathon prototype: submissions close Sunday 25 October 2026, 23:59 AoE. Aim for the smallest change that works and can be shared. Fix real bugs; decline speculative hardening and edge cases nobody has hit, with a reason. Automatic review stops after three rounds, or sooner when a round finds nothing real.
+This is a hackathon prototype. Aim for the smallest change that works and can be shared. Fix real bugs; decline speculative hardening and edge cases nobody has hit, with a reason. Automatic review stops after three rounds, or sooner when a round finds nothing real.
 
 ## Commands
 
@@ -32,9 +32,22 @@ Every issue goes **spec → failing test → code → trace → draft PR → rev
 ## Code review rules
 
 Follow the `review-pr` skill. In short:
-1. **Start with the spec.** Is each new or changed statement in `product/spec/` or `contributing/spec/` good? A behaviour change with no spec change is a finding.
+1. **Start with the spec.** Is each new or changed statement in `product/spec/`, `experiments/spec/` or `contributing/spec/` good? A behaviour change with no spec change is a finding.
 2. **Then the code:** does it do what the statements say, reasonably? Its `Implements:` lines and the spec's "Where this is enforced" table must agree.
 3. **Then the tests listed for each changed statement.**
 4. **Never:** pull request or issue numbers in code, specs or tests; secrets anywhere.
 
 Put each finding inline on the lines it concerns.
+
+## Reusing the old work
+
+Our earlier project stays public at [`al-beton/something-to-lose-apart-ai-collusion`, commit `24961e54c`](https://github.com/al-beton/something-to-lose-apart-ai-collusion/tree/24961e54c). Nothing from it is here, so copy what a change needs from that commit. The modules are under `src/collusion_lab/`:
+
+- `backends.py`: model endpoints
+- `cache.py`: replaying from cached responses
+- `runner.py`, `manifest.py`, `provenance.py`: running games and recording what produced them
+- `estimate.py`: cost estimates before a run
+- `debrief.py`: asking agents about the game afterwards
+- `leisure.py`, `conditions/free_time.py`: the Sudoku time
+- `report/`: HTML reports
+- `deploy/` (at the top of that repository): serving models on Modal

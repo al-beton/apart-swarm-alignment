@@ -1,6 +1,6 @@
 ---
 name: review-pr
-description: Review a collusion-lab pull request, spec first, then tests, then how it's built, with inline findings. Use when asked to review any pull request in this repository.
+description: Review a Treasure Island pull request, spec first, then tests, then how it's built, with inline findings. Use when asked to review any pull request in this repository.
 ---
 
 <!-- Implements: agent-setup/shared-skills, agent-setup/skills-hold-the-process, ci/checks-over-prose, commits/deliberate-messages, commits/small-sane-steps, research/hypothesis-first, research/honest-limits, research/results-from-logs, research/every-run-committed, review/follows-the-rules, review/inline-findings, review/spec-first, safety/justified-dependencies, safety/no-secrets, specs-and-docs/docs-next-to-code, specs-and-docs/no-history, workflow/issue-scope, workflow/test-first -->

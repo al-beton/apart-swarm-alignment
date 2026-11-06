@@ -1,3 +1,0 @@
-# Implements: reproducibility/provenance-log
-# Every branch appends to the provenance log; keep both sides on merge.
-runs/index.jsonl merge=union

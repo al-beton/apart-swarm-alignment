@@ -1,6 +1,6 @@
 ---
 name: merge-pr
-description: Merge a collusion-lab pull request when authorised and every merge condition holds. Use when you reviewed a pull request you didn't author and it passed, or when Al asks you to merge.
+description: Merge a Treasure Island pull request when authorised and every merge condition holds. Use when you reviewed a pull request you didn't author and it passed, or when Al asks you to merge.
 ---
 
 <!-- Implements: agent-setup/shared-skills, agent-setup/skills-hold-the-process, commits/grooming-optional, merging/merge-is-authorised, merging/merge-when-clean, merging/squash-only, review/reviewed-before-merge, team/reviewers -->

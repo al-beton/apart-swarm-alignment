@@ -9,7 +9,7 @@ file lists named statements (`- **name:** sentence`) and ends with a
 source file names the statements it implements on an `Implements:` line,
 except prompt files (prompts/): models read them verbatim, so a table row
 homes them and they never carry an `Implements:` line. Committed run folders
-(runs/) are the same: output the lab wrote, homed by a row such as
+(runs/) are the same: output the game wrote, homed by a row such as
 `runs/survey/**`. JSON Lines files never hold a comment, wherever they are.
 
 This script fails (exit 1, GitHub errors) on anything broken, and only warns
@@ -272,7 +272,7 @@ def _verbatim(path):
     if path.startswith(PROMPTS):
         return "a prompt the model reads verbatim"
     if path.startswith(RUNS):
-        return "run output the lab wrote"
+        return "run output the game wrote"
     return None
 
 

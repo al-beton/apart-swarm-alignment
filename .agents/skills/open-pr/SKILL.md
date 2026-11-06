@@ -1,6 +1,6 @@
 ---
 name: open-pr
-description: Open or update a collusion-lab pull request with the right title, template and closing block, then request review. Use whenever creating a pull request or marking one ready.
+description: Open or update a Treasure Island pull request with the right title, template and closing block, then request review. Use whenever creating a pull request or marking one ready.
 ---
 
 <!-- Implements: agent-setup/shared-skills, agent-setup/skills-hold-the-process, pull-requests/closing-block, pull-requests/template, pull-requests/title-shows-type-and-issues, review/every-reviewer-counts, safety/justified-dependencies, workflow/draft-early, ci/ci-minutes -->
@@ -9,8 +9,8 @@ description: Open or update a collusion-lab pull request with the right title, t
 
 1. **Title:** `<type>(<area>): <summary> (<issues>)`. `pr-gate` checks it and re-runs when you edit it.
    - Type: `feat` (new behaviour the spec gains), `fix` (the code doesn't do what the spec says), or `improve` (everything else: deeper spec, refactors, CI, dependency updates).
-   - Area: the spec file the change mainly belongs to (`runs`, `pull-requests`, …). It must exist.
-   - Issues: one or more, separated by ", ": `feat(runs): run a game from one config (#2, #3)`.
+   - Area: the spec file the change mainly belongs to (`ci`, `pull-requests`, …). It must exist.
+   - Issues: one or more, separated by ", ": `feat(ci): every pull request runs the spec check (#2, #3)`.
 2. **Description:** fill in `.github/pull_request_template.md`: issues, spec changes (quoted, first, because review starts there), how it's built, tests, notes. Sections that don't apply say "None".
 3. **Closing block:** one line per issue.
    - `Closes`, `Fixes` or `Resolves` for issues this pull request finishes (GitHub closes them on merge);

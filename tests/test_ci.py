@@ -187,6 +187,11 @@ def test_gif_per_change_plays_a_whole_game_and_renders_it_from_that_commit():
     steps = gif_workflow()["jobs"]["render"]["steps"]
     assert any("upload-artifact" in step.get("uses", "") for step in steps)
     assert (ROOT / "configs/s-sweep.toml").is_file()
+    # By default a pull request checks out a merge with its base, which isn't
+    # the commit the comment names.
+    checkout = steps[0]
+    assert "checkout" in checkout["uses"]
+    assert checkout["with"]["ref"] == "${{ github.event.pull_request.head.sha }}"
 
 
 def test_gif_per_change_never_blocks_merging():

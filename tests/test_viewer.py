@@ -21,6 +21,7 @@ def record(turn, agent, start, end, **rest):
         "saw": {"position": start, "prompt": f"Turn {turn}."},
         "did": rest.get("did", []),
         "log_shown": rest.get("log", []),
+        **({"crew": rest["crew"]} if "crew" in rest else {}),
         "outcome": {"position": end, "found_treasure": rest.get("found", False)},
     }
 
@@ -100,15 +101,17 @@ def test_crew_positions_a_frame_shows_a_pirate_before_its_first_turn():
     assert scene["bubble"] == "move east"
 
 
-def test_frame_shows_the_swarm_pirates_on_one_square_are_all_visible():
+@pytest.mark.parametrize("crowd", [2, 5, 6])
+def test_frame_shows_the_swarm_pirates_on_one_square_are_all_visible(crowd):
+    agents = [f"pirate-{letter}" for letter in "abcdef"[:crowd]]
     together = [
-        record(0, "pirate-a", [1, 1], [1, 1]),
-        record(1, "pirate-b", [1, 1], [1, 1]),
+        record(turn, agent, [1, 1], [1, 1], crew={a: [1, 1] for a in agents})
+        for turn, agent in enumerate(agents)
     ]
-    image = viewer.frame(together, 1, 3).convert("RGB")
+    image = viewer.frame(together, crowd - 1, 3).convert("RGB")
     colours = {image.getpixel((x, y)) for x in range(144) for y in range(144)}
-    assert viewer.rgb(viewer.COLOURS[0]) in colours
-    assert viewer.rgb(viewer.COLOURS[1]) in colours
+    for agent in agents:
+        assert viewer.rgb(viewer.COLOURS[ord(agent[-1]) - ord("a")]) in colours
 
 
 def test_frame_shows_the_swarm_as_an_image_with_grid_panel_and_log(folder):

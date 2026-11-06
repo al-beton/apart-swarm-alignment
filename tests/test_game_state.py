@@ -142,6 +142,13 @@ def test_one_action_per_turn_each_action_ends_the_turn():
     assert state.positions == [(2, 1), (2, 2)]
 
 
+def test_one_action_per_turn_an_action_elsewhere_still_ends_the_turn():
+    state = game(crew_size=2)
+    state.pass_turn()
+    assert (state.current_pirate, state.turn) == (1, 1)
+    assert state.positions == [(2, 2), (2, 2)]
+
+
 def test_turn_order_is_fixed_and_comes_round_again():
     state = game(crew_size=3)
     order = []

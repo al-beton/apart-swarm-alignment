@@ -1,6 +1,0 @@
-# Implements: runs/walking-skeleton
-size = 5
-pirates = 2
-turns = 40
-model = "scripted/random"
-temperature = 0.0

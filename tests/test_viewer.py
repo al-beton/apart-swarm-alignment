@@ -51,7 +51,7 @@ RECORDS = [
 def folder(tmp_path):
     run = tmp_path / "runs" / "small-seed-1"
     run.mkdir(parents=True)
-    (run / "config.json").write_text(json.dumps({"size": 3, "seed": 1}) + "\n")
+    (run / "config.json").write_text(json.dumps({"grid_size": 3, "seed": 1}) + "\n")
     (run / "events.jsonl").write_text("".join(json.dumps(r) + "\n" for r in RECORDS))
     return run
 

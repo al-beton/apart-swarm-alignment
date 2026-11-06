@@ -49,7 +49,7 @@ class RandomWalker:
 class Sweeper:
     """Digs where it stands, then follows the snake, turning back at either end."""
 
-    remembers_its_turns = True
+    remembers_outside_the_request = True
 
     def __init__(self):
         self.dug = {}  # agent -> the cells it has dug
@@ -74,7 +74,7 @@ class Sweeper:
 class Counter:
     """Says 1, 2, 3, ... on its turns and never digs."""
 
-    remembers_its_turns = True
+    remembers_outside_the_request = True
 
     def __init__(self):
         self.said = {}  # agent -> how many numbers it has said

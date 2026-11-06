@@ -13,7 +13,9 @@ all of it makes the key, and anything added to a request later joins the key.
 A run also reuses any earlier run's reply to the same request, since the key says
 the request is identical, and copies it into its own `replies.jsonl`, so its folder
 alone can regenerate it. If two runs answered one request differently, the newest
-answer wins. Replay never borrows: it only reads the folder it's checking.
+answer wins. Replay never borrows: it only reads the folder it's checking. A
+scripted agent that remembers its turns always answers for itself: it's free, and
+a look-alike request from another run may follow a different history.
 
 Events and replies are written as they happen, so a run can be followed live. A
 watched run waits out the rest of `PACE_SECONDS` after each turn, which is what
@@ -74,12 +76,10 @@ class Replies:
         if key in self._stored:
             self.hits += 1
             return self._stored[key]
-        if key in self.earlier:
+        # The key can't vouch for a reply shaped by memory the request doesn't show.
+        trusted = not getattr(self.backend, "remembers_outside_the_request", False)
+        if key in self.earlier and trusted:
             self.hits += 1
-            # An agent that remembers its turns has to see this one too, or it
-            # would start from nothing when the cache runs out mid-game.
-            if getattr(self.backend, "remembers_its_turns", False):
-                self.backend(request)
             return self._keep(key, request, self.earlier[key])
         if self.backend is None:
             raise MissingReply(f"No stored reply for {request['agent']}: {key}")

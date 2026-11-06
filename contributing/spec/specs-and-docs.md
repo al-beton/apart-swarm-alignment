@@ -10,7 +10,7 @@
 - **no-history:** The codebase describes how things are now, never how they got there.
 - **prompts-are-verbatim:** Prompt files hold exactly the text a model reads, so a spec table row traces them instead of a comment inside them.
 - **runs-are-evidence:** Committed run folders hold exactly what the game wrote, so a spec table row traces them instead of a comment inside them, and JSON Lines logs are never asked for one anywhere; scratch and smoke runs are never committed.
-- **art-is-binary:** Files in `assets/` are art the viewer draws as it is, so a spec table row traces them instead of a comment inside them, and binary images such as GIFs are never asked for one anywhere.
+- **art-is-binary:** Binary images such as PNGs and GIFs can't carry an `Implements:` line, so the spec check never asks them for one or for a home, wherever they are, while the code that draws art traces like any other code.
 - **short-specs:** Spec files stay short enough to read; long ones get split.
 
 ## Where this is enforced
@@ -27,5 +27,5 @@
 | `no-history` | `.agents/skills/review-pr/SKILL.md` | — |
 | `prompts-are-verbatim` | `.github/scripts/spec_check.py` | `test_prompts_are_verbatim_and_homed_by_a_table_row`, `test_prompts_are_verbatim_so_they_never_carry_implements_lines` |
 | `runs-are-evidence` | `.github/scripts/spec_check.py`, `.gitignore` | `test_runs_are_evidence_homed_by_a_table_row`, `test_runs_are_evidence_so_they_never_carry_implements_lines`, `test_runs_are_evidence_jsonl_never_asked_for_implements_lines`, `test_runs_are_evidence_compressed_files_never_asked_for_implements_lines`, `test_runs_are_evidence_scratch_and_smoke_runs_stay_ignored` |
-| `art-is-binary` | `.github/scripts/spec_check.py` | `test_art_is_binary_assets_are_homed_by_a_table_row`, `test_art_is_binary_so_assets_never_carry_implements_lines`, `test_art_is_binary_gifs_never_asked_for_implements_lines` |
+| `art-is-binary` | `.github/scripts/spec_check.py` | `test_art_is_binary_images_never_need_a_home`, `test_art_is_binary_a_gif_a_row_names_is_never_asked_to_point_back` |
 | `short-specs` | `.github/scripts/spec_check.py` | `test_spec_length_warns_over_300_lines` |

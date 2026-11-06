@@ -51,7 +51,7 @@ Each pull request also gets a comment showing every example game's GIF at its la
 
 `run` takes `--no-watch` to skip the browser, as CI does. Once a brain asks a model, its replies will be reused from earlier runs, so a repeat spends nothing, and `--no-cache` asks for them again; scripted brains ask nothing.
 
-**How the game is built:** `src/treasure_island/game_loop.py` plays a whole game from a config, with every lever a variable (`config.py`), the pirates' log with its free window and paid reads (`pirates_log.py`) and the score (`score.py`). A saved game holds `story.txt` (the game to read, one line per turn), `pirates-log.txt` (all the pirates can see), `events.jsonl` (the full record), `config.json`, `replies.jsonl` and `manifest.json`. Configs without a `brain`, such as `configs/sweep.toml`, still play the small stand-in game.
+**How the game is built:** `src/treasure_island/game_loop.py` plays a whole game from a config, with every lever a variable (`config.py`), the pirates' log with its free window and paid reads (`pirates_log.py`) and the score (`score.py`). A saved game holds `story.txt` (the game to read, one line per turn), `pirates-log.txt` (all the pirates can see), `events.jsonl` (the full record), `config.json`, `replies.jsonl` and `manifest.json`. A config must name its `brain`.
 
 **Planned:** LLM pirates that replay from cached replies, the exploit that hands one pirate the answer, and the stills for the paper.
 

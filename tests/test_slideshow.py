@@ -92,13 +92,21 @@ def test_slideshow_file_writing_it_opens_no_socket(saved, monkeypatch):
     assert viewer.slideshow(saved).is_file()
 
 
-def test_slideshow_file_a_pirate_s_words_cannot_break_out_of_the_page(saved):
+@pytest.mark.parametrize(
+    "words",
+    [
+        "</script><script>alert(1)</script> & <b>bold</b>",
+        "<!-- <script>",  # an HTML parser would never close the page's own script
+    ],
+)
+def test_slideshow_file_a_pirate_s_words_cannot_break_out_of_the_page(saved, words):
     records = records_of(saved)
-    records[0]["story"] = "</script><script>alert(1)</script> & <b>bold</b>"
+    records[0]["story"] = words
     (saved / "events.jsonl").write_text("".join(json.dumps(r) + "\n" for r in records))
     page = viewer.slideshow_page(saved)
-    assert "</script><script>alert" not in page
-    assert turns_in(page)[0]["story"] == records[0]["story"]
+    data = re.search(r"const TURNS = (.*?);\n", page, re.DOTALL).group(1)
+    assert "<" not in data
+    assert turns_in(page)[0]["story"] == words
     # The script puts the story in as text, never as markup.
     assert "innerHTML" not in page
 

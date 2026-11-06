@@ -1,9 +1,11 @@
-# Implements: ci/simple-code, tooling/one-command-each, tooling/package-and-cli, ci/ci-minutes
+# Implements: ci/simple-code, tooling/one-command-each, tooling/package-and-cli, ci/ci-minutes, viewer/render-gif
 [project]
 name = "treasure-island"
 version = "0.1.0"
 requires-python = ">=3.12,<3.13"
-dependencies = []
+dependencies = [
+    "pillow>=13.0.0",
+]
 
 [project.scripts]
 treasure-island = "treasure_island.cli:main"
@@ -14,7 +16,6 @@ build-backend = "hatchling.build"
 
 [dependency-groups]
 dev = [
-    "pillow>=13.0.0",
     "pytest>=8.3",
     "pytest-xdist>=3.8.0",
     "pyyaml>=6.0",

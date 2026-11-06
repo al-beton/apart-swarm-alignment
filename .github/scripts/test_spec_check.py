@@ -1,4 +1,4 @@
-# Implements: specs-and-docs/everything-traces, specs-and-docs/every-file-has-a-home, specs-and-docs/domains, specs-and-docs/prompts-are-verbatim, specs-and-docs/runs-are-evidence
+# Implements: specs-and-docs/everything-traces, specs-and-docs/every-file-has-a-home, specs-and-docs/domains, specs-and-docs/prompts-are-verbatim, specs-and-docs/runs-are-evidence, specs-and-docs/art-is-binary
 import tempfile
 import unittest
 from pathlib import Path
@@ -149,6 +149,25 @@ class SpecCheckTests(unittest.TestCase):
         ignored = Path(__file__).parents[2].joinpath(".gitignore").read_text()
         self.assertIn("runs/scratch/", ignored.splitlines())
         self.assertIn("runs/smoke/", ignored.splitlines())
+
+    def test_art_is_binary_images_never_need_a_home(self):
+        files = {
+            "assets/sand.png": "not really a png\n",
+            "assets/sheet.gif": "not really a gif\n",
+            "assets/draw.py": "# Implements: pull-requests/closing-block\n",
+        }
+        self.assertEqual(warnings_for(**files), [])
+
+    def test_art_is_binary_a_gif_a_row_names_is_never_asked_to_point_back(self):
+        spec = SPEC.replace(
+            "`.github/scripts/pr_gate.py`, reviewer",
+            "`.github/scripts/pr_gate.py`, `figures/game.gif`",
+        )
+        files = {
+            "contributing/spec/pull-requests.md": spec,
+            "figures/game.gif": "not really a gif\n",
+        }
+        self.assertEqual(warnings_for(**files), [])
 
     def test_statement_format_requires_title_and_named_lines(self):
         spec = SPEC.replace("# Pull requests\n", "").replace(

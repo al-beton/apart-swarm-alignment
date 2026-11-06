@@ -1,6 +1,6 @@
 """spec-check: the spec and the code point at each other.
 
-Implements: specs-and-docs/everything-traces, specs-and-docs/every-file-has-a-home, specs-and-docs/areas, specs-and-docs/spec-is-intent, specs-and-docs/short-specs, specs-and-docs/domains, specs-and-docs/prompts-are-verbatim, specs-and-docs/runs-are-evidence
+Implements: specs-and-docs/everything-traces, specs-and-docs/every-file-has-a-home, specs-and-docs/areas, specs-and-docs/spec-is-intent, specs-and-docs/short-specs, specs-and-docs/domains, specs-and-docs/prompts-are-verbatim, specs-and-docs/runs-are-evidence, specs-and-docs/art-is-binary
 
 The spec lives in product/spec/, experiments/spec/ and contributing/spec/, one
 file per area. Each
@@ -10,7 +10,8 @@ source file names the statements it implements on an `Implements:` line,
 except prompt files (prompts/): models read them verbatim, so a table row
 homes them and they never carry an `Implements:` line. Committed run folders
 (runs/) are the same: output the game wrote, homed by a row such as
-`runs/survey/**`. JSON Lines files never hold a comment, wherever they are.
+`runs/survey/**`. JSON Lines files never hold a comment, wherever they are,
+and binary images (PNG, GIF, ...) are never asked for one or for a home.
 
 This script fails (exit 1, GitHub errors) on anything broken, and only warns
 about statements marked "not yet" (planned work) and long spec files:
@@ -54,8 +55,15 @@ _JS_TEST = re.compile(
 _PLACEHOLDER = re.compile(r"[%$][a-z#]+")
 _SKIPPED_DIRS = {".git", ".venv", "node_modules", "dist", "staticfiles"}
 _EXEMPT_NAMES = {"uv.lock", "package-lock.json", ".gitignore"}
-_EXEMPT_SUFFIXES = {".png", ".jpg", ".jpeg", ".svg", ".ico"}
-_NO_COMMENTS = {".json", ".jsonl", ".gz", ".docx", ".pdf"}  # data, archives, documents
+_EXEMPT_SUFFIXES = {".png", ".jpg", ".jpeg", ".gif", ".svg", ".ico"}
+_NO_COMMENTS = {
+    ".json",
+    ".jsonl",
+    ".gz",
+    ".docx",
+    ".pdf",
+    ".gif",
+}  # data, archives, documents, images
 _NO_COMMENT_NAMES = {".python-version", "uv.lock", "package-lock.json", "LICENSE"}
 
 

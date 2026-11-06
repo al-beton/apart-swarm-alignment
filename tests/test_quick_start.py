@@ -106,7 +106,7 @@ from PIL import Image
 mode = sys.argv[1]
 if mode == "fails":
     sys.exit(7)
-frames = [Image.new("P", (4, 4), i) for i in range(3)]
+frames = [Image.new("RGB", (4, 4), colour) for colour in ("red", "green", "blue")]
 if mode == "one-frame":
     frames = frames[:1]
 frames[0].save("game.gif", save_all=True, append_images=frames[1:])

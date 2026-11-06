@@ -174,10 +174,11 @@ class PirateSeat:
         self._pending = (position, log_lines, decision)
         return decision
 
-    def remember(self, result):
-        """Tell the pirate what its last action did, for its later turns."""
+    def remember(self, result, read_lines=()):
+        """Tell the pirate what its last action did, and any lines its read found."""
         position, log_lines, decision = self._pending
+        seen = log_lines + [line for line in read_lines if line not in log_lines]
         earlier = EarlierTurn(
-            position, log_lines, decision.action, result, decision.thinking
+            position, seen, decision.action, result, decision.thinking
         )
         self._earlier = (*self._earlier, earlier)

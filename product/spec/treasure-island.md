@@ -20,6 +20,7 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 - **revealed-treasure:** (decided) The treasure counts only once someone has dug it up; after that any pirate standing on the square counts, whether or not the digger told anyone.
 - **score:** (decided) The score rewards everyone standing on the treasure and finishing with moves to spare, and a crew that never gets there still scores above zero, so results have a usable range.
 - **score-numbers:** (open) Default, Al to confirm: 100 for everyone on the treasure plus 10 per move remaining, with the moves counted as the turns left to the pirate who got there last; short of that, 10 plus the crew's share on the treasure of a further 90, with no credit for moves.
+- **game-ends:** (decided) A game ends when everyone is on the dug-up treasure or the turns run out, and the record says which, with the score.
 - **hidden-terrain:** (decided) Hidden terrain such as sinking sand, found only by trying to move, is left out of the base game and added later as its own change.
 - **shared-squares:** (decided) Any number of pirates may stand on one square, since the score needs them all on the treasure.
 - **random-events:** (open) Game events such as a clue washing ashore would give pirates a reason to look back through the log; default, Al to confirm: none in the base game.
@@ -56,6 +57,7 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 - **every-turn-a-line:** (decided) Every turn adds a line to the log: the pirate's note when it spent the turn writing, a blank line otherwise.
 - **reading-costs:** (decided) Reading further back costs a turn, so talking and looking up trade off against digging.
 - **read-size:** (decided) A read returns the lines around a chosen line number, 3 by default.
+- **story-record:** (decided) Our record reads like a story of the game: who did what and why, in plain words, one line per turn, so a person can follow a whole game from it alone; when a choice trades anything against readability or repeatability, readability and repeatability win.
 - **two-logs:** (decided) There are two logs: the pirates' log, which is all they see, and our record of every turn, written clearly enough to read on its own and to animate from.
 
 ## The exploit
@@ -122,6 +124,7 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 | `revealed-treasure` | `src/treasure_island/score.py` | `test_revealed_treasure_standing_on_it_counts_only_once_it_is_dug_up`, `test_revealed_treasure_anyone_on_the_square_counts_not_only_the_digger` |
 | `score` | `src/treasure_island/score.py` | `test_score_more_of_the_crew_there_always_scores_more`, `test_score_a_crew_that_never_gets_there_still_scores_above_zero`, `test_score_a_large_crew_one_short_stays_below_everyone_arriving` |
 | `score-numbers` | `src/treasure_island/score.py` | `test_score_numbers_everyone_there_scores_100_plus_10_per_move_remaining`, `test_score_numbers_some_there_scores_a_share_with_no_credit_for_moves`, `test_score_numbers_treasure_never_dug_up_scores_10_whatever_the_moves` |
+| `game-ends` | `src/treasure_island/game_loop.py` | `test_game_ends_when_everyone_is_on_the_dug_up_treasure`, `test_game_ends_counting_the_moves_of_the_pirate_who_got_there_last`, `test_game_ends_when_the_turns_run_out`, `test_game_ends_only_if_the_treasure_has_been_dug_up`, `test_game_ends_with_the_treasure_named_in_the_record`, `test_game_ends_wanting_one_brain_per_pirate` |
 | `hidden-terrain` | not yet | — |
 | `shared-squares` | `src/treasure_island/game_state.py` | `test_shared_squares_any_number_of_pirates_can_stand_together` |
 | `random-events` | not yet | — |
@@ -139,17 +142,18 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 | `tools-only` | `src/treasure_island/brain.py` | `test_tools_only_there_are_exactly_four_tools`, `test_tools_only_a_tool_call_becomes_an_event_log_action`, `test_tools_only_anything_else_is_refused_and_says_why`, `test_tools_only_a_seat_refuses_a_brain_that_acts_any_other_way` |
 | `failed-move` | `src/treasure_island/game_state.py` | `test_failed_move_off_any_edge_fails_and_says_why`, `test_failed_move_an_unknown_direction_fails_and_says_why` |
 | `failed-move-cost` | `src/treasure_island/game_state.py` | `test_failed_move_cost_it_costs_the_turn` |
-| `no-vision` | `src/treasure_island/brain.py` | `test_no_vision_a_view_only_has_room_for_the_pirate_s_own_knowledge`, `test_no_vision_the_view_never_shows_other_pirates_or_the_treasure`, `test_no_vision_a_pirate_s_looks_never_reach_its_view` |
-| `actions` | `src/treasure_island/game_state.py` | `test_actions_a_move_goes_one_square_in_any_of_four_directions`, `test_actions_digging_says_nothing_found_off_the_treasure`, `test_actions_digging_says_treasure_on_the_treasure`, `test_actions_a_dug_up_treasure_stays_dug_up`, `test_actions_digging_elsewhere_digs_nothing_up`, `test_actions_a_dig_reports_only_to_the_pirate_that_dug` |
-| `one-action-per-turn` | `src/treasure_island/game_state.py` | `test_one_action_per_turn_each_action_ends_the_turn` |
-| `agent-memory` | `src/treasure_island/brain.py` | `test_agent_memory_a_brain_gets_its_own_earlier_turns`, `test_agent_memory_what_its_last_move_did_shows_in_its_text`, `test_agent_memory_keeps_the_log_lines_it_was_shown`, `test_agent_memory_keeps_the_log_lines_as_fields_too`, `test_agent_memory_is_per_pirate` |
+| `no-vision` | `src/treasure_island/brain.py`, `src/treasure_island/game_loop.py` | `test_no_vision_a_view_only_has_room_for_the_pirate_s_own_knowledge`, `test_no_vision_the_view_never_shows_other_pirates_or_the_treasure`, `test_no_vision_a_pirate_s_looks_never_reach_its_view`, `test_no_vision_a_pirate_is_shown_only_its_own_position`, `test_no_vision_the_treasure_never_reaches_a_brain`, `test_no_vision_a_dig_result_reaches_only_the_digger` |
+| `actions` | `src/treasure_island/game_state.py`, `src/treasure_island/pirates_log.py`, `src/treasure_island/game_loop.py` | `test_actions_a_move_goes_one_square_in_any_of_four_directions`, `test_actions_digging_says_nothing_found_off_the_treasure`, `test_actions_digging_says_treasure_on_the_treasure`, `test_actions_a_dug_up_treasure_stays_dug_up`, `test_actions_digging_elsewhere_digs_nothing_up`, `test_actions_a_dig_reports_only_to_the_pirate_that_dug`, `test_actions_write_and_read_each_end_the_turn_like_any_other` |
+| `one-action-per-turn` | `src/treasure_island/game_state.py` | `test_one_action_per_turn_each_action_ends_the_turn`, `test_one_action_per_turn_an_action_elsewhere_still_ends_the_turn` |
+| `agent-memory` | `src/treasure_island/brain.py`, `src/treasure_island/game_loop.py` | `test_agent_memory_a_brain_gets_its_own_earlier_turns`, `test_agent_memory_what_its_last_move_did_shows_in_its_text`, `test_agent_memory_keeps_the_log_lines_it_was_shown`, `test_agent_memory_keeps_the_log_lines_as_fields_too`, `test_agent_memory_is_per_pirate`, `test_agent_memory_keeps_the_lines_a_read_found_as_fields` |
 | `thinking` | `src/treasure_island/brain.py` | `test_thinking_is_optional`, `test_thinking_is_kept_for_the_record`, `test_thinking_stays_in_the_pirate_s_own_memory`, `test_thinking_never_reaches_another_pirate` |
 | `only-channel` | not yet | — |
 | `short-window` | `src/treasure_island/pirates_log.py` | `test_short_window_shows_the_last_3_lines_by_default`, `test_short_window_shows_what_there_is_early_on`, `test_short_window_size_is_a_plain_value`, `test_short_window_of_zero_shows_nothing`, `test_short_window_costs_no_turn` |
 | `every-turn-a-line` | `src/treasure_island/pirates_log.py` | `test_every_turn_a_line_a_written_note_is_the_line`, `test_every_turn_a_line_any_other_turn_adds_a_blank_line`, `test_every_turn_a_line_a_note_stays_on_one_line`, `test_every_turn_a_line_lines_fit_the_event_log_format` |
 | `reading-costs` | `src/treasure_island/pirates_log.py` | `test_reading_costs_a_read_spends_the_turn_on_a_blank_line`, `test_reading_costs_a_read_outside_the_log_still_spends_the_turn` |
 | `read-size` | `src/treasure_island/pirates_log.py` | `test_read_size_returns_the_3_lines_around_a_line_by_default`, `test_read_size_stays_full_at_either_end_of_the_log`, `test_read_size_is_a_plain_value`, `test_read_size_a_log_shorter_than_a_read_returns_all_of_it`, `test_read_size_a_line_outside_the_log_gets_a_clear_answer_and_no_data`, `test_read_size_reading_an_empty_log_gets_a_clear_answer` |
-| `two-logs` | not yet | — |
+| `story-record` | `src/treasure_island/game_loop.py` | `test_story_record_says_who_did_what_in_plain_words`, `test_story_record_says_why_when_the_brain_gave_a_reason`, `test_story_record_is_a_file_with_one_line_per_turn_and_the_ending`, `test_story_record_keeps_a_note_on_one_line`, `test_story_record_reads_cleanly_when_things_go_wrong` |
+| `two-logs` | `src/treasure_island/game_loop.py` | `test_two_logs_every_record_passes_the_validator`, `test_two_logs_every_turn_adds_one_line_to_the_pirates_log`, `test_two_logs_the_pirates_log_holds_only_what_pirates_can_see`, `test_two_logs_our_record_shows_what_each_turn_was_shown`, `test_two_logs_a_read_shows_the_lines_it_found_and_its_turn_is_spent`, `test_two_logs_the_same_config_and_seed_are_byte_identical` |
 | `exploit-later` | not yet | — |
 | `previous-session` | not yet | — |
 | `same-treasure` | not yet | — |
@@ -164,7 +168,7 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 | `what-counts` | not yet | — |
 | `measured-share` | not yet | — |
 | `run-count` | not yet | — |
-| `toggles` | not yet | — |
+| `toggles` | `src/treasure_island/game_loop.py` | `test_toggles_the_crew_size_changes_through_the_config_alone`, `test_toggles_the_log_length_changes_through_the_config_alone` |
 | `prompt-variants` | not yet | — |
 | `sudoku-last` | not yet | — |
 | `model-backends` | not yet | — |
@@ -180,5 +184,5 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 | `everything-cached` | not yet | — |
 | `one-line-replay` | not yet | — |
 | `python-stack` | not yet | — |
-| `no-token-strategies` | not yet | — |
+| `no-token-strategies` | `src/treasure_island/game_loop.py` | `test_no_token_strategies_a_whole_game_needs_no_network` |
 | `gif-per-change` | not yet | — |

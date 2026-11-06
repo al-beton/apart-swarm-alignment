@@ -125,7 +125,6 @@ def test_treasure_mark_a_game_still_being_played_has_it_from_its_config(saved):
 
 
 def test_treasure_mark_a_run_that_does_not_say_shows_no_question_mark(tmp_path):
-    (tmp_path / "config.json").write_text(json.dumps({"size": 3, "seed": 1}))
     assert viewer.treasure_in(tmp_path, [record(0)]) is None
     assert viewer.scene([record(0)], 0, 3)["mark"] is None
 

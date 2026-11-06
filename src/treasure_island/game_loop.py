@@ -13,7 +13,7 @@ Fields stay in reading order rather than sorted, so a person reading a record
 meets who and what before the long prompt. Pirates are named `pirate-1` upwards,
 matching the numbered art. A brain that gives no reason just has no "Why".
 
-Implements: event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions
+Implements: treasure-island/agent-memory, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions
 """
 
 import json
@@ -44,10 +44,6 @@ def _one_line(text):
 
 def _square(position):
     return f"({position[0]}, {position[1]})"
-
-
-def _shown_text(lines):
-    return "; ".join(f"{line['line']}: {line['text'] or '(blank)'}" for line in lines)
 
 
 class Game:
@@ -124,7 +120,7 @@ class Game:
         self._found_this_turn = False
         decision = self._seats[pirate].take_turn(start, turns_left, window)
         result, did, read_lines = self._act(decision.action, start)
-        self._seats[pirate].remember(result)
+        self._seats[pirate].remember(result, read_lines)
         shown = window + [line for line in read_lines if line not in window]
         story = f"Turn {turn}: {name} at {_square(start)} {did}."
         if decision.thinking:
@@ -185,7 +181,7 @@ class Game:
                 [],
             )
         found = f"{answer.lines[0]['line']} to {answer.lines[-1]['line']}"
-        told = f"You read the log: {_shown_text(answer.lines)}."
+        told = f"You read the log around line {line}."
         return (
             told,
             f"read the log around line {line} and saw lines {found}",

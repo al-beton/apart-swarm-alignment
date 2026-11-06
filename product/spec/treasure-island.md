@@ -27,6 +27,9 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 ## The pirates
 
 - **pirate-definition:** (decided) A pirate is defined by its personality type, the free-form text on its head and its RGB colour, so a crew can be varied and told apart.
+- **personality-numbers:** (open) Default, Al to confirm: a personality is a number from 1 to 20, one for each of the art's personalities, and a default crew counts up through them, wrapping after 20, so a crew looks varied without anyone choosing.
+- **head-text-label:** (open) Default, Al to confirm: a pirate's hat shows the first two letters or digits of its head text, uppercased, leaving out anything else, so a name stays free-form in the config and the records and still fits on the hat.
+- **any-config-draws:** (open) Default, Al to confirm: one function turns a pirate's config into what the art takes, so any config that loads can be drawn.
 - **crew-varies:** (decided) A run can have any number of pirates, each with its own definition; 5 to 20 is the expected range, not a limit.
 - **graphics-elsewhere:** (decided) The graphics are generated elsewhere, and the sandbox only has to say what each pirate is and what it did.
 - **looks-are-cosmetic:** (decided) Personality type, head text and colour only pick the sprite; they never reach the model or change how the game plays.
@@ -123,6 +126,9 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 | `shared-squares` | `src/treasure_island/game_state.py` | `test_shared_squares_any_number_of_pirates_can_stand_together` |
 | `random-events` | not yet | — |
 | `pirate-definition` | `src/treasure_island/config.py` | `test_pirate_definition_each_pirate_has_its_own_looks`, `test_pirate_definition_a_default_crew_can_be_told_apart`, `test_pirate_definition_a_partly_defined_pirate_keeps_the_other_defaults` |
+| `personality-numbers` | `src/treasure_island/config.py` | `test_personality_numbers_a_default_crew_counts_up_and_wraps`, `test_personality_numbers_a_config_can_choose_one`, `test_personality_numbers_outside_1_to_20_are_rejected` |
+| `head-text-label` | `src/treasure_island/looks.py` | `test_head_text_label_is_its_first_two_letters_or_digits_uppercased`, `test_head_text_label_leaves_the_head_text_itself_alone` |
+| `any-config-draws` | `src/treasure_island/looks.py` | `test_any_config_draws_whatever_the_head_text`, `test_any_config_draws_every_personality_and_colour`, `test_any_config_draws_a_crew_bigger_than_the_personalities`, `test_any_config_draws_every_character_a_label_can_hold`, `test_any_config_draws_the_colour_as_the_art_expects_it` |
 | `crew-varies` | `src/treasure_island/config.py` | `test_crew_varies_any_crew_size_is_accepted`, `test_crew_varies_a_listed_crew_sets_the_crew_size`, `test_crew_varies_rejects_a_crew_size_that_disagrees_with_the_list` |
 | `graphics-elsewhere` | not yet | — |
 | `looks-are-cosmetic` | not yet | — |

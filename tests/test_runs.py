@@ -337,4 +337,19 @@ def test_cache_across_runs_a_longer_game_keeps_a_scripted_agent_s_memory(
     events = [json.loads(line) for line in (folder / "events.jsonl").open()]
     assert [e["did"][0]["text"] for e in events] == ["1", "2", "3", "4"]
     manifest = manifest_of(folder)
-    assert (manifest["cache_hits"], manifest["cache_misses"]) == (2, 2)
+    assert (manifest["cache_hits"], manifest["cache_misses"]) == (0, 4)
+
+
+def test_cache_across_runs_a_bigger_crew_keeps_a_scripted_agent_s_count(
+    tmp_path, monkeypatch, capsys
+):
+    monkeypatch.chdir(tmp_path)
+    solo = tmp_path / "solo.toml"
+    solo.write_text('size = 3\npirates = 1\nturns = 6\nmodel = "scripted/counter"\n')
+    pair = tmp_path / "pair.toml"
+    pair.write_text('size = 3\npirates = 2\nturns = 6\nmodel = "scripted/counter"\n')
+    played(solo, capsys)
+    folder = played(pair, capsys)
+    events = [json.loads(line) for line in (folder / "events.jsonl").open()]
+    said = [e["did"][0]["text"] for e in events if e["agent"] == "pirate-a"]
+    assert said == ["1", "2", "3"]

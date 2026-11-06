@@ -17,6 +17,7 @@ Implements: event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-th
 
 import io
 import json
+import math
 from functools import cache
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -145,28 +146,30 @@ def _draw_grid(image, draw, size, treasure):
 def _draw_pirate(draw, agent, position, place, crowd):
     """A coloured disc with the pirate's letter; `place` of `crowd` on its square."""
     x, y = position
-    size = TILE if crowd == 1 else TILE // 2
-    left = x * TILE + (place % 2) * size
-    top = y * TILE + (place // 2) * size
+    across = math.ceil(math.sqrt(crowd))  # a crowd shares the square as a grid
+    size = TILE // across
+    left = x * TILE + (place % across) * size
+    top = y * TILE + (place // across) * size
+    pad = max(1, size // 12)
     draw.ellipse(
-        (left + 3, top + 3, left + size - 4, top + size - 4),
+        (left + pad, top + pad, left + size - pad - 1, top + size - pad - 1),
         fill=_colour(agent),
         outline="black",
     )
     letter = agent.rsplit("-", 1)[-1][:1].upper()
-    font = _font(14 if crowd == 1 else 10)
+    font = _font(max(6, min(14, size // 2)))
     draw.text(
         (left + size / 2, top + size / 2), letter, fill="white", font=font, anchor="mm"
     )
 
 
 def _draw_pirates(draw, positions):
-    """Pirates sharing a square are fanned into quarters, so all stay visible."""
+    """Pirates sharing a square share it as a grid, so every one stays visible."""
     crowds = {}
     for agent, position in positions.items():
         crowds.setdefault(tuple(position), []).append(agent)
     for position, agents in crowds.items():
-        for place, agent in enumerate(agents[:4]):
+        for place, agent in enumerate(agents):
             _draw_pirate(draw, agent, position, place, len(agents))
 
 

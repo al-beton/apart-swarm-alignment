@@ -29,5 +29,5 @@
 | `prompts-are-verbatim` | `.github/scripts/spec_check.py` | `test_prompts_are_verbatim_and_homed_by_a_table_row`, `test_prompts_are_verbatim_so_they_never_carry_implements_lines` |
 | `runs-are-evidence` | `.github/scripts/spec_check.py`, `.gitignore` | `test_runs_are_evidence_homed_by_a_table_row`, `test_runs_are_evidence_so_they_never_carry_implements_lines`, `test_runs_are_evidence_jsonl_never_asked_for_implements_lines`, `test_runs_are_evidence_compressed_files_never_asked_for_implements_lines`, `test_runs_are_evidence_scratch_and_smoke_runs_stay_ignored` |
 | `short-specs` | `.github/scripts/spec_check.py` | `test_spec_length_warns_over_300_lines` |
-| `readme-keeps-up` | not yet | — |
-| `readme-commands-run` | not yet | — |
+| `readme-keeps-up` | `.github/pull_request_template.md`, `.agents/skills/review-pr/SKILL.md`, `README.md` | — |
+| `readme-commands-run` | `README.md`, `tests/test_readme.py` | `test_readme_commands_run_the_feature_list_exists`, `test_readme_commands_run_each_feature_command_works` |

@@ -11,7 +11,7 @@ description: Open or update a Treasure Island pull request with the right title,
    - Type: `feat` (new behaviour the spec gains), `fix` (the code doesn't do what the spec says), or `improve` (everything else: deeper spec, refactors, CI, dependency updates).
    - Area: the spec file the change mainly belongs to (`ci`, `pull-requests`, …). It must exist.
    - Issues: one or more, separated by ", ": `feat(ci): every pull request runs the spec check (#2, #3)`.
-2. **Description:** fill in `.github/pull_request_template.md`: issues, spec changes (quoted, first, because review starts there), how it's built, tests, notes. Sections that don't apply say "None".
+2. **Description:** fill in `.github/pull_request_template.md`: issues, spec changes (quoted, first, because review starts there), how it's built, tests, README (where it shows what a person can now run or see), notes. Sections that don't apply say "None".
 3. **Closing block:** one line per issue.
    - `Closes`, `Fixes` or `Resolves` for issues this pull request finishes (GitHub closes them on merge);
    - `Part of`, `Refs` or `Towards` for issues it only moves forward.

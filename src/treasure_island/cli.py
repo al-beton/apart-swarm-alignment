@@ -3,7 +3,7 @@
 `run` opens the live view unless told not to. At a terminal it keeps the page up
 after the game ends, until Ctrl-C; a script gets its prompt back when the game ends.
 
-Implements: tooling/package-and-cli, runs/run-command, runs/replay-byte-identical, runs/plays-live, runs/no-cache, viewer/watch-live, viewer/render-gif, treasure-island/named-runs, treasure-island/everything-cached
+Implements: tooling/package-and-cli, runs/run-command, runs/replay-byte-identical, runs/plays-live, runs/no-cache, viewer/watch-live, viewer/render-gif, viewer/slideshow-file, treasure-island/named-runs, treasure-island/everything-cached
 """
 
 import argparse
@@ -91,6 +91,11 @@ def _render(args):
     return 0
 
 
+def _slideshow(args):
+    print(viewer.slideshow(args.folder, args.out))
+    return 0
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(
         prog="treasure-island",
@@ -126,6 +131,12 @@ def main(argv=None):
     render.add_argument("folder", help="a run folder, such as runs/<name>")
     render.add_argument("--out", help="where to write it; default runs/<name>.gif")
     render.set_defaults(handler=_render)
+    slideshow = commands.add_parser(
+        "slideshow", help="write one HTML file that steps through a run, offline"
+    )
+    slideshow.add_argument("folder", help="a run folder, such as runs/<name>")
+    slideshow.add_argument("--out", help="where to write it; default runs/<name>.html")
+    slideshow.set_defaults(handler=_slideshow)
     args = parser.parse_args(argv)
     if args.command is None:
         parser.print_help()

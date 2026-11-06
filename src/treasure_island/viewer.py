@@ -18,9 +18,10 @@ The side panel is the art's parchment with the acting pirate's portrait, what it
 in plain words and a trail of its recent thoughts, all wrapped to fit: a reader should
 be able to follow the game from the frames alone.
 
-Implements: treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/crowds-fan-out, treasure-island/pokemon-style
+Implements: treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/crowds-fan-out, treasure-island/pokemon-style, viewer/slideshow-file, treasure-island/slideshow
 """
 
+import base64
 import io
 import json
 import math
@@ -403,6 +404,63 @@ def render(folder, out=None):
     out.write_bytes(gif(folder))
     return out
 
+
+def slideshow_page(folder):
+    """One HTML file holding every turn's frame and story, as text."""
+    turns = [
+        {
+            "frame": base64.b64encode(frame_png(folder, number)).decode(),
+            "story": record.get("story", ""),
+        }
+        for number, record in enumerate(records_in(folder))
+    ]
+    # "</" can't appear in the data, so a note can't close the script it's held in.
+    data = json.dumps(turns, ensure_ascii=False).replace("</", "<\\/")
+    return SLIDESHOW.replace("@TURNS@", data)
+
+
+def slideshow(folder, out=None):
+    """Write the slideshow next to the run's folder (or to `out`); return the path."""
+    out = Path(out) if out else Path(folder).with_suffix(".html")
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(slideshow_page(folder), encoding="utf-8")
+    return out
+
+
+SLIDESHOW = """<!doctype html>
+<html><head><meta charset="utf-8"><title>Treasure Island</title>
+<style>
+body { background: #1a1a1a; color: #eee; font: 14px sans-serif; text-align: center; }
+img { image-rendering: pixelated; margin-top: 1em; max-width: 100%; }
+#story { max-width: 60em; margin: 1em auto; min-height: 3em; }
+</style></head>
+<body>
+<p id="status"></p>
+<img id="frame" alt="the current turn">
+<p id="story"></p>
+<p>← → step through turns · Home and End jump to the first and the last</p>
+<script>
+const TURNS = @TURNS@;
+const frame = document.getElementById("frame");
+const story = document.getElementById("story");
+const status = document.getElementById("status");
+let shown = 0;
+function show(turn) {
+  shown = Math.max(0, Math.min(turn, TURNS.length - 1));
+  frame.src = "data:image/png;base64," + TURNS[shown].frame;
+  story.textContent = TURNS[shown].story;
+  status.textContent = "Turn " + shown + " (" + (shown + 1) + " of " + TURNS.length + ")";
+}
+document.addEventListener("keydown", (key) => {
+  if (key.key === "ArrowLeft") show(shown - 1);
+  if (key.key === "ArrowRight") show(shown + 1);
+  if (key.key === "Home") show(0);
+  if (key.key === "End") show(TURNS.length - 1);
+});
+show(0);
+</script>
+</body></html>
+"""
 
 PAGE = """<!doctype html>
 <html><head><meta charset="utf-8"><title>Treasure Island</title>

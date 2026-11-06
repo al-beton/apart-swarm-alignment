@@ -1,4 +1,4 @@
-# Implements: assets/sheet-on-every-pr, ci/ci-minutes, ci/one-gate, ci/ci-runs-everything, ci/no-model-calls, tooling/how-we-work, specs-and-docs/folder-guides, agent-setup/reuse-old-work
+# Implements: assets/sheet-on-every-pr, ci/ci-minutes, ci/skipped-draft-runs, ci/one-gate, ci/ci-runs-everything, ci/no-model-calls, tooling/how-we-work, specs-and-docs/folder-guides, agent-setup/reuse-old-work
 """The gate, and the few files a newcomer starts from, are what the spec says."""
 
 import re
@@ -66,6 +66,12 @@ def test_ci_minutes_newer_runs_cancel_older_ones_and_drafts_wait():
     assert cancel == "${{ github.event_name == 'pull_request' }}"
     assert "pull_request.number || github.run_id" in flow["concurrency"]["group"]
     assert "draft" in flow["jobs"]["blocking-checks"]["if"]
+
+
+def test_skipped_draft_runs_can_t_cancel_a_ready_run():
+    # Draft and ready runs are in separate groups, so a run that will skip
+    # itself never cancels one that will check.
+    assert "pull_request.draft" in workflow()["concurrency"]["group"]
 
 
 def test_no_model_calls_no_secret_but_the_github_token():

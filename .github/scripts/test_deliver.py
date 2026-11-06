@@ -1,4 +1,4 @@
-# Implements: commits/named-paths, review/review-finished, merging/stacked-retarget, merging/main-stays-green, merging/merge-when-clean
+# Implements: commits/named-paths, review/review-finished, merging/stacked-retarget, merging/main-stays-green, merging/merge-when-clean, ci/skipped-draft-runs
 import json
 import unittest
 
@@ -6,6 +6,7 @@ from deliver import (
     MergeRefused,
     closing_lines,
     commit,
+    gate_passed,
     merge,
     review_finished,
     review_state,
@@ -18,12 +19,19 @@ def summary(sha, status):
     return {"body": f"<!-- codex-review-state:v1 {json.dumps(state)} -->\n## Codex"}
 
 
+def gate(conclusion, started="2026-01-01T10:00:00Z", name="blocking-checks"):
+    return {"name": name, "conclusion": conclusion, "startedAt": started}
+
+
+LATER = "2026-01-01T10:05:00Z"
+
+
 class FakeGh:
     """Answers the commands `merge` runs; records every one."""
 
-    def __init__(self, checks="pass", unresolved=0, stacked=(102,), review="abc"):
+    def __init__(self, checks="SUCCESS", unresolved=0, stacked=(102,), review="abc"):
         self.calls = []
-        self.checks = checks
+        self.checks = checks if isinstance(checks, list) else [gate(checks)]
         self.unresolved = unresolved
         self.stacked = stacked
         # The commit Codex last finished reviewing; the head is "abc".
@@ -41,6 +49,7 @@ class FakeGh:
                 "headRefName": "7-one-routine",
                 "baseRefName": "main",
                 "headRefOid": "abc",
+                "statusCheckRollup": self.checks,
             },
             ("pr", "list"): [{"number": n} for n in self.stacked],
             ("repo", "view"): {"owner": {"login": "o"}, "name": "r"},
@@ -50,8 +59,6 @@ class FakeGh:
         if args[0] == "api" and args[1].endswith("/comments"):
             done = [summary(self.review, "completed")] if self.review else []
             return json.dumps([{"body": "@codex review"}, *done])
-        if args[:2] == ("pr", "checks"):
-            return f"blocking-checks\t{self.checks}\t3s\turl\n"
         return json.dumps(answers[args[:2]]) if args[:2] in answers else ""
 
     def index(self, *prefix):
@@ -115,7 +122,7 @@ class DeliverTests(unittest.TestCase):
 
     def test_merge_when_clean_refuses_red_checks_open_threads_or_no_codex_review(self):
         for gh in (
-            FakeGh(checks="fail"),
+            FakeGh(checks="FAILURE"),
             FakeGh(unresolved=1),
             FakeGh(review=None),
             FakeGh(review="old"),
@@ -123,6 +130,35 @@ class DeliverTests(unittest.TestCase):
             with self.assertRaises(MergeRefused):
                 merge(101, gh, pause=lambda seconds: None)
             self.assertFalse([c for c in gh.calls if c[:2] == ("pr", "merge")])
+
+    def test_skipped_draft_runs_a_later_skip_does_not_hide_a_pass(self):
+        rollup = [gate("SUCCESS"), gate("SKIPPED", LATER)]
+        self.assertTrue(gate_passed(rollup))
+        gh = FakeGh(checks=rollup)
+        merge(101, gh, pause=lambda seconds: None)
+        self.assertTrue([c for c in gh.calls if c[:2] == ("pr", "merge")])
+
+    def test_skipped_draft_runs_a_cancelled_run_does_not_hide_a_pass(self):
+        self.assertTrue(gate_passed([gate("CANCELLED", LATER), gate("SUCCESS")]))
+
+    def test_skipped_draft_runs_only_skips_is_not_a_pass(self):
+        self.assertFalse(gate_passed([gate("SKIPPED"), gate("CANCELLED", LATER)]))
+        self.assertFalse(gate_passed([]))
+
+    def test_skipped_draft_runs_the_latest_real_run_decides(self):
+        # A title fix re-runs the gate on the same commit, so a pass can follow
+        # a failure, and a newer failure must still refuse.
+        self.assertTrue(gate_passed([gate("FAILURE"), gate("SUCCESS", LATER)]))
+        self.assertFalse(gate_passed([gate("SUCCESS"), gate("FAILURE", LATER)]))
+
+    def test_skipped_draft_runs_a_newer_unfinished_run_is_not_a_pass(self):
+        self.assertFalse(gate_passed([gate("SUCCESS"), gate("", LATER)]))
+        self.assertFalse(gate_passed([gate("SUCCESS"), gate("", None)]))
+
+    def test_skipped_draft_runs_other_workflows_do_not_count(self):
+        self.assertFalse(gate_passed([gate("SUCCESS", name="asset-sheet")]))
+        rollup = [gate("SUCCESS"), gate("FAILURE", LATER, name="asset-sheet")]
+        self.assertTrue(gate_passed(rollup))
 
 
 if __name__ == "__main__":

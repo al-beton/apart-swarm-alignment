@@ -3,7 +3,7 @@ name: review-pr
 description: Review a Treasure Island pull request, spec first, then tests, then how it's built, with inline findings. Use when asked to review any pull request in this repository.
 ---
 
-<!-- Implements: agent-setup/shared-skills, agent-setup/skills-hold-the-process, ci/checks-over-prose, commits/deliberate-messages, commits/small-sane-steps, research/hypothesis-first, research/honest-limits, research/results-from-logs, research/every-run-committed, review/follows-the-rules, review/inline-findings, review/spec-first, safety/justified-dependencies, safety/no-secrets, specs-and-docs/docs-next-to-code, specs-and-docs/no-history, workflow/audience, workflow/issue-scope, workflow/test-first -->
+<!-- Implements: agent-setup/shared-skills, agent-setup/skills-hold-the-process, ci/checks-over-prose, commits/deliberate-messages, commits/small-sane-steps, research/hypothesis-first, research/honest-limits, research/results-from-logs, research/every-run-committed, review/follows-the-rules, review/inline-findings, review/spec-first, safety/justified-dependencies, safety/no-secrets, specs-and-docs/docs-next-to-code, specs-and-docs/no-history, specs-and-docs/readme-keeps-up, workflow/audience, workflow/issue-scope, workflow/test-first -->
 
 # Review a pull request
 
@@ -16,6 +16,7 @@ description: Review a Treasure Island pull request, spec first, then tests, then
 3. **Also check:**
    - no pull request or issue numbers, and no history, in code, specs or tests;
    - no API keys or other secrets in code, configs, commits, logs or test output;
+   - if a person can now run or see something new or different, the README shows it in this pull request (its "README" section says where); a missing update is a finding;
    - the pull request covers only its issues;
    - commits are small and deliberately worded;
    - new dependencies are justified in the notes;

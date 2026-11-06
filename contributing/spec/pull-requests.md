@@ -2,7 +2,7 @@
 
 - **three-types:** Every pull request is a bug fix, an improvement or a new feature.
 - **title-shows-type-and-issues:** Pull request titles follow a strict standard that shows the type, the area and the linked issues.
-- **template:** Pull request descriptions follow the template: issues, spec changes, how it's built, tests, notes.
+- **template:** Pull request descriptions follow the template: issues, spec changes, how it's built, tests, README, notes.
 - **closing-block:** Pull request descriptions list every issue they close or contribute to, using GitHub's closing keywords.
 
 ## Where this is enforced

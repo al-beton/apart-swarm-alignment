@@ -12,6 +12,8 @@
 - **runs-are-evidence:** Committed run folders hold exactly what the game wrote, so a spec table row traces them instead of a comment inside them, and JSON Lines logs are never asked for one anywhere; scratch and smoke runs are never committed.
 - **art-is-binary:** Binary images such as PNGs and GIFs can't carry an `Implements:` line, so the spec check never asks them for one or for a home, wherever they are, while the code that draws art traces like any other code.
 - **short-specs:** Spec files stay short enough to read; long ones get split.
+- **readme-keeps-up:** A pull request that adds or changes something a person can run or see updates the README in the same pull request, so the first page anyone reads never falls behind the code.
+- **readme-commands-run:** The README lists what a person can do today, each with the one command that shows it, and CI runs or checks every one of those commands, so a stale entry fails the build.
 
 ## Where this is enforced
 
@@ -29,3 +31,5 @@
 | `runs-are-evidence` | `.github/scripts/spec_check.py`, `.gitignore` | `test_runs_are_evidence_homed_by_a_table_row`, `test_runs_are_evidence_so_they_never_carry_implements_lines`, `test_runs_are_evidence_jsonl_never_asked_for_implements_lines`, `test_runs_are_evidence_compressed_files_never_asked_for_implements_lines`, `test_runs_are_evidence_scratch_and_smoke_runs_stay_ignored` |
 | `art-is-binary` | `.github/scripts/spec_check.py` | `test_art_is_binary_images_never_need_a_home`, `test_art_is_binary_a_gif_a_row_names_is_never_asked_to_point_back` |
 | `short-specs` | `.github/scripts/spec_check.py` | `test_spec_length_warns_over_300_lines` |
+| `readme-keeps-up` | `.github/pull_request_template.md`, `.agents/skills/review-pr/SKILL.md`, `README.md` | — |
+| `readme-commands-run` | `README.md`, `tests/test_readme.py` | `test_readme_commands_run_the_feature_list_exists`, `test_readme_commands_run_each_feature_command_works` |

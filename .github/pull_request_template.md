@@ -1,4 +1,4 @@
-<!-- Implements: pull-requests/template -->
+<!-- Implements: pull-requests/template, specs-and-docs/readme-keeps-up -->
 <!--
 Title: <type>(<area>): <summary> (#<n>)   type = feat | fix | improve; area = a spec file name
 How to fill this in: .agents/skills/open-pr/SKILL.md.
@@ -16,6 +16,9 @@ Closes #
 
 ## Tests
 <!-- The tests that prove the changed statements (they're listed in the spec's "Where this is enforced" table). -->
+
+## README
+<!-- If a person can now run or see something new or different, say where the README shows it. Otherwise "Nothing a person runs or sees changed". A missing update is a review finding. -->
 
 ## Notes
 <!-- New dependencies and why, follow-ups, risks, API spend. -->

@@ -33,7 +33,7 @@ Each committed run replays offline with no API keys, so anyone can clone this an
 
 A test runs or checks each of these commands, so this table can't go stale.
 
-Each pull request also gets a comment linking a GIF of a whole game at its latest commit, so a change can be seen without running anything.
+Each pull request also gets a comment showing every example game's GIF at its latest commit, so a change can be seen without running anything.
 
 `make figures` writes into `figures/`, and `make figure NAME=sweep-game` builds just one. CI builds them all on every pull request: open the `blocking-checks` run on the Actions tab and download the `figures` artifact.
 

@@ -88,6 +88,7 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 
 ## Deterministic first
 
+- **python-stack:** (decided) The sandbox is written in Python, because everyone on the team and most readers can run and change it.
 - **no-token-strategies:** (decided) The first target is a working game played by deterministic strategies, such as a grid sweep or an agent that says a number each turn, with scoring working and no tokens spent.
 - **gif-per-change:** (decided) Each pull request carries an automatically generated GIF of a whole game, so Al can see the change play without running anything.
 
@@ -152,5 +153,6 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 | `slideshow` | not yet | — |
 | `paper-figures` | not yet | — |
 | `one-line-replay` | not yet | — |
+| `python-stack` | not yet | — |
 | `no-token-strategies` | not yet | — |
 | `gif-per-change` | not yet | — |

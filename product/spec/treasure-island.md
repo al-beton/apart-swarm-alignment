@@ -35,6 +35,8 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 - **graphics-elsewhere:** (decided) The graphics are generated elsewhere, and the sandbox only has to say what each pirate is and what it did.
 - **looks-are-cosmetic:** (decided) Personality type, head text and colour only pick the sprite; they never reach the model or change how the game plays.
 - **pluggable-pirate:** (decided) A pirate's brain is pluggable: an LLM, or a scripted strategy that needs no tokens.
+- **say-a-number:** (decided) A second scripted pirate writes the next number to the log each turn and never digs, so a game has chatter to show and plays to its turn limit.
+- **reference-games:** (decided) Each scripted pirate has a committed reference game that one command remakes and a test compares byte for byte, so any change to how a game plays shows up at once.
 - **sweeper:** (decided) The first scripted pirate sweeps the grid in an S shape, digging each square, and stays still once it finds the treasure.
 
 ## The turn
@@ -136,7 +138,9 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 | `graphics-elsewhere` | `src/treasure_island/config.py` | `test_graphics_elsewhere_the_game_itself_draws_nothing`, `test_graphics_elsewhere_the_config_says_what_each_pirate_is` |
 | `looks-are-cosmetic` | `src/treasure_island/brain.py` | `test_looks_are_cosmetic_the_same_seed_gives_identical_logs`, `test_looks_are_cosmetic_a_turn_view_is_the_same_whatever_the_looks`, `test_looks_are_cosmetic_head_text_never_appears_in_a_view_or_a_log`, `test_no_vision_a_pirate_s_looks_never_reach_its_view` |
 | `pluggable-pirate` | `src/treasure_island/brain.py` | `test_pluggable_pirate_any_brain_takes_a_turn_through_one_interface`, `test_pluggable_pirate_a_view_as_text_says_everything_a_model_needs` |
-| `sweeper` | not yet | — |
+| `say-a-number` | `src/treasure_island/strategies.py`, `configs/say-a-number.toml` | `test_say_a_number_writes_the_next_number_each_turn_and_never_digs`, `test_say_a_number_plays_to_the_turn_limit_and_scores_the_floor` |
+| `reference-games` | `src/treasure_island/strategies.py`, `Makefile`, `runs/reference-s-sweep/**`, `runs/reference-say-a-number/**` | `test_reference_games_match_what_one_command_remakes`, `test_reference_games_pass_the_validator`, `test_reference_games_tell_a_story_that_ends_with_the_score` |
+| `sweeper` | `src/treasure_island/strategies.py`, `configs/s-sweep.toml` | `test_sweeper_walks_an_s_and_digs_each_square`, `test_sweeper_walks_to_the_corner_from_anywhere`, `test_sweeper_stays_still_once_it_finds_the_treasure`, `test_sweeper_scores_what_the_rules_predict` |
 | `turn-order` | `src/treasure_island/game_state.py` | `test_turn_order_is_fixed_and_comes_round_again` |
 | `turn-view` | `src/treasure_island/brain.py` | `test_turn_view_holds_the_rules_position_turns_left_and_log_lines`, `test_turn_view_system_prompt_gives_the_rules_and_every_action`, `test_turn_view_a_blank_log_line_reads_as_blank` |
 | `tools-only` | `src/treasure_island/brain.py` | `test_tools_only_there_are_exactly_four_tools`, `test_tools_only_a_tool_call_becomes_an_event_log_action`, `test_tools_only_anything_else_is_refused_and_says_why`, `test_tools_only_a_seat_refuses_a_brain_that_acts_any_other_way` |
@@ -184,5 +188,5 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 | `everything-cached` | not yet | — |
 | `one-line-replay` | not yet | — |
 | `python-stack` | not yet | — |
-| `no-token-strategies` | `src/treasure_island/game_loop.py` | `test_no_token_strategies_a_whole_game_needs_no_network` |
+| `no-token-strategies` | `src/treasure_island/game_loop.py`, `src/treasure_island/strategies.py` | `test_no_token_strategies_a_whole_game_needs_no_network` |
 | `gif-per-change` | not yet | — |

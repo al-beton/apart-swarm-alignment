@@ -1,0 +1,10 @@
+# Implements: safety/no-secrets, specs-and-docs/runs-are-evidence
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.env
+*.env
+.cache/
+runs/scratch/
+runs/smoke/

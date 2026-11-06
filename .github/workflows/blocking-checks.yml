@@ -1,0 +1,47 @@
+# Implements: ci/checks-on-every-pr, ci/one-gate, ci/ci-runs-everything, ci/ci-minutes, ci/no-model-calls
+name: blocking-checks
+
+# The one status to require before merging is the `blocking-checks` job: every
+# check that gates a merge is a step of it (contributing/spec/ci.md). Add new
+# gating checks as steps of the gate.
+on:
+  pull_request:
+    # edited: re-check the title and description (pr-gate) when they change.
+    # No branch filter, so stacked pull requests are checked too.
+    types: [opened, edited, synchronize, reopened, ready_for_review]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# A newer run for the same pull request cancels the one in progress. Every
+# other run (main, after a merge) is its own group, so none is cancelled or
+# dropped from a queue: each merger waits for its own run.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  blocking-checks:
+    # Drafts wait: marking a pull request ready runs the checks.
+    if: github.event_name != 'pull_request' || !github.event.pull_request.draft
+    runs-on: ubuntu-latest
+    # CI never calls a model, so it holds no API key (contributing/spec/ci.md).
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      # Title and closing block (contributing/spec/pull-requests.md).
+      - name: pr-gate
+        run: python3 .github/scripts/pr_gate.py
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - run: make install
+      - run: make lint
+      - run: make test
+      - run: make spec-check

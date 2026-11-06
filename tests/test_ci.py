@@ -275,6 +275,8 @@ def test_result_on_its_pr_has_no_section_without_a_result():
     script = comment_script()
     assert 'if [ -n "$results" ]' in script
     assert "**Results in this pull request**" in script
+    # A result the pull request removes has nothing to show.
+    assert 'curl --silent --fail --head --output /dev/null "$raw/README.md"' in script
 
 
 def test_result_on_its_pr_finds_the_section_a_result_calls_what_it_shows():

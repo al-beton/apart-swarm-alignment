@@ -14,7 +14,7 @@
 |---|---|---|
 | `run-command` | `src/treasure_island/cli.py`, `src/treasure_island/runs.py` | `test_run_command_makes_a_new_folder_each_time` |
 | `run-folder` | `src/treasure_island/runs.py` | `test_run_folder_holds_events_replies_config_and_manifest`, `test_run_folder_events_pass_the_validator` |
-| `replies-keyed` | `src/treasure_island/runs.py` | `test_replies_keyed_each_part_of_the_request_changes_the_key`, `test_replies_keyed_a_repeated_request_reuses_its_reply` |
+| `replies-keyed` | `src/treasure_island/runs.py` | `test_replies_keyed_each_part_of_the_request_changes_the_key`, `test_replies_keyed_a_repeated_request_reuses_its_reply`, `test_replies_keyed_a_stored_reply_survives_any_line_separator` |
 | `manifest-varies` | `src/treasure_island/runs.py` | `test_manifest_varies_holds_times_cost_and_cache_hits`, `test_manifest_varies_two_identical_runs_differ_nowhere_else` |
 | `replay-byte-identical` | `src/treasure_island/cli.py`, `src/treasure_island/runs.py` | `test_replay_byte_identical_with_no_keys_or_network`, `test_replay_byte_identical_fails_when_a_reply_changed`, `test_replay_byte_identical_leaves_the_folder_untouched` |
 | `no-silent-model-calls` | `src/treasure_island/runs.py` | `test_no_silent_model_calls_a_missing_reply_fails_the_replay` |

@@ -98,6 +98,14 @@ def test_replies_keyed_a_repeated_request_reuses_its_reply(tmp_path):
     assert (replies.hits, replies.misses, replies.cost_usd) == (1, 2, 1.0)
 
 
+@pytest.mark.parametrize("separator", ["\u2028", "\u0085", "\x0c"])
+def test_replies_keyed_a_stored_reply_survives_any_line_separator(tmp_path, separator):
+    text = f"dig{separator}now"
+    path = tmp_path / "replies.jsonl"
+    assert Replies(path, lambda request: (text, 0.0)).ask(REQUEST) == text
+    assert Replies(path).ask(REQUEST) == text
+
+
 def test_manifest_varies_holds_times_cost_and_cache_hits(config, capsys):
     manifest = json.loads((played(config, capsys) / "manifest.json").read_text())
     assert set(manifest) == {

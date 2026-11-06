@@ -1,11 +1,15 @@
-# Implements: assets/plain-files, assets/remade-by-one-command, assets/game-size, assets/any-pirate, assets/charming-personalities, assets/label-on-hat, assets/four-directions, assets/actions-shown, assets/ground-tiles, assets/treasure-shown, assets/viewer-parts, assets/sheet-shows-everything
+# Implements: assets/plain-files, assets/remade-by-one-command, assets/game-size, assets/any-pirate, assets/charming-personalities, assets/label-on-hat, assets/four-directions, assets/actions-shown, assets/ground-tiles, assets/treasure-shown, assets/viewer-parts, assets/sheet-shows-everything, assets/catwalk
 """The art is what the spec says, and the committed images match the code."""
 
+import re
+from functools import cache
 from pathlib import Path
 
 import pytest
 from PIL import Image
 
+from assets import generate
+from assets.catwalk import GROUND, LOOP, catwalk_frames, catwalk_gif, ground, walk
 from assets.font import CHARS, FONT_HEIGHT, text_width
 from assets.generate import build
 from assets.pirates import (
@@ -149,3 +153,84 @@ def test_sheet_shows_everything_is_committed_and_wide_enough():
     with Image.open(ASSETS / "sheet.png") as sheet:
         assert sheet.width >= 480
     assert "sheet.png" in build()
+
+
+def test_catwalk_every_pirate_walks_in_all_four_directions():
+    steps = {
+        number: [walk(number, step) for step in range(LOOP)] for number in PERSONALITIES
+    }
+    assert len(steps) == 20
+    moves = {"right": (1, 0), "down": (0, 1), "left": (-1, 0), "up": (0, -1)}
+    for path in steps.values():
+        assert {pose for pose, _, _ in path} == set(FACINGS)
+        assert {frame for _, frame, _ in path} == {0, 1, 2}
+        # Each step goes the way the pirate faces, and the loop closes.
+        for (pose, _, here), (_, _, there) in zip(
+            path, [*path[1:], path[0]], strict=True
+        ):
+            dx, dy = there[0] - here[0], there[1] - here[1]
+            sign = (dx > 0) - (dx < 0), (dy > 0) - (dy < 0)
+            assert sign == moves[pose] or sign == (0, 0)
+
+
+def test_catwalk_pirates_keep_to_their_own_patch_of_ground():
+    spots = [
+        {tuple(walk(number, step)[2]) for step in range(LOOP)}
+        for number in PERSONALITIES
+    ]
+    for a in range(len(spots)):
+        for b in range(a + 1, len(spots)):
+            for ax, ay in spots[a]:
+                for bx, by in spots[b]:
+                    assert abs(ax - bx) >= SIZE or abs(ay - by) >= SIZE
+
+
+def test_catwalk_crosses_a_sample_of_walkable_tiles():
+    assert len(GROUND) >= 3
+    assert {"sand", "grass", "dug"} <= set(GROUND)
+    assert not {"water", "water-2", "sinking-sand"} & set(GROUND)
+    assert set(GROUND) <= set(TILES)
+    board = ground()
+    colours = {
+        board.crop((x, 0, x + SIZE, SIZE)).tobytes() for x in range(0, SIZE * 5, SIZE)
+    }
+    assert len(colours) >= 3
+
+
+@cache
+def built_gif():
+    """Building it takes a second or two, so the tests share one."""
+    return catwalk_gif()
+
+
+def test_catwalk_gif_shows_exactly_what_was_drawn(tmp_path):
+    path = tmp_path / "catwalk.gif"
+    path.write_bytes(built_gif())
+    with Image.open(path) as gif:
+        assert gif.format == "GIF"
+        assert gif.n_frames == LOOP
+        assert gif.info["loop"] == 0
+        for index, drawn in enumerate(catwalk_frames()):
+            gif.seek(index)
+            assert same(gif, drawn), f"frame {index}"
+
+
+def test_catwalk_is_deterministic_and_the_committed_gif_matches_the_code():
+    assert built_gif() == catwalk_gif()
+    committed = (ASSETS / "catwalk.gif").read_bytes()
+    assert committed == built_gif(), "stale: run make catwalk"
+
+
+def test_catwalk_is_under_two_megabytes():
+    assert (ASSETS / "catwalk.gif").stat().st_size < 2_000_000
+
+
+def test_catwalk_make_catwalk_and_make_assets_both_write_it(tmp_path, monkeypatch):
+    makefile = (ROOT / "Makefile").read_text()
+    assert re.search(
+        r"^catwalk:.*\n\tuv run python -m assets\.catwalk$", makefile, re.MULTILINE
+    )
+    monkeypatch.setattr(generate, "ASSETS", tmp_path)
+    generate.main()
+    assert (tmp_path / "catwalk.gif").read_bytes() == built_gif()
+    assert (tmp_path / "sheet.png").is_file()

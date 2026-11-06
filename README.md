@@ -7,6 +7,8 @@ Each committed run replays offline with no API keys, so anyone can clone this an
 
 ![All the game's art on one page](assets/sheet.png)
 
+![Every pirate walking](assets/catwalk.gif)
+
 ## What you can do today
 
 | Feature | The one command that shows it |
@@ -16,6 +18,7 @@ Each committed run replays offline with no API keys, so anyone can clone this an
 | A committed game replays offline, byte for byte, with no keys and no network | `uv run treasure-island replay runs/sweep-seed-5` |
 | Two scripted pirates play the real game: an S-sweep that finds the treasure (read `runs/reference-s-sweep/story.txt`), and one that says a number each turn | `make reference-games` |
 | All the art is drawn in code: one command redraws every PNG in `assets/` | `make assets` |
+| Every pirate walks in all four directions, in one GIF (`assets/catwalk.gif`), which each pull request's art comment shows | `make catwalk` |
 | The game's command and what it can do | `uv run treasure-island --help` |
 
 A test runs or checks each of these commands, so this table can't go stale.

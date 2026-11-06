@@ -135,8 +135,8 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 | `head-text-label` | `src/treasure_island/looks.py` | `test_head_text_label_is_its_first_two_letters_or_digits_uppercased`, `test_head_text_label_leaves_the_head_text_itself_alone` |
 | `any-config-draws` | `src/treasure_island/looks.py` | `test_any_config_draws_whatever_the_head_text`, `test_any_config_draws_every_personality_and_colour`, `test_any_config_draws_a_crew_bigger_than_the_personalities`, `test_any_config_draws_every_character_a_label_can_hold`, `test_any_config_draws_the_colour_as_the_art_expects_it` |
 | `crew-varies` | `src/treasure_island/config.py` | `test_crew_varies_any_crew_size_is_accepted`, `test_crew_varies_a_listed_crew_sets_the_crew_size`, `test_crew_varies_rejects_a_crew_size_that_disagrees_with_the_list` |
-| `graphics-elsewhere` | not yet | — |
-| `looks-are-cosmetic` | not yet | — |
+| `graphics-elsewhere` | `src/treasure_island/config.py` | `test_graphics_elsewhere_the_game_itself_draws_nothing`, `test_graphics_elsewhere_the_config_says_what_each_pirate_is` |
+| `looks-are-cosmetic` | `src/treasure_island/brain.py` | `test_looks_are_cosmetic_the_same_seed_gives_identical_logs`, `test_looks_are_cosmetic_a_turn_view_is_the_same_whatever_the_looks`, `test_looks_are_cosmetic_head_text_never_appears_in_a_view_or_a_log`, `test_no_vision_a_pirate_s_looks_never_reach_its_view` |
 | `pluggable-pirate` | `src/treasure_island/brain.py` | `test_pluggable_pirate_any_brain_takes_a_turn_through_one_interface`, `test_pluggable_pirate_a_view_as_text_says_everything_a_model_needs` |
 | `say-a-number` | `src/treasure_island/strategies.py`, `configs/say-a-number.toml` | `test_say_a_number_writes_the_next_number_each_turn_and_never_digs`, `test_say_a_number_plays_to_the_turn_limit_and_scores_the_floor` |
 | `reference-games` | `src/treasure_island/strategies.py`, `Makefile`, `runs/reference-s-sweep/**`, `runs/reference-say-a-number/**` | `test_reference_games_match_what_one_command_remakes`, `test_reference_games_pass_the_validator`, `test_reference_games_tell_a_story_that_ends_with_the_score` |

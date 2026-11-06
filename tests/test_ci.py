@@ -123,6 +123,15 @@ def test_sheet_on_every_pr_shows_the_latest_commit_s_sheet_in_one_comment():
     assert "--method PATCH" in run
 
 
+def test_sheet_on_every_pr_shows_the_catwalk_beside_the_sheet_from_the_same_commit():
+    run = sheet_steps()[0]["run"]
+    assert "raw.githubusercontent.com/$REPO/$SHA/assets/catwalk.gif" in run
+    # A branch from before the catwalk gets the sheet alone, not a broken image.
+    assert '--head --output /dev/null "$catwalk"' in run
+    # One table row, so the two sit side by side.
+    assert re.search(r"\| !\[[^]]*\]\(\$url\) \| !\[[^]]*\]\(\$catwalk\) \|", run)
+
+
 def test_how_we_work_is_five_lines_and_points_agents_to_agents_md():
     readme = (ROOT / "README.md").read_text()
     work = readme.split("## How we work", 1)[1].split("\n## ", 1)[0]

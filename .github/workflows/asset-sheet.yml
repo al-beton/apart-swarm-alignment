@@ -3,7 +3,7 @@ name: asset-sheet
 
 # Keeps one comment on each pull request showing the art at its latest commit.
 # It has a write token, so it runs no code from the branch: no checkout, and the
-# image is a link to the committed file. It doesn't gate merging. A stale sheet
+# images are links to the committed files. It doesn't gate merging. A stale sheet
 # can't get through, because the gate fails when a committed image doesn't match
 # the code. Drafts count too, since this costs seconds.
 on:
@@ -35,13 +35,21 @@ jobs:
             echo "No assets/sheet.png at $SHA, so nothing to show."
             exit 0
           fi
+          # A branch from before the catwalk has only the sheet to show.
+          catwalk="https://raw.githubusercontent.com/$REPO/$SHA/assets/catwalk.gif"
+          shown="![A sheet of all the art]($url)"
+          if curl --silent --fail --head --output /dev/null "$catwalk"; then
+            shown="| All the art | Every pirate walking |
+          |---|---|
+          | ![A sheet of all the art]($url) | ![Every pirate walking]($catwalk) |"
+          fi
           # The marker finds this workflow's own comment, so it never edits a
           # comment that another workflow keeps on the same pull request.
           marker="<!-- asset-sheet -->"
           body="$marker
           **The art at ${SHA:0:7}**
 
-          ![A sheet of all the art]($url)"
+          $shown"
           comment=$(gh api --paginate "repos/$REPO/issues/$PR/comments" \
             --jq ".[] | select(.body | startswith(\"$marker\")) | .id" | head -n 1)
           if [ -n "$comment" ]; then

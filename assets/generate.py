@@ -5,6 +5,7 @@ from pathlib import Path
 
 from PIL import Image
 
+from assets import catwalk
 from assets.font import FONT_HEIGHT, draw_text, font_sheet, text_width
 from assets.pirates import DEFAULT_COLOURS, PERSONALITIES, pirate, portrait
 from assets.pixels import DARK, SIZE
@@ -217,6 +218,7 @@ def main():
         path = ASSETS / name
         path.parent.mkdir(exist_ok=True)
         image.save(path, optimize=True)
+    catwalk.main(ASSETS)
 
 
 if __name__ == "__main__":

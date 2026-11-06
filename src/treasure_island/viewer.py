@@ -45,7 +45,8 @@ def grid_size(folder, records):
     """The grid size from config.json, or the widest position seen plus one."""
     config = Path(folder) / "config.json"
     if config.exists():
-        return json.loads(config.read_text())["size"]
+        saved = json.loads(config.read_text())
+        return saved["grid_size"] if "grid_size" in saved else saved["size"]
     spots = [r["saw"]["position"] for r in records]
     spots += [r["outcome"]["position"] for r in records]
     return max((max(x, y) for x, y in spots), default=0) + 1

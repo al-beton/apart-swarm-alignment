@@ -4,11 +4,12 @@ A TOML file sets any of the fields below. `pirates` is an optional list of
 tables, one per pirate; leave a key out, or the whole list, to get its default.
 `parse_config` reports every problem at once, so one fix-and-retry is enough.
 
-Implements: treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere
+Implements: treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config
 """
 
 import colorsys
 import dataclasses
+import json
 import tomllib
 from pathlib import Path
 
@@ -20,6 +21,7 @@ DEFAULTS = {
     "log_window": 3,
     "read_size": 3,
     "seed": 0,
+    "brain": "s-sweep",
 }
 # The smallest value each whole-number field may take. A log window of 0 turns
 # the free window off. Seeds can be any whole number.
@@ -53,6 +55,7 @@ class GameConfig:
     log_window: int
     read_size: int
     seed: int
+    brain: str
     pirates: tuple[Pirate, ...]
 
 
@@ -119,6 +122,8 @@ def _number_errors(data):
             errors.append(f"{key} must be a whole number of at least {minimum}")
     if not _is_int(data.get("seed", DEFAULTS["seed"])):
         errors.append("seed must be a whole number")
+    if not isinstance(data.get("brain", DEFAULTS["brain"]), str):
+        errors.append("brain must be the name of a brain")
     return errors
 
 
@@ -184,3 +189,9 @@ def load_config(path):
     except tomllib.TOMLDecodeError as error:
         raise ConfigError(f"{Path(path).name} is not valid TOML: {error}") from error
     return parse_config(data)
+
+
+def save_config(config, path):
+    """Write every lever, defaults included, so `parse_config` can read it back."""
+    text = json.dumps(dataclasses.asdict(config), indent=2, sort_keys=True)
+    Path(path).write_text(text + "\n", encoding="utf-8")

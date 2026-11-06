@@ -6,6 +6,7 @@ from pathlib import Path
 
 import pytest
 
+from treasure_island import cli
 from treasure_island.config import load_config, parse_config
 from treasure_island.event_log import log_errors
 from treasure_island.game_loop import Game
@@ -144,6 +145,13 @@ def test_reference_games_match_what_one_command_remakes(name, tmp_path, monkeypa
     made = {path.name: path.read_bytes() for path in tmp_path.iterdir()}
     assert made
     assert made == {path.name: path.read_bytes() for path in committed.iterdir()}
+
+
+@pytest.mark.parametrize("name", REFERENCE_GAMES)
+def test_reference_games_replay_like_any_other_run(name, capsys):
+    folder = ROOT / "runs" / f"reference-{name}"
+    assert cli.main(["replay", str(folder)]) == 0
+    assert "byte-identical" in capsys.readouterr().out
 
 
 @pytest.mark.parametrize("name", REFERENCE_GAMES)

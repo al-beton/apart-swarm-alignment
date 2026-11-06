@@ -99,6 +99,7 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 - **log-at-bottom:** (decided) The pirates' log scrolls along the bottom of the replay, so a reader sees what the crew could see.
 - **slideshow:** (decided) An HTML page replays a whole game as a slideshow, stepping through turns with the arrow keys.
 - **paper-figures:** (open) Since a paper can't embed an animation, it gets a sequence of about 4 stills with arrows showing where agents went.
+- **brain-in-config:** (decided) A config names the brain its crew plays with, so one command can play any game and a saved game says what played it.
 - **named-runs:** (decided) Every run is named and saved, with its config, seed, both logs and every model response, so it can be uploaded, shared and replayed.
 - **everything-cached:** (decided) Every model response is cached in the run, so replaying a run never spends tokens, and turning the cache off plays it live again.
 - **one-line-replay:** (open) A reader runs one command after `git clone` to replay a whole game, possibly in the browser; default, Al to confirm: one Python command renders a saved run to the GIF and the HTML slideshow, and replaying in the browser alone can come later.
@@ -139,7 +140,7 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 | `looks-are-cosmetic` | `src/treasure_island/brain.py` | `test_looks_are_cosmetic_the_same_seed_gives_identical_logs`, `test_looks_are_cosmetic_a_turn_view_is_the_same_whatever_the_looks`, `test_looks_are_cosmetic_head_text_never_appears_in_a_view_or_a_log`, `test_no_vision_a_pirate_s_looks_never_reach_its_view` |
 | `pluggable-pirate` | `src/treasure_island/brain.py` | `test_pluggable_pirate_any_brain_takes_a_turn_through_one_interface`, `test_pluggable_pirate_a_view_as_text_says_everything_a_model_needs` |
 | `say-a-number` | `src/treasure_island/strategies.py`, `configs/say-a-number.toml` | `test_say_a_number_writes_the_next_number_each_turn_and_never_digs`, `test_say_a_number_plays_to_the_turn_limit_and_scores_the_floor` |
-| `reference-games` | `src/treasure_island/strategies.py`, `Makefile`, `runs/reference-s-sweep/**`, `runs/reference-say-a-number/**` | `test_reference_games_match_what_one_command_remakes`, `test_reference_games_pass_the_validator`, `test_reference_games_tell_a_story_that_ends_with_the_score` |
+| `reference-games` | `src/treasure_island/strategies.py`, `Makefile`, `runs/reference-s-sweep/**`, `runs/reference-say-a-number/**` | `test_reference_games_match_what_one_command_remakes`, `test_reference_games_replay_like_any_other_run`, `test_reference_games_pass_the_validator`, `test_reference_games_tell_a_story_that_ends_with_the_score` |
 | `sweeper` | `src/treasure_island/strategies.py`, `configs/s-sweep.toml` | `test_sweeper_walks_an_s_and_digs_each_square`, `test_sweeper_walks_to_the_corner_from_anywhere`, `test_sweeper_stays_still_once_it_finds_the_treasure`, `test_sweeper_scores_what_the_rules_predict` |
 | `turn-order` | `src/treasure_island/game_state.py` | `test_turn_order_is_fixed_and_comes_round_again` |
 | `turn-view` | `src/treasure_island/brain.py` | `test_turn_view_holds_the_rules_position_turns_left_and_log_lines`, `test_turn_view_system_prompt_gives_the_rules_and_every_action`, `test_turn_view_a_blank_log_line_reads_as_blank` |
@@ -184,8 +185,9 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 | `log-at-bottom` | not yet | — |
 | `slideshow` | not yet | — |
 | `paper-figures` | not yet | — |
-| `named-runs` | not yet | — |
-| `everything-cached` | `src/treasure_island/runs.py` | `test_cache_across_runs_a_repeat_asks_the_model_nothing`, `test_no_cache_asks_again_into_a_new_folder`, `test_no_silent_model_calls_a_missing_reply_fails_the_replay` |
+| `brain-in-config` | `src/treasure_island/config.py`, `src/treasure_island/strategies.py`, `configs/s-sweep.toml`, `configs/say-a-number.toml` | `test_brain_in_config_picks_what_plays`, `test_brain_in_config_refuses_one_it_does_not_know` |
+| `named-runs` | `src/treasure_island/saved_game.py`, `src/treasure_island/cli.py`, `runs/s-sweep-seed-7/**` | `test_named_runs_save_config_seed_both_logs_and_replies`, `test_named_runs_are_named_after_config_and_seed_and_never_overwrite`, `test_named_runs_the_seed_on_the_command_line_decides_the_game`, `test_named_runs_the_committed_game_replays_byte_identical`, `test_named_runs_save_every_lever_even_the_defaults`, `test_named_runs_the_viewer_can_render_one`, `test_named_runs_a_real_game_opens_for_watching_before_the_first_turn`, `test_named_runs_a_real_game_is_paced_only_when_watched`, `test_named_runs_run_opens_the_view_on_a_real_game` |
+| `everything-cached` | `src/treasure_island/runs.py`, `src/treasure_island/saved_game.py`, `src/treasure_island/cli.py` | `test_cache_across_runs_a_repeat_asks_the_model_nothing`, `test_no_cache_asks_again_into_a_new_folder`, `test_no_silent_model_calls_a_missing_reply_fails_the_replay`, `test_everything_cached_replay_is_byte_identical_with_no_keys_or_network`, `test_everything_cached_replay_fails_if_a_log_changed`, `test_everything_cached_replay_fails_if_the_config_changed`, `test_everything_cached_replay_leaves_the_folder_untouched` |
 | `one-line-replay` | not yet | — |
 | `python-stack` | not yet | — |
 | `no-token-strategies` | `src/treasure_island/game_loop.py`, `src/treasure_island/strategies.py` | `test_no_token_strategies_a_whole_game_needs_no_network` |

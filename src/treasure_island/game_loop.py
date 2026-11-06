@@ -17,6 +17,7 @@ Implements: treasure-island/agent-memory, event-log/the-outcome, event-log/crew-
 """
 
 import json
+import time
 from pathlib import Path
 
 from treasure_island.brain import PirateSeat
@@ -189,8 +190,11 @@ class Game:
         )
 
 
-def write_game(config, brains, folder):
-    """Play a game into `folder`, as it happens, and return its `game_over`."""
+def write_game(config, brains, folder, pace=0):
+    """Play a game into `folder`, as it happens, and return its `game_over`.
+
+    `pace` waits that many seconds after each turn, so a watcher can follow it.
+    """
     folder = Path(folder)
     game = Game(config, brains)
     game_over = None
@@ -203,6 +207,8 @@ def write_game(config, brains, folder):
             story.write((record["story"] + "\n").encode())
             events.flush()
             story.flush()
+            if pace:
+                time.sleep(pace)
             game_over = record.get("game_over", game_over)
         story.write((game_over["story"] + "\n").encode())
     lines = [f"{line['line']}: {line['text']}".rstrip() for line in game.log.lines()]

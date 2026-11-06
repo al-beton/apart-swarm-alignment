@@ -3,7 +3,7 @@
 `run` opens the live view unless told not to. At a terminal it keeps the page up
 after the game ends, until Ctrl-C; a script gets its prompt back when the game ends.
 
-Implements: tooling/package-and-cli, runs/run-command, runs/replay-byte-identical, runs/plays-live, runs/no-cache, viewer/watch-live, viewer/render-gif
+Implements: tooling/package-and-cli, runs/run-command, runs/replay-byte-identical, runs/plays-live, runs/no-cache, viewer/watch-live, viewer/render-gif, treasure-island/named-runs, treasure-island/everything-cached
 """
 
 import argparse
@@ -12,7 +12,7 @@ import threading
 import webbrowser
 from pathlib import Path
 
-from treasure_island import runs, viewer
+from treasure_island import runs, saved_game, viewer
 
 
 def _serve_until_interrupted():
@@ -24,9 +24,19 @@ def _serve_until_interrupted():
 
 
 def _run(args):
-    use_cache = not args.no_cache
+    if saved_game.is_real_config(args.config):
+
+        def play(on_start=None, pace=0):
+            return saved_game.play_saved(args.config, args.seed, on_start, pace)
+
+    else:
+
+        def play(on_start=None, pace=0):
+            use_cache = not args.no_cache
+            return runs.run(args.config, args.seed, use_cache, on_start, pace)
+
     if args.no_watch:
-        print(runs.run(args.config, args.seed, use_cache))
+        print(play())
         return 0
 
     def open_the_view(folder):
@@ -36,13 +46,24 @@ def _run(args):
         print(f"Watching {folder} at {url}", flush=True)
         webbrowser.open(url)
 
-    runs.run(args.config, args.seed, use_cache, open_the_view, runs.PACE_SECONDS)
+    play(open_the_view, runs.PACE_SECONDS)
     if sys.stdin.isatty():
         _serve_until_interrupted()
     return 0
 
 
+def _replay_real(folder):
+    if different := saved_game.differences(folder):
+        names = ", ".join(different)
+        print(f"Replay failed: these don't match: {names}.", file=sys.stderr)
+        return 1
+    print(f"{folder}: both logs and the story rebuilt, byte-identical.")
+    return 0
+
+
 def _replay(args):
+    if saved_game.is_real_run(args.folder):
+        return _replay_real(args.folder)
     try:
         rebuilt = runs.replay(args.folder)
     except runs.MissingReply as missing:
@@ -77,7 +98,7 @@ def main(argv=None):
     )
     commands = parser.add_subparsers(dest="command")
     run = commands.add_parser("run", help="play one game into a new run folder")
-    run.add_argument("config", help="a TOML file, such as configs/skeleton.toml")
+    run.add_argument("config", help="a TOML file, such as configs/s-sweep.toml")
     run.add_argument("--seed", type=int, required=True)
     run.add_argument(
         "--no-watch",

@@ -1,4 +1,4 @@
-# Implements: event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions
+# Implements: treasure-island/agent-memory, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions
 """A whole game: brains take turns, and both logs come out."""
 
 import json
@@ -335,3 +335,18 @@ def test_crew_positions_a_real_game_says_where_everyone_starts_each_turn():
 def test_crew_positions_the_first_frame_of_a_real_game_shows_the_whole_crew():
     records = play(config(landing_square=[0, 0]), Steps(DIG), Steps(DIG))
     assert set(scene(records[:1], 0, 5)["positions"]) == {"pirate-1", "pirate-2"}
+
+
+def test_agent_memory_keeps_the_lines_a_read_found_as_fields():
+    reader = Steps(read(1), DIG)
+    game_config = off_the_treasure(log_window=0, turns_per_pirate=2)
+    play(game_config, reader, Steps(write("note")))
+    # Pirate 1 reads first, before any note, so it finds nothing.
+    assert reader.views[1].earlier_turns[0].log_lines == []
+
+    reader = Steps(DIG, read(2))
+    writer = Steps(write("note"), DIG)
+    play(off_the_treasure(log_window=0, turns_per_pirate=3), reader, writer)
+    remembered = reader.views[2].earlier_turns[1].log_lines
+    assert {"line": 2, "text": "note"} in remembered
+    assert "2: note" in reader.views[2].as_text()

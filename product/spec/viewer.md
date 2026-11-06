@@ -11,7 +11,7 @@
 | Statement | Enforced by | Tested by |
 |---|---|---|
 | `one-renderer` | `src/treasure_island/viewer.py` | `test_one_renderer_the_gif_holds_exactly_the_frames_the_page_serves` |
-| `frame-shows-the-swarm` | `src/treasure_island/viewer.py` | `test_frame_shows_the_swarm_every_pirate_whose_turn_the_bubble_and_the_log`, `test_frame_shows_the_swarm_a_pirate_is_drawn_before_its_first_turn`, `test_frame_shows_the_swarm_as_an_image_with_grid_panel_and_log` |
+| `frame-shows-the-swarm` | `src/treasure_island/viewer.py` | `test_frame_shows_the_swarm_every_pirate_whose_turn_the_bubble_and_the_log`, `test_frame_shows_the_swarm_pirates_on_one_square_are_all_visible`, `test_frame_shows_the_swarm_as_an_image_with_grid_panel_and_log` |
 | `watch-live` | `src/treasure_island/cli.py`, `src/treasure_island/viewer.py` | `test_watch_live_the_page_follows_the_log_as_it_is_written`, `test_watch_live_the_command_names_its_address` |
 | `render-gif` | `src/treasure_island/cli.py`, `src/treasure_island/viewer.py` | `test_render_gif_writes_one_frame_per_turn_next_to_the_run`, `test_render_gif_writes_where_asked` |
 | `art-folder` | `src/treasure_island/viewer.py` | `test_art_folder_the_viewer_draws_without_art`, `test_art_folder_art_is_drawn_when_it_exists` |

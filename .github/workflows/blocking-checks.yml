@@ -1,4 +1,4 @@
-# Implements: ci/checks-on-every-pr, ci/one-gate, ci/ci-runs-everything, ci/ci-minutes, ci/no-model-calls, agents/free-runs-in-ci, figures/figures-published, results/results-stay-checkable
+# Implements: ci/checks-on-every-pr, ci/one-gate, ci/ci-runs-everything, ci/ci-minutes, ci/no-model-calls, agents/free-runs-in-ci, treasure-island/one-line-replay, figures/figures-published, results/results-stay-checkable
 name: blocking-checks
 
 # The one status to require before merging is the `blocking-checks` job: every
@@ -48,6 +48,8 @@ jobs:
       - run: make lint
       - run: make test
       - run: make spec-check
+      # The README's quick start, exactly as written, with no keys.
+      - run: uv run treasure-island show examples/s-sweep
       # Every figure, rebuilt from committed runs with no keys, for anyone to
       # download from the run (product/spec/figures.md).
       - run: make figures

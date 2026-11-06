@@ -12,7 +12,7 @@ all of it makes the key, and anything added to a request later joins the key.
 
 Events and replies are written as they happen, so a run can be followed live.
 
-Implements: runs/run-command, runs/run-folder, runs/replies-keyed, runs/manifest-varies, runs/replay-byte-identical, runs/no-silent-model-calls
+Implements: runs/run-command, runs/run-folder, runs/replies-keyed, runs/manifest-varies, runs/replay-byte-identical, runs/no-silent-model-calls, agents/one-interface
 """
 
 import dataclasses

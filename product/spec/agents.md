@@ -11,9 +11,9 @@
 
 | Statement | Enforced by | Tested by |
 |---|---|---|
-| `one-interface` | not yet | — |
-| `scripted-sees-the-prompt` | not yet | — |
-| `grid-sweep` | not yet | — |
-| `counter` | not yet | — |
-| `free-runs-in-ci` | not yet | — |
-| `committed-runs` | not yet | — |
+| `one-interface` | `src/treasure_island/backends.py`, `src/treasure_island/runs.py` | `test_one_interface_every_scripted_agent_answers_like_a_model`, `test_one_interface_each_run_gets_a_fresh_agent` |
+| `scripted-sees-the-prompt` | `src/treasure_island/agents.py`, `src/treasure_island/game.py` | `test_scripted_sees_the_prompt_the_sweep_reads_where_it_is`, `test_scripted_sees_the_prompt_memory_is_per_pirate` |
+| `grid-sweep` | `src/treasure_island/agents.py`, `configs/sweep.toml` | `test_grid_sweep_walks_row_by_row_and_turns_back_at_the_far_corner`, `test_grid_sweep_finds_the_treasure_from_anywhere` |
+| `counter` | `src/treasure_island/agents.py`, `configs/counter.toml` | `test_counter_says_the_next_number_each_turn_and_never_digs` |
+| `free-runs-in-ci` | `configs/sweep.toml`, `configs/counter.toml`, `.github/workflows/blocking-checks.yml` | `test_free_runs_in_ci_each_scripted_config_plays_a_full_game` |
+| `committed-runs` | `runs/sweep-seed-5/**`, `runs/counter-seed-1/**` | `test_committed_runs_pass_the_validator_and_replay_byte_identical` |

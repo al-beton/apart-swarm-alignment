@@ -1,21 +1,35 @@
 """The `treasure-island` command.
 
-Implements: tooling/package-and-cli, runs/run-command, runs/replay-byte-identical, viewer/watch-live, viewer/render-gif
+Implements: tooling/package-and-cli, runs/run-command, runs/replay-byte-identical, viewer/watch-live, viewer/render-gif, treasure-island/named-runs, treasure-island/everything-cached
 """
 
 import argparse
 import sys
 from pathlib import Path
 
-from treasure_island import runs, viewer
+from treasure_island import runs, saved_game, viewer
 
 
 def _run(args):
-    print(runs.run(args.config, args.seed))
+    if saved_game.is_real_config(args.config):
+        print(saved_game.play_saved(args.config, args.seed))
+    else:
+        print(runs.run(args.config, args.seed))
+    return 0
+
+
+def _replay_real(folder):
+    if different := saved_game.differences(folder):
+        names = ", ".join(different)
+        print(f"Replay failed: these don't match: {names}.", file=sys.stderr)
+        return 1
+    print(f"{folder}: both logs and the story rebuilt, byte-identical.")
     return 0
 
 
 def _replay(args):
+    if saved_game.is_real_run(args.folder):
+        return _replay_real(args.folder)
     try:
         rebuilt = runs.replay(args.folder)
     except runs.MissingReply as missing:
@@ -50,7 +64,7 @@ def main(argv=None):
     )
     commands = parser.add_subparsers(dest="command")
     run = commands.add_parser("run", help="play one game into a new run folder")
-    run.add_argument("config", help="a TOML file, such as configs/skeleton.toml")
+    run.add_argument("config", help="a TOML file, such as configs/s-sweep.toml")
     run.add_argument("--seed", type=int, required=True)
     run.set_defaults(handler=_run)
     replay = commands.add_parser(

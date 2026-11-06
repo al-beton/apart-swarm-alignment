@@ -3,7 +3,7 @@
 
 A reproducible sandbox for asking when a swarm of LLM agents whistleblows, and what in their environment changes that. Pirates dig for one buried treasure on a grid, with too few turns for any one of them to search it alone and a short shared log as their only channel. One of them will be handed a secret. We watch what it does. It's our entry to Apart's multi-agent oversight and control track.
 
-Everything a run produces is committed, and every graphic is rebuilt from committed runs with no API keys, so anyone can clone this and check what we claim.
+Each committed run replays offline with no API keys, so anyone can clone this and check it. Rebuilding every graphic from committed runs is planned.
 
 ![All the game's art on one page](assets/sheet.png)
 

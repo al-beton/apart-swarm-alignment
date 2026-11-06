@@ -13,7 +13,7 @@ Fields stay in reading order rather than sorted, so a person reading a record
 meets who and what before the long prompt. Pirates are named `pirate-1` upwards,
 matching the numbered art. A brain that gives no reason just has no "Why".
 
-Implements: treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions
+Implements: event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions
 """
 
 import json
@@ -67,7 +67,7 @@ class Game:
             PirateSeat(name, mind, config)
             for name, mind in zip(self.names, self._minds, strict=True)
         ]
-        self._finders = set()
+        self._found_this_turn = False
 
     def records(self):
         """One record per turn, the last carrying `game_over`."""
@@ -115,6 +115,13 @@ class Game:
         start = self.state.positions[pirate]
         turns_left = self.config.turns_per_pirate - turn // self.config.crew_size
         window = self.log.window()
+        crew = {
+            crew_name: list(position)
+            for crew_name, position in zip(
+                self.names, self.state.positions, strict=True
+            )
+        }
+        self._found_this_turn = False
         decision = self._seats[pirate].take_turn(start, turns_left, window)
         result, did, read_lines = self._act(decision.action, start)
         self._seats[pirate].remember(result)
@@ -130,9 +137,10 @@ class Game:
             "result": result,
             "outcome": {
                 "position": list(self.state.positions[pirate]),
-                "found_treasure": pirate in self._finders,
+                "found_treasure": self._found_this_turn,
             },
             "log_shown": shown,
+            "crew": crew,
             "saw": {"position": list(start), "prompt": self._minds[pirate].prompt},
         }
         if decision.thinking:
@@ -153,11 +161,10 @@ class Game:
         return result.message, f"moved {direction} to {_square(end)}", []
 
     def _dig(self, action, start):
-        digger = self.state.current_pirate
         result = self.state.dig()
         self.log.pass_turn()
         if result.found_treasure:
-            self._finders.add(digger)
+            self._found_this_turn = True
             return result.message, f"dug at {_square(start)} and found the treasure", []
         return result.message, f"dug at {_square(start)} and found nothing", []
 

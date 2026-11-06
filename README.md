@@ -1,4 +1,4 @@
-<!-- Implements: tooling/one-command-each, tooling/how-we-work, specs-and-docs/readme-commands-run, specs-and-docs/readme-keeps-up -->
+<!-- Implements: tooling/one-command-each, tooling/how-we-work, specs-and-docs/readme-commands-run, specs-and-docs/readme-keeps-up, treasure-island/one-line-replay -->
 # Treasure Island
 
 A reproducible sandbox for asking when a swarm of LLM agents whistleblows, and what in their environment changes that. Pirates dig for one buried treasure on a grid, with too few turns for any one of them to search it alone and a short shared log as their only channel. One of them will be handed a secret. We watch what it does. It's our entry to Apart's multi-agent oversight and control track.
@@ -10,6 +10,18 @@ Each committed run replays offline with no API keys, so anyone can clone this an
 ![All the game's art on one page](assets/sheet.png)
 
 ![Every pirate walking](assets/catwalk.gif)
+
+## Quick start
+
+You need [uv](https://docs.astral.sh/uv/) and nothing else: no API keys and no account.
+
+```bash
+git clone https://github.com/al-beton/apart-swarm-alignment.git
+cd apart-swarm-alignment
+uv run treasure-island show examples/s-sweep
+```
+
+That writes a GIF of a whole game and an HTML page you can step through with the arrow keys, and prints where they are. To read the same game, open `examples/s-sweep/story.txt`.
 
 ## What you can do today
 
@@ -25,6 +37,7 @@ Each committed run replays offline with no API keys, so anyone can clone this an
 | Remake the examples, after a change that's meant to show in them | `make examples` |
 | Remake the scripted pirates' reference games | `make reference-games` |
 | Watch a game in the browser, turn by turn, in the approved art: each pirate in its own colour and label, facing the way it moves, with whose turn it is and what each saw (stop it with Ctrl-C) | `uv run treasure-island watch runs/s-sweep-seed-7` |
+| See a game the quickest way: its GIF and its page, from one command | `uv run treasure-island show examples/s-sweep` |
 | Bake a game into an animated GIF, from the same drawing code | `uv run treasure-island render runs/s-sweep-seed-7` |
 | Study a game at your own pace: one HTML file you can open or pass on, stepped through with the arrow keys, with no server | `uv run treasure-island slideshow runs/s-sweep-seed-7` |
 | All the art is drawn in code: one command redraws every PNG in `assets/` | `make assets` |

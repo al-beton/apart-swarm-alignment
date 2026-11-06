@@ -3,7 +3,7 @@
 `run` opens the live view unless told not to. At a terminal it keeps the page up
 after the game ends, until Ctrl-C; a script gets its prompt back when the game ends.
 
-Implements: tooling/package-and-cli, runs/run-command, runs/replay-byte-identical, runs/plays-live, runs/no-cache, viewer/watch-live, viewer/render-gif, viewer/slideshow-file, treasure-island/named-runs, treasure-island/everything-cached
+Implements: tooling/package-and-cli, runs/run-command, runs/replay-byte-identical, runs/plays-live, runs/no-cache, viewer/watch-live, viewer/render-gif, viewer/slideshow-file, treasure-island/named-runs, treasure-island/everything-cached, treasure-island/one-line-replay
 """
 
 import argparse
@@ -86,6 +86,12 @@ def _watch(args):
     return 0
 
 
+def _show(args):
+    print(viewer.render(args.folder))
+    print(viewer.slideshow(args.folder))
+    return 0
+
+
 def _render(args):
     print(viewer.render(args.folder, args.out))
     return 0
@@ -127,6 +133,11 @@ def main(argv=None):
     watch.add_argument("folder", help="a run folder, such as runs/<name>")
     watch.add_argument("--port", type=int, default=8477, help="0 picks a free port")
     watch.set_defaults(handler=_watch)
+    show = commands.add_parser(
+        "show", help="write a run's GIF and its HTML page, the quickest way to see it"
+    )
+    show.add_argument("folder", help="a run folder, such as examples/s-sweep")
+    show.set_defaults(handler=_show)
     render = commands.add_parser("render", help="bake a run into an animated GIF")
     render.add_argument("folder", help="a run folder, such as runs/<name>")
     render.add_argument("--out", help="where to write it; default runs/<name>.gif")

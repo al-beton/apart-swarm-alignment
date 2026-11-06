@@ -111,16 +111,16 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 | `sandbox-counts` | not yet | — |
 | `principals` | not yet | — |
 | `what-they-are-told` | not yet | — |
-| `pirates-and-treasure` | not yet | — |
+| `pirates-and-treasure` | `src/treasure_island/game_state.py` | `test_pirates_and_treasure_the_same_seed_places_it_on_the_same_square`, `test_pirates_and_treasure_the_seed_decides_where_it_is`, `test_pirates_and_treasure_it_is_always_on_the_grid` |
 | `from-scratch` | not yet | — |
 | `config-variables` | `src/treasure_island/config.py` | `test_config_variables_a_file_sets_every_lever`, `test_config_variables_the_defaults_are_only_defaults`, `test_config_variables_the_log_window_can_be_switched_off`, `test_config_variables_a_seed_plays_the_same_config_again`, `test_config_variables_a_bad_config_is_rejected_with_a_clear_message`, `test_config_variables_every_problem_is_named_at_once`, `test_config_variables_a_file_that_is_not_toml_is_rejected` |
-| `grid-and-crew` | `src/treasure_island/config.py` | `test_grid_and_crew_defaults_are_a_10x10_grid_and_6_pirates_on_one_square` |
+| `grid-and-crew` | `src/treasure_island/config.py`, `src/treasure_island/game_state.py` | `test_grid_and_crew_defaults_are_a_10x10_grid_and_6_pirates_on_one_square`, `test_grid_and_crew_every_pirate_lands_on_the_same_square` |
 | `scarce-turns` | `src/treasure_island/config.py` | `test_scarce_turns_defaults_to_30_turns_per_pirate` |
 | `revealed-treasure` | `src/treasure_island/score.py` | `test_revealed_treasure_standing_on_it_counts_only_once_it_is_dug_up`, `test_revealed_treasure_anyone_on_the_square_counts_not_only_the_digger` |
 | `score` | `src/treasure_island/score.py` | `test_score_more_of_the_crew_there_always_scores_more`, `test_score_a_crew_that_never_gets_there_still_scores_above_zero`, `test_score_a_large_crew_one_short_stays_below_everyone_arriving` |
 | `score-numbers` | `src/treasure_island/score.py` | `test_score_numbers_everyone_there_scores_100_plus_10_per_move_remaining`, `test_score_numbers_some_there_scores_a_share_with_no_credit_for_moves`, `test_score_numbers_treasure_never_dug_up_scores_10_whatever_the_moves` |
 | `hidden-terrain` | not yet | — |
-| `shared-squares` | not yet | — |
+| `shared-squares` | `src/treasure_island/game_state.py` | `test_shared_squares_any_number_of_pirates_can_stand_together` |
 | `random-events` | not yet | — |
 | `pirate-definition` | `src/treasure_island/config.py` | `test_pirate_definition_each_pirate_has_its_own_looks`, `test_pirate_definition_a_default_crew_can_be_told_apart`, `test_pirate_definition_a_partly_defined_pirate_keeps_the_other_defaults` |
 | `crew-varies` | `src/treasure_island/config.py` | `test_crew_varies_any_crew_size_is_accepted`, `test_crew_varies_a_listed_crew_sets_the_crew_size`, `test_crew_varies_rejects_a_crew_size_that_disagrees_with_the_list` |
@@ -128,14 +128,14 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 | `looks-are-cosmetic` | not yet | — |
 | `pluggable-pirate` | not yet | — |
 | `sweeper` | not yet | — |
-| `turn-order` | not yet | — |
+| `turn-order` | `src/treasure_island/game_state.py` | `test_turn_order_is_fixed_and_comes_round_again` |
 | `turn-view` | not yet | — |
 | `tools-only` | not yet | — |
-| `failed-move` | not yet | — |
-| `failed-move-cost` | not yet | — |
+| `failed-move` | `src/treasure_island/game_state.py` | `test_failed_move_off_any_edge_fails_and_says_why`, `test_failed_move_an_unknown_direction_fails_and_says_why` |
+| `failed-move-cost` | `src/treasure_island/game_state.py` | `test_failed_move_cost_it_costs_the_turn` |
 | `no-vision` | not yet | — |
-| `actions` | not yet | — |
-| `one-action-per-turn` | not yet | — |
+| `actions` | `src/treasure_island/game_state.py` | `test_actions_a_move_goes_one_square_in_any_of_four_directions`, `test_actions_digging_says_nothing_found_off_the_treasure`, `test_actions_digging_says_treasure_on_the_treasure`, `test_actions_a_dug_up_treasure_stays_dug_up`, `test_actions_digging_elsewhere_digs_nothing_up`, `test_actions_a_dig_reports_only_to_the_pirate_that_dug` |
+| `one-action-per-turn` | `src/treasure_island/game_state.py` | `test_one_action_per_turn_each_action_ends_the_turn` |
 | `agent-memory` | not yet | — |
 | `thinking` | not yet | — |
 | `only-channel` | not yet | — |

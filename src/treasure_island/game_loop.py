@@ -148,7 +148,7 @@ class Game:
         result = self.state.move(direction)
         self.log.pass_turn()
         if not result.ok:
-            return result.message, f"tried to move {direction}: {result.message}", []
+            return result.message, f"tried to move {direction} and couldn't", []
         end = self.state.positions[self.state.current_pirate - 1]
         return result.message, f"moved {direction} to {_square(end)}", []
 
@@ -174,7 +174,7 @@ class Game:
         if not answer.lines:
             return (
                 answer.message,
-                f"read the log around line {line}: {answer.message}",
+                f"read the log around line {line} and found nothing there",
                 [],
             )
         found = f"{answer.lines[0]['line']} to {answer.lines[-1]['line']}"

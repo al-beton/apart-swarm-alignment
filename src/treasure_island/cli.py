@@ -113,6 +113,11 @@ def _figure(args):
     return 0
 
 
+def _slideshow(args):
+    print(viewer.slideshow(args.folder, args.out))
+    return 0
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(
         prog="treasure-island",
@@ -166,6 +171,12 @@ def main(argv=None):
     figure.add_argument("--all", action="store_true", help="build every figure")
     figure.add_argument("--out", default="figures", help="folder to write into")
     figure.set_defaults(handler=_figure)
+    slideshow = commands.add_parser(
+        "slideshow", help="write one HTML file that steps through a run, offline"
+    )
+    slideshow.add_argument("folder", help="a run folder, such as runs/<name>")
+    slideshow.add_argument("--out", help="where to write it; default runs/<name>.html")
+    slideshow.set_defaults(handler=_slideshow)
     args = parser.parse_args(argv)
     if args.command is None:
         parser.print_help()

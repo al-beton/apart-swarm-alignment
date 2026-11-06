@@ -1,4 +1,4 @@
-<!-- Implements: agent-setup/entry-point, agent-setup/reuse-old-work, review/spec-first, safety/no-secrets, workflow/al-only, workflow/prototype-pace, workflow/audience, workflow/one-routine -->
+<!-- Implements: agent-setup/entry-point, agent-setup/reuse-old-work, review/spec-first, safety/no-secrets, workflow/al-only, workflow/prototype-pace, workflow/audience, workflow/one-routine, research/results-have-a-place -->
 # Treasure Island: agent guide
 
 Treasure Island is a reproducible sandbox for asking when a swarm of LLM agents whistleblows, and what in their environment changes that. It's our entry to Apart's multi-agent oversight and control track.
@@ -8,6 +8,7 @@ Treasure Island is a reproducible sandbox for asking when a swarm of LLM agents 
 - **Spec (intent, read first):** `product/spec/` (the game), `experiments/spec/` (what we're finding out with it) and `contributing/spec/` (how we build it). One file per area. Each ends with "Where this is enforced", which says which files enforce each statement and which tests prove it.
 - **Code:** `src/treasure_island/`, tests in `tests/`, CI in `.github/`. Every file names the statements it implements on an `Implements:` line (files that can't hold comments, such as JSON, lockfiles and symlinks, are traced by their table row). Docs are the comments and docstrings next to the code.
 - **How to do each step:** the skills in `.agents/skills/` (also linked as `.claude/skills/`): `deliver-issue` (the whole routine, issue to merged), and the steps it chains: `build-issue`, `write-spec-change`, `trace-spec`, `open-pr`, `review-pr`, `address-review`, `merge-pr`. Who does what (manager, delivery lead, builders, reviewers, Codex, researcher) and the queue labels are in `team`.
+- **Games:** `results/` keeps findings, each with the games behind it; `examples/` is the fixed set of games remade with the code; `runs/` is everyday evidence. `results/README.md` says how to add one.
 - **Work** is tracked as GitHub issues on this repository.
 
 Al handles accounts, API keys and spending. Agents never put keys in code, configs, logs or commits.

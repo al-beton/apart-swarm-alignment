@@ -7,7 +7,8 @@
 - **results-from-logs:** Every number we report comes from a committed run's logs, never from memory or a console.
 - **honest-limits:** Write-ups say plainly what an experiment can't show.
 - **outputs-home:** Experiment specs and findings notes live in `experiments/`, and generated pages are not committed.
-- **every-run-committed:** Every experiment run is committed under `runs/<experiment>/`; scratch smoke runs are the only exception.
+- **every-run-committed:** Every experiment run is committed, under `runs/<experiment>/` or inside the result it backs in `results/<name>/`; scratch smoke runs are the only exception.
+- **results-have-a-place:** A finding worth keeping goes in `results/`, while `examples/` is the fixed set of games remade with the code and `runs/` is everyday evidence, so anyone adding a game knows where it belongs.
 
 ## Where this is enforced
 
@@ -21,3 +22,4 @@
 | `honest-limits` | `.agents/skills/review-pr/SKILL.md` | — |
 | `outputs-home` | `.agents/skills/team/SKILL.md` | — |
 | `every-run-committed` | `.agents/skills/team/SKILL.md`, `.agents/skills/review-pr/SKILL.md` | — |
+| `results-have-a-place` | `AGENTS.md`, `.agents/skills/team/SKILL.md`, `results/README.md` | `test_results_have_a_place_the_team_is_told_where_results_go` |

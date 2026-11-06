@@ -49,3 +49,9 @@ def test_walking_skeleton_the_game_stops_at_the_turn_limit():
 def test_walking_skeleton_an_unknown_model_is_refused():
     with pytest.raises(UnknownModel):
         backend_for("some-provider/some-model")
+
+
+def test_walking_skeleton_a_said_line_is_recorded():
+    event = next(play(solo(), 0, asking("write Ahoy there")))
+    assert event["did"] == [{"action": "write", "text": "Ahoy there"}]
+    assert event["outcome"] == {"position": [0, 0], "found_treasure": False}

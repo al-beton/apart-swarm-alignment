@@ -208,6 +208,30 @@ def test_agent_memory_what_its_last_move_did_shows_in_its_text():
     assert "You moved east to (3, 3)." in brain.texts[1]
 
 
+def test_agent_memory_keeps_the_log_lines_it_was_shown():
+    # Six pirates and a window of 3: a note is gone from the window by a
+    # pirate's next turn, but it has seen it, so it must not forget it.
+    fact = {"line": 7, "text": "treasure at (4, 4)"}
+    brain = ReadsTextLikeAModel()
+    a_seat = seat(brain)
+    take_turn(a_seat, log_lines=[fact])
+    a_seat.remember("You moved east to (3, 3).")
+    take_turn(a_seat, position=(3, 3), log_lines=[{"line": 13, "text": ""}])
+    earlier, latest = brain.texts[1].split("The log's latest lines:")
+    assert "7: treasure at (4, 4)" in earlier
+    assert "treasure" not in latest
+
+
+def test_agent_memory_keeps_the_log_lines_as_fields_too():
+    fact = {"line": 7, "text": "treasure at (4, 4)"}
+    brain = Scripted()
+    a_seat = seat(brain)
+    take_turn(a_seat, log_lines=[fact])
+    a_seat.remember("Nothing here.")
+    take_turn(a_seat)
+    assert brain.views[1].earlier_turns[0].log_lines == [fact]
+
+
 def test_agent_memory_is_per_pirate():
     first, second = Scripted(), Scripted()
     first_seat, second_seat = seat(first), seat(second, "pirate-b")

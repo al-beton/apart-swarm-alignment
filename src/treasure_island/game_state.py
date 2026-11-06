@@ -12,6 +12,7 @@ Implements: treasure-island/pirates-and-treasure, treasure-island/grid-and-crew,
 import dataclasses
 import random
 
+TREASURE_FOUND = "You dug here and found the treasure!"
 _STEPS = {"north": (0, -1), "east": (1, 0), "south": (0, 1), "west": (-1, 0)}
 
 
@@ -67,6 +68,4 @@ class GameState:
         if self.positions[self.current_pirate] != self.treasure:
             return self._end_turn(Result(True, "You dug here and found nothing."))
         self.treasure_dug_up = True
-        return self._end_turn(
-            Result(True, "You dug here and found the treasure!", True)
-        )
+        return self._end_turn(Result(True, TREASURE_FOUND, True))

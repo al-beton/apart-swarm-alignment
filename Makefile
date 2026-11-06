@@ -1,5 +1,5 @@
-# Implements: tooling/one-command-each, tooling/locked-dependencies, ci/ci-minutes, ci/ci-runs-everything, assets/remade-by-one-command
-.PHONY: install lint test spec-check assets
+# Implements: tooling/one-command-each, tooling/locked-dependencies, ci/ci-minutes, ci/ci-runs-everything, assets/remade-by-one-command, treasure-island/reference-games
+.PHONY: install lint test spec-check assets reference-games
 install:
 	uv sync --frozen
 lint:
@@ -11,3 +11,5 @@ spec-check:
 	uv run python .github/scripts/spec_check.py
 assets:  # redraw every image in assets/
 	uv run python -m assets.generate
+reference-games:  # replay the scripted pirates' committed games into runs/
+	uv run python -m treasure_island.strategies

@@ -129,7 +129,7 @@ def test_free_runs_in_ci_each_scripted_config_plays_a_full_game(name, offline, c
         assert len(events) == turns
 
 
-@pytest.mark.parametrize("name", ["sweep-seed-1", "counter-seed-1"])
+@pytest.mark.parametrize("name", ["sweep-seed-5", "counter-seed-1"])
 def test_committed_runs_pass_the_validator_and_replay_byte_identical(name, offline):
     folder = ROOT / "runs" / name
     assert log_errors(folder / "events.jsonl") == []

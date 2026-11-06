@@ -126,6 +126,7 @@ class Game:
         start = self.state.positions[pirate]
         turns_left = self.config.turns_per_pirate - turn // self.config.crew_size
         window = self.log.window()
+        log_had = bool(self.log.lines())
         crew = {
             crew_name: list(position)
             for crew_name, position in zip(
@@ -137,7 +138,14 @@ class Game:
         result, did, read_lines = self._act(decision.action, start)
         self._seats[pirate].remember(result, read_lines)
         shown = window + [line for line in read_lines if line not in window]
-        saw = _lines_said(window) if window else "nothing, the log is empty"
+        if window:
+            saw = _lines_said(window)
+        else:
+            saw = (
+                "no lines, the free window is off"
+                if log_had
+                else "nothing, the log is empty"
+            )
         story = f"Turn {turn}: {name} at {_square(start)} {did}. Saw: {saw}."
         if decision.thinking:
             story += f" Why: {_one_line(decision.thinking)}"

@@ -23,6 +23,12 @@ uv run treasure-island show examples/s-sweep
 
 That writes a GIF of a whole game and an HTML page you can step through with the arrow keys, and prints where they are. To read the same game, open `examples/s-sweep/story.txt`.
 
+A line of a game's story looks like this, so you can tell whether a pirate acted on a note or missed it:
+
+```text
+Turn 2: pirate-1 at (0, 0) wrote "2". Saw: line 1 "1", line 2 "1". Why: I just count.
+```
+
 ## What you can do today
 
 | Feature | The one command that shows it |
@@ -51,7 +57,7 @@ Each pull request also gets a comment showing every example game's GIF at its la
 
 `run` takes `--no-watch` to skip the browser, as CI does. Once a brain asks a model, its replies will be reused from earlier runs, so a repeat spends nothing, and `--no-cache` asks for them again; scripted brains ask nothing.
 
-**How the game is built:** `src/treasure_island/game_loop.py` plays a whole game from a config, with every lever a variable (`config.py`), the pirates' log with its free window and paid reads (`pirates_log.py`) and the score (`score.py`). A saved game holds `story.txt` (the game to read, one line per turn), `pirates-log.txt` (all the pirates can see), `events.jsonl` (the full record), `config.json`, `replies.jsonl` and `manifest.json`. A config must name its `brain`.
+**How the game is built:** `src/treasure_island/game_loop.py` plays a whole game from a config, with every lever a variable (`config.py`), the pirates' log with its free window and paid reads (`pirates_log.py`) and the score (`score.py`). A saved game holds `story.txt` (the game to read, one line per turn, saying what each pirate did, what it saw of the log and why), `pirates-log.txt` (all the pirates can see), `events.jsonl` (the full record), `config.json`, `replies.jsonl` and `manifest.json`. A config must name its `brain`.
 
 **Planned:** LLM pirates that replay from cached replies, the exploit that hands one pirate the answer, and the stills for the paper.
 

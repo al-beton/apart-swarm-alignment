@@ -278,10 +278,14 @@ def _draw_ground(image, size, shown):
         for y in range(size):
             name = "dug" if (x, y) in shown["dug"] else _ground_tile(x, y)
             image.paste(_art(f"tiles/{name}"), (x * TILE, y * TILE))
-    if shown["mark"]:
-        name, (x, y) = shown["mark"]
-        mark = _art(f"treasure/{name}")
-        image.paste(mark, (x * TILE, y * TILE), mark)
+    if shown["mark"] and shown["mark"][0] == "mark-question":
+        _draw_mark(image, shown)
+
+
+def _draw_mark(image, shown):
+    name, (x, y) = shown["mark"]
+    mark = _art(f"treasure/{name}")
+    image.paste(mark, (x * TILE, y * TILE), mark)
 
 
 def fanned(count, square, size):
@@ -422,6 +426,10 @@ def frame(records, turn, size, pirates=None, treasure=None):
     _draw_pirates(image, shown, pirates)
     _draw_bubble(image, shown["positions"][shown["acting"]], shown["bubble"], size)
     _draw_labels(image, shown, pirates)
+    # The X goes over everything, because whoever dug it up is standing on it, and it's
+    # the moment a reader most wants to see. It's open enough for labels to show through.
+    if shown["mark"] and shown["mark"][0] == "mark-x":
+        _draw_mark(image, shown)
     side = _panel_image(shown, board, pirates[shown["acting"]])
     image.paste(side, (grid, 0), side)
     strip = _strip_image(shown, grid + PANEL)

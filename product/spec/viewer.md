@@ -7,8 +7,8 @@
 - **art-folder:** The viewer draws pirates, tiles and the treasure from `assets/` and has no plain shape to fall back on, so a reader always sees the approved art, and missing art is an error rather than a different picture.
 - **sprite-from-definition:** Each pirate's sprite comes from its definition in the run's config, or the default crew's when the run doesn't say, so the viewer shows the crew that was configured.
 - **sprite-follows-action:** A pirate faces the way it last moved, walks on the turn it moves, and digs or cheers on the turn it digs, so a reader can see what it did from the animation.
-- **crowds-fan-out:** Pirates sharing a square fan out so every label stays visible, even on the landing square in a corner: up to six keep their labels inside the square, so a neighbouring square can't cover them, and a bigger crowd spreads sideways.
 - **slideshow-file:** `treasure-island slideshow runs/<name>` writes one HTML file holding every turn's frame and story line, which the left and right arrow keys step through, offline and with no server, so a reader can study a game at their own pace or pass it on as a file.
+- **crowds-fan-out:** Pirates sharing a square fan out so every label stays visible, even on the landing square in a corner: up to six keep their labels inside the square, so a neighbouring square can't cover them, and a bigger crowd spreads sideways; only the X on the treasure's square may cross a label, since that's the moment to see.
 - **long-log-lines:** The log strip wraps a long line rather than running it off the edge, and shows the newest rows when more than fit, so a reader sees as much of what a pirate wrote as a frame can hold.
 
 ## Where this is enforced

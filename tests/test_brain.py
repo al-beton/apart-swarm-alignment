@@ -200,7 +200,7 @@ def test_agent_memory_a_brain_gets_its_own_earlier_turns():
     assert earlier[0].result == "You dug here and found nothing."
 
 
-def test_agent_memory_what_a_pirate_dug_shows_in_its_text():
+def test_agent_memory_what_its_last_move_did_shows_in_its_text():
     brain = ReadsTextLikeAModel()
     a_seat = seat(brain)
     take_turn(a_seat)

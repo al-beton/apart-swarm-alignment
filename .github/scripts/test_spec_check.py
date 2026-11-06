@@ -1,4 +1,4 @@
-# Implements: specs-and-docs/everything-traces, specs-and-docs/every-file-has-a-home, specs-and-docs/domains, specs-and-docs/prompts-are-verbatim, specs-and-docs/runs-are-evidence
+# Implements: specs-and-docs/everything-traces, specs-and-docs/every-file-has-a-home, specs-and-docs/domains, specs-and-docs/prompts-are-verbatim, specs-and-docs/runs-are-evidence, specs-and-docs/art-is-binary
 import tempfile
 import unittest
 from pathlib import Path
@@ -149,6 +149,39 @@ class SpecCheckTests(unittest.TestCase):
         ignored = Path(__file__).parents[2].joinpath(".gitignore").read_text()
         self.assertIn("runs/scratch/", ignored.splitlines())
         self.assertIn("runs/smoke/", ignored.splitlines())
+
+    def test_art_is_binary_assets_are_homed_by_a_table_row(self):
+        spec = SPEC.replace(
+            "`.github/scripts/pr_gate.py`, reviewer",
+            "`.github/scripts/pr_gate.py`, `assets/**`",
+        )
+        files = {
+            "contributing/spec/pull-requests.md": spec,
+            "assets/README.md": "# Assets\n",
+            "assets/sand.png": "not really a png\n",
+            "assets/intro.gif": "not really a gif\n",
+        }
+        self.assertEqual(warnings_for(**files), [])
+
+    def test_art_is_binary_so_assets_never_carry_implements_lines(self):
+        readme = "<!-- Implements: pull-requests/closing-block -->\n# Assets\n"
+        warnings = warnings_for(**{"assets/README.md": readme})
+        self.assertIn(
+            "assets/README.md is art the viewer draws as it is: home it "
+            "with a spec table row, not an Implements: line.",
+            warnings,
+        )
+
+    def test_art_is_binary_gifs_never_asked_for_implements_lines(self):
+        spec = SPEC.replace(
+            "`.github/scripts/pr_gate.py`, reviewer",
+            "`.github/scripts/pr_gate.py`, `figures/game.gif`",
+        )
+        files = {
+            "contributing/spec/pull-requests.md": spec,
+            "figures/game.gif": "not really a gif\n",
+        }
+        self.assertEqual(warnings_for(**files), [])
 
     def test_statement_format_requires_title_and_named_lines(self):
         spec = SPEC.replace("# Pull requests\n", "").replace(

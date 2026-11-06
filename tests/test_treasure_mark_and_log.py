@@ -185,7 +185,7 @@ def test_long_log_lines_wrap_and_lose_no_word():
 def test_long_log_lines_a_word_too_long_for_a_row_is_split_not_cut():
     long = "x" * 200
     rows = viewer.log_rows([(1, long)], width=300)
-    assert "".join(rows).replace("1: ", "") == long
+    assert "".join(rows).removeprefix("1:") == long
     assert all(viewer.text_width(row) <= 300 for row in rows)
 
 

@@ -8,7 +8,7 @@
 - **no-silent-model-calls:** Replay never calls a model, and a reply it can't find fails the replay, so checking a run can never cost money.
 - **plays-live:** `treasure-island run` opens the live view by default, and `--no-watch` turns it off for CI, so you always watch a game play, whether it's new or cached.
 - **paced-from-cache:** While it's being watched, a run plays turn by turn at a watchable pace even when every reply comes from the cache, so a cached game never jumps to the end.
-- **cache-across-runs:** A run reuses an earlier run's reply to the same request and keeps a copy in its own folder, so a repeat spends nothing and its folder alone can regenerate it.
+- **cache-across-runs:** A run reuses an earlier run's reply to the same request and keeps a copy in its own folder, so a repeat spends nothing and its folder alone can regenerate it; an agent that remembers things its request doesn't show always answers for itself, since no other run's reply can be trusted for it.
 - **no-cache:** `--no-cache` ignores earlier runs' replies, asks for them again and writes a new run folder, so a game can be regenerated.
 - **walking-skeleton:** A tiny game (a grid, moving, digging, saying a line, one treasure) stands in for the full rules, so the whole path from config to events can be proved before they're settled.
 

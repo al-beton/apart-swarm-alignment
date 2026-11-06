@@ -60,13 +60,15 @@ def test_ci_minutes_newer_runs_cancel_older_ones_and_drafts_wait():
     flow = workflow()
     # Only pull request runs cancel: main's runs after a merge must finish,
     # or a second merge would make the first look as if main failed.
-    # A draft run would only be skipped, so it must not cancel a ready run
-    # for the same pull request that is already in progress.
     cancel = flow["concurrency"]["cancel-in-progress"]
-    assert cancel == (
-        "${{ github.event_name == 'pull_request' && !github.event.pull_request.draft }}"
+    assert cancel == "${{ github.event_name == 'pull_request' }}"
+    # A draft run would only be skipped, so it gets a group of its own: in the
+    # pull request's group it would cancel a ready run, running or queued.
+    group = flow["concurrency"]["group"]
+    assert (
+        "!github.event.pull_request.draft && github.event.pull_request.number" in group
     )
-    assert "pull_request.number || github.run_id" in flow["concurrency"]["group"]
+    assert "|| github.run_id" in group
     assert "draft" in flow["jobs"]["blocking-checks"]["if"]
 
 

@@ -10,8 +10,8 @@ source file names the statements it implements on an `Implements:` line,
 except prompt files (prompts/): models read them verbatim, so a table row
 homes them and they never carry an `Implements:` line. Committed run folders
 (runs/) are the same: output the game wrote, homed by a row such as
-`runs/survey/**`, and so is art (assets/), homed by `assets/**`. JSON Lines
-files and binary images never hold a comment, wherever they are.
+`runs/survey/**`. JSON Lines files never hold a comment, wherever they are,
+and binary images (PNG, GIF, ...) are never asked for one or for a home.
 
 This script fails (exit 1, GitHub errors) on anything broken, and only warns
 about statements marked "not yet" (planned work) and long spec files:
@@ -39,7 +39,6 @@ from pathlib import Path
 DOMAINS = ("product", "experiments", "contributing")
 PROMPTS = "prompts/"
 RUNS = "runs/"
-ASSETS = "assets/"
 MAX_LINES = 300
 TABLE_HEADING = "## Where this is enforced"
 _NAME = r"[a-z0-9]+(?:-[a-z0-9]+)*"
@@ -56,7 +55,7 @@ _JS_TEST = re.compile(
 _PLACEHOLDER = re.compile(r"[%$][a-z#]+")
 _SKIPPED_DIRS = {".git", ".venv", "node_modules", "dist", "staticfiles"}
 _EXEMPT_NAMES = {"uv.lock", "package-lock.json", ".gitignore"}
-_EXEMPT_SUFFIXES = {".png", ".jpg", ".jpeg", ".svg", ".ico"}
+_EXEMPT_SUFFIXES = {".png", ".jpg", ".jpeg", ".gif", ".svg", ".ico"}
 _NO_COMMENTS = {
     ".json",
     ".jsonl",
@@ -202,7 +201,7 @@ def _can_hold_comments(root, path):
         Path(root, path).is_symlink()
         or Path(path).suffix in _NO_COMMENTS
         or _basename(path) in _NO_COMMENT_NAMES
-        or path.startswith((PROMPTS, RUNS, ASSETS))
+        or path.startswith((PROMPTS, RUNS))
     )
 
 
@@ -282,8 +281,6 @@ def _verbatim(path):
         return "a prompt the model reads verbatim"
     if path.startswith(RUNS):
         return "run output the game wrote"
-    if path.startswith(ASSETS):
-        return "art the viewer draws as it is"
     return None
 
 

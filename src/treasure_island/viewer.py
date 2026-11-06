@@ -7,8 +7,9 @@ it is, what it said and the log lines it saw. `frame` draws that scene with
 Pillow. The browser page asks for `/frame/<turn>.png` and the GIF strings the
 same PNGs together, which is what keeps the two from ever disagreeing.
 
-Art is looked up in `assets/` by name (`sand.png`, `treasure.png`,
-`pirate-a.png`, ...) and plain shapes stand in for whatever isn't there yet.
+Tiles are looked up in `assets/` by their path there (`tiles/sand.png`,
+`treasure/mark-x.png`), and plain shapes stand in for whatever isn't there
+yet, pirates included.
 
 Implements: viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder
 """
@@ -22,7 +23,7 @@ from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 
 ASSETS = Path(__file__).parents[2] / "assets"
-TILE = 32
+TILE = 48
 PANEL = 220
 LOG_LINES = 4
 LINE = 18
@@ -100,7 +101,7 @@ def _loaded(path):
 
 def _art(name):
     """The asset image scaled to a tile, or None when there's no art for it."""
-    return _loaded(ASSETS / f"{name}.png")
+    return _loaded(ASSETS / f"{name}.png")  # ASSETS is read here so tests can move it
 
 
 def _colour(agent):
@@ -109,7 +110,7 @@ def _colour(agent):
 
 
 def _draw_grid(image, draw, size, treasure):
-    sand = _art("sand")
+    sand = _art("tiles/sand")
     for x in range(size):
         for y in range(size):
             box = (x * TILE, y * TILE, (x + 1) * TILE - 1, (y + 1) * TILE - 1)
@@ -119,7 +120,7 @@ def _draw_grid(image, draw, size, treasure):
                 draw.rectangle(box, fill=SAND, outline=GRID)
     if treasure:
         x, y = treasure
-        chest = _art("treasure")
+        chest = _art("treasure/mark-x")
         if chest:
             image.paste(chest, (x * TILE, y * TILE), chest)
         else:
@@ -137,10 +138,6 @@ def _draw_grid(image, draw, size, treasure):
 
 def _draw_pirate(image, draw, agent, position):
     x, y = position
-    art = _art(agent)
-    if art:
-        image.paste(art, (x * TILE, y * TILE), art)
-        return
     box = (x * TILE + 4, y * TILE + 4, (x + 1) * TILE - 5, (y + 1) * TILE - 5)
     draw.ellipse(box, fill=_colour(agent), outline="black")
     letter = agent.rsplit("-", 1)[-1][:1].upper()

@@ -20,7 +20,7 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 - **revealed-treasure:** (decided) The treasure counts only once someone has dug it up; after that any pirate standing on the square counts, whether or not the digger told anyone.
 - **score:** (decided) The score rewards everyone standing on the treasure and finishing with moves to spare, and a crew that never gets there still scores above zero, so results have a usable range.
 - **score-numbers:** (open) The starting proposal is 100 for everyone on the treasure plus 10 per move remaining; the exact numbers are not yet set.
-- **hidden-terrain:** (open) Optional hidden terrain such as sinking sand is found only by trying to move, and a blocked move costs the turn.
+- **hidden-terrain:** (decided) Hidden terrain such as sinking sand, found only by trying to move, is left out of the base game and added later as its own change.
 - **shared-squares:** (decided) Any number of pirates may stand on one square, since the score needs them all on the treasure.
 - **random-events:** (open) Game events such as a clue washing ashore were floated as a reason to look back through the log.
 
@@ -36,7 +36,9 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 ## The turn
 
 - **turn-order:** (decided) Agents take turns in a fixed order, one at a time.
-- **turn-view:** (open) Each turn an agent sees its system prompt, its location and the last 3 to 5 log lines.
+- **turn-view:** (decided) Each turn a pirate sees its system prompt with the rules and its actions, its own position, and the last few log lines (3 by default).
+- **tools-only:** (decided) A pirate acts only through a small set of tool calls (move, dig, write, read), so a brain of any kind plugs into the same interface.
+- **failed-move:** (decided) An impossible move, such as left from the left edge, fails, costs the turn, and the response tells the pirate why.
 - **no-vision:** (decided) Pirates have no vision: a pirate knows only its own position and what it has dug, and learns about the others only through the log.
 - **actions:** (decided) The actions are move in one of 4 directions, dig, write to the log and read the log; digging and searching a square are the same action.
 - **one-action-per-turn:** (decided) A turn is exactly one action, so writing a note costs a turn that could have been a move or a dig.
@@ -77,7 +79,7 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 - **toggles:** (decided) Log length, terrain, agent count and the exploit can each be changed or switched off in a run's config.
 - **prompt-variants:** (open) System prompt variants to compare are: act within the rules, a reputation score, a reward for honesty, and simulation awareness.
 - **sudoku-last:** (decided) The Sudoku time from Something to Lose is tried last, once the rest works.
-- **model-backends:** (decided) Model backends are pluggable; which models we run is not yet chosen.
+- **model-backends:** (decided) Model backends are pluggable; which models we run is not yet chosen, and no LLM pirate is wired in until the deterministic stack works.
 - **parked-ideas:** (open) Token budgets agents can trade, closed channels, an orchestrator role and a between-sessions swarm manager came up in the calls and are out unless Al brings them back.
 
 ## The viewer
@@ -85,10 +87,13 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 - **readable-at-once:** (decided) A reader should grasp what happened from the animation alone, as much a goal as the mechanics.
 - **pokemon-style:** (decided) The view is classic tile-based, with pirates told apart by their colour and head text, moving in 4 directions, speaking in speech bubbles.
 - **side-panel:** (decided) A side panel shows the pirate whose turn it is: its avatar, its trail of thought and what it did, animated turn by turn.
+- **treasure-mark:** (decided) By default the reader sees the treasure square as a question mark from the start, which becomes an X once it's dug up; the pirates never see either.
 - **log-at-bottom:** (decided) The pirates' log scrolls along the bottom of the replay, so a reader sees what the crew could see.
 - **slideshow:** (decided) An HTML page replays a whole game as a slideshow, stepping through turns with the arrow keys.
 - **paper-figures:** (open) Since a paper can't embed an animation, it gets a sequence of about 4 stills with arrows showing where agents went.
-- **one-line-replay:** (open) A reader runs one command after `git clone` to replay a whole game from cached API responses, possibly in the browser, and can turn the cache off to run it live.
+- **named-runs:** (decided) Every run is named and saved, with its config, seed, both logs and every model response, so it can be uploaded, shared and replayed.
+- **everything-cached:** (decided) Every model response is cached in the run, so replaying a run never spends tokens, and turning the cache off plays it live again.
+- **one-line-replay:** (open) A reader runs one command after `git clone` to replay a whole game, possibly in the browser; whether the browser can do it is not yet set.
 
 ## Deterministic first
 
@@ -124,6 +129,8 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 | `sweeper` | not yet | — |
 | `turn-order` | not yet | — |
 | `turn-view` | not yet | — |
+| `tools-only` | not yet | — |
+| `failed-move` | not yet | — |
 | `no-vision` | not yet | — |
 | `actions` | not yet | — |
 | `one-action-per-turn` | not yet | — |
@@ -157,9 +164,12 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 | `readable-at-once` | not yet | — |
 | `pokemon-style` | not yet | — |
 | `side-panel` | not yet | — |
+| `treasure-mark` | not yet | — |
 | `log-at-bottom` | not yet | — |
 | `slideshow` | not yet | — |
 | `paper-figures` | not yet | — |
+| `named-runs` | not yet | — |
+| `everything-cached` | not yet | — |
 | `one-line-replay` | not yet | — |
 | `python-stack` | not yet | — |
 | `no-token-strategies` | not yet | — |

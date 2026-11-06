@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pytest
 
-from treasure_island import cli
+from treasure_island import cli, saved_game
 from treasure_island.config import ConfigError, load_config, parse_config
 from treasure_island.strategies import brains_for
 
@@ -25,7 +25,7 @@ def config(tmp_path, monkeypatch):
 
 
 def played(config_path, capsys, seed=7):
-    assert cli.main(["run", str(config_path), "--seed", str(seed)]) == 0
+    assert cli.main(["run", str(config_path), "--seed", str(seed), "--no-watch"]) == 0
     return Path(config_path).parent / capsys.readouterr().out.strip()
 
 
@@ -143,3 +143,37 @@ def test_brain_in_config_refuses_one_it_does_not_know():
         brains_for(config.brain, config)
     with pytest.raises(ConfigError, match="brain"):
         parse_config({"brain": 3})
+
+
+def test_named_runs_a_real_game_opens_for_watching_before_the_first_turn(config):
+    seen = []
+
+    def on_start(folder):
+        seen.append(
+            ((folder / "config.json").is_file(), (folder / "story.txt").exists())
+        )
+
+    folder = saved_game.play_saved(config, 7, on_start)
+    assert seen == [(True, False)]
+    assert (folder / "story.txt").is_file()
+
+
+def test_named_runs_a_real_game_is_paced_only_when_watched(config, monkeypatch):
+    naps = []
+    monkeypatch.setattr("time.sleep", naps.append)
+    plain = saved_game.play_saved(config, 7)
+    assert naps == []
+    paced = saved_game.play_saved(config, 7, pace=0.25)
+    assert naps and set(naps) == {0.25}
+    assert (plain / "events.jsonl").read_bytes() == (
+        paced / "events.jsonl"
+    ).read_bytes()
+
+
+def test_named_runs_run_opens_the_view_on_a_real_game(config, capsys, monkeypatch):
+    opened = []
+    monkeypatch.setattr("webbrowser.open", opened.append)
+    monkeypatch.setattr("time.sleep", lambda seconds: None)
+    assert cli.main(["run", str(config), "--seed", "7"]) == 0
+    assert len(opened) == 1
+    assert opened[0].startswith("http://127.0.0.1:")

@@ -1,6 +1,6 @@
 ---
 name: build-issue
-description: Build a collusion-lab GitHub issue end to end, from issue to branch to spec to failing test to code to draft pull request. Use when starting work on any issue in this repository.
+description: Build a Treasure Island GitHub issue end to end, from issue to branch to spec to failing test to code to draft pull request. Use when starting work on any issue in this repository.
 ---
 
 <!-- Implements: agent-setup/shared-skills, agent-setup/skills-hold-the-process, commits/commit-refs-issue, commits/deliberate-messages, commits/small-sane-steps, specs-and-docs/docs-next-to-code, workflow/al-only, workflow/blocked-means-ask, workflow/draft-early, workflow/issue-first, workflow/issue-scope, workflow/test-first -->
@@ -17,7 +17,7 @@ description: Build a collusion-lab GitHub issue end to end, from issue to branch
    7. its order is set with "Blocked by #<n>" lines.
 
    If it isn't well specced, improve the issue or ask first. A pull request covers one issue, or one parent issue and its children; unrelated changes go in their own pull request.
-2. **Branch** from the latest base: `<n>-<short-slug>` (for example `3-litellm-backend`).
+2. **Branch** from the latest base: `<n>-<short-slug>` (for example `3-grid-moves`).
 3. **Spec first:** write the spec change (`write-spec-change`), commit it, push, and open a draft pull request straight away (`open-pr`).
 4. **Test first:** write the tests that prove each new or changed statement, run them and watch them fail for the right reason, then commit them on their own ("Test that …").
 5. **Build:** the smallest code that makes those tests pass, then connect code and tests to the spec (`trace-spec`). Docs are module docstrings and comments next to the code.

@@ -1,6 +1,6 @@
 ---
 name: deliver-issue
-description: Deliver a collusion-lab GitHub issue from start to merged in one routine - build, draft pull request, Codex review rounds, hand to a reviewer who merges. Use when asked to deliver, ship or "build and merge" an issue.
+description: Deliver a Treasure Island GitHub issue from start to merged in one routine - build, draft pull request, Codex review rounds, hand to a reviewer who merges. Use when asked to deliver, ship or "build and merge" an issue.
 ---
 
 <!-- Implements: agent-setup/shared-skills, agent-setup/skills-hold-the-process, workflow/one-routine, workflow/prototype-pace, review/review-finished, review/bounded-rounds, commits/named-paths, merging/stacked-retarget, merging/main-stays-green, team/builders, ci/ci-minutes -->

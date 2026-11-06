@@ -157,8 +157,15 @@ def test_log_at_bottom_runs_along_under_the_board_at_a_fixed_height():
     assert strip_of(first).tobytes() != strip_of(last).tobytes()
 
 
+def test_long_log_lines_a_note_too_long_for_the_strip_shows_its_end():
+    words = [f"word{n}" for n in range(200)]
+    rows = viewer.log_rows([(1, " ".join(words))], width=300)
+    assert len(rows) == viewer.STRIP_ROWS
+    assert rows[-1].split()[-1] == "word199"
+
+
 def test_long_log_lines_wrap_and_lose_no_word():
-    words = [f"word{n}" for n in range(60)]
+    words = [f"word{n}" for n in range(15)]
     rows = viewer.log_rows([(1, " ".join(words))], width=300)
     assert len(rows) > 1
     assert " ".join(rows).split() == ["1:", *words]

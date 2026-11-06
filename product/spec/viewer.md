@@ -13,11 +13,11 @@
 
 | Statement | Enforced by | Tested by |
 |---|---|---|
-| `one-renderer` | `src/treasure_island/viewer.py` | `test_one_renderer_the_gif_holds_exactly_the_frames_the_page_serves` |
-| `frame-shows-the-swarm` | `src/treasure_island/viewer.py` | `test_frame_shows_the_swarm_every_pirate_whose_turn_the_bubble_and_the_log`, `test_frame_shows_the_swarm_pirates_on_one_square_are_all_visible`, `test_frame_shows_the_swarm_as_an_image_with_grid_panel_and_log` |
+| `one-renderer` | `src/treasure_island/viewer.py` | `test_one_renderer_the_gif_holds_exactly_the_frames_the_page_serves`, `test_one_renderer_rendering_twice_gives_an_identical_gif` |
+| `frame-shows-the-swarm` | `src/treasure_island/viewer.py` | `test_frame_shows_the_swarm_every_pirate_whose_turn_the_bubble_and_the_log`, `test_crowds_fan_out_every_pirate_on_one_square_shows`, `test_frame_shows_the_swarm_as_an_image_with_grid_panel_and_log` |
 | `watch-live` | `src/treasure_island/cli.py`, `src/treasure_island/viewer.py` | `test_watch_live_the_page_follows_the_log_as_it_is_written`, `test_watch_live_the_command_names_its_address` |
 | `render-gif` | `src/treasure_island/cli.py`, `src/treasure_island/viewer.py` | `test_render_gif_writes_one_frame_per_turn_next_to_the_run`, `test_render_gif_writes_where_asked` |
-| `art-folder` | not yet | — |
-| `sprite-from-definition` | not yet | — |
-| `sprite-follows-action` | not yet | — |
-| `crowds-fan-out` | not yet | — |
+| `art-folder` | `src/treasure_island/viewer.py`, `pyproject.toml` | `test_art_folder_every_empty_square_is_a_sand_tile_from_the_assets`, `test_art_folder_a_pirate_is_exactly_its_sprite_and_never_a_shape`, `test_art_folder_a_dug_square_and_a_found_treasure_use_their_art`, `test_art_folder_missing_art_is_an_error_not_a_different_picture`, `test_art_folder_the_art_loads_from_outside_the_repository` |
+| `sprite-from-definition` | `src/treasure_island/viewer.py` | `test_sprite_from_definition_uses_the_configured_look`, `test_sprite_from_definition_a_run_that_does_not_say_gets_the_default_crew`, `test_sprite_from_definition_the_frame_draws_the_given_look` |
+| `sprite-follows-action` | `src/treasure_island/viewer.py` | `test_sprite_follows_action_a_pirate_faces_the_way_it_moves`, `test_sprite_follows_action_it_keeps_facing_that_way_and_stands_still`, `test_sprite_follows_action_walking_alternates_its_feet`, `test_sprite_follows_action_digging_and_finding_the_treasure`, `test_sprite_follows_action_others_stay_as_they_were` |
+| `crowds-fan-out` | `src/treasure_island/viewer.py` | `test_crowds_fan_out_every_pirate_on_one_square_shows`, `test_crowds_fan_out_stays_on_the_board_and_never_stacks`, `test_crowds_fan_out_a_lone_pirate_stands_on_its_square`, `test_crowds_fan_out_every_label_shows_on_the_landing_square` |

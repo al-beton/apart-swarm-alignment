@@ -1,4 +1,4 @@
-# Implements: ci/simple-code, tooling/one-command-each, tooling/package-and-cli, ci/ci-minutes, viewer/render-gif
+# Implements: ci/simple-code, tooling/one-command-each, tooling/package-and-cli, ci/ci-minutes, viewer/render-gif, viewer/art-folder
 [project]
 name = "treasure-island"
 version = "0.1.0"
@@ -13,6 +13,10 @@ treasure-island = "treasure_island.cli:main"
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+# The viewer draws pirates with the art's code, so `assets` installs with the game.
+[tool.hatch.build.targets.wheel]
+packages = ["src/treasure_island", "assets"]
 
 [dependency-groups]
 dev = [

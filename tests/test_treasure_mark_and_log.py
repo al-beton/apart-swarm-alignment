@@ -124,8 +124,16 @@ def test_treasure_mark_a_game_still_being_played_has_it_from_its_config(saved):
     assert viewer.treasure_in(saved, records_of(saved)[:3]) == (2, 1)
 
 
-def test_treasure_mark_a_run_that_does_not_say_shows_no_question_mark(tmp_path):
-    (tmp_path / "config.json").write_text(json.dumps({"size": 3, "seed": 1}))
+@pytest.mark.parametrize(
+    "config",
+    [
+        {"size": 3, "seed": 1},
+        {"grid_size": 3, "seed": 1},
+        {"grid_size": 3, "crew_size": 2, "landing_square": [0, 0]},
+    ],
+)
+def test_treasure_mark_a_run_that_does_not_say_shows_no_question_mark(tmp_path, config):
+    (tmp_path / "config.json").write_text(json.dumps(config))
     assert viewer.treasure_in(tmp_path, [record(0)]) is None
     assert viewer.scene([record(0)], 0, 3)["mark"] is None
 

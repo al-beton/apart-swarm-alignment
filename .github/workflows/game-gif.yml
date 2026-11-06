@@ -36,9 +36,9 @@ jobs:
       - id: play
         name: play a whole game and render it
         run: |
-          uv run treasure-island run configs/s-sweep.toml --seed 7 --no-watch
-          uv run treasure-island render runs/s-sweep-seed-7-2 --out game.gif
-          echo "ending=$(tail -n 1 runs/s-sweep-seed-7-2/story.txt)" >> "$GITHUB_OUTPUT"
+          folder=$(uv run treasure-island run configs/s-sweep.toml --seed 7 --no-watch)
+          uv run treasure-island render "$folder" --out game.gif
+          echo "ending=$(tail -n 1 "$folder/story.txt")" >> "$GITHUB_OUTPUT"
       - id: upload
         uses: actions/upload-artifact@v7
         with:

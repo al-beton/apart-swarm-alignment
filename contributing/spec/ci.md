@@ -5,7 +5,7 @@
 - **checks-over-prose:** Anything that can be checked automatically ends up checked by CI rather than left to the reviewer.
 - **simple-code:** Code stays simple enough that the linter never calls it too complex.
 - **ci-runs-everything:** CI runs the linter, every test and the spec check before anything merges.
-- **ci-minutes:** The gate is quick: every check that gates a merge is a step of the one `blocking-checks` job, the tests run in parallel (one worker per core) and dependencies are cached between runs. A newer run for the same pull request cancels the one in progress, and draft pull requests are not checked until they are marked ready.
+- **ci-minutes:** The gate is quick: every check that gates a merge is a step of the one `blocking-checks` job, the tests run in parallel (one worker per core) and dependencies are cached between runs. A newer run for the same pull request cancels the one in progress, unless it is a draft run that would only be skipped, and draft pull requests are not checked until they are marked ready.
 - **no-model-calls:** CI never calls a model, and no API keys are stored as secrets.
 
 ## Where this is enforced

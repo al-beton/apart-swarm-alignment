@@ -1,4 +1,4 @@
-<!-- Implements: agent-setup/entry-point, agent-setup/reuse-old-work, review/spec-first, safety/no-secrets, workflow/al-only, workflow/prototype-pace, workflow/one-routine -->
+<!-- Implements: agent-setup/entry-point, agent-setup/reuse-old-work, review/spec-first, safety/no-secrets, workflow/al-only, workflow/prototype-pace, workflow/audience, workflow/one-routine -->
 # Treasure Island: agent guide
 
 Treasure Island is a reproducible sandbox for asking when a swarm of LLM agents whistleblows, and what in their environment changes that. It's our entry to Apart's multi-agent oversight and control track.
@@ -11,6 +11,10 @@ Treasure Island is a reproducible sandbox for asking when a swarm of LLM agents 
 - **Work** is tracked as GitHub issues on this repository.
 
 Al handles accounts, API keys and spending. Agents never put keys in code, configs, logs or commits.
+
+## Who it's for
+
+First, the people working in this code over and over to make it really good; next, researchers reviewing or extending it; then judges of the paper. So a change should make repeated use easier: quick to run, easy to see, easy to compare.
 
 ## Pace
 

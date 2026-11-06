@@ -1,7 +1,6 @@
 # Implements: treasure-island/treasure-mark, treasure-island/log-at-bottom, viewer/long-log-lines
 """What only the reader sees: the mark on the treasure square, and the crew's log."""
 
-import json
 import shutil
 from pathlib import Path
 

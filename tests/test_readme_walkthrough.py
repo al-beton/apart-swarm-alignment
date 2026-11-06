@@ -25,7 +25,9 @@ def quoted():
 
 
 def test_readme_reads_a_game_comes_right_after_quick_start():
-    headings = re.findall(r"^## (.+)$", (ROOT / "README.md").read_text(), flags=re.M)
+    headings = re.findall(
+        r"^## (.+)$", (ROOT / "README.md").read_text(), flags=re.MULTILINE
+    )
     assert headings[:2] == ["Quick start", HEADING]
 
 

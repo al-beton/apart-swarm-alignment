@@ -5,6 +5,11 @@
 - **examples-small:** Each example's GIF is under 2 MB, so a clone stays small and the GIF opens at once.
 - **examples-stay-true:** CI replays every example and fails if its logs or its GIF differ, and says which command remakes them, so an example always shows what the code does today.
 - **examples-on-every-pr:** Every pull request's one game comment shows each example's GIF inline, with its name and how it ended, from that pull request's latest commit, so a change to the games can be seen without running anything.
+- **result-folder:** Each result is `results/<name>/`, holding its run folders and a short `README.md` that says the question, what was run, what it shows and what it cost, so a finding can be kept and shared with its evidence beside it.
+- **results-are-runs:** A result's run folders use the same format as `runs/` and `examples/`, so the same commands work on them.
+- **results-listed:** `results/README.md` lists every result, so a reader can see at once what's been found.
+- **results-stay-checkable:** CI replays every committed result with no keys and no network, so anyone can trust a result without paying to rerun it.
+- **sample-result:** `results/` holds a small sample result from a scripted game, so the layout can be copied and costs nothing to check.
 
 ## Where this is enforced
 
@@ -15,3 +20,8 @@
 | `examples-small` | `src/treasure_island/examples.py` | `test_examples_small_each_gif_is_under_2_mb` |
 | `examples-stay-true` | `src/treasure_island/examples.py`, `src/treasure_island/saved_game.py` | `test_examples_stay_true_every_log_replays_byte_identical`, `test_examples_stay_true_every_gif_matches_what_is_drawn_now`, `test_examples_stay_true_a_stale_example_says_how_to_remake_it` |
 | `examples-on-every-pr` | `.github/workflows/game-gif.yml` | `test_examples_on_every_pr_shows_each_gif_inline_with_its_ending`, `test_examples_on_every_pr_reads_the_commit_without_running_its_code`, `test_examples_on_every_pr_lists_examples_from_that_commit` |
+| `result-folder` | not yet | — |
+| `results-are-runs` | not yet | — |
+| `results-listed` | not yet | — |
+| `results-stay-checkable` | not yet | — |
+| `sample-result` | not yet | — |

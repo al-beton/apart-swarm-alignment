@@ -5,6 +5,8 @@ A reproducible sandbox for asking when a swarm of LLM agents whistleblows, and w
 
 Each committed run replays offline with no API keys, so anyone can clone this and check it. Rebuilding every graphic from committed runs is planned.
 
+![A whole game: three pirates sweep the grid and find the treasure](examples/s-sweep/game.gif)
+
 ![All the game's art on one page](assets/sheet.png)
 
 ![Every pirate walking](assets/catwalk.gif)
@@ -19,6 +21,8 @@ Each committed run replays offline with no API keys, so anyone can clone this an
 | Scripted pirates play the real game: an S-sweep that finds the treasure, saved as a named run with its story, both logs and its config | `uv run treasure-island run configs/s-sweep.toml --seed 7` |
 | A real game replays offline, byte for byte, with no keys and no network (read its `story.txt`) | `uv run treasure-island replay runs/s-sweep-seed-7` |
 | A pirate that says a number each turn plays the real game too, so the log has chatter | `uv run treasure-island run configs/say-a-number.toml --seed 1` |
+| Open a finished game: `examples/` holds three, each with its story and GIF, and any of them replays | `uv run treasure-island replay examples/s-sweep` |
+| Remake the examples, after a change that's meant to show in them | `make examples` |
 | Remake the scripted pirates' reference games | `make reference-games` |
 | Watch a game in the browser, turn by turn, in the approved art: each pirate in its own colour and label, facing the way it moves, with whose turn it is and what each saw (stop it with Ctrl-C) | `uv run treasure-island watch runs/s-sweep-seed-7` |
 | Bake a game into an animated GIF, from the same drawing code | `uv run treasure-island render runs/s-sweep-seed-7` |
@@ -34,7 +38,7 @@ A model's replies are reused from earlier runs, so a repeat spends nothing. `run
 
 **How the real game is built:** `src/treasure_island/game_loop.py` plays a whole game from a config, with every lever a variable (`config.py`), the pirates' log with its free window and paid reads (`pirates_log.py`) and the score (`score.py`). A saved game holds `story.txt` (the game to read, one line per turn), `pirates-log.txt` (all the pirates can see), `events.jsonl` (the full record), `config.json`, `replies.jsonl` and `manifest.json`. Configs without a `brain`, such as `configs/sweep.toml`, still play the small stand-in game.
 
-**Planned:** an HTML page that steps through a game with the arrow keys, LLM pirates that replay from cached replies, the exploit that hands one pirate the answer, and the figures for the paper. Once a game GIF exists on `main`, it goes here.
+**Planned:** an HTML page that steps through a game with the arrow keys, LLM pirates that replay from cached replies, the exploit that hands one pirate the answer, and the figures for the paper.
 
 ## Commands
 

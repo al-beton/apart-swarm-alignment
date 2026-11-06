@@ -9,7 +9,7 @@ varies between identical runs).
 `differences` plays the game again from that folder, in a temporary folder and
 with nothing but what's saved, and names any log that doesn't match byte for byte.
 
-Implements: treasure-island/named-runs, treasure-island/everything-cached, runs/plays-live
+Implements: treasure-island/named-runs, treasure-island/everything-cached, runs/plays-live, results/examples-stay-true
 """
 
 import datetime
@@ -51,11 +51,22 @@ def play_saved(config_path, seed, on_start=None, pace=0):
     `on_start(folder)` is called once the folder can be watched, before any turn,
     and `pace` waits that many seconds after each turn. Neither changes the game.
     """
-    data = tomllib.loads(Path(config_path).read_text(encoding="utf-8"))
-    data["seed"] = seed
-    config = parse_config(data)
-    brains = brains_for(config.brain, config)
+    config = _config_with_seed(config_path, seed)
+    brains_for(config.brain, config)  # a bad brain makes no folder
     folder = new_folder(f"{Path(config_path).stem}-seed-{seed}")
+    return write_saved(config_path, seed, folder, on_start, pace)
+
+
+def _config_with_seed(config_path, seed):
+    data = tomllib.loads(Path(config_path).read_text(encoding="utf-8"))
+    return parse_config({**data, "seed": seed})
+
+
+def write_saved(config_path, seed, folder, on_start=None, pace=0):
+    """Play the config with this seed into `folder`, which must exist."""
+    folder = Path(folder)
+    config = _config_with_seed(config_path, seed)
+    brains = brains_for(config.brain, config)
     save_config(config, folder / "config.json")
     (folder / "replies.jsonl").touch()
     if on_start:

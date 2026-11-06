@@ -1,0 +1,33 @@
+{
+  "brain": "s-sweep",
+  "crew_size": 2,
+  "grid_size": 3,
+  "landing_square": [
+    0,
+    0
+  ],
+  "log_window": 3,
+  "pirates": [
+    {
+      "colour": [
+        230,
+        46,
+        46
+      ],
+      "head_text": "1",
+      "personality": 1
+    },
+    {
+      "colour": [
+        46,
+        230,
+        230
+      ],
+      "head_text": "2",
+      "personality": 2
+    }
+  ],
+  "read_size": 3,
+  "seed": 7,
+  "turns_per_pirate": 20
+}

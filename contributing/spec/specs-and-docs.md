@@ -11,6 +11,8 @@
 - **prompts-are-verbatim:** Prompt files hold exactly the text a model reads, so a spec table row traces them instead of a comment inside them.
 - **runs-are-evidence:** Committed run folders hold exactly what the game wrote, so a spec table row traces them instead of a comment inside them, and JSON Lines logs are never asked for one anywhere; scratch and smoke runs are never committed.
 - **short-specs:** Spec files stay short enough to read; long ones get split.
+- **readme-keeps-up:** A pull request that adds or changes something a person can run or see updates the README in the same pull request, so the first page anyone reads never falls behind the code.
+- **readme-commands-run:** The README lists what a person can do today, each with the one command that shows it, and CI runs or checks every one of those commands, so a stale entry fails the build.
 
 ## Where this is enforced
 
@@ -27,3 +29,5 @@
 | `prompts-are-verbatim` | `.github/scripts/spec_check.py` | `test_prompts_are_verbatim_and_homed_by_a_table_row`, `test_prompts_are_verbatim_so_they_never_carry_implements_lines` |
 | `runs-are-evidence` | `.github/scripts/spec_check.py`, `.gitignore` | `test_runs_are_evidence_homed_by_a_table_row`, `test_runs_are_evidence_so_they_never_carry_implements_lines`, `test_runs_are_evidence_jsonl_never_asked_for_implements_lines`, `test_runs_are_evidence_compressed_files_never_asked_for_implements_lines`, `test_runs_are_evidence_scratch_and_smoke_runs_stay_ignored` |
 | `short-specs` | `.github/scripts/spec_check.py` | `test_spec_length_warns_over_300_lines` |
+| `readme-keeps-up` | not yet | — |
+| `readme-commands-run` | not yet | — |

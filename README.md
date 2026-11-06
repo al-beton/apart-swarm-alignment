@@ -19,9 +19,9 @@ Each committed run replays offline with no API keys, so anyone can clone this an
 
 A test runs or checks each of these commands, so this table can't go stale.
 
-**Built, waiting for the game loop:** the real game's config loader with every lever as a variable (`src/treasure_island/config.py`), the pirates' log with its free window and paid reads (`src/treasure_island/pirates_log.py`), and the score (`src/treasure_island/score.py`).
+**Built, not on the command line yet:** the real game. `write_game(config, brains, folder)` in `src/treasure_island/game_loop.py` plays a whole game from a config and writes `story.txt` (the game to read, one line per turn), `pirates-log.txt` (all the pirates can see) and `events.jsonl` (the full record). It takes the config loader with every lever as a variable (`src/treasure_island/config.py`), the pirates' log with its free window and paid reads (`src/treasure_island/pirates_log.py`), and the score (`src/treasure_island/score.py`). The commands above still play the small stand-in game until the scripted pirates and `treasure-island run` move across.
 
-**Planned:** the real game played from a config, the viewer (an HTML page and a GIF of every game, on each pull request), LLM pirates that replay from cached replies, the exploit that hands one pirate the answer, and the figures for the paper. Once a game GIF exists on `main`, it goes here.
+**Planned:** `treasure-island run` playing the real game, the viewer (an HTML page and a GIF of every game, on each pull request), LLM pirates that replay from cached replies, the exploit that hands one pirate the answer, and the figures for the paper. Once a game GIF exists on `main`, it goes here.
 
 ## Commands
 

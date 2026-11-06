@@ -1,9 +1,11 @@
-<!-- Implements: assets/plain-files, specs-and-docs/folder-guides -->
+<!-- Implements: assets/plain-files, assets/catwalk, specs-and-docs/folder-guides -->
 # Assets
 
-All the game's art: plain PNG files any renderer can load, and the Python that draws them. `make assets` redraws everything, and a test fails if a committed image doesn't match the code.
+All the game's art: plain PNG files any renderer can load, and the Python that draws them. `make assets` redraws everything, and a test fails if a committed image doesn't match the code. `make catwalk` writes only the GIF below.
 
 ![All the art on one page](sheet.png)
+
+![Every pirate walking in all four directions](catwalk.gif)
 
 ## Sizes
 
@@ -28,6 +30,7 @@ A square is 48x48, so a 10x10 board is 480px at real size. Scale by whole number
 | `ui/panel.png` | 36x36 | Side panel and log frame nine-slice, with 12px cells. |
 | `ui/turn-arrow.png` | 16x12 | Floats above the pirate whose turn it is. |
 | `sheet.png` | 1024x956 | All of the above on one page. |
+| `catwalk.gif` | 480x384 | Every pirate walking a loop on a sample of the walkable tiles: 32 frames, 100 ms each. A preview for people, not something to build a renderer on. |
 
 ## Walking
 

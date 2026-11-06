@@ -1,5 +1,5 @@
-# Implements: tooling/one-command-each, tooling/locked-dependencies, ci/ci-minutes, ci/ci-runs-everything, assets/remade-by-one-command
-.PHONY: install lint test spec-check assets
+# Implements: tooling/one-command-each, tooling/locked-dependencies, ci/ci-minutes, ci/ci-runs-everything, assets/remade-by-one-command, assets/catwalk
+.PHONY: install lint test spec-check assets catwalk
 install:
 	uv sync --frozen
 lint:
@@ -11,3 +11,5 @@ spec-check:
 	uv run python .github/scripts/spec_check.py
 assets:  # redraw every image in assets/
 	uv run python -m assets.generate
+catwalk:  # write the GIF of every pirate walking
+	uv run python -m assets.catwalk

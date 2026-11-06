@@ -21,7 +21,7 @@
 | Statement | Enforced by | Tested by |
 |---|---|---|
 | `plain-files` | `assets/README.md`, `assets/generate.py` | `test_plain_files_are_pngs_the_guide_names` |
-| `remade-by-one-command` | `Makefile`, `assets/generate.py` | `test_remade_by_one_command_committed_images_match_the_code` |
+| `remade-by-one-command` | `Makefile`, `assets/generate.py`, `assets/catwalk.py` | `test_remade_by_one_command_committed_images_match_the_code`, `test_catwalk_is_deterministic_and_the_committed_gif_matches_the_code` |
 | `original-art` | reviewer, `assets/pirates.py`, `assets/tiles.py`, `assets/treasure.py`, `assets/ui.py`, `assets/font.py`, `assets/pixels.py` | — |
 | `game-size` | `assets/pixels.py` | `test_game_size_tiles_and_sprites_are_48px` |
 | `any-pirate` | `assets/pirates.py` | `test_any_pirate_takes_any_personality_colour_and_label`, `test_any_pirate_refuses_a_label_that_will_not_fit` |
@@ -33,5 +33,5 @@
 | `treasure-shown` | `assets/treasure.py` | `test_treasure_shown_chests_and_marks_exist_and_differ` |
 | `viewer-parts` | `assets/ui.py`, `assets/font.py`, `assets/pirates.py` | `test_viewer_parts_bubble_fits_its_text`, `test_viewer_parts_panel_stretches_to_any_size`, `test_viewer_parts_font_covers_printable_ascii`, `test_viewer_parts_portrait_is_the_head_enlarged` |
 | `sheet-shows-everything` | `assets/generate.py` | `test_sheet_shows_everything_is_committed_and_wide_enough` |
-| `catwalk` | not yet | — |
-| `sheet-on-every-pr` | `.github/workflows/asset-sheet.yml` | `test_sheet_on_every_pr_runs_on_pull_request_and_never_pull_request_target`, `test_sheet_on_every_pr_can_only_write_pull_requests`, `test_sheet_on_every_pr_runs_no_code_from_the_branch`, `test_sheet_on_every_pr_skips_forks_and_never_gates`, `test_sheet_on_every_pr_shows_the_latest_commit_s_sheet_in_one_comment` |
+| `catwalk` | `assets/catwalk.py`, `Makefile`, `assets/README.md` | `test_catwalk_every_pirate_walks_in_all_four_directions`, `test_catwalk_pirates_keep_to_their_own_patch_of_ground`, `test_catwalk_crosses_a_sample_of_walkable_tiles`, `test_catwalk_gif_shows_exactly_what_was_drawn`, `test_catwalk_is_deterministic_and_the_committed_gif_matches_the_code`, `test_catwalk_is_under_two_megabytes`, `test_catwalk_make_catwalk_and_make_assets_both_write_it` |
+| `sheet-on-every-pr` | `.github/workflows/asset-sheet.yml` | `test_sheet_on_every_pr_runs_on_pull_request_and_never_pull_request_target`, `test_sheet_on_every_pr_can_only_write_pull_requests`, `test_sheet_on_every_pr_runs_no_code_from_the_branch`, `test_sheet_on_every_pr_skips_forks_and_never_gates`, `test_sheet_on_every_pr_shows_the_latest_commit_s_sheet_in_one_comment`, `test_sheet_on_every_pr_shows_the_catwalk_beside_the_sheet_from_the_same_commit` |

@@ -49,7 +49,7 @@ def test_two_lines_sit_next_to_the_figure(offline, tmp_path):
     cli.main(["figure", "sweep-game", "--out", str(tmp_path)])
     lines = (tmp_path / "sweep-game.md").read_text()
     assert "make figure NAME=sweep-game" in lines
-    assert "treasure-island run configs/sweep.toml --seed 5" in lines
+    assert "uv run treasure-island run configs/sweep.toml --seed 5" in lines
 
 
 def test_rerun_matches_every_committed_run_without_spending(offline):

@@ -102,7 +102,7 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 - **brain-in-config:** (decided) A config names the brain its crew plays with, so one command can play any game and a saved game says what played it.
 - **named-runs:** (decided) Every run is named and saved, with its config, seed, both logs and every model response, so it can be uploaded, shared and replayed.
 - **everything-cached:** (decided) Every model response is cached in the run, so replaying a run never spends tokens, and turning the cache off plays it live again.
-- **one-line-replay:** (open) A reader runs one command after `git clone` to replay a whole game, possibly in the browser; default, Al to confirm: one Python command renders a saved run to the GIF and the HTML slideshow, and replaying in the browser alone can come later.
+- **one-line-replay:** (open) A reader runs one command after `git clone` to replay a whole game, possibly in the browser; default, Al to confirm: one Python command renders a saved run to the GIF and the HTML slideshow, and replaying in the browser alone can come later. CI runs that command in a new clone, before anything else is installed, and fails unless a real GIF and page come out, so nothing the other checks leave behind can hide a break.
 
 ## Deterministic first
 

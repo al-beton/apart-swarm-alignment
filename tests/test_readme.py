@@ -59,8 +59,10 @@ def test_readme_commands_run_each_feature_command_works(command, tmp_path, monke
     if words[3] == "watch":  # it serves until stopped, so check it can start
         viewer.server(words[4], 0).server_close()
         return
+    # A person watches `run` in a browser; here it only has to work.
+    arguments = [*words[3:], "--no-watch"] if words[3] == "run" else words[3:]
     try:
-        code = cli.main(words[3:])
+        code = cli.main(arguments)
     except SystemExit as exit:  # argparse's --help
         code = exit.code
     assert code == 0, command

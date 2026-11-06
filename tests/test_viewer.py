@@ -346,6 +346,17 @@ def test_sprite_follows_action_walking_alternates_its_feet():
     assert feet == [1, 2]
 
 
+def test_sprite_follows_action_each_pirate_alternates_its_own_feet():
+    east = [{"action": "move", "direction": "east"}]
+    crew = {"pirate-1": [0, 0], "pirate-2": [0, 0]}
+    turns = [
+        record(t, f"pirate-{t % 2 + 1}", [0, 0], [0, 0], crew=crew, did=east)
+        for t in range(6)
+    ]
+    feet = [viewer.scene(turns, t, 3)["poses"]["pirate-1"][1] for t in (0, 2, 4)]
+    assert feet == [1, 2, 1]
+
+
 def test_sprite_follows_action_digging_and_finding_the_treasure():
     dig = alone(0, [{"action": "dig"}])
     assert viewer.scene([dig], 0, 3)["poses"]["pirate-1"][0] == "dig"

@@ -24,23 +24,22 @@ def drawn_at(image, overlay, position):
     return ImageChops.difference(here, wanted).getbbox() is None
 
 
-def record(
-    turn, agent="pirate-1", did=None, thinking=None, found=False, story=None, at=None
-):
-    at = at or [0, 0]
+def record(turn, agent="pirate-1", **rest):
+    """One record; `did`, `thinking`, `found`, `story` and `at` can be given."""
+    at = rest.get("at", [0, 0])
+    did = rest.get("did", [{"action": "dig"}])
     made = {
         "turn": turn,
         "agent": agent,
         "saw": {"position": at, "prompt": ""},
-        "did": did if did is not None else [{"action": "dig"}],
+        "did": did,
         "log_shown": [],
         "crew": CREW,
-        "outcome": {"position": at, "found_treasure": found},
+        "outcome": {"position": at, "found_treasure": rest.get("found", False)},
     }
-    if thinking:
-        made["thinking"] = thinking
-    if story:
-        made["story"] = story
+    for optional in ("thinking", "story"):
+        if optional in rest:
+            made[optional] = rest[optional]
     return made
 
 

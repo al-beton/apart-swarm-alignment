@@ -1,17 +1,19 @@
 ---
 name: team
-description: Who does what on Treasure Island - manager, delivery lead, builders, reviewers, Codex, researcher - and how the issue queue's labels move. Use when starting as any of these roles, or when handing work between them.
+description: Who does what on Treasure Island - manager, Specker, Visual Assets, delivery lead, builders, reviewers, Codex, researcher - and how the issue queue's labels move. Use when starting as any of these roles, or when handing work between them.
 ---
 
-<!-- Implements: agent-setup/shared-skills, agent-setup/skills-hold-the-process, team/manager, team/delivery-lead, team/builders, team/reviewers, team/codex, team/researcher, team/queue-labels, research/outputs-home, research/every-run-committed, research/hypothesis-first, research/pilot-first, research/spend-caps, research/loop-closes -->
+<!-- Implements: agent-setup/shared-skills, agent-setup/skills-hold-the-process, team/manager, team/specker, team/visual-assets, team/delivery-lead, team/builders, team/reviewers, team/codex, team/researcher, team/queue-labels, research/outputs-home, research/every-run-committed, research/hypothesis-first, research/pilot-first, research/spend-caps, research/loop-closes -->
 
 # The team
 
-Al talks only to the manager. Everyone else works from GitHub issues and pull requests on this repository, and messages the session that started them only when blocked or handing over.
+Al talks to the manager, Specker and Visual Assets. Everyone else works from GitHub issues and pull requests on this repository, and messages the session that started them only when blocked or handing over.
 
 | Role | Does | Never |
 |---|---|---|
 | **Manager** | Turns what Al says into well-specced issues (`build-issue` step 1) and priorities; relays Al's decisions to the lead | builds or merges |
+| **Specker** | Talks with Al and owns `product/spec/treasure-island.md` | — |
+| **Visual Assets** | Talks with Al and owns `assets/` | — |
 | **Delivery lead** | Owns the queue: picks the next `ready` issue, assigns it to one builder, keeps the labels below current, tells the manager what merged | builds or merges |
 | **Builder** (one or two) | Delivers its assigned issue with `deliver-issue` steps 1 to 4, then labels it `in-review` and tells the lead in one line; starts the next issue from `main` | merges its own pull request |
 | **Reviewer** (one or two) | Reviews pull requests labelled `in-review` (`review-pr`); if its review passes, merges (`merge-pr`) | merges a pull request it authored |

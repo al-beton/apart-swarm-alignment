@@ -7,7 +7,7 @@ model, which is what makes a run replayable. A reply it can't read is a turn
 with no action. North is towards y = 0, and moves off the grid do nothing. A
 said line (`write ...`) is only recorded; there is no log to read it from yet.
 
-Implements: runs/walking-skeleton, agents/scripted-sees-the-prompt
+Implements: runs/walking-skeleton, agents/scripted-sees-the-prompt, event-log/crew-positions
 """
 
 import dataclasses
@@ -68,6 +68,7 @@ def play(config, seed, ask):
     for turn in range(config.turns):
         agent = agents[turn % len(agents)]
         start = positions[agent]
+        crew = {name: list(spot) for name, spot in positions.items()}
         text = prompt(agent, start, turn, config)
         action = read_action(
             ask(
@@ -89,6 +90,7 @@ def play(config, seed, ask):
             "saw": {"position": start, "prompt": text},
             "did": [action] if action else [],
             "log_shown": [],
+            "crew": crew,
             "outcome": {"position": positions[agent], "found_treasure": found},
         }
         if found:

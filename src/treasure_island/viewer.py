@@ -34,10 +34,11 @@ from treasure_island.looks import sprite_values
 ASSETS = Path(assets.__file__).parent
 SAND_TILES = ("sand", "sand-2", "sand-3")
 TILE = 48
-# How far apart pirates sharing a square stand, which is the size of a label, and
-# the most a very big crowd may spread.
+# How far apart pirates sharing a square stand, which is the size of a two-letter
+# label, and where a label sits on a sprite: (left, top, right, bottom).
 _FAN = (20, 14)
-_FAN_LIMIT = (2 * TILE, 2 * TILE)
+_LABEL_BOX = (14, 2, 34, 16)
+_ROWS = 3
 _FACING = {"north": "up", "south": "down", "east": "right", "west": "left"}
 PANEL = 220
 LOG_LINES = 4
@@ -196,25 +197,23 @@ def _draw_ground(image, size, shown):
 
 
 def fanned(count, square, size):
-    """Where `count` pirates on one square stand, in pixels, all inside the board."""
-    across = math.ceil(math.sqrt(count))
-    rows = math.ceil(count / across)
-    steps = [
-        min(step, limit // max(cells - 1, 1))
-        for step, limit, cells in zip(_FAN, _FAN_LIMIT, (across, rows), strict=True)
-    ]
+    """Where `count` pirates on one square stand, in pixels.
+
+    Two columns of three rows fit six labels inside a square, which is what stops a
+    neighbour's label landing on one. A bigger crowd adds columns, moved along if
+    needed to keep every label on the board.
+    """
+    across = math.ceil(count / _ROWS)
     spots = []
     for place in range(count):
-        column, row = place % across, place // across
-        x = square[0] * TILE + (2 * column - across + 1) * steps[0] // 2
-        y = square[1] * TILE + (2 * row - rows + 1) * steps[1] // 2
-        spots.append((x, y))
-    far = (size - 1) * TILE
-    shift = [
-        max(-min(values), 0) + min(far - max(values), 0)
-        for values in ([x for x, _ in spots], [y for _, y in spots])
-    ]
-    return [(x + shift[0], y + shift[1]) for x, y in spots]
+        column, row = place // _ROWS, place % _ROWS
+        x = square[0] * TILE + (2 * column - across + 1) * _FAN[0] // 2
+        spots.append((x, square[1] * TILE + row * _FAN[1]))
+    lefts = [x for x, _ in spots]
+    board = size * TILE
+    shift = max(-(min(lefts) + _LABEL_BOX[0]), 0)
+    shift += min(board - (max(lefts) + _LABEL_BOX[2]), 0)
+    return [(x + shift, y) for x, y in spots]
 
 
 @cache

@@ -32,4 +32,4 @@
 | `art-is-binary` | `.github/scripts/spec_check.py` | `test_art_is_binary_images_never_need_a_home`, `test_art_is_binary_a_gif_a_row_names_is_never_asked_to_point_back` |
 | `short-specs` | `.github/scripts/spec_check.py` | `test_spec_length_warns_over_300_lines` |
 | `readme-keeps-up` | `.github/pull_request_template.md`, `.agents/skills/review-pr/SKILL.md`, `README.md` | — |
-| `readme-commands-run` | `README.md`, `tests/test_readme.py` | `test_readme_commands_run_the_feature_list_exists`, `test_readme_commands_run_each_feature_command_works` |
+| `readme-commands-run` | `README.md`, `tests/test_readme.py` | `test_readme_commands_run_list_the_viewer_on_a_committed_run`, `test_readme_commands_run_the_feature_list_exists`, `test_readme_commands_run_each_feature_command_works` |

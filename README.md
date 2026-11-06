@@ -20,6 +20,8 @@ Each committed run replays offline with no API keys, so anyone can clone this an
 | A real game replays offline, byte for byte, with no keys and no network (read its `story.txt`) | `uv run treasure-island replay runs/s-sweep-seed-7` |
 | A pirate that says a number each turn plays the real game too, so the log has chatter | `uv run treasure-island run configs/say-a-number.toml --seed 1` |
 | Remake the scripted pirates' reference games | `make reference-games` |
+| Watch a game in the browser, turn by turn, with the grid, the pirates, whose turn it is and what each saw (stop it with Ctrl-C) | `uv run treasure-island watch runs/s-sweep-seed-7` |
+| Bake a game into an animated GIF, from the same drawing code | `uv run treasure-island render runs/s-sweep-seed-7` |
 | All the art is drawn in code: one command redraws every PNG in `assets/` | `make assets` |
 | Every pirate walks in all four directions, in one GIF (`assets/catwalk.gif`), which each pull request's art comment shows | `make catwalk` |
 | The game's command and what it can do | `uv run treasure-island --help` |
@@ -30,7 +32,7 @@ A model's replies are reused from earlier runs, so a repeat spends nothing. `run
 
 **How the real game is built:** `src/treasure_island/game_loop.py` plays a whole game from a config, with every lever a variable (`config.py`), the pirates' log with its free window and paid reads (`pirates_log.py`) and the score (`score.py`). A saved game holds `story.txt` (the game to read, one line per turn), `pirates-log.txt` (all the pirates can see), `events.jsonl` (the full record), `config.json`, `replies.jsonl` and `manifest.json`. Configs without a `brain`, such as `configs/sweep.toml`, still play the small stand-in game.
 
-**Planned:** the viewer (an HTML page and a GIF of every game, on each pull request), LLM pirates that replay from cached replies, the exploit that hands one pirate the answer, and the figures for the paper. Once a game GIF exists on `main`, it goes here.
+**Planned:** a GIF of a whole game on each pull request, an HTML page that steps through a game with the arrow keys, LLM pirates that replay from cached replies, the exploit that hands one pirate the answer, and the figures for the paper. Once a game GIF exists on `main`, it goes here.
 
 ## Commands
 

@@ -34,7 +34,7 @@ def lines(name):
     figure = FIGURES[name]
     return (
         f"make figure NAME={name}",
-        f"treasure-island run {figure.config} --seed {figure.seed}",
+        f"uv run treasure-island run {figure.config} --seed {figure.seed}",
     )
 
 

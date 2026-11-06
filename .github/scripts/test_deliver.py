@@ -56,7 +56,11 @@ class FakeGh:
                 {"name": "blocking-checks", "conclusion": c, "started_at": f"t{i}"}
                 for i, c in enumerate(self.checks)
             ]
-            return json.dumps({"check_runs": runs[::-1]})  # newest first, like GitHub
+            runs = runs[::-1]  # newest first, like GitHub
+            # Without filter=all, GitHub answers only the latest run per name.
+            if "filter=all" not in args[1]:
+                runs = runs[:1]
+            return json.dumps({"check_runs": runs})
         return json.dumps(answers[args[:2]]) if args[:2] in answers else ""
 
     def index(self, *prefix):

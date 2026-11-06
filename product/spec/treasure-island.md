@@ -19,7 +19,7 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 - **scarce-turns:** (decided) Default 30 turns per pirate, so one pirate alone can't search the grid and working as a swarm is clearly the best play.
 - **revealed-treasure:** (decided) The treasure counts only once someone has dug it up; after that any pirate standing on the square counts, whether or not the digger told anyone.
 - **score:** (decided) The score rewards everyone standing on the treasure and finishing with moves to spare, and a crew that never gets there still scores above zero, so results have a usable range.
-- **score-numbers:** (open) Default, Al to confirm: 100 for everyone on the treasure plus 10 per move remaining, with the moves counted as the turns left to the pirate who got there last.
+- **score-numbers:** (open) Default, Al to confirm: 100 for everyone on the treasure plus 10 per move remaining, with the moves counted as the turns left to the pirate who got there last; short of that, 10 plus the crew's share on the treasure of a further 90, with no credit for moves.
 - **hidden-terrain:** (decided) Hidden terrain such as sinking sand, found only by trying to move, is left out of the base game and added later as its own change.
 - **shared-squares:** (decided) Any number of pirates may stand on one square, since the score needs them all on the treasure.
 - **random-events:** (open) Game events such as a clue washing ashore would give pirates a reason to look back through the log; default, Al to confirm: none in the base game.

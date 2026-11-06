@@ -87,20 +87,21 @@ def test_sweeper_walks_to_the_corner_from_anywhere():
 
 
 def test_sweeper_stays_still_once_it_finds_the_treasure():
-    # Two pirates, one square: the first finds it, then waits for the second.
+    # Pirate 2 only writes, staying on the landing square, so the game goes on.
     config = game_of(
-        grid=2, crew=2, turns=20, seed=seed_with_treasure(2, wanted=(1, 0))
+        grid=2, crew=2, turns=10, seed=seed_with_treasure(2, wanted=(1, 0))
     )
-    records = sweep(config)
+    records = list(Game(config, [Sweeper(2), SayANumber()]).records())
     first = [record for record in records if record["agent"] == "pirate-1"]
     found_at = next(
         i for i, record in enumerate(first) if record["outcome"]["found_treasure"]
     )
     assert first[found_at]["outcome"]["position"] == [1, 0]
-    for record in first[found_at + 1 :]:
+    later = first[found_at + 1 :]
+    assert len(later) >= 5
+    for record in later:
         assert record["did"] == [DIG]
         assert record["outcome"]["position"] == [1, 0]
-    assert records[-1]["game_over"]["reason"] == "everyone is on the treasure"
 
 
 def test_sweeper_scores_what_the_rules_predict():

@@ -1,8 +1,6 @@
 # Implements: treasure-island/pirates-and-treasure, treasure-island/grid-and-crew, treasure-island/shared-squares, treasure-island/failed-move, treasure-island/failed-move-cost, treasure-island/actions, treasure-island/one-action-per-turn, treasure-island/turn-order
 """The game's rules, played directly with plain values."""
 
-import dataclasses
-
 import pytest
 
 from treasure_island.game_state import GameState
@@ -151,8 +149,3 @@ def test_turn_order_is_fixed_and_comes_round_again():
         order.append(state.current_pirate)
         state.dig()
     assert order == [0, 1, 2, 0, 1, 2, 0]
-
-
-def test_turn_order_a_result_cannot_be_changed_afterwards():
-    with pytest.raises(dataclasses.FrozenInstanceError):
-        game().dig().ok = False

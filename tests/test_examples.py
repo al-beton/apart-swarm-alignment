@@ -46,18 +46,19 @@ def test_examples_small_each_gif_is_under_2_mb(name):
 
 @pytest.mark.parametrize("name", NAMES)
 def test_examples_stay_true_every_log_replays_byte_identical(name):
-    assert saved_game.differences(FOLDER / name) == []
+    assert saved_game.differences(FOLDER / name) == [], examples.REMAKE
 
 
 @pytest.mark.parametrize("name", NAMES)
 def test_examples_stay_true_every_gif_matches_what_is_drawn_now(name):
-    assert examples.stale(FOLDER / name) == []
+    assert examples.problem(FOLDER / name) is None
 
 
 def test_examples_stay_true_a_stale_example_says_how_to_remake_it(tmp_path):
     copy = tmp_path / NAMES[0]
     shutil.copytree(FOLDER / NAMES[0], copy)
     (copy / "game.gif").write_bytes(b"not this one")
-    assert examples.stale(copy) == ["game.gif"]
-    assert "make examples" in examples.REMAKE
+    message = examples.problem(copy)
+    assert "game.gif" in message
+    assert "make examples" in message
     assert viewer.gif(copy) != b"not this one"

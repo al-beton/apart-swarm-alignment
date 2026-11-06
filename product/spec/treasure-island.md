@@ -4,7 +4,8 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 
 ## The question
 
-- **research-question:** (decided) When a swarm of LLM agents becomes misaligned, we want to know how often they whistleblow and what in their environment changes that.
+- **sandbox-first:** (decided) The sandbox is specified and built first, as one big spec turned into a stack of pull requests, before any experiment on top of it.
+- **research-question:** (open) The calls ask how often a misaligned swarm whistleblows and what in the environment changes that, but handing one agent a secret may only show candour about windfall information.
 - **sandbox-counts:** (decided) A reproducible sandbox with levers is a worthwhile result on its own, whatever the whistleblowing numbers turn out to be.
 - **principals:** (open) Apart's brief asks for agents acting for different principals, and the calls floated both one shared score and individual scores, so we still choose which.
 - **what-they-are-told:** (open) The calls leaned towards telling agents openly that this is a study of how well they swarm, and that they are scored, since knowing it's a simulation doesn't invalidate the result.
@@ -19,6 +20,14 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 - **hidden-terrain:** (open) Optional hidden terrain such as sinking sand is found only by trying to move, and a blocked move costs the turn.
 - **shared-squares:** (open) Whether two agents may stand on one square is not yet set, and the score needs them all on the treasure.
 - **random-events:** (open) Game events such as a clue washing ashore were floated as a reason to look back through the log.
+
+## The pirates
+
+- **pirate-definition:** (decided) A pirate is defined by its personality, the free-form text on its head and its RGB colour, so a crew can be varied and told apart.
+- **crew-varies:** (decided) A run can have different numbers of pirates, each with its own definition.
+- **graphics-elsewhere:** (decided) The graphics are generated elsewhere, and the sandbox only has to say what each pirate is and what it did.
+- **personality-reach:** (open) Whether personality reaches the model through its prompt, and what it means for a pirate with no model, is not yet set.
+- **head-text-reach:** (open) Whether the head text is fixed by the config or can change in play, and whether other pirates can see it, is not yet set.
 
 ## The turn
 
@@ -67,7 +76,7 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 ## The viewer
 
 - **readable-at-once:** (decided) A reader should grasp what happened from the animation alone, as much a goal as the mechanics.
-- **pokemon-style:** (decided) The view is classic tile-based, with pirates told apart by colour or a letter, moving in 4 directions, speaking in speech bubbles.
+- **pokemon-style:** (decided) The view is classic tile-based, with pirates told apart by their colour and head text, moving in 4 directions, speaking in speech bubbles.
 - **side-panel:** (decided) A side panel shows whose turn it is and the part of the chat that agent can see.
 - **shows-thinking:** (open) The calls imagine the viewer showing what an agent thought and decided; how much private thinking is on screen is not yet set.
 - **paper-figures:** (open) Since a paper can't embed an animation, it gets a sequence of about 4 stills with arrows showing where agents went.
@@ -131,3 +140,9 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 | `one-line-replay` | not yet | — |
 | `no-token-strategies` | not yet | — |
 | `gif-per-change` | not yet | — |
+| `sandbox-first` | not yet | — |
+| `pirate-definition` | not yet | — |
+| `crew-varies` | not yet | — |
+| `graphics-elsewhere` | not yet | — |
+| `personality-reach` | not yet | — |
+| `head-text-reach` | not yet | — |

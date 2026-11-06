@@ -16,7 +16,7 @@ The game itself is still to be built; what it should do goes in `product/spec/`.
 | `make test` | runs every test, in parallel |
 | `make spec-check` | checks that the spec, the code and the tests point at each other |
 | `uv run treasure-island --help` | shows what the game's command can do |
-| `uv run treasure-island run configs/skeleton.toml --seed 0` | plays one game into a new folder under `runs/` |
+| `uv run treasure-island run configs/skeleton.toml --seed 0` | plays one game into a new folder under `runs/` (`configs/sweep.toml` and `configs/counter.toml` play the scripted agents, for free) |
 | `uv run treasure-island replay runs/<name>` | checks a run offline, for free, by rebuilding its events from its stored replies |
 
 ## How we work

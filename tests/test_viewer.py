@@ -69,9 +69,9 @@ def test_one_renderer_the_gif_holds_exactly_the_frames_the_page_serves(
     drawn = []
     draw = viewer.frame
 
-    def counted(records, turn, size, pirates=None):
+    def counted(records, turn, *rest):
         drawn.append(turn)
-        return draw(records, turn, size, pirates)
+        return draw(records, turn, *rest)
 
     monkeypatch.setattr(viewer, "frame", counted)
     frames = list(png_frames(viewer.gif(folder)))

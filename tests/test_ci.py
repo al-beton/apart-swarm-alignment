@@ -1,4 +1,4 @@
-# Implements: assets/sheet-on-every-pr, ci/ci-minutes, ci/one-gate, ci/ci-runs-everything, ci/no-model-calls, tooling/how-we-work, specs-and-docs/folder-guides, agent-setup/reuse-old-work
+# Implements: assets/sheet-on-every-pr, ci/ci-minutes, ci/one-gate, ci/ci-runs-everything, ci/no-model-calls, tooling/how-we-work, specs-and-docs/folder-guides, agent-setup/reuse-old-work, treasure-island/gif-per-change
 """The gate, and the few files a newcomer starts from, are what the spec says."""
 
 import re
@@ -169,3 +169,55 @@ def test_reuse_old_work_links_the_commit_and_names_what_to_copy():
         "deploy/",
     ):
         assert name in section, name
+
+
+def gif_workflow():
+    return yaml.safe_load((WORKFLOWS / "game-gif.yml").read_text())
+
+
+def gif_runs(job):
+    steps = gif_workflow()["jobs"][job]["steps"]
+    return " ".join(str(step.get("run", "")) for step in steps)
+
+
+def test_gif_per_change_plays_a_whole_game_and_renders_it_from_that_commit():
+    runs = gif_runs("render")
+    assert "treasure-island run configs/s-sweep.toml --seed 7 --no-watch" in runs
+    assert "treasure-island render" in runs
+    steps = gif_workflow()["jobs"]["render"]["steps"]
+    assert any("upload-artifact" in step.get("uses", "") for step in steps)
+    assert (ROOT / "configs/s-sweep.toml").is_file()
+
+
+def test_gif_per_change_never_blocks_merging():
+    # It's its own workflow, and nothing in the gate waits for it.
+    assert "gif" not in " ".join(workflow()["jobs"])
+    assert "game-gif" not in (WORKFLOWS / "blocking-checks.yml").read_text()
+
+
+def test_gif_per_change_keeps_write_access_away_from_the_branch_code():
+    flow = gif_workflow()
+    assert flow["permissions"] == {"contents": "read"}
+    jobs = flow["jobs"]
+    assert "pull-requests" not in jobs["render"].get("permissions", {})
+    assert jobs["comment"]["permissions"] == {"pull-requests": "write"}
+    assert jobs["comment"]["needs"] == "render"
+    uses = [step.get("uses", "") for step in jobs["comment"]["steps"]]
+    assert not any("checkout" in use for use in uses)
+
+
+def test_gif_per_change_updates_the_same_comment_on_a_later_push():
+    runs = gif_runs("comment")
+    assert "<!-- game-gif -->" in runs
+    assert "PATCH" in runs
+    assert "gh pr comment" in runs
+    # Only one comment comes out of two pushes close together.
+    assert gif_workflow()["concurrency"]["cancel-in-progress"] is True
+
+
+def test_gif_per_change_links_the_gif_of_that_commit():
+    runs = gif_runs("comment")
+    assert "GIF_URL" in runs
+    assert "SHA" in runs
+    env = gif_workflow()["jobs"]["comment"]["steps"][0]["env"]
+    assert "needs.render.outputs" in env["GIF_URL"]

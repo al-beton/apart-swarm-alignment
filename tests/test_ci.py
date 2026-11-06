@@ -126,6 +126,8 @@ def test_sheet_on_every_pr_shows_the_latest_commit_s_sheet_in_one_comment():
 def test_sheet_on_every_pr_shows_the_catwalk_beside_the_sheet_from_the_same_commit():
     run = sheet_steps()[0]["run"]
     assert "raw.githubusercontent.com/$REPO/$SHA/assets/catwalk.gif" in run
+    # A branch from before the catwalk gets the sheet alone, not a broken image.
+    assert '--head --output /dev/null "$catwalk"' in run
     # One table row, so the two sit side by side.
     assert re.search(r"\| !\[[^]]*\]\(\$url\) \| !\[[^]]*\]\(\$catwalk\) \|", run)
 

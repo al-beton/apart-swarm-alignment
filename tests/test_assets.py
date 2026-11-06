@@ -2,13 +2,14 @@
 """The art is what the spec says, and the committed images match the code."""
 
 import re
+from functools import cache
 from pathlib import Path
 
 import pytest
-from assets.catwalk import GROUND, LOOP, catwalk_frames, catwalk_gif, ground, walk
 from PIL import Image
 
 from assets import generate
+from assets.catwalk import GROUND, LOOP, catwalk_frames, catwalk_gif, ground, walk
 from assets.font import CHARS, FONT_HEIGHT, text_width
 from assets.generate import build
 from assets.pirates import (
@@ -196,9 +197,15 @@ def test_catwalk_crosses_a_sample_of_walkable_tiles():
     assert len(colours) >= 3
 
 
+@cache
+def built_gif():
+    """Building it takes a second or two, so the tests share one."""
+    return catwalk_gif()
+
+
 def test_catwalk_gif_shows_exactly_what_was_drawn(tmp_path):
     path = tmp_path / "catwalk.gif"
-    path.write_bytes(catwalk_gif())
+    path.write_bytes(built_gif())
     with Image.open(path) as gif:
         assert gif.format == "GIF"
         assert gif.n_frames == LOOP
@@ -209,9 +216,9 @@ def test_catwalk_gif_shows_exactly_what_was_drawn(tmp_path):
 
 
 def test_catwalk_is_deterministic_and_the_committed_gif_matches_the_code():
-    made = catwalk_gif()
-    assert made == catwalk_gif()
-    assert (ASSETS / "catwalk.gif").read_bytes() == made, "stale: run make catwalk"
+    assert built_gif() == catwalk_gif()
+    committed = (ASSETS / "catwalk.gif").read_bytes()
+    assert committed == built_gif(), "stale: run make catwalk"
 
 
 def test_catwalk_is_under_two_megabytes():
@@ -225,5 +232,5 @@ def test_catwalk_make_catwalk_and_make_assets_both_write_it(tmp_path, monkeypatc
     )
     monkeypatch.setattr(generate, "ASSETS", tmp_path)
     generate.main()
-    assert (tmp_path / "catwalk.gif").read_bytes() == catwalk_gif()
+    assert (tmp_path / "catwalk.gif").read_bytes() == built_gif()
     assert (tmp_path / "sheet.png").is_file()

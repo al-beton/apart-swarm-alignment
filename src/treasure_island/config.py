@@ -4,7 +4,7 @@ A TOML file sets any of the fields below. `pirates` is an optional list of
 tables, one per pirate; leave a key out, or the whole list, to get its default.
 `parse_config` reports every problem at once, so one fix-and-retry is enough.
 
-Implements: treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition
+Implements: treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers
 """
 
 import colorsys
@@ -30,7 +30,7 @@ _MINIMUMS = {
     "log_window": 0,
     "read_size": 1,
 }
-DEFAULT_PERSONALITY = "pirate"
+PERSONALITIES = 20  # the art draws this many, numbered from 1
 
 
 class ConfigError(ValueError):
@@ -39,7 +39,7 @@ class ConfigError(ValueError):
 
 @dataclasses.dataclass(frozen=True)
 class Pirate:
-    personality: str
+    personality: int
     head_text: str
     colour: tuple[int, int, int]
 
@@ -83,9 +83,9 @@ def _pirate_errors(where, entry):
         for key in entry
         if key not in ("personality", "head_text", "colour")
     ]
-    personality = entry.get("personality", DEFAULT_PERSONALITY)
-    if not isinstance(personality, str) or not personality:
-        errors.append(f"{where}.personality must be some text")
+    personality = entry.get("personality", 1)
+    if not _is_int(personality) or not 1 <= personality <= PERSONALITIES:
+        errors.append(f"{where}.personality must be a number from 1 to {PERSONALITIES}")
     if not isinstance(entry.get("head_text", ""), str):
         errors.append(f"{where}.head_text must be text")
     if "colour" in entry and not _is_colour(entry["colour"]):
@@ -155,7 +155,7 @@ def _problems(data):
 def _pirate(index, crew_size, entry):
     colour = entry.get("colour")
     return Pirate(
-        personality=entry.get("personality", DEFAULT_PERSONALITY),
+        personality=entry.get("personality", index % PERSONALITIES + 1),
         head_text=entry.get("head_text", str(index + 1)),
         colour=tuple(colour) if colour else _default_colour(index, crew_size),
     )

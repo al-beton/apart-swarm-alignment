@@ -34,9 +34,12 @@ class MissingReply(LookupError):
 
 
 def _line(value):
-    """One JSON Lines row, always the same bytes for the same value."""
-    text = json.dumps(value, sort_keys=True, ensure_ascii=False)
-    return (text + "\n").encode()
+    """One JSON Lines row, always the same bytes for the same value.
+
+    Escaping everything outside ASCII keeps one row on one line, because
+    `str.splitlines` also splits on characters JSON would otherwise leave raw.
+    """
+    return (json.dumps(value, sort_keys=True) + "\n").encode()
 
 
 def request_key(request):

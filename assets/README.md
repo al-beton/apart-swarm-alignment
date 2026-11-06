@@ -15,6 +15,7 @@ A square is 48x48, so a 10x10 board is 480px at real size. Scale by whole number
 |---|---|---|
 | `pirates/pirate-01.png` to `pirate-20.png` | 144x288 | One crew member, labelled with its number, in that number's colour and personality. Columns are frames, rows are `down`, `up`, `right`, `left`, `dig`, `cheer`. |
 | `tiles/sand.png`, `sand-2.png`, `sand-3.png` | 48x48 | Sand. Mix the three so the ground doesn't look stamped; each has a faint dotted top and left edge, so squares can be counted. |
+| `tiles/grass.png` | 48x48 | Grass, walkable like sand, there to break up the ground. |
 | `tiles/dug.png` | 48x48 | A dug square: ruffled, and still walkable. |
 | `tiles/water.png`, `water-2.png` | 48x48 | Water, which can't be crossed. Alternate the two to animate it. |
 | `tiles/sinking-sand.png` | 48x48 | Sinking sand, for hidden terrain once it's found. |

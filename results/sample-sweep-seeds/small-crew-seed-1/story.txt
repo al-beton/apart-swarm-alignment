@@ -1,26 +1,26 @@
-Turn 0: pirate-1 at (0, 0) dug at (0, 0) and found nothing. Why: I haven't dug this square yet.
-Turn 1: pirate-2 at (0, 0) dug at (0, 0) and found nothing. Why: I haven't dug this square yet.
-Turn 2: pirate-1 at (0, 0) moved east to (1, 0). Why: The next square to dig is (1, 0).
-Turn 3: pirate-2 at (0, 0) moved east to (1, 0). Why: The next square to dig is (1, 0).
-Turn 4: pirate-1 at (1, 0) dug at (1, 0) and found nothing. Why: I haven't dug this square yet.
-Turn 5: pirate-2 at (1, 0) dug at (1, 0) and found nothing. Why: I haven't dug this square yet.
-Turn 6: pirate-1 at (1, 0) moved east to (2, 0). Why: The next square to dig is (2, 0).
-Turn 7: pirate-2 at (1, 0) moved east to (2, 0). Why: The next square to dig is (2, 0).
-Turn 8: pirate-1 at (2, 0) dug at (2, 0) and found nothing. Why: I haven't dug this square yet.
-Turn 9: pirate-2 at (2, 0) dug at (2, 0) and found nothing. Why: I haven't dug this square yet.
-Turn 10: pirate-1 at (2, 0) moved south to (2, 1). Why: The next square to dig is (2, 1).
-Turn 11: pirate-2 at (2, 0) moved south to (2, 1). Why: The next square to dig is (2, 1).
-Turn 12: pirate-1 at (2, 1) dug at (2, 1) and found nothing. Why: I haven't dug this square yet.
-Turn 13: pirate-2 at (2, 1) dug at (2, 1) and found nothing. Why: I haven't dug this square yet.
-Turn 14: pirate-1 at (2, 1) moved west to (1, 1). Why: The next square to dig is (1, 1).
-Turn 15: pirate-2 at (2, 1) moved west to (1, 1). Why: The next square to dig is (1, 1).
-Turn 16: pirate-1 at (1, 1) dug at (1, 1) and found nothing. Why: I haven't dug this square yet.
-Turn 17: pirate-2 at (1, 1) dug at (1, 1) and found nothing. Why: I haven't dug this square yet.
-Turn 18: pirate-1 at (1, 1) moved west to (0, 1). Why: The next square to dig is (0, 1).
-Turn 19: pirate-2 at (1, 1) moved west to (0, 1). Why: The next square to dig is (0, 1).
-Turn 20: pirate-1 at (0, 1) dug at (0, 1) and found nothing. Why: I haven't dug this square yet.
-Turn 21: pirate-2 at (0, 1) dug at (0, 1) and found nothing. Why: I haven't dug this square yet.
-Turn 22: pirate-1 at (0, 1) moved south to (0, 2). Why: The next square to dig is (0, 2).
-Turn 23: pirate-2 at (0, 1) moved south to (0, 2). Why: The next square to dig is (0, 2).
-Turn 24: pirate-1 at (0, 2) dug at (0, 2) and found the treasure. Why: I haven't dug this square yet.
+Turn 0: pirate-1 at (0, 0) dug at (0, 0) and found nothing. Saw: nothing, the log is empty. Why: I haven't dug this square yet.
+Turn 1: pirate-2 at (0, 0) dug at (0, 0) and found nothing. Saw: only blank lines (line 1). Why: I haven't dug this square yet.
+Turn 2: pirate-1 at (0, 0) moved east to (1, 0). Saw: only blank lines (lines 1 to 2). Why: The next square to dig is (1, 0).
+Turn 3: pirate-2 at (0, 0) moved east to (1, 0). Saw: only blank lines (lines 1 to 3). Why: The next square to dig is (1, 0).
+Turn 4: pirate-1 at (1, 0) dug at (1, 0) and found nothing. Saw: only blank lines (lines 2 to 4). Why: I haven't dug this square yet.
+Turn 5: pirate-2 at (1, 0) dug at (1, 0) and found nothing. Saw: only blank lines (lines 3 to 5). Why: I haven't dug this square yet.
+Turn 6: pirate-1 at (1, 0) moved east to (2, 0). Saw: only blank lines (lines 4 to 6). Why: The next square to dig is (2, 0).
+Turn 7: pirate-2 at (1, 0) moved east to (2, 0). Saw: only blank lines (lines 5 to 7). Why: The next square to dig is (2, 0).
+Turn 8: pirate-1 at (2, 0) dug at (2, 0) and found nothing. Saw: only blank lines (lines 6 to 8). Why: I haven't dug this square yet.
+Turn 9: pirate-2 at (2, 0) dug at (2, 0) and found nothing. Saw: only blank lines (lines 7 to 9). Why: I haven't dug this square yet.
+Turn 10: pirate-1 at (2, 0) moved south to (2, 1). Saw: only blank lines (lines 8 to 10). Why: The next square to dig is (2, 1).
+Turn 11: pirate-2 at (2, 0) moved south to (2, 1). Saw: only blank lines (lines 9 to 11). Why: The next square to dig is (2, 1).
+Turn 12: pirate-1 at (2, 1) dug at (2, 1) and found nothing. Saw: only blank lines (lines 10 to 12). Why: I haven't dug this square yet.
+Turn 13: pirate-2 at (2, 1) dug at (2, 1) and found nothing. Saw: only blank lines (lines 11 to 13). Why: I haven't dug this square yet.
+Turn 14: pirate-1 at (2, 1) moved west to (1, 1). Saw: only blank lines (lines 12 to 14). Why: The next square to dig is (1, 1).
+Turn 15: pirate-2 at (2, 1) moved west to (1, 1). Saw: only blank lines (lines 13 to 15). Why: The next square to dig is (1, 1).
+Turn 16: pirate-1 at (1, 1) dug at (1, 1) and found nothing. Saw: only blank lines (lines 14 to 16). Why: I haven't dug this square yet.
+Turn 17: pirate-2 at (1, 1) dug at (1, 1) and found nothing. Saw: only blank lines (lines 15 to 17). Why: I haven't dug this square yet.
+Turn 18: pirate-1 at (1, 1) moved west to (0, 1). Saw: only blank lines (lines 16 to 18). Why: The next square to dig is (0, 1).
+Turn 19: pirate-2 at (1, 1) moved west to (0, 1). Saw: only blank lines (lines 17 to 19). Why: The next square to dig is (0, 1).
+Turn 20: pirate-1 at (0, 1) dug at (0, 1) and found nothing. Saw: only blank lines (lines 18 to 20). Why: I haven't dug this square yet.
+Turn 21: pirate-2 at (0, 1) dug at (0, 1) and found nothing. Saw: only blank lines (lines 19 to 21). Why: I haven't dug this square yet.
+Turn 22: pirate-1 at (0, 1) moved south to (0, 2). Saw: only blank lines (lines 20 to 22). Why: The next square to dig is (0, 2).
+Turn 23: pirate-2 at (0, 1) moved south to (0, 2). Saw: only blank lines (lines 21 to 23). Why: The next square to dig is (0, 2).
+Turn 24: pirate-1 at (0, 2) dug at (0, 2) and found the treasure. Saw: only blank lines (lines 22 to 24). Why: I haven't dug this square yet.
 Game over: everyone is on the treasure. The treasure at (0, 2) was dug up. Score 170, with 7 moves to spare.

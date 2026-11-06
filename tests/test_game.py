@@ -1,4 +1,4 @@
-# Implements: runs/walking-skeleton
+# Implements: runs/walking-skeleton, event-log/crew-positions
 """The tiny game that proves the path from config to events."""
 
 import pytest
@@ -55,3 +55,12 @@ def test_walking_skeleton_a_said_line_is_recorded():
     event = next(play(solo(), 0, asking("write Ahoy there")))
     assert event["did"] == [{"action": "write", "text": "Ahoy there"}]
     assert event["outcome"] == {"position": [0, 0], "found_treasure": False}
+
+
+def test_crew_positions_every_record_says_where_the_crew_stands():
+    events = list(play(Config(size=3, pirates=2, turns=4), 0, asking("move north")))
+    assert len(events) == 4
+    for event in events:
+        assert set(event["crew"]) == {"pirate-a", "pirate-b"}
+        assert event["crew"][event["agent"]] == event["saw"]["position"]
+    assert events[1]["crew"]["pirate-a"] == events[0]["outcome"]["position"]

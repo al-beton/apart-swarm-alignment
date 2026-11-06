@@ -1,4 +1,4 @@
-# Implements: viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder
+# Implements: event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder
 """Watching a run in the browser and rendering it to a GIF from one renderer."""
 
 import io
@@ -93,10 +93,22 @@ def test_frame_shows_the_swarm_every_pirate_whose_turn_the_bubble_and_the_log():
     assert viewer.scene(RECORDS, 2, size=3)["treasure"] == [1, 0]
 
 
-def test_frame_shows_the_swarm_a_pirate_is_drawn_before_its_first_turn():
-    scene = viewer.scene(RECORDS, 0, size=3)
+def test_crew_positions_a_frame_shows_a_pirate_before_its_first_turn():
+    first = {**RECORDS[0], "crew": {"pirate-a": [0, 0], "pirate-b": [2, 2]}}
+    scene = viewer.scene([first], 0, size=3)
     assert scene["positions"] == {"pirate-a": [1, 0], "pirate-b": [2, 2]}
     assert scene["bubble"] == "move east"
+
+
+def test_frame_shows_the_swarm_pirates_on_one_square_are_all_visible():
+    together = [
+        record(0, "pirate-a", [1, 1], [1, 1]),
+        record(1, "pirate-b", [1, 1], [1, 1]),
+    ]
+    image = viewer.frame(together, 1, 3).convert("RGB")
+    colours = {image.getpixel((x, y)) for x in range(144) for y in range(144)}
+    assert viewer.rgb(viewer.COLOURS[0]) in colours
+    assert viewer.rgb(viewer.COLOURS[1]) in colours
 
 
 def test_frame_shows_the_swarm_as_an_image_with_grid_panel_and_log(folder):

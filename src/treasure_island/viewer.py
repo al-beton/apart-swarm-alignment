@@ -4,7 +4,8 @@ Everything visual reads `events.jsonl` and nothing else, so a frame can be
 drawn while the game is still writing. `scene` turns the records up to a turn
 into what a frame shows: the grid size, where every pirate stands (from the
 turn's `crew`, so pirates that haven't acted yet are there too), whose turn
-it is, what it said and the log lines it saw. `frame` draws that scene with
+it is, what it said and the log lines it saw, and under the board the turn's line of
+the story, word for word, so a frame and the log can be matched up. `frame` draws that scene with
 Pillow. The browser page asks for `/frame/<turn>.png` and the GIF strings the
 same PNGs together, which is what keeps the two from ever disagreeing.
 
@@ -18,7 +19,7 @@ The side panel is the art's parchment with the acting pirate's portrait, what it
 in plain words and a trail of its recent thoughts, all wrapped to fit: a reader should
 be able to follow the game from the frames alone.
 
-Implements: treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/crowds-fan-out, treasure-island/pokemon-style, viewer/slideshow-file, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom
+Implements: viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/crowds-fan-out, treasure-island/pokemon-style, viewer/slideshow-file, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom
 """
 
 import base64
@@ -64,6 +65,7 @@ _BUBBLE_CHARACTERS = 90
 STRIP_ROWS = 5
 STRIP = 24 + (STRIP_ROWS + 1) * LINE + 4  # the parchment's edges, a heading and rows
 _STRIP_LEFT = 14
+_CAPTION_ROWS = 2  # the least a caption keeps room for
 FRAME_MS = 600
 _PLACES_THE_TREASURE = ("grid_size", "crew_size", "landing_square", "seed")
 
@@ -407,13 +409,38 @@ def _strip_image(shown, width):
     return image
 
 
+def caption_rows(story, width):
+    """A line of the story, wrapped to fit a frame this wide."""
+    return wrap(story, (width - 2 * _STRIP_LEFT) // text_width("x"))
+
+
+def rows_height(rows):
+    """How tall a caption with this many rows is, parchment's edges included."""
+    return 24 + rows * LINE
+
+
+def caption_height(records, width):
+    """Tall enough for the longest line in this run, so no frame needs another size."""
+    rows = [len(caption_rows(r.get("story", ""), width)) for r in records]
+    return rows_height(max(max(rows, default=0), _CAPTION_ROWS))
+
+
+def _caption_image(story, width, height):
+    image = panel(width, height)
+    for row, text in enumerate(caption_rows(story, width)):
+        draw_text(image, (_STRIP_LEFT, 12 + row * LINE), text)
+    return image
+
+
 def frame(records, turn, size, pirates=None, treasure=None):
-    """The image for one turn: ground, pirates, bubble, side panel and log strip."""
+    """The image for one turn: ground, pirates, bubble, panel, caption and log strip."""
     pirates = pirates or _default_pirates(_crew_names(records))
     shown = scene(records, turn, size, treasure)
     grid = max(size, 1) * TILE
     board = max(grid, PANEL_HEIGHT)
-    image = Image.new("RGB", (grid + PANEL, board + STRIP), "#2b2b2b")
+    width = grid + PANEL
+    caption = caption_height(records, width)
+    image = Image.new("RGB", (width, board + caption + STRIP), "#2b2b2b")
     _draw_ground(image, size, shown)
     _draw_pirates(image, shown, pirates)
     _draw_bubble(image, shown["positions"][shown["acting"]], shown["bubble"], size)
@@ -424,8 +451,10 @@ def frame(records, turn, size, pirates=None, treasure=None):
         _draw_mark(image, shown)
     side = _panel_image(shown, board, pirates[shown["acting"]])
     image.paste(side, (grid, 0), side)
-    strip = _strip_image(shown, grid + PANEL)
-    image.paste(strip, (0, board), strip)
+    words = _caption_image(records[turn].get("story", ""), width, caption)
+    image.paste(words, (0, board), words)
+    strip = _strip_image(shown, width)
+    image.paste(strip, (0, board + caption), strip)
     return image
 
 

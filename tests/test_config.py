@@ -1,0 +1,162 @@
+# Implements: treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition
+"""A game config sets every lever, has the spec's defaults and rejects bad values."""
+
+import pytest
+
+from treasure_island.config import ConfigError, load_config, parse_config
+
+
+def write_config(tmp_path, text):
+    path = tmp_path / "game.toml"
+    path.write_text(text)
+    return path
+
+
+def test_config_variables_a_file_sets_every_lever(tmp_path):
+    path = write_config(
+        tmp_path,
+        """
+        grid_size = 8
+        crew_size = 2
+        turns_per_pirate = 12
+        landing_square = [3, 4]
+        log_window = 5
+        read_size = 2
+        seed = 7
+        """,
+    )
+    config = load_config(path)
+    assert config.grid_size == 8
+    assert config.crew_size == 2
+    assert config.turns_per_pirate == 12
+    assert config.landing_square == (3, 4)
+    assert config.log_window == 5
+    assert config.read_size == 2
+    assert config.seed == 7
+
+
+def test_config_variables_the_defaults_are_only_defaults():
+    config = parse_config({})
+    assert config.log_window == 3
+    assert config.read_size == 3
+    assert parse_config({"log_window": 9}).log_window == 9
+
+
+def test_config_variables_the_log_window_can_be_switched_off():
+    assert parse_config({"log_window": 0}).log_window == 0
+
+
+def test_config_variables_a_seed_plays_the_same_config_again():
+    assert parse_config({"seed": 3}) == parse_config({"seed": 3})
+    assert parse_config({"seed": 3}) != parse_config({"seed": 4})
+
+
+def test_grid_and_crew_defaults_are_a_10x10_grid_and_6_pirates_on_one_square():
+    config = parse_config({})
+    assert config.grid_size == 10
+    assert config.crew_size == 6
+    assert len(config.pirates) == 6
+    assert config.landing_square == (0, 0)
+
+
+def test_scarce_turns_defaults_to_30_turns_per_pirate():
+    assert parse_config({}).turns_per_pirate == 30
+
+
+@pytest.mark.parametrize("size", [1, 5, 20, 37])
+def test_crew_varies_any_crew_size_is_accepted(size):
+    config = parse_config({"crew_size": size})
+    assert config.crew_size == size
+    assert len(config.pirates) == size
+
+
+def test_crew_varies_a_listed_crew_sets_the_crew_size():
+    config = parse_config({"pirates": [{"head_text": "a"}, {"head_text": "b"}]})
+    assert config.crew_size == 2
+    assert [pirate.head_text for pirate in config.pirates] == ["a", "b"]
+
+
+def test_crew_varies_rejects_a_crew_size_that_disagrees_with_the_list():
+    with pytest.raises(ConfigError, match="crew_size"):
+        parse_config({"crew_size": 3, "pirates": [{"head_text": "a"}]})
+
+
+def test_pirate_definition_each_pirate_has_its_own_looks():
+    config = parse_config(
+        {
+            "pirates": [
+                {"personality": "bold", "head_text": "Anne", "colour": [255, 0, 0]},
+                {"personality": "shy", "head_text": "Mary", "colour": [0, 0, 255]},
+            ]
+        }
+    )
+    first, second = config.pirates
+    assert (first.personality, first.head_text, first.colour) == (
+        "bold",
+        "Anne",
+        (255, 0, 0),
+    )
+    assert (second.personality, second.head_text, second.colour) == (
+        "shy",
+        "Mary",
+        (0, 0, 255),
+    )
+
+
+def test_pirate_definition_a_default_crew_can_be_told_apart():
+    for size in (6, 20):
+        pirates = parse_config({"crew_size": size}).pirates
+        assert len({pirate.head_text for pirate in pirates}) == size
+        assert len({pirate.colour for pirate in pirates}) == size
+
+
+def test_pirate_definition_a_partly_defined_pirate_keeps_the_other_defaults():
+    pirate = parse_config({"pirates": [{"head_text": "Anne"}]}).pirates[0]
+    assert pirate.head_text == "Anne"
+    assert pirate.personality
+    assert len(pirate.colour) == 3
+
+
+@pytest.mark.parametrize(
+    "bad, named",
+    [
+        ({"grid_size": 0}, "grid_size"),
+        ({"grid_size": "10"}, "grid_size"),
+        ({"grid_size": True}, "grid_size"),
+        ({"crew_size": 0}, "crew_size"),
+        ({"turns_per_pirate": -1}, "turns_per_pirate"),
+        ({"log_window": -1}, "log_window"),
+        ({"read_size": 0}, "read_size"),
+        ({"seed": "one"}, "seed"),
+        ({"landing_square": [1]}, "landing_square"),
+        ({"landing_square": 3}, "landing_square"),
+        ({"landing_square": [10, 0]}, "landing_square"),
+        ({"landing_square": [0, -1]}, "landing_square"),
+        ({"grid_sizes": 10}, "grid_sizes"),
+        ({"pirates": []}, "pirates"),
+        ({"pirates": "anne"}, "pirates"),
+        ({"pirates": ["anne"]}, r"pirates\[0\]"),
+        ({"pirates": [{"hat": "big"}]}, "hat"),
+        ({"pirates": [{"personality": ""}]}, "personality"),
+        ({"pirates": [{"head_text": 3}]}, "head_text"),
+        ({"pirates": [{"colour": [255, 0]}]}, "colour"),
+        ({"pirates": [{"colour": [256, 0, 0]}]}, "colour"),
+        ({"pirates": [{"colour": "red"}]}, "colour"),
+    ],
+)
+def test_config_variables_a_bad_config_is_rejected_with_a_clear_message(bad, named):
+    with pytest.raises(ConfigError, match=named):
+        parse_config(bad)
+
+
+def test_config_variables_every_problem_is_named_at_once():
+    with pytest.raises(ConfigError) as caught:
+        parse_config({"grid_size": 0, "read_size": 0})
+    assert "grid_size" in str(caught.value)
+    assert "read_size" in str(caught.value)
+
+
+def test_config_variables_a_file_that_is_not_toml_is_rejected(tmp_path):
+    path = write_config(tmp_path, "grid_size = = 3")
+    with pytest.raises(ConfigError, match=path.name):
+        load_config(path)

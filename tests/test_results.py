@@ -1,4 +1,4 @@
-# Implements: results/result-folder, results/results-are-runs, results/results-listed, results/results-stay-checkable, results/sample-result, research/results-have-a-place
+# Implements: results/result-folder, results/results-are-runs, results/results-listed, results/results-stay-checkable, results/sample-result, research/results-have-a-place, results/result-gif
 """Results have one home: each a folder of run folders that anyone can replay."""
 
 import os
@@ -90,3 +90,12 @@ def test_results_have_a_place_the_team_is_told_where_results_go(guide):
     text = (ROOT / guide).read_text()
     for folder in ("results/", "examples/", "runs/"):
         assert folder in text, f"{guide} doesn't mention {folder}"
+
+
+def test_result_gif_each_result_has_one_under_2_mb():
+    results = [path for path in (ROOT / "results").iterdir() if path.is_dir()]
+    assert results
+    for result in results:
+        gif = result / "game.gif"
+        assert gif.read_bytes().startswith(b"GIF"), result
+        assert gif.stat().st_size < 2_000_000, result

@@ -1,4 +1,4 @@
-# Implements: assets/sheet-on-every-pr, ci/ci-minutes, ci/one-gate, ci/ci-runs-everything, ci/no-model-calls, tooling/how-we-work, specs-and-docs/folder-guides, agent-setup/reuse-old-work, treasure-island/gif-per-change, results/examples-on-every-pr
+# Implements: assets/sheet-on-every-pr, ci/ci-minutes, ci/one-gate, ci/ci-runs-everything, ci/no-model-calls, tooling/how-we-work, specs-and-docs/folder-guides, agent-setup/reuse-old-work, treasure-island/gif-per-change, results/examples-on-every-pr, results/result-on-its-pr
 """The gate, and the few files a newcomer starts from, are what the spec says."""
 
 import re
@@ -247,3 +247,40 @@ def test_examples_on_every_pr_lists_examples_from_that_commit():
     runs = gif_runs("comment")
     assert "contents/examples?ref=$SHA" in runs
     assert 'select(.type == \\"dir\\")' in runs or 'select(.type == "dir")' in runs
+
+
+def comment_script():
+    steps = gif_workflow()["jobs"]["comment"]["steps"]
+    return next(step["run"] for step in steps if "run" in step)
+
+
+def test_result_on_its_pr_shows_summary_endings_and_gif():
+    script = comment_script()
+    assert "$raw/README.md" in script
+    assert "$raw/game.gif" in script
+    assert "![$result]($raw/game.gif)" in script
+    assert "story.txt" in script
+    assert "tail -n 1" in script
+
+
+def test_result_on_its_pr_reads_only_what_the_pull_request_changed():
+    script = comment_script()
+    assert "repos/$REPO/pulls/$PR/files" in script
+    assert "results/" in script
+    # Only committed files at this commit, and still no checkout in this job.
+    assert "raw.githubusercontent.com/$REPO/$SHA/results/$result" in script
+
+
+def test_result_on_its_pr_has_no_section_without_a_result():
+    script = comment_script()
+    assert 'if [ -n "$results" ]' in script
+    assert "**Results in this pull request**" in script
+    # A result the pull request removes has nothing to show.
+    assert 'curl --silent --fail --head --output /dev/null "$raw/README.md"' in script
+
+
+def test_result_on_its_pr_finds_the_section_a_result_calls_what_it_shows():
+    # The heading the comment looks for is the one every result must have.
+    assert "## What it shows" in comment_script()
+    guide = (ROOT / "results/README.md").read_text()
+    assert "`## What it shows`" in guide

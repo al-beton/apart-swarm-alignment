@@ -10,6 +10,8 @@
 - **results-listed:** `results/README.md` lists every result, so a reader can see at once what's been found.
 - **results-stay-checkable:** CI replays every committed result with no keys and no network, so anyone can trust a result without paying to rerun it.
 - **sample-result:** `results/` holds a small sample result from a scripted game, so the layout can be copied and costs nothing to check.
+- **result-gif:** Each result holds a `game.gif` of one of its games, under 2 MB, so a reader sees it play without running anything.
+- **result-on-its-pr:** A pull request that adds or changes a result shows what it found, how each game ended and its GIF in the one game comment, from committed files alone, and one that touches no result shows no results section, so a reviewer can see what came in without running anything.
 
 ## Where this is enforced
 
@@ -25,3 +27,5 @@
 | `results-listed` | `results/README.md` | `test_results_listed_in_the_index_exactly_once_each` |
 | `results-stay-checkable` | `results/**`, `.github/workflows/blocking-checks.yml` | `test_results_stay_checkable_replaying_with_no_keys_or_network` |
 | `sample-result` | `results/sample-sweep-seeds/**` | `test_sample_result_is_a_scripted_game_that_cost_nothing` |
+| `result-gif` | `results/**`, `results/README.md` | `test_result_gif_each_result_has_one_under_2_mb` |
+| `result-on-its-pr` | `.github/workflows/game-gif.yml` | `test_result_on_its_pr_shows_summary_endings_and_gif`, `test_result_on_its_pr_reads_only_what_the_pull_request_changed`, `test_result_on_its_pr_has_no_section_without_a_result`, `test_result_on_its_pr_finds_the_section_a_result_calls_what_it_shows` |

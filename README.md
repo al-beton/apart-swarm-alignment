@@ -13,7 +13,7 @@ Each committed run replays offline with no API keys, so anyone can clone this an
 
 | Feature | The one command that shows it |
 |---|---|
-| Two scripted pirates sweep a small grid for the treasure, with no model and no tokens | `uv run treasure-island run configs/sweep.toml --seed 5` |
+| Two scripted pirates sweep a small grid for the treasure, playing live in your browser, with no model and no tokens. Run it again and the same game plays turn by turn | `uv run treasure-island run configs/sweep.toml --seed 5` |
 | A pirate that says a number each turn, so the log has chatter | `uv run treasure-island run configs/counter.toml --seed 1` |
 | A committed game replays offline, byte for byte, with no keys and no network | `uv run treasure-island replay runs/sweep-seed-5` |
 | Scripted pirates play the real game: an S-sweep that finds the treasure, saved as a named run with its story, both logs and its config | `uv run treasure-island run configs/s-sweep.toml --seed 7` |
@@ -25,6 +25,8 @@ Each committed run replays offline with no API keys, so anyone can clone this an
 | The game's command and what it can do | `uv run treasure-island --help` |
 
 A test runs or checks each of these commands, so this table can't go stale.
+
+A model's replies are reused from earlier runs, so a repeat spends nothing. `run` takes `--no-watch` to skip the browser, as CI does, and `--no-cache` to ask for every reply again.
 
 **How the real game is built:** `src/treasure_island/game_loop.py` plays a whole game from a config, with every lever a variable (`config.py`), the pirates' log with its free window and paid reads (`pirates_log.py`) and the score (`score.py`). A saved game holds `story.txt` (the game to read, one line per turn), `pirates-log.txt` (all the pirates can see), `events.jsonl` (the full record), `config.json`, `replies.jsonl` and `manifest.json`. Configs without a `brain`, such as `configs/sweep.toml`, still play the small stand-in game.
 

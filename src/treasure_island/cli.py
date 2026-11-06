@@ -1,20 +1,47 @@
 """The `treasure-island` command.
 
-Implements: tooling/package-and-cli, runs/run-command, runs/replay-byte-identical, viewer/watch-live, viewer/render-gif, treasure-island/named-runs, treasure-island/everything-cached
+`run` opens the live view unless told not to. At a terminal it keeps the page up
+after the game ends, until Ctrl-C; a script gets its prompt back when the game ends.
+
+Implements: tooling/package-and-cli, runs/run-command, runs/replay-byte-identical, runs/plays-live, runs/no-cache, viewer/watch-live, viewer/render-gif, treasure-island/named-runs, treasure-island/everything-cached
 """
 
 import argparse
 import sys
+import threading
+import webbrowser
 from pathlib import Path
 
 from treasure_island import runs, saved_game, viewer
 
 
+def _serve_until_interrupted():
+    print("The page stays up until you press Ctrl-C.", flush=True)
+    try:
+        threading.Event().wait()
+    except KeyboardInterrupt:
+        pass
+
+
 def _run(args):
     if saved_game.is_real_config(args.config):
         print(saved_game.play_saved(args.config, args.seed))
-    else:
-        print(runs.run(args.config, args.seed))
+        return 0
+    use_cache = not args.no_cache
+    if args.no_watch:
+        print(runs.run(args.config, args.seed, use_cache))
+        return 0
+
+    def open_the_view(folder):
+        httpd = viewer.server(folder, port=0)
+        threading.Thread(target=httpd.serve_forever, daemon=True).start()
+        url = f"http://127.0.0.1:{httpd.server_address[1]}/"
+        print(f"Watching {folder} at {url}", flush=True)
+        webbrowser.open(url)
+
+    runs.run(args.config, args.seed, use_cache, open_the_view, runs.PACE_SECONDS)
+    if sys.stdin.isatty():
+        _serve_until_interrupted()
     return 0
 
 
@@ -66,6 +93,16 @@ def main(argv=None):
     run = commands.add_parser("run", help="play one game into a new run folder")
     run.add_argument("config", help="a TOML file, such as configs/s-sweep.toml")
     run.add_argument("--seed", type=int, required=True)
+    run.add_argument(
+        "--no-watch",
+        action="store_true",
+        help="don't open the live view or pace the turns, as in CI",
+    )
+    run.add_argument(
+        "--no-cache",
+        action="store_true",
+        help="ignore earlier runs' replies and ask for them again",
+    )
     run.set_defaults(handler=_run)
     replay = commands.add_parser(
         "replay", help="check a run folder by replaying it offline"

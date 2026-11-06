@@ -115,7 +115,7 @@ def test_counter_says_the_next_number_each_turn_and_never_digs():
 @pytest.mark.parametrize("name", ["sweep", "counter"])
 def test_free_runs_in_ci_each_scripted_config_plays_a_full_game(name, offline, capsys):
     config = ROOT / "configs" / f"{name}.toml"
-    assert cli.main(["run", str(config), "--seed", "1"]) == 0
+    assert cli.main(["run", str(config), "--seed", "1", "--no-watch"]) == 0
     folder = offline / capsys.readouterr().out.strip()
     manifest = json.loads((folder / "manifest.json").read_text())
     assert manifest["cost_usd"] == 0

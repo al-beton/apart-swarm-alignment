@@ -1,10 +1,8 @@
-# Implements: runs/run-command, runs/run-folder, runs/replies-keyed, runs/manifest-varies, runs/replay-byte-identical, runs/no-silent-model-calls, runs/plays-live, runs/paced-from-cache, runs/cache-across-runs, runs/no-cache, treasure-island/everything-cached, runs/same-answer-wins
-"""Running a game into a folder, and replaying that folder offline."""
+# Implements: runs/one-game, runs/run-command, runs/run-folder, runs/replies-keyed, runs/manifest-varies, runs/no-silent-model-calls, runs/plays-live, runs/paced-from-cache, runs/cache-across-runs, runs/same-answer-wins, runs/no-cache
+"""Running a game into a folder, and the replies a model brain will reuse."""
 
 import json
 import os
-import shutil
-import socket
 import sys
 import urllib.request
 import webbrowser
@@ -13,18 +11,19 @@ import pytest
 
 from treasure_island import cli, runs
 from treasure_island.event_log import log_errors
-from treasure_island.runs import MissingReply, Replies, replay, request_key
+from treasure_island.runs import MissingReply, Replies, earlier_replies, request_key
 
 CONFIG = """
-size = 3
-pirates = 2
-turns = 12
-model = "scripted/random"
-temperature = 0.0
+grid_size = 3
+crew_size = 2
+turns_per_pirate = 6
+landing_square = [0, 0]
+brain = "say-a-number"
 """
+TURNS = 12
 REQUEST = {
-    "agent": "pirate-a",
-    "model": "scripted/random",
+    "agent": "pirate-1",
+    "model": "some/model",
     "prompt": "You are at (0, 0).",
     "temperature": 0.0,
     "seed": 1,
@@ -50,6 +49,20 @@ def contents(folder):
     return {path.name: path.read_bytes() for path in folder.iterdir()}
 
 
+def test_one_game_a_config_with_no_brain_is_refused(config, capsys):
+    config.write_text("grid_size = 3\ncrew_size = 2\n")
+    assert cli.main(["run", str(config), "--seed", "1", "--no-watch"]) == 1
+    assert "brain" in capsys.readouterr().err
+    assert not (config.parent / "runs").exists()
+
+
+def test_one_game_a_brain_nobody_knows_is_refused_too(config, capsys):
+    config.write_text('brain = "no-such-brain"\n')
+    assert cli.main(["run", str(config), "--seed", "1", "--no-watch"]) == 1
+    assert "no-such-brain" in capsys.readouterr().err
+    assert not (config.parent / "runs").exists()
+
+
 def test_run_command_makes_a_new_folder_each_time(config, capsys):
     first = played(config, capsys)
     before = contents(first)
@@ -59,28 +72,31 @@ def test_run_command_makes_a_new_folder_each_time(config, capsys):
     assert contents(first) == before
 
 
-def test_run_folder_holds_events_replies_config_and_manifest(config, capsys):
+def test_run_folder_holds_both_logs_the_story_replies_config_and_manifest(
+    config, capsys
+):
     folder = played(config, capsys, seed=4)
     assert {path.name for path in folder.iterdir()} == {
         "events.jsonl",
+        "story.txt",
+        "pirates-log.txt",
         "replies.jsonl",
         "config.json",
         "manifest.json",
     }
     saved = json.loads((folder / "config.json").read_text())
-    assert saved["seed"] == 4 and saved["size"] == 3
+    assert saved["seed"] == 4 and saved["grid_size"] == 3
 
 
 def test_run_folder_events_pass_the_validator(config, capsys):
-    folder = played(config, capsys)
-    assert log_errors(folder / "events.jsonl") == []
+    assert log_errors(played(config, capsys) / "events.jsonl") == []
 
 
 @pytest.mark.parametrize(
     "part,other",
     [
-        ("agent", "pirate-b"),
-        ("model", "scripted/other"),
+        ("agent", "pirate-2"),
+        ("model", "some/other-model"),
         ("prompt", "You are at (1, 0)."),
         ("temperature", 0.5),
         ("seed", 2),
@@ -103,7 +119,7 @@ def test_replies_keyed_a_repeated_request_reuses_its_reply(tmp_path):
     assert (replies.hits, replies.misses, replies.cost_usd) == (1, 2, 1.0)
 
 
-@pytest.mark.parametrize("separator", ["\u2028", "\u0085", "\x0c"])
+@pytest.mark.parametrize("separator", [" ", "\u0085", "\x0c"])
 def test_replies_keyed_a_stored_reply_survives_any_line_separator(tmp_path, separator):
     text = f"dig{separator}now"
     path = tmp_path / "replies.jsonl"
@@ -121,7 +137,6 @@ def test_manifest_varies_holds_times_cost_and_cache_hits(config, capsys):
         "cache_misses",
     }
     assert manifest["cost_usd"] == 0
-    assert manifest["cache_misses"] > 0
 
 
 def test_manifest_varies_two_identical_runs_differ_nowhere_else(config, capsys):
@@ -132,47 +147,9 @@ def test_manifest_varies_two_identical_runs_differ_nowhere_else(config, capsys):
     assert first == second
 
 
-def test_replay_byte_identical_with_no_keys_or_network(config, capsys, monkeypatch):
-    folder = played(config, capsys)
-    for name in os.environ:
-        if name.endswith("_API_KEY"):
-            monkeypatch.delenv(name)
-
-    def no_network(*args, **kwargs):
-        raise AssertionError("replay opened a socket")
-
-    monkeypatch.setattr(socket, "socket", no_network)
-    assert cli.main(["replay", str(folder)]) == 0
-    rebuilt = replay(folder)
-    assert rebuilt == (folder / "events.jsonl").read_bytes()
-    assert rebuilt
-
-
-def test_replay_byte_identical_fails_when_a_reply_changed(config, capsys):
-    folder = played(config, capsys)
-    path = folder / "replies.jsonl"
-    rows = [json.loads(line) for line in path.read_text().splitlines()]
-    rows[0]["reply"] = "dig" if rows[0]["reply"] != "dig" else "move north"
-    path.write_text("".join(json.dumps(row) + "\n" for row in rows))
-    assert cli.main(["replay", str(folder)]) == 1
-
-
-def test_replay_byte_identical_leaves_the_folder_untouched(config, capsys):
-    folder = played(config, capsys)
-    before = contents(folder)
-    assert cli.main(["replay", str(folder)]) == 0
-    assert contents(folder) == before
-
-
-def test_no_silent_model_calls_a_missing_reply_fails_the_replay(config, capsys):
-    folder = played(config, capsys)
-    path = folder / "replies.jsonl"
-    path.write_text("".join(path.read_text().splitlines(keepends=True)[1:]))
+def test_no_silent_model_calls_a_missing_reply_fails_with_no_backend(tmp_path):
     with pytest.raises(MissingReply):
-        replay(folder)
-    before = contents(folder)
-    assert cli.main(["replay", str(folder)]) == 1
-    assert contents(folder) == before
+        Replies(tmp_path / "replies.jsonl").ask(REQUEST)
 
 
 class FakeModel:
@@ -183,135 +160,120 @@ class FakeModel:
 
     def __call__(self, request):
         self.calls += 1
-        return f"write call {self.calls}", 0.01
+        return f"call {self.calls}", 0.01
+
+
+def answered(name, model, started_at="2026-01-01T00:00:00+00:00"):
+    """A finished run folder under runs/ whose model answered REQUEST."""
+    folder = runs.RUNS / name
+    folder.mkdir(parents=True)
+    Replies(folder / "replies.jsonl", model).ask(REQUEST)
+    (folder / "manifest.json").write_text(json.dumps({"started_at": started_at}))
+    return folder
+
+
+def reused(folder, earlier, model=None):
+    """What a run in `folder` gets for REQUEST, given those earlier replies."""
+    return Replies(folder / "replies.jsonl", model, earlier).ask(REQUEST)
 
 
 @pytest.fixture
-def model(monkeypatch):
-    fake = FakeModel()
-    monkeypatch.setattr(runs, "backend_for", lambda name: fake)
-    return fake
+def in_runs(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / "next").mkdir()
+    return tmp_path / "next"
 
 
-def manifest_of(folder):
-    return json.loads((folder / "manifest.json").read_text())
+def test_cache_across_runs_a_repeat_asks_the_model_nothing(in_runs):
+    model = FakeModel()
+    answered("first", model)
+    replies = Replies(in_runs / "replies.jsonl", model, earlier_replies())
+    assert replies.ask(REQUEST) == "call 1"
+    assert model.calls == 1
+    assert (replies.hits, replies.misses, replies.cost_usd) == (1, 0, 0.0)
 
 
-def turns_in(folder):
-    return len((folder / "events.jsonl").read_text().splitlines())
+def test_cache_across_runs_its_folder_alone_regenerates_the_game(in_runs):
+    answered("first", FakeModel())
+    assert reused(in_runs, earlier_replies(), FakeModel()) == "call 1"
+    assert reused(in_runs, {}) == "call 1"
 
 
-def test_cache_across_runs_a_repeat_asks_the_model_nothing(config, capsys, model):
-    first = played(config, capsys)
-    asked = model.calls
-    second = played(config, capsys)
-    assert asked == 12 and model.calls == asked
-    assert first != second
-    assert (first / "events.jsonl").read_bytes() == (
-        second / "events.jsonl"
-    ).read_bytes()
-    manifest = manifest_of(second)
-    assert (manifest["cache_hits"], manifest["cache_misses"]) == (12, 0)
-    assert manifest["cost_usd"] == 0
+def test_cache_across_runs_only_the_same_request_reuses_a_reply(in_runs):
+    model = FakeModel()
+    answered("first", model)
+    other = Replies(in_runs / "replies.jsonl", model, earlier_replies())
+    assert other.ask({**REQUEST, "seed": 2}) == "call 2"
 
 
-def test_cache_across_runs_its_folder_alone_regenerates_the_game(config, capsys, model):
-    first = played(config, capsys)
-    second = played(config, capsys)
-    shutil.rmtree(first)
-    assert cli.main(["replay", str(second)]) == 0
-    assert replay(second) == (second / "events.jsonl").read_bytes()
-
-
-def test_cache_across_runs_only_the_same_request_reuses_a_reply(config, capsys, model):
-    played(config, capsys, seed=1)
-    asked = model.calls
-    played(config, capsys, seed=2)
-    assert model.calls == asked * 2
-
-
-def test_cache_across_runs_replay_never_borrows_from_another_run(config, capsys, model):
-    played(config, capsys)
-    second = played(config, capsys)
-    path = second / "replies.jsonl"
-    path.write_text("".join(path.read_text().splitlines(keepends=True)[1:]))
+def test_cache_across_runs_replay_never_borrows_from_another_run(in_runs):
+    answered("first", FakeModel())
     with pytest.raises(MissingReply):
-        replay(second)
+        reused(in_runs, {})
 
 
-def test_no_cache_asks_again_into_a_new_folder(config, capsys, model):
+def test_no_cache_asks_again_into_a_new_folder(config, capsys):
     first = played(config, capsys)
     before = contents(first)
     fresh = played(config, capsys, "--no-cache")
-    assert model.calls == 24
     assert fresh != first
     assert contents(first) == before
-    assert (fresh / "events.jsonl").read_bytes() != before["events.jsonl"]
-    assert manifest_of(fresh)["cache_misses"] == 12
-    assert cli.main(["replay", str(fresh)]) == 0
+    # Scripted brains ask nothing, so the same game comes out.
+    assert (fresh / "events.jsonl").read_bytes() == before["events.jsonl"]
 
 
-def test_no_cache_a_later_repeat_reuses_the_newest_replies(config, capsys, model):
-    played(config, capsys)
-    fresh = played(config, capsys, "--no-cache")
-    repeat = played(config, capsys)
-    assert (repeat / "events.jsonl").read_bytes() == (
-        fresh / "events.jsonl"
-    ).read_bytes()
+def test_no_cache_means_no_earlier_replies_so_the_model_is_asked_again(in_runs):
+    model = FakeModel()
+    answered("first", model)
+    assert reused(in_runs, {}, model) == "call 2"
 
 
-def two_answers(config, capsys):
-    """Two runs that answered every request differently, oldest first."""
-    return played(config, capsys), played(config, capsys, "--no-cache")
+def test_no_cache_a_later_repeat_reuses_the_newest_replies(in_runs):
+    model = FakeModel()
+    answered("first", model, "2026-01-01T00:00:00+00:00")
+    answered("fresh", model, "2026-01-02T00:00:00+00:00")
+    assert reused(in_runs, earlier_replies()) == "call 2"
 
 
-def test_same_answer_wins_whatever_the_file_times_say(config, capsys, model):
-    older, newer = two_answers(config, capsys)
+def two_answers():
+    """Two runs that answered the same request differently, oldest first."""
+    model = FakeModel()
+    return (
+        answered("b-older", model, "2026-01-01T00:00:00+00:00"),
+        answered("a-newer", model, "2026-01-02T00:00:00+00:00"),
+    )
+
+
+def test_same_answer_wins_whatever_the_file_times_say(in_runs):
+    older, newer = two_answers()
     # A fresh clone can give the files any times at all, so make them lie.
     os.utime(older / "replies.jsonl", (2_000_000_000, 2_000_000_000))
     os.utime(newer / "replies.jsonl", (1_000_000_000, 1_000_000_000))
-    repeat = played(config, capsys)
-    assert (repeat / "events.jsonl").read_bytes() == (
-        newer / "events.jsonl"
-    ).read_bytes()
+    assert reused(in_runs, earlier_replies()) == "call 2"
 
 
-def test_same_answer_wins_a_run_with_no_manifest_counts_as_the_oldest(
-    config, capsys, model
-):
-    finished, stopped = two_answers(config, capsys)
+def test_same_answer_wins_a_run_with_no_manifest_counts_as_the_oldest(in_runs):
+    _, stopped = two_answers()
     (stopped / "manifest.json").unlink()
-    repeat = played(config, capsys)
-    assert (repeat / "events.jsonl").read_bytes() == (
-        finished / "events.jsonl"
-    ).read_bytes()
+    assert reused(in_runs, earlier_replies()) == "call 1"
 
 
-def test_same_answer_wins_runs_that_started_together_go_by_folder_name(
-    config, capsys, model
-):
-    first, second = two_answers(config, capsys)
-    moment = {**manifest_of(first), "started_at": "2026-01-01T00:00:00+00:00"}
-    for folder in (first, second):
-        (folder / "manifest.json").write_text(json.dumps(moment))
-    os.utime(first / "replies.jsonl", (2_000_000_000, 2_000_000_000))
+def test_same_answer_wins_runs_that_started_together_go_by_folder_name(in_runs):
+    model = FakeModel()
+    answered("a-first", model)
+    second = answered("b-second", model)
     os.utime(second / "replies.jsonl", (1_000_000_000, 1_000_000_000))
-    assert first.name < second.name
-    repeat = played(config, capsys)
-    assert (repeat / "events.jsonl").read_bytes() == (
-        second / "events.jsonl"
-    ).read_bytes()
+    assert reused(in_runs, earlier_replies()) == "call 2"
 
 
-def test_plays_live_no_watch_opens_nothing_and_never_waits(
-    config, capsys, model, monkeypatch
-):
+def test_plays_live_no_watch_opens_nothing_and_never_waits(config, capsys, monkeypatch):
     def refuse(*args, **kwargs):
         raise AssertionError("--no-watch must not open a view or wait")
 
     monkeypatch.setattr(webbrowser, "open", refuse)
-    monkeypatch.setattr(runs.time, "sleep", refuse)
-    assert turns_in(played(config, capsys)) == 12
+    monkeypatch.setattr("time.sleep", refuse)
+    events = played(config, capsys) / "events.jsonl"
+    assert len(events.read_text().splitlines()) == TURNS
 
 
 @pytest.fixture
@@ -325,14 +287,14 @@ def watching(monkeypatch):
             seen["turns"].append(json.load(reply)["turns"])
 
     monkeypatch.setattr(webbrowser, "open", lambda url: seen["opened"].append(url))
-    monkeypatch.setattr(runs.time, "sleep", fake_sleep)
+    monkeypatch.setattr("time.sleep", fake_sleep)
     monkeypatch.setattr(
         cli, "_serve_until_interrupted", lambda: seen["served"].append(1)
     )
     return seen
 
 
-def test_plays_live_run_opens_the_view_by_default(config, capsys, model, watching):
+def test_plays_live_run_opens_the_view_by_default(config, capsys, watching):
     assert cli.main(["run", str(config), "--seed", "1"]) == 0
     out = capsys.readouterr().out
     assert len(watching["opened"]) == 1
@@ -341,7 +303,7 @@ def test_plays_live_run_opens_the_view_by_default(config, capsys, model, watchin
 
 
 def test_plays_live_stays_open_at_a_terminal_but_not_in_a_script(
-    config, capsys, model, watching, monkeypatch
+    config, capsys, watching, monkeypatch
 ):
     assert cli.main(["run", str(config), "--seed", "1"]) == 0
     assert watching["served"] == []
@@ -350,49 +312,14 @@ def test_plays_live_stays_open_at_a_terminal_but_not_in_a_script(
     assert watching["served"] == [1]
 
 
-def test_paced_from_cache_a_new_game_plays_turn_by_turn(
-    config, capsys, model, watching
-):
+def test_paced_from_cache_a_game_plays_turn_by_turn(config, capsys, watching):
     assert cli.main(["run", str(config), "--seed", "1"]) == 0
-    assert watching["turns"] == list(range(1, 13))
+    assert watching["turns"] == list(range(1, TURNS + 1))
 
 
-def test_paced_from_cache_a_cached_game_plays_turn_by_turn_too(
-    config, capsys, model, watching
-):
-    played(config, capsys)
-    asked = model.calls
+def test_paced_from_cache_a_repeat_plays_turn_by_turn_too(config, capsys, watching):
     assert cli.main(["run", str(config), "--seed", "1"]) == 0
-    assert model.calls == asked
-    assert watching["turns"] == list(range(1, 13))
-
-
-def test_cache_across_runs_a_longer_game_keeps_a_scripted_agent_s_memory(
-    tmp_path, monkeypatch, capsys
-):
-    monkeypatch.chdir(tmp_path)
-    short = tmp_path / "short.toml"
-    short.write_text('size = 3\npirates = 1\nturns = 2\nmodel = "scripted/counter"\n')
-    long = tmp_path / "long.toml"
-    long.write_text('size = 3\npirates = 1\nturns = 4\nmodel = "scripted/counter"\n')
-    played(short, capsys)
-    folder = played(long, capsys)
-    events = [json.loads(line) for line in (folder / "events.jsonl").open()]
-    assert [e["did"][0]["text"] for e in events] == ["1", "2", "3", "4"]
-    manifest = manifest_of(folder)
-    assert (manifest["cache_hits"], manifest["cache_misses"]) == (0, 4)
-
-
-def test_cache_across_runs_a_bigger_crew_keeps_a_scripted_agent_s_count(
-    tmp_path, monkeypatch, capsys
-):
-    monkeypatch.chdir(tmp_path)
-    solo = tmp_path / "solo.toml"
-    solo.write_text('size = 3\npirates = 1\nturns = 6\nmodel = "scripted/counter"\n')
-    pair = tmp_path / "pair.toml"
-    pair.write_text('size = 3\npirates = 2\nturns = 6\nmodel = "scripted/counter"\n')
-    played(solo, capsys)
-    folder = played(pair, capsys)
-    events = [json.loads(line) for line in (folder / "events.jsonl").open()]
-    said = [e["did"][0]["text"] for e in events if e["agent"] == "pirate-a"]
-    assert said == ["1", "2", "3"]
+    watching["turns"].clear()
+    watching["opened"].clear()
+    assert cli.main(["run", str(config), "--seed", "1"]) == 0
+    assert watching["turns"] == list(range(1, TURNS + 1))

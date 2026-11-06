@@ -3,7 +3,7 @@ name: review-pr
 description: Review a Treasure Island pull request, spec first, then tests, then how it's built, with inline findings. Use when asked to review any pull request in this repository.
 ---
 
-<!-- Implements: agent-setup/shared-skills, agent-setup/skills-hold-the-process, ci/checks-over-prose, commits/deliberate-messages, commits/small-sane-steps, research/hypothesis-first, research/honest-limits, research/results-from-logs, research/every-run-committed, review/follows-the-rules, review/inline-findings, review/spec-first, safety/justified-dependencies, safety/no-secrets, specs-and-docs/docs-next-to-code, specs-and-docs/no-history, workflow/issue-scope, workflow/test-first -->
+<!-- Implements: agent-setup/shared-skills, agent-setup/skills-hold-the-process, ci/checks-over-prose, commits/deliberate-messages, commits/small-sane-steps, research/hypothesis-first, research/honest-limits, research/results-from-logs, research/every-run-committed, review/follows-the-rules, review/inline-findings, review/spec-first, safety/justified-dependencies, safety/no-secrets, specs-and-docs/docs-next-to-code, specs-and-docs/no-history, workflow/audience, workflow/issue-scope, workflow/test-first -->
 
 # Review a pull request
 
@@ -18,7 +18,8 @@ description: Review a Treasure Island pull request, spec first, then tests, then
    - no API keys or other secrets in code, configs, commits, logs or test output;
    - the pull request covers only its issues;
    - commits are small and deliberately worded;
-   - new dependencies are justified in the notes.
+   - new dependencies are justified in the notes;
+   - the change helps the people using this repository again and again: it's quick to run, easy to see and easy to compare, or at least it doesn't make those harder.
 
    Leave anything `pr-gate`, `spec-check`, lint or tests already check to CI.
 4. **Report each finding inline,** on the lines it concerns. General remarks are only for the pull request as a whole (scope, title, description). Say what's wrong and what would fix it.

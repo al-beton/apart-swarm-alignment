@@ -21,6 +21,11 @@ class ReadAnswer:
     message: str = ""
 
 
+def one_line(note):
+    """A note as the log holds it: one line, however it was written."""
+    return " ".join(note.splitlines())
+
+
 class PiratesLog:
     def __init__(self, window=3, read_size=3):
         self._window = window
@@ -45,7 +50,7 @@ class PiratesLog:
 
     def write(self, note):
         """Spend the turn on a note. A note always stays on one line."""
-        self._texts.append(" ".join(note.splitlines()))
+        self._texts.append(one_line(note))
 
     def pass_turn(self):
         """A turn spent on anything but the log adds a blank line."""

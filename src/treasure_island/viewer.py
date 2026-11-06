@@ -39,6 +39,7 @@ from assets.ui import panel, speech_bubble
 from treasure_island.config import parse_config
 from treasure_island.game_state import GameState
 from treasure_island.looks import sprite_values
+from treasure_island.pirates_log import one_line
 
 ASSETS = Path(assets.__file__).parent
 SAND_TILES = ("sand", "sand-2", "sand-3")
@@ -206,7 +207,7 @@ def _log_so_far(records, turn):
     lines = []
     for number, record in enumerate(records[: turn + 1], start=1):
         words = [a["text"] for a in record["did"] if a["action"] == "write"]
-        lines.append((number, " ".join(words)))
+        lines.append((number, " ".join(one_line(word) for word in words)))
     return lines
 
 

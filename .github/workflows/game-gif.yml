@@ -1,9 +1,9 @@
-# Implements: treasure-island/gif-per-change
+# Implements: treasure-island/gif-per-change, results/examples-on-every-pr
 name: game-gif
 
-# Keeps one comment on each pull request linking a GIF of a whole game played by
-# scripted pirates at its latest commit, so a change can be seen without running
-# anything. It's not the gate, so it never blocks a merge, and it calls no model.
+# Keeps one comment on each pull request showing every example game's GIF at its
+# latest commit, and linking a GIF of a game played fresh by scripted pirates, so a
+# change can be seen without running anything. It's not the gate, so it never blocks a merge, and it calls no model.
 # Rendering runs the branch's code, so that job can only read; the job that can
 # write a comment runs no branch code, not even a checkout.
 on:
@@ -51,9 +51,10 @@ jobs:
     needs: render
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       pull-requests: write
     steps:
-      - name: link the GIF
+      - name: show the games
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
@@ -65,10 +66,23 @@ jobs:
           # The marker finds this workflow's own comment, so it never edits a
           # comment that another workflow keeps on the same pull request.
           marker="<!-- game-gif -->"
-          body="$marker
-          **A whole game at ${SHA:0:7}:** [watch the GIF]($GIF_URL)
+          # Committed examples can show inline, from raw files at this commit. A
+          # branch from before there were any has only the fresh game to link.
+          names=$(gh api "repos/$REPO/contents/examples?ref=$SHA" \
+            --jq '.[] | select(.type == "dir") | .name' 2>/dev/null || true)
+          shown=""
+          for name in $names; do
+            raw="https://raw.githubusercontent.com/$REPO/$SHA/examples/$name"
+            ending=$(curl --silent --fail "$raw/story.txt" | tail -n 1)
+            shown="$shown
+          **$name:** $ending
 
-          $ENDING"
+          ![$name]($raw/game.gif)
+          "
+          done
+          body="$marker
+          **The games at ${SHA:0:7}.** [A fresh game, played at this commit]($GIF_URL): $ENDING
+          $shown"
           comment=$(gh api --paginate "repos/$REPO/issues/$PR/comments" \
             --jq ".[] | select(.body | startswith(\"$marker\")) | .id" | head -n 1)
           if [ -n "$comment" ]; then

@@ -1,4 +1,4 @@
-# Implements: runs/run-command, runs/run-folder, runs/replies-keyed, runs/manifest-varies, runs/replay-byte-identical, runs/no-silent-model-calls, runs/plays-live, runs/paced-from-cache, runs/cache-across-runs, runs/no-cache, treasure-island/everything-cached
+# Implements: runs/run-command, runs/run-folder, runs/replies-keyed, runs/manifest-varies, runs/replay-byte-identical, runs/no-silent-model-calls, runs/plays-live, runs/paced-from-cache, runs/cache-across-runs, runs/no-cache, treasure-island/everything-cached, runs/same-answer-wins
 """Running a game into a folder, and replaying that folder offline."""
 
 import json
@@ -257,6 +257,49 @@ def test_no_cache_a_later_repeat_reuses_the_newest_replies(config, capsys, model
     repeat = played(config, capsys)
     assert (repeat / "events.jsonl").read_bytes() == (
         fresh / "events.jsonl"
+    ).read_bytes()
+
+
+def two_answers(config, capsys):
+    """Two runs that answered every request differently, oldest first."""
+    return played(config, capsys), played(config, capsys, "--no-cache")
+
+
+def test_same_answer_wins_whatever_the_file_times_say(config, capsys, model):
+    older, newer = two_answers(config, capsys)
+    # A fresh clone can give the files any times at all, so make them lie.
+    os.utime(older / "replies.jsonl", (2_000_000_000, 2_000_000_000))
+    os.utime(newer / "replies.jsonl", (1_000_000_000, 1_000_000_000))
+    repeat = played(config, capsys)
+    assert (repeat / "events.jsonl").read_bytes() == (
+        newer / "events.jsonl"
+    ).read_bytes()
+
+
+def test_same_answer_wins_a_run_with_no_manifest_counts_as_the_oldest(
+    config, capsys, model
+):
+    finished, stopped = two_answers(config, capsys)
+    (stopped / "manifest.json").unlink()
+    repeat = played(config, capsys)
+    assert (repeat / "events.jsonl").read_bytes() == (
+        finished / "events.jsonl"
+    ).read_bytes()
+
+
+def test_same_answer_wins_runs_that_started_together_go_by_folder_name(
+    config, capsys, model
+):
+    first, second = two_answers(config, capsys)
+    moment = {**manifest_of(first), "started_at": "2026-01-01T00:00:00+00:00"}
+    for folder in (first, second):
+        (folder / "manifest.json").write_text(json.dumps(moment))
+    os.utime(first / "replies.jsonl", (2_000_000_000, 2_000_000_000))
+    os.utime(second / "replies.jsonl", (1_000_000_000, 1_000_000_000))
+    assert first.name < second.name
+    repeat = played(config, capsys)
+    assert (repeat / "events.jsonl").read_bytes() == (
+        second / "events.jsonl"
     ).read_bytes()
 
 

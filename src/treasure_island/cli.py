@@ -3,7 +3,7 @@
 `run` opens the live view unless told not to. At a terminal it keeps the page up
 after the game ends, until Ctrl-C; a script gets its prompt back when the game ends.
 
-Implements: tooling/package-and-cli, runs/run-command, runs/replay-byte-identical, runs/plays-live, runs/no-cache, viewer/watch-live, viewer/render-gif, viewer/slideshow-file, treasure-island/named-runs, treasure-island/everything-cached, treasure-island/one-line-replay
+Implements: tooling/package-and-cli, runs/run-command, runs/replay-byte-identical, runs/plays-live, runs/no-cache, viewer/watch-live, viewer/render-gif, viewer/slideshow-file, treasure-island/named-runs, treasure-island/everything-cached, treasure-island/one-line-replay, figures/named-figures
 """
 
 import argparse
@@ -12,7 +12,7 @@ import threading
 import webbrowser
 from pathlib import Path
 
-from treasure_island import runs, saved_game, viewer
+from treasure_island import figures, runs, saved_game, viewer
 
 
 def _serve_until_interrupted():
@@ -102,6 +102,17 @@ def _slideshow(args):
     return 0
 
 
+def _figure(args):
+    names = list(figures.FIGURES) if args.all else [args.name]
+    for name in names:
+        if name not in figures.FIGURES:
+            known = ", ".join(figures.FIGURES)
+            print(f"No figure named '{name}'. Known: {known}.", file=sys.stderr)
+            return 1
+        print(figures.build(name, args.out))
+    return 0
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(
         prog="treasure-island",
@@ -148,6 +159,13 @@ def main(argv=None):
     slideshow.add_argument("folder", help="a run folder, such as runs/<name>")
     slideshow.add_argument("--out", help="where to write it; default runs/<name>.html")
     slideshow.set_defaults(handler=_slideshow)
+    figure = commands.add_parser(
+        "figure", help="build a named figure from a committed run, with no keys"
+    )
+    figure.add_argument("name", nargs="?", help="one of the names in figures.py")
+    figure.add_argument("--all", action="store_true", help="build every figure")
+    figure.add_argument("--out", default="figures", help="folder to write into")
+    figure.set_defaults(handler=_figure)
     args = parser.parse_args(argv)
     if args.command is None:
         parser.print_help()

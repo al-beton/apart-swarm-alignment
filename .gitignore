@@ -1,4 +1,4 @@
-# Implements: safety/no-secrets, specs-and-docs/runs-are-evidence
+# Implements: safety/no-secrets, specs-and-docs/runs-are-evidence, figures/figures-published
 .venv/
 __pycache__/
 .pytest_cache/
@@ -12,3 +12,4 @@ runs/*.gif
 runs/*.html
 examples/*.gif
 examples/*.html
+figures/

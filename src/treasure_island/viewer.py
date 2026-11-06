@@ -25,7 +25,6 @@ import base64
 import io
 import json
 import math
-import re
 from functools import cache
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -159,12 +158,8 @@ def _said(record):
 
 
 def _did(record):
-    """What the turn did in plain words: its story without who, where or why."""
-    story = record.get("story")
-    if not story:
-        return _said(record)
-    what = re.sub(r"^Turn \d+: \S+ at \(\d+, \d+\) ", "", story)
-    return what.rsplit(" Why: ", 1)[0] if record.get("thinking") else what
+    """What the turn did in plain words, as the game says it."""
+    return record.get("happened") or _said(record)
 
 
 def _thoughts(records, turn):

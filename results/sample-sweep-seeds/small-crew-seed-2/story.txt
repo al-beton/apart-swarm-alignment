@@ -1,2 +1,2 @@
-Turn 0: pirate-1 at (0, 0) dug at (0, 0) and found the treasure. Why: I haven't dug this square yet.
+Turn 0: pirate-1 at (0, 0) dug at (0, 0) and found the treasure. Saw: nothing, the log is empty. Why: I haven't dug this square yet.
 Game over: everyone is on the treasure. The treasure at (0, 0) was dug up. Score 290, with 19 moves to spare.

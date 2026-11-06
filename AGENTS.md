@@ -6,7 +6,7 @@ Treasure Island is a reproducible sandbox for asking when a swarm of LLM agents 
 ## Where things are
 
 - **Spec (intent, read first):** `product/spec/` (the game), `experiments/spec/` (what we're finding out with it) and `contributing/spec/` (how we build it). One file per area. Each ends with "Where this is enforced", which says which files enforce each statement and which tests prove it.
-- **Code:** tests in `tests/`, CI in `.github/`. Every file names the statements it implements on an `Implements:` line (files that can't hold comments, such as JSON, lockfiles and symlinks, are traced by their table row). Docs are the comments and docstrings next to the code.
+- **Code:** `src/treasure_island/`, tests in `tests/`, CI in `.github/`. Every file names the statements it implements on an `Implements:` line (files that can't hold comments, such as JSON, lockfiles and symlinks, are traced by their table row). Docs are the comments and docstrings next to the code.
 - **How to do each step:** the skills in `.agents/skills/` (also linked as `.claude/skills/`): `deliver-issue` (the whole routine, issue to merged), and the steps it chains: `build-issue`, `write-spec-change`, `trace-spec`, `open-pr`, `review-pr`, `address-review`, `merge-pr`. Who does what (manager, delivery lead, builders, reviewers, Codex, researcher) and the queue labels are in `team`.
 - **Work** is tracked as GitHub issues on this repository.
 

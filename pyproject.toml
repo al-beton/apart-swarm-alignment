@@ -1,9 +1,16 @@
-# Implements: ci/simple-code, tooling/one-command-each, ci/ci-minutes
+# Implements: ci/simple-code, tooling/one-command-each, tooling/package-and-cli, ci/ci-minutes
 [project]
 name = "treasure-island"
 version = "0.1.0"
 requires-python = ">=3.12,<3.13"
 dependencies = []
+
+[project.scripts]
+treasure-island = "treasure_island.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [dependency-groups]
 dev = [

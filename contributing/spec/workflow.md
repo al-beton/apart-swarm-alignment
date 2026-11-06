@@ -7,6 +7,7 @@
 - **draft-early:** Pull requests are opened early as drafts and marked ready once the code is done and passes locally; marking one ready runs CI, since drafts aren't checked.
 - **al-only:** Only Al deals with accounts, API keys and spending.
 - **prototype-pace:** Treasure Island is a hackathon prototype, so each issue aims for the smallest change that works and can be shared, and review stops once only edge cases remain.
+- **audience:** This repository is first for the people working in its code over and over to make it really good, then for researchers reviewing or extending it, then for judges of the paper, because the hard part is the repeated work and everything the others see comes out of it.
 - **one-routine:** An issue goes from start to merged through one routine that chains every step and says what to do when a step fails.
 
 ## Where this is enforced
@@ -20,4 +21,5 @@
 | `draft-early` | `.agents/skills/build-issue/SKILL.md`, `.agents/skills/open-pr/SKILL.md` | — |
 | `al-only` | `.agents/skills/build-issue/SKILL.md`, `AGENTS.md` | — |
 | `prototype-pace` | `.agents/skills/deliver-issue/SKILL.md`, `AGENTS.md`, `.agents/skills/address-review/SKILL.md` | — |
+| `audience` | `AGENTS.md`, `.agents/skills/review-pr/SKILL.md` | — |
 | `one-routine` | `.agents/skills/deliver-issue/SKILL.md`, `.github/scripts/deliver.py`, `AGENTS.md` | — |

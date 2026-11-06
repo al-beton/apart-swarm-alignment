@@ -8,11 +8,13 @@ it is, what it said and the log lines it saw. `frame` draws that scene with
 Pillow. The browser page asks for `/frame/<turn>.png` and the GIF strings the
 same PNGs together, which is what keeps the two from ever disagreeing.
 
-Tiles are looked up in `assets/` by their path there (`tiles/sand.png`,
-`treasure/mark-x.png`), and plain shapes stand in for whatever isn't there
-yet, pirates included.
+Tiles and marks are the PNGs in `assets/`, and a pirate is `pirate()` from the art,
+since a config can ask for any colour. There is no plain shape to fall back on, so
+missing art is an error. A pirate's looks come from the run's `config.json`, or the
+default crew's when it doesn't say. They only pick the sprite: the game never sees
+them.
 
-Implements: event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder
+Implements: event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/crowds-fan-out, treasure-island/pokemon-style
 """
 
 import io
@@ -22,16 +24,25 @@ from functools import cache
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageChops, ImageDraw, ImageFont
 
-ASSETS = Path(__file__).parents[2] / "assets"
+import assets
+from assets.pirates import pirate
+from treasure_island.config import parse_config
+from treasure_island.looks import sprite_values
+
+ASSETS = Path(assets.__file__).parent
+SAND_TILES = ("sand", "sand-2", "sand-3")
 TILE = 48
+# How far apart pirates sharing a square stand, which is the size of a two-letter
+# label, and where a label sits on a sprite: (left, top, right, bottom).
+_FAN = (20, 14)
+_LABEL_BOX = (14, 2, 34, 16)
+_ROWS = 3
+_FACING = {"north": "up", "south": "down", "east": "right", "west": "left"}
 PANEL = 220
 LOG_LINES = 4
 LINE = 18
-COLOURS = ["#d62828", "#1d4ed8", "#15803d", "#b45309", "#7e22ce", "#0e7490"]
-SAND = "#f1d9a0"
-GRID = "#c9b67c"
 FRAME_MS = 600
 
 
@@ -50,6 +61,61 @@ def grid_size(folder, records):
     spots = [r["saw"]["position"] for r in records]
     spots += [r["outcome"]["position"] for r in records]
     return max((max(x, y) for x, y in spots), default=0) + 1
+
+
+def _crew_names(records):
+    """Every pirate's name, in crew order."""
+    names = list(records[0].get("crew", {})) if records else []
+    for record in records:
+        if record["agent"] not in names:
+            names.append(record["agent"])
+    return names
+
+
+def _default_pirates(names):
+    crew = parse_config({"crew_size": len(names)}).pirates
+    return {name: sprite_values(p) for name, p in zip(names, crew, strict=True)}
+
+
+def pirates_in(folder, records):
+    """What each pirate's sprite is made from, as `pirate()` takes it."""
+    names = _crew_names(records)
+    config = Path(folder) / "config.json"
+    saved = json.loads(config.read_text()).get("pirates") if config.exists() else None
+    if not isinstance(saved, list):  # the walking skeleton saves only a count
+        return _default_pirates(names)
+    crew = parse_config({"pirates": saved}).pirates
+    return {name: sprite_values(p) for name, p in zip(names, crew, strict=True)}
+
+
+def _poses(records, turn):
+    """Each pirate's (pose, walking frame) on this turn."""
+    facing = {}
+    for record in records[: turn + 1]:
+        for action in record["did"]:
+            if action["action"] == "move":
+                facing[record["agent"]] = _FACING[action["direction"]]
+    poses = {agent: (pose, 0) for agent, pose in facing.items()}
+    current = records[turn]
+    # Its own turns, not the game's: a pirate's every turn may be even in a crew of two.
+    step = sum(r["agent"] == current["agent"] for r in records[: turn + 1]) - 1
+    done = {action["action"] for action in current["did"]}
+    if "move" in done:
+        poses[current["agent"]] = (facing[current["agent"]], 1 + step % 2)
+    elif "dig" in done:
+        found = current["outcome"]["found_treasure"]
+        poses[current["agent"]] = ("cheer" if found else "dig", step % 2)
+    for name in _crew_names(records):
+        poses.setdefault(name, ("down", 0))
+    return poses
+
+
+def _dug(records, turn):
+    return {
+        tuple(record["saw"]["position"])
+        for record in records[: turn + 1]
+        if any(action["action"] == "dig" for action in record["did"])
+    }
 
 
 def _said(record):
@@ -87,6 +153,8 @@ def scene(records, turn, size):
         "bubble": _said(current),
         "log": [line["text"] for line in current["log_shown"]],
         "treasure": treasure,
+        "poses": _poses(records, turn),
+        "dug": _dug(records, turn),
     }
 
 
@@ -97,14 +165,16 @@ def _font(px):
 
 @cache
 def _loaded(path):
-    if not path.is_file():
-        return None
-    return Image.open(path).convert("RGBA").resize((TILE, TILE), Image.NEAREST)
+    return Image.open(path).convert("RGBA")
 
 
 def _art(name):
-    """The asset image scaled to a tile, or None when there's no art for it."""
     return _loaded(ASSETS / f"{name}.png")  # ASSETS is read here so tests can move it
+
+
+@cache
+def _sprite(look, pose, frame):
+    return pirate(*look, pose, frame)
 
 
 def rgb(colour):
@@ -112,66 +182,74 @@ def rgb(colour):
     return tuple(int(colour[i : i + 2], 16) for i in (1, 3, 5))
 
 
-def _colour(agent):
-    letter = agent.rsplit("-", 1)[-1][:1]
-    return COLOURS[(ord(letter) - ord("a")) % len(COLOURS)] if letter else COLOURS[0]
+def _ground_tile(x, y):
+    """A sand tile for this square, mixed so the ground doesn't look stamped."""
+    return SAND_TILES[(x * x + 2 * y + x * y) % len(SAND_TILES)]
 
 
-def _draw_grid(image, draw, size, treasure):
-    sand = _art("tiles/sand")
+def _draw_ground(image, size, shown):
     for x in range(size):
         for y in range(size):
-            box = (x * TILE, y * TILE, (x + 1) * TILE - 1, (y + 1) * TILE - 1)
-            if sand:
-                image.paste(sand, box[:2], sand)
-            else:
-                draw.rectangle(box, fill=SAND, outline=GRID)
-    if treasure:
-        x, y = treasure
-        chest = _art("treasure/mark-x")
-        if chest:
-            image.paste(chest, (x * TILE, y * TILE), chest)
-        else:
-            draw.line(
-                (x * TILE + 6, y * TILE + 6, (x + 1) * TILE - 6, (y + 1) * TILE - 6),
-                fill="black",
-                width=3,
-            )
-            draw.line(
-                (x * TILE + 6, (y + 1) * TILE - 6, (x + 1) * TILE - 6, y * TILE + 6),
-                fill="black",
-                width=3,
-            )
+            name = "dug" if (x, y) in shown["dug"] else _ground_tile(x, y)
+            image.paste(_art(f"tiles/{name}"), (x * TILE, y * TILE))
+    if shown["treasure"]:
+        mark = _art("treasure/mark-x")
+        x, y = shown["treasure"]
+        image.paste(mark, (x * TILE, y * TILE), mark)
 
 
-def _draw_pirate(draw, agent, position, place, crowd):
-    """A coloured disc with the pirate's letter; `place` of `crowd` on its square."""
-    x, y = position
-    across = math.ceil(math.sqrt(crowd))  # a crowd shares the square as a grid
-    size = TILE // across
-    left = x * TILE + (place % across) * size
-    top = y * TILE + (place // across) * size
-    pad = max(1, size // 12)
-    draw.ellipse(
-        (left + pad, top + pad, left + size - pad - 1, top + size - pad - 1),
-        fill=_colour(agent),
-        outline="black",
-    )
-    letter = agent.rsplit("-", 1)[-1][:1].upper()
-    font = _font(max(6, min(14, size // 2)))
-    draw.text(
-        (left + size / 2, top + size / 2), letter, fill="white", font=font, anchor="mm"
-    )
+def fanned(count, square, size):
+    """Where `count` pirates on one square stand, in pixels.
+
+    Two columns of three rows fit six labels inside a square, which is what stops a
+    neighbour's label landing on one. A bigger crowd adds columns, moved along if
+    needed to keep every label on the board.
+    """
+    across = math.ceil(count / _ROWS)
+    spots = []
+    for place in range(count):
+        column, row = place // _ROWS, place % _ROWS
+        x = square[0] * TILE + (2 * column - across + 1) * _FAN[0] // 2
+        spots.append((x, square[1] * TILE + row * _FAN[1]))
+    lefts = [x for x, _ in spots]
+    board = size * TILE
+    shift = max(-(min(lefts) + _LABEL_BOX[0]), 0)
+    shift += min(board - (max(lefts) + _LABEL_BOX[2]), 0)
+    return [(x + shift, y) for x, y in spots]
 
 
-def _draw_pirates(draw, positions):
-    """Pirates sharing a square share it as a grid, so every one stays visible."""
+@cache
+def _label(look, pose, frame):
+    """Only the label's pixels of a sprite: what it has that the bare sprite hasn't."""
+    sprite = _sprite(look, pose, frame)
+    changed = ImageChops.difference(sprite, pirate(*look[:2], "", pose, frame))
+    label = sprite.copy()
+    label.putalpha(changed.convert("L").point(lambda value: 255 if value else 0))
+    return label
+
+
+def _placed(shown):
+    """Each pirate and where it stands, whoever's acting last so it's drawn on top."""
     crowds = {}
-    for agent, position in positions.items():
+    for agent, position in shown["positions"].items():
         crowds.setdefault(tuple(position), []).append(agent)
-    for position, agents in crowds.items():
-        for place, agent in enumerate(agents):
-            _draw_pirate(draw, agent, position, place, len(agents))
+    placed = []
+    for square, agents in crowds.items():
+        placed += zip(agents, fanned(len(agents), square, shown["size"]), strict=True)
+    return sorted(placed, key=lambda spot: spot[0] == shown["acting"])
+
+
+def _draw_pirates(image, shown, pirates):
+    for agent, spot in _placed(shown):
+        sprite = _sprite(pirates[agent], *shown["poses"][agent])
+        image.paste(sprite, spot, sprite)
+
+
+def _draw_labels(image, shown, pirates):
+    """Labels go over everything, so a crowd can always be told apart."""
+    for agent, spot in _placed(shown):
+        label = _label(pirates[agent], *shown["poses"][agent])
+        image.paste(label, spot, label)
 
 
 def _draw_bubble(draw, position, text, size):
@@ -180,21 +258,22 @@ def _draw_bubble(draw, position, text, size):
     width = draw.textlength(text, font=font) + 10
     x, y = position
     left = min(max(0, x * TILE + TILE / 2 - width / 2), max(0, size * TILE - width))
-    top = max(0, y * TILE - 22)
+    # Above the pirate, or below it on the top row, where it would cover the labels.
+    top = y * TILE - 22 if y else TILE + 6
     draw.rounded_rectangle(
         (left, top, left + width, top + 18), radius=5, fill="white", outline="black"
     )
     draw.text((left + 5, top + 3), text, fill="black", font=font)
 
 
-def _draw_panel(draw, shown, left, height):
+def _draw_panel(draw, shown, left, height, colour):
     draw.rectangle((left, 0, left + PANEL, height), fill="#2b2b2b")
     font = _font(13)
     draw.text((left + 10, 10), f"Turn {shown['turn']}", fill="white", font=font)
     draw.text(
         (left + 10, 32),
         f"{shown['acting']}'s turn",
-        fill=_colour(shown["acting"]),
+        fill=colour,
         font=font,
     )
     draw.text((left + 10, 54), shown["bubble"][:30], fill="white", font=_font(12))
@@ -206,17 +285,19 @@ def _draw_panel(draw, shown, left, height):
         )
 
 
-def frame(records, turn, size):
-    """The image for one turn: grid, pirates, bubble and the side panel."""
+def frame(records, turn, size, pirates=None):
+    """The image for one turn: ground, pirates, bubble and the side panel."""
+    pirates = pirates or _default_pirates(_crew_names(records))
     shown = scene(records, turn, size)
     grid = max(size, 1) * TILE
     height = max(grid, 102 + LOG_LINES * LINE + 10)
     image = Image.new("RGB", (grid + PANEL, height), "#2b2b2b")
     draw = ImageDraw.Draw(image)
-    _draw_grid(image, draw, size, shown["treasure"])
-    _draw_pirates(draw, shown["positions"])
+    _draw_ground(image, size, shown)
+    _draw_pirates(image, shown, pirates)
     _draw_bubble(draw, shown["positions"][shown["acting"]], shown["bubble"], size)
-    _draw_panel(draw, shown, grid, height)
+    _draw_labels(image, shown, pirates)
+    _draw_panel(draw, shown, grid, height, pirates[shown["acting"]][1])
     return image
 
 
@@ -229,15 +310,17 @@ def _png(image):
 def frame_png(folder, turn):
     """The PNG the page serves for one turn, read fresh from the run folder."""
     records = records_in(folder)
-    return _png(frame(records, turn, grid_size(folder, records)))
+    size = grid_size(folder, records)
+    return _png(frame(records, turn, size, pirates_in(folder, records)))
 
 
 def gif(folder):
     """The whole run as GIF bytes, one frame per turn, from the same frames."""
     records = records_in(folder)
     size = grid_size(folder, records)
+    pirates = pirates_in(folder, records)
     frames = [
-        Image.open(io.BytesIO(_png(frame(records, turn, size))))
+        Image.open(io.BytesIO(_png(frame(records, turn, size, pirates))))
         for turn in range(len(records))
     ]
     out = io.BytesIO()

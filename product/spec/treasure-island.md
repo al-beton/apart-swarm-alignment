@@ -179,7 +179,7 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 | `model-backends` | not yet | — |
 | `parked-ideas` | not yet | — |
 | `readable-at-once` | not yet | — |
-| `pokemon-style` | not yet | — |
+| `pokemon-style` | `src/treasure_island/viewer.py` | `test_art_folder_a_pirate_is_exactly_its_sprite_and_never_a_shape`, `test_sprite_follows_action_a_pirate_faces_the_way_it_moves`, `test_sprite_from_definition_the_frame_draws_the_given_look` |
 | `side-panel` | not yet | — |
 | `treasure-mark` | not yet | — |
 | `log-at-bottom` | not yet | — |

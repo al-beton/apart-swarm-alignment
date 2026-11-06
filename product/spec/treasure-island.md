@@ -38,7 +38,8 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 - **turn-order:** (decided) Agents take turns in a fixed order, one at a time.
 - **turn-view:** (decided) Each turn a pirate sees its system prompt with the rules and its actions, its own position, and the last few log lines (3 by default).
 - **tools-only:** (decided) A pirate acts only through a small set of tool calls (move, dig, write, read), so a brain of any kind plugs into the same interface.
-- **failed-move:** (decided) An impossible move, such as left from the left edge, fails, costs the turn, and the response tells the pirate why.
+- **failed-move:** (decided) An impossible move, such as left from the left edge, fails and the response tells the pirate why.
+- **failed-move-cost:** (open) Whether a failed move costs the turn may depend on why it failed (walking off the map against hitting hidden terrain), and is not yet set.
 - **no-vision:** (decided) Pirates have no vision: a pirate knows only its own position and what it has dug, and learns about the others only through the log.
 - **actions:** (decided) The actions are move in one of 4 directions, dig, write to the log and read the log; digging and searching a square are the same action.
 - **one-action-per-turn:** (decided) A turn is exactly one action, so writing a note costs a turn that could have been a move or a dig.
@@ -131,6 +132,7 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 | `turn-view` | not yet | — |
 | `tools-only` | not yet | — |
 | `failed-move` | not yet | — |
+| `failed-move-cost` | not yet | — |
 | `no-vision` | not yet | — |
 | `actions` | not yet | — |
 | `one-action-per-turn` | not yet | — |

@@ -76,6 +76,10 @@ class Replies:
             return self._stored[key]
         if key in self.earlier:
             self.hits += 1
+            # An agent that remembers its turns has to see this one too, or it
+            # would start from nothing when the cache runs out mid-game.
+            if getattr(self.backend, "remembers_its_turns", False):
+                self.backend(request)
             return self._keep(key, request, self.earlier[key])
         if self.backend is None:
             raise MissingReply(f"No stored reply for {request['agent']}: {key}")

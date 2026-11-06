@@ -5,7 +5,7 @@ what an agent remembers never leaks between runs and a replay can't depend on
 it. An agent only sees the request a model would see, and reads its position
 and the grid size out of the prompt text, exactly as a model would have to.
 
-Implements: agents/scripted-sees-the-prompt, agents/grid-sweep, agents/counter, runs/walking-skeleton
+Implements: agents/scripted-sees-the-prompt, agents/grid-sweep, agents/counter, runs/walking-skeleton, runs/cache-across-runs
 """
 
 import hashlib
@@ -49,6 +49,8 @@ class RandomWalker:
 class Sweeper:
     """Digs where it stands, then follows the snake, turning back at either end."""
 
+    remembers_its_turns = True
+
     def __init__(self):
         self.dug = {}  # agent -> the cells it has dug
         self.step = {}  # agent -> +1 along the snake, or -1 back along it
@@ -71,6 +73,8 @@ class Sweeper:
 
 class Counter:
     """Says 1, 2, 3, ... on its turns and never digs."""
+
+    remembers_its_turns = True
 
     def __init__(self):
         self.said = {}  # agent -> how many numbers it has said

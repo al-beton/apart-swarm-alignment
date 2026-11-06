@@ -66,6 +66,7 @@ STRIP_ROWS = 5
 STRIP = 24 + (STRIP_ROWS + 1) * LINE + 4  # the parchment's edges, a heading and rows
 _STRIP_LEFT = 14
 FRAME_MS = 600
+_PLACES_THE_TREASURE = ("grid_size", "crew_size", "landing_square", "seed")
 
 
 def records_in(folder):
@@ -193,12 +194,9 @@ def treasure_in(folder, records):
         return tuple(game_over["treasure"])
     path = Path(folder) / "config.json"
     saved = json.loads(path.read_text()) if path.exists() else {}
-    if "grid_size" not in saved:  # the walking skeleton saves no such thing
+    if any(field not in saved for field in _PLACES_THE_TREASURE):
         return None
-    state = GameState(
-        saved["grid_size"], saved["crew_size"], saved["landing_square"], saved["seed"]
-    )
-    return state.treasure
+    return GameState(*(saved[field] for field in _PLACES_THE_TREASURE)).treasure
 
 
 def _log_so_far(records, turn):

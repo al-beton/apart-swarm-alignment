@@ -8,4 +8,8 @@ __pycache__/
 .cache/
 runs/scratch/
 runs/smoke/
+runs/*.gif
+runs/*.html
+examples/*.gif
+examples/*.html
 figures/

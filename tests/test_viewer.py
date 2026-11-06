@@ -8,7 +8,7 @@ import urllib.request
 from pathlib import Path
 
 import pytest
-from PIL import Image
+from PIL import Image, ImageChops, ImageStat
 
 from treasure_island import cli, viewer
 
@@ -57,14 +57,29 @@ def png_frames(gif_bytes):
         yield image.convert("RGB")
 
 
-def test_one_renderer_the_gif_holds_exactly_the_frames_the_page_serves(folder):
-    gif = viewer.gif(folder)
-    frames = list(png_frames(gif))
-    assert len(frames) == len(RECORDS)
-    for turn, frame in enumerate(frames):
-        served = Image.open(io.BytesIO(viewer.frame_png(folder, turn))).convert("RGB")
-        assert frame.size == served.size
-        assert frame.tobytes() == served.tobytes()
+def test_one_renderer_the_gif_holds_exactly_the_frames_the_page_serves(
+    folder, monkeypatch
+):
+    drawn = []
+    draw = viewer.frame
+
+    def counted(records, turn, size):
+        drawn.append(turn)
+        return draw(records, turn, size)
+
+    monkeypatch.setattr(viewer, "frame", counted)
+    frames = list(png_frames(viewer.gif(folder)))
+    assert drawn == list(range(len(RECORDS)))
+    served = [
+        Image.open(io.BytesIO(viewer.frame_png(folder, turn))).convert("RGB")
+        for turn in range(len(RECORDS))
+    ]
+    assert drawn == 2 * list(range(len(RECORDS)))
+    for frame, page in zip(frames, served, strict=True):
+        assert frame.size == page.size
+        # A GIF frame holds at most 256 colours, so compare within that loss.
+        diff = ImageChops.difference(frame, page)
+        assert ImageStat.Stat(diff.convert("L")).mean[0] < 2
 
 
 def test_frame_shows_the_swarm_every_pirate_whose_turn_the_bubble_and_the_log():

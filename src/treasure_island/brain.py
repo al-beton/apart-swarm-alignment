@@ -9,7 +9,7 @@ pirate's own memory. A seat is only ever handed what the pirate may know: its
 position, its turns left and the log lines it may see. So other pirates and the
 treasure can't reach a brain, and neither can another pirate's thinking.
 
-Implements: treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/thinking, treasure-island/what-they-are-told
+Implements: treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/thinking, treasure-island/what-they-are-told, treasure-island/looks-are-cosmetic
 """
 
 import dataclasses

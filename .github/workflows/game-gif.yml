@@ -1,0 +1,77 @@
+# Implements: treasure-island/gif-per-change
+name: game-gif
+
+# Keeps one comment on each pull request linking a GIF of a whole game played by
+# scripted pirates at its latest commit, so a change can be seen without running
+# anything. It's not the gate, so it never blocks a merge, and it calls no model.
+# Rendering runs the branch's code, so that job can only read; the job that can
+# write a comment runs no branch code, not even a checkout.
+on:
+  pull_request:
+
+# A newer push replaces a run in progress, so two runs can't both add a comment.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  render:
+    # A fork's token can't comment.
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    outputs:
+      gif-url: ${{ steps.upload.outputs.artifact-url }}
+      ending: ${{ steps.play.outputs.ending }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - run: make install
+      - id: play
+        name: play a whole game and render it
+        run: |
+          uv run treasure-island run configs/s-sweep.toml --seed 7 --no-watch
+          uv run treasure-island render runs/s-sweep-seed-7-2 --out game.gif
+          echo "ending=$(tail -n 1 runs/s-sweep-seed-7-2/story.txt)" >> "$GITHUB_OUTPUT"
+      - id: upload
+        uses: actions/upload-artifact@v7
+        with:
+          path: game.gif
+          archive: false
+
+  comment:
+    needs: render
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: link the GIF
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          SHA: ${{ github.event.pull_request.head.sha }}
+          GIF_URL: ${{ needs.render.outputs.gif-url }}
+          ENDING: ${{ needs.render.outputs.ending }}
+        run: |
+          # The marker finds this workflow's own comment, so it never edits a
+          # comment that another workflow keeps on the same pull request.
+          marker="<!-- game-gif -->"
+          body="$marker
+          **A whole game at ${SHA:0:7}:** [watch the GIF]($GIF_URL)
+
+          $ENDING"
+          comment=$(gh api --paginate "repos/$REPO/issues/$PR/comments" \
+            --jq ".[] | select(.body | startswith(\"$marker\")) | .id" | head -n 1)
+          if [ -n "$comment" ]; then
+            gh api --method PATCH "repos/$REPO/issues/comments/$comment" \
+              --field body="$body" --silent
+          else
+            gh pr comment "$PR" --repo "$REPO" --body "$body"
+          fi

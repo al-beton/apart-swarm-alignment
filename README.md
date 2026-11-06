@@ -28,11 +28,13 @@ Each committed run replays offline with no API keys, so anyone can clone this an
 
 A test runs or checks each of these commands, so this table can't go stale.
 
+Each pull request also gets a comment linking a GIF of a whole game at its latest commit, so a change can be seen without running anything.
+
 A model's replies are reused from earlier runs, so a repeat spends nothing. `run` takes `--no-watch` to skip the browser, as CI does, and `--no-cache` to ask for every reply again.
 
 **How the real game is built:** `src/treasure_island/game_loop.py` plays a whole game from a config, with every lever a variable (`config.py`), the pirates' log with its free window and paid reads (`pirates_log.py`) and the score (`score.py`). A saved game holds `story.txt` (the game to read, one line per turn), `pirates-log.txt` (all the pirates can see), `events.jsonl` (the full record), `config.json`, `replies.jsonl` and `manifest.json`. Configs without a `brain`, such as `configs/sweep.toml`, still play the small stand-in game.
 
-**Planned:** a GIF of a whole game on each pull request, an HTML page that steps through a game with the arrow keys, LLM pirates that replay from cached replies, the exploit that hands one pirate the answer, and the figures for the paper. Once a game GIF exists on `main`, it goes here.
+**Planned:** an HTML page that steps through a game with the arrow keys, LLM pirates that replay from cached replies, the exploit that hands one pirate the answer, and the figures for the paper. Once a game GIF exists on `main`, it goes here.
 
 ## Commands
 

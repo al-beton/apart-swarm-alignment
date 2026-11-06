@@ -191,4 +191,4 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 | `one-line-replay` | not yet | — |
 | `python-stack` | not yet | — |
 | `no-token-strategies` | `src/treasure_island/game_loop.py`, `src/treasure_island/strategies.py` | `test_no_token_strategies_a_whole_game_needs_no_network` |
-| `gif-per-change` | not yet | — |
+| `gif-per-change` | `.github/workflows/game-gif.yml` | `test_gif_per_change_plays_a_whole_game_and_renders_it_from_that_commit`, `test_gif_per_change_never_blocks_merging`, `test_gif_per_change_keeps_write_access_away_from_the_branch_code`, `test_gif_per_change_updates_the_same_comment_on_a_later_push`, `test_gif_per_change_links_the_gif_of_that_commit` |

@@ -211,6 +211,21 @@ def test_story_record_is_a_file_with_one_line_per_turn_and_the_ending(tmp_path):
     assert "Score 10" in lines[-1]
 
 
+def test_story_record_reads_cleanly_when_things_go_wrong():
+    brains = [Steps(move("west"), read(99), move("sideways")), Steps(DIG)]
+    stories = [
+        record["story"]
+        for record in play(config(turns_per_pirate=3, landing_square=[0, 0]), *brains)
+    ]
+    assert stories[0] == "Turn 0: pirate-1 at (0, 0) tried to move west and couldn't."
+    assert stories[2] == (
+        "Turn 2: pirate-1 at (0, 0) read the log around line 99 and found nothing there."
+    )
+    assert stories[4] == (
+        "Turn 4: pirate-1 at (0, 0) tried to move sideways and couldn't."
+    )
+
+
 def test_story_record_keeps_a_note_on_one_line(tmp_path):
     brains = [Steps(write("two\nlines")), Steps(DIG)]
     write_game(off_the_treasure(turns_per_pirate=1), brains, tmp_path)

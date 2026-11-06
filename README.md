@@ -20,7 +20,7 @@ Each committed run replays offline with no API keys, so anyone can clone this an
 | A real game replays offline, byte for byte, with no keys and no network (read its `story.txt`) | `uv run treasure-island replay runs/s-sweep-seed-7` |
 | A pirate that says a number each turn plays the real game too, so the log has chatter | `uv run treasure-island run configs/say-a-number.toml --seed 1` |
 | Remake the scripted pirates' reference games | `make reference-games` |
-| Watch a game in the browser, turn by turn, with the grid, the pirates, whose turn it is and what each saw (stop it with Ctrl-C) | `uv run treasure-island watch runs/s-sweep-seed-7` |
+| Watch a game in the browser, turn by turn, in the approved art: each pirate in its own colour and label, facing the way it moves, with whose turn it is and what each saw (stop it with Ctrl-C) | `uv run treasure-island watch runs/s-sweep-seed-7` |
 | Bake a game into an animated GIF, from the same drawing code | `uv run treasure-island render runs/s-sweep-seed-7` |
 | All the art is drawn in code: one command redraws every PNG in `assets/` | `make assets` |
 | Every pirate walks in all four directions, in one GIF (`assets/catwalk.gif`), which each pull request's art comment shows | `make catwalk` |

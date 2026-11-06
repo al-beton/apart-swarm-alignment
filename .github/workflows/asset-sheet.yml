@@ -1,0 +1,52 @@
+# Implements: assets/sheet-on-every-pr
+name: asset-sheet
+
+# Keeps one comment on each pull request showing the art at its latest commit.
+# It has a write token, so it runs no code from the branch: no checkout, and the
+# image is a link to the committed file. It doesn't gate merging. A stale sheet
+# can't get through, because the gate fails when a committed image doesn't match
+# the code. Drafts count too, since this costs seconds.
+on:
+  pull_request:
+
+# A newer push replaces a run in progress, so two runs can't both add a comment.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  pull-requests: write
+
+jobs:
+  asset-sheet:
+    # A fork's token can't comment.
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: show the sheet
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          url="https://raw.githubusercontent.com/$REPO/$SHA/assets/sheet.png"
+          if ! curl --silent --fail --head --output /dev/null "$url"; then
+            echo "No assets/sheet.png at $SHA, so nothing to show."
+            exit 0
+          fi
+          # The marker finds this workflow's own comment, so it never edits a
+          # comment that another workflow keeps on the same pull request.
+          marker="<!-- asset-sheet -->"
+          body="$marker
+          **The art at ${SHA:0:7}**
+
+          ![A sheet of all the art]($url)"
+          comment=$(gh api --paginate "repos/$REPO/issues/$PR/comments" \
+            --jq ".[] | select(.body | startswith(\"$marker\")) | .id" | head -n 1)
+          if [ -n "$comment" ]; then
+            gh api --method PATCH "repos/$REPO/issues/comments/$comment" \
+              --field body="$body" --silent
+          else
+            gh pr comment "$PR" --repo "$REPO" --body "$body"
+          fi

@@ -43,6 +43,20 @@ def _one_line(text):
     return " ".join(text.split())
 
 
+def _lines_said(lines):
+    """Log lines in plain words, with their numbers, on one line."""
+    if all(not line["text"].strip() for line in lines):
+        first, last = lines[0]["line"], lines[-1]["line"]
+        where = f"line {first}" if first == last else f"lines {first} to {last}"
+        return f"only blank lines ({where})"
+    return ", ".join(
+        f'line {line["line"]} "{_one_line(line["text"])}"'
+        if line["text"].strip()
+        else f"line {line['line']} blank"
+        for line in lines
+    )
+
+
 def _square(position):
     return f"({position[0]}, {position[1]})"
 
@@ -123,13 +137,15 @@ class Game:
         result, did, read_lines = self._act(decision.action, start)
         self._seats[pirate].remember(result, read_lines)
         shown = window + [line for line in read_lines if line not in window]
-        story = f"Turn {turn}: {name} at {_square(start)} {did}."
+        saw = _lines_said(window) if window else "nothing, the log is empty"
+        story = f"Turn {turn}: {name} at {_square(start)} {did}. Saw: {saw}."
         if decision.thinking:
             story += f" Why: {_one_line(decision.thinking)}"
         record = {
             "turn": turn,
             "agent": name,
             "story": story,
+            "happened": f"{did}.",
             "did": [decision.action],
             "result": result,
             "outcome": {
@@ -181,11 +197,10 @@ class Game:
                 f"read the log around line {line} and found nothing there",
                 [],
             )
-        found = f"{answer.lines[0]['line']} to {answer.lines[-1]['line']}"
         told = f"You read the log around line {line}."
         return (
             told,
-            f"read the log around line {line} and saw lines {found}",
+            f"read the log around line {line} and found {_lines_said(answer.lines)}",
             answer.lines,
         )
 

@@ -14,20 +14,27 @@ missing art is an error. A pirate's looks come from the run's `config.json`, or 
 default crew's when it doesn't say. They only pick the sprite: the game never sees
 them.
 
-Implements: event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/crowds-fan-out, treasure-island/pokemon-style
+The side panel is the art's parchment with the acting pirate's portrait, what it did
+in plain words and a trail of its recent thoughts, all wrapped to fit: a reader should
+be able to follow the game from the frames alone.
+
+Implements: treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/crowds-fan-out, treasure-island/pokemon-style
 """
 
 import io
 import json
 import math
+import re
 from functools import cache
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
-from PIL import Image, ImageChops, ImageDraw, ImageFont
+from PIL import Image, ImageChops
 
 import assets
-from assets.pirates import pirate
+from assets.font import draw_text, wrap
+from assets.pirates import pirate, portrait
+from assets.ui import panel, speech_bubble
 from treasure_island.config import parse_config
 from treasure_island.looks import sprite_values
 
@@ -40,9 +47,18 @@ _FAN = (20, 14)
 _LABEL_BOX = (14, 2, 34, 16)
 _ROWS = 3
 _FACING = {"north": "up", "south": "down", "east": "right", "west": "left"}
-PANEL = 220
+PANEL = 260
+PANEL_COLUMNS = 38
+PANEL_HEIGHT = 320
+PORTRAIT = (14, 32)
+_PANEL_LEFT = 14
+_TEXT_LEFT = 118
 LOG_LINES = 4
-LINE = 18
+THOUGHTS = 3
+LINE = 12
+_DID_LINES = 3
+_THOUGHT_LINES = 6
+_BUBBLE_CHARACTERS = 90
 FRAME_MS = 600
 
 
@@ -120,6 +136,8 @@ def _dug(records, turn):
 
 def _said(record):
     """What a pirate's turn says in its bubble: its words, else its actions."""
+    if record["outcome"]["found_treasure"]:
+        return "I found the treasure!"
     words = [a["text"] for a in record["did"] if a["action"] == "write"]
     if words:
         return " ".join(words)
@@ -132,6 +150,31 @@ def _said(record):
         else:
             actions.append(action["action"])
     return ", ".join(actions) or "..."
+
+
+def _did(record):
+    """What the turn did in plain words: its story without who, where or why."""
+    story = record.get("story")
+    if not story:
+        return _said(record)
+    what = re.sub(r"^Turn \d+: \S+ at \(\d+, \d+\) ", "", story)
+    return what.rsplit(" Why: ", 1)[0] if record.get("thinking") else what
+
+
+def _thoughts(records, turn):
+    """This pirate's own latest thoughts, oldest first, the current one last.
+
+    Only a thought repeated turn after turn collapses: one it comes back to counts again.
+    """
+    agent = records[turn]["agent"]
+    thoughts = []
+    for record in records[: turn + 1]:
+        thought = record.get("thinking")
+        if record["agent"] == agent and thought:
+            thought = " ".join(thought.split())
+            if not thoughts or thoughts[-1] != thought:
+                thoughts.append(thought)
+    return thoughts[-THOUGHTS:]
 
 
 def scene(records, turn, size):
@@ -151,16 +194,13 @@ def scene(records, turn, size):
         "positions": positions,
         "acting": current["agent"],
         "bubble": _said(current),
+        "did": _did(current),
+        "thoughts": _thoughts(records, turn),
         "log": [line["text"] for line in current["log_shown"]],
         "treasure": treasure,
         "poses": _poses(records, turn),
         "dug": _dug(records, turn),
     }
-
-
-@cache
-def _font(px):
-    return ImageFont.load_default(px)
 
 
 @cache
@@ -252,37 +292,58 @@ def _draw_labels(image, shown, pirates):
         image.paste(label, spot, label)
 
 
-def _draw_bubble(draw, position, text, size):
-    text = text if len(text) <= 28 else text[:27] + "…"
-    font = _font(12)
-    width = draw.textlength(text, font=font) + 10
+def bubble_box(position, bubble_size, size):
+    """Where a bubble goes: above the pirate, or below the crowd if there's no room."""
     x, y = position
-    left = min(max(0, x * TILE + TILE / 2 - width / 2), max(0, size * TILE - width))
-    # Above the pirate, or below it on the top row, where it would cover the labels.
-    top = y * TILE - 22 if y else TILE + 6
-    draw.rounded_rectangle(
-        (left, top, left + width, top + 18), radius=5, fill="white", outline="black"
-    )
-    draw.text((left + 5, top + 3), text, fill="black", font=font)
+    width, height = bubble_size
+    left = min(x * TILE + 6, max(0, size * TILE - width))
+    above = y * TILE - height
+    return left, above if above >= 0 else y * TILE + TILE + (_ROWS - 1) * _FAN[1]
 
 
-def _draw_panel(draw, shown, left, height, colour):
-    draw.rectangle((left, 0, left + PANEL, height), fill="#2b2b2b")
-    font = _font(13)
-    draw.text((left + 10, 10), f"Turn {shown['turn']}", fill="white", font=font)
-    draw.text(
-        (left + 10, 32),
-        f"{shown['acting']}'s turn",
-        fill=colour,
-        font=font,
-    )
-    draw.text((left + 10, 54), shown["bubble"][:30], fill="white", font=_font(12))
-    draw.text((left + 10, 84), "Log it saw:", fill="#bbbbbb", font=_font(12))
-    lines = shown["log"][-LOG_LINES:] or ["(nothing)"]
-    for row, line in enumerate(lines):
-        draw.text(
-            (left + 10, 102 + row * LINE), line[:30], fill="white", font=_font(12)
-        )
+def _draw_bubble(image, position, text, size):
+    if len(text) > _BUBBLE_CHARACTERS:
+        text = text[: _BUBBLE_CHARACTERS - 3] + "..."
+    bubble = speech_bubble(text)
+    image.paste(bubble, bubble_box(position, bubble.size, size), bubble)
+
+
+def wrapped(text):
+    """Text split into lines that fit the panel."""
+    return wrap(text, PANEL_COLUMNS)
+
+
+def _fitted(lines, most):
+    """At most `most` lines, ending in dots if some are left out."""
+    if len(lines) <= most:
+        return lines
+    return [*lines[: most - 1], lines[most - 1][: PANEL_COLUMNS - 3] + "..."]
+
+
+def _panel_image(shown, height, look):
+    image = panel(PANEL, height)
+    draw_text(image, (_PANEL_LEFT, 14), f"Turn {shown['turn']}")
+    head = portrait(*look)
+    image.paste(head, PORTRAIT, head)
+    draw_text(image, (_TEXT_LEFT, PORTRAIT[1] + 8), shown["acting"])
+    draw_text(image, (_TEXT_LEFT, PORTRAIT[1] + 8 + LINE), "is acting")
+    y = PORTRAIT[1] + head.height + 8
+    sections = [("It did:", wrapped(shown["did"]), _DID_LINES)]
+    if shown["thoughts"]:
+        lines = [line for thought in shown["thoughts"] for line in wrapped(thought)]
+        # The latest thought matters most, so older lines are the ones to go.
+        sections.append(("Thinking:", lines[-_THOUGHT_LINES:], _THOUGHT_LINES))
+    log = [line or "(blank)" for line in shown["log"][-LOG_LINES:]] or ["(nothing)"]
+    log = [line[:PANEL_COLUMNS] for line in log]
+    sections.append(("Log it saw:", log, LOG_LINES))
+    for title, lines, most in sections:
+        draw_text(image, (_PANEL_LEFT, y), title)
+        y += LINE
+        for line in _fitted(lines, most):
+            draw_text(image, (_PANEL_LEFT, y), line)
+            y += LINE
+        y += LINE // 2
+    return image
 
 
 def frame(records, turn, size, pirates=None):
@@ -290,14 +351,14 @@ def frame(records, turn, size, pirates=None):
     pirates = pirates or _default_pirates(_crew_names(records))
     shown = scene(records, turn, size)
     grid = max(size, 1) * TILE
-    height = max(grid, 102 + LOG_LINES * LINE + 10)
+    height = max(grid, PANEL_HEIGHT)
     image = Image.new("RGB", (grid + PANEL, height), "#2b2b2b")
-    draw = ImageDraw.Draw(image)
     _draw_ground(image, size, shown)
     _draw_pirates(image, shown, pirates)
-    _draw_bubble(draw, shown["positions"][shown["acting"]], shown["bubble"], size)
+    _draw_bubble(image, shown["positions"][shown["acting"]], shown["bubble"], size)
     _draw_labels(image, shown, pirates)
-    _draw_panel(draw, shown, grid, height, pirates[shown["acting"]][1])
+    side = _panel_image(shown, height, pirates[shown["acting"]])
+    image.paste(side, (grid, 0), side)
     return image
 
 

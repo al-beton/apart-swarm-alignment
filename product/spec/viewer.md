@@ -7,7 +7,7 @@
 - **art-folder:** The viewer draws pirates, tiles and the treasure from `assets/` and has no plain shape to fall back on, so a reader always sees the approved art, and missing art is an error rather than a different picture.
 - **sprite-from-definition:** Each pirate's sprite comes from its definition in the run's config, or the default crew's when the run doesn't say, so the viewer shows the crew that was configured.
 - **sprite-follows-action:** A pirate faces the way it last moved, walks on the turn it moves, and digs or cheers on the turn it digs, so a reader can see what it did from the animation.
-- **crowds-fan-out:** Pirates sharing a square fan out inside the board, so every one and its label stay visible, even on the landing square in a corner.
+- **crowds-fan-out:** Pirates sharing a square fan out so every label stays visible, even on the landing square in a corner: up to six keep their labels inside the square, so a neighbouring square can't cover them, and a bigger crowd spreads sideways.
 
 ## Where this is enforced
 

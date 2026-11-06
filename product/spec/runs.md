@@ -17,15 +17,15 @@
 
 | Statement | Enforced by | Tested by |
 |---|---|---|
-| `one-game` | not yet | — |
+| `one-game` | `src/treasure_island/cli.py`, `src/treasure_island/saved_game.py` | `test_one_game_a_config_with_no_brain_is_refused`, `test_one_game_a_brain_nobody_knows_is_refused_too` |
 | `run-command` | `src/treasure_island/cli.py`, `src/treasure_island/runs.py` | `test_run_command_makes_a_new_folder_each_time` |
-| `run-folder` | `src/treasure_island/runs.py` | `test_run_folder_holds_events_replies_config_and_manifest`, `test_run_folder_events_pass_the_validator` |
+| `run-folder` | `src/treasure_island/saved_game.py` | `test_run_folder_holds_both_logs_the_story_replies_config_and_manifest`, `test_run_folder_events_pass_the_validator` |
 | `replies-keyed` | `src/treasure_island/runs.py` | `test_replies_keyed_each_part_of_the_request_changes_the_key`, `test_replies_keyed_a_repeated_request_reuses_its_reply`, `test_replies_keyed_a_stored_reply_survives_any_line_separator` |
-| `manifest-varies` | `src/treasure_island/runs.py` | `test_manifest_varies_holds_times_cost_and_cache_hits`, `test_manifest_varies_two_identical_runs_differ_nowhere_else` |
-| `replay-byte-identical` | `src/treasure_island/cli.py`, `src/treasure_island/runs.py` | `test_replay_byte_identical_with_no_keys_or_network`, `test_replay_byte_identical_fails_when_a_reply_changed`, `test_replay_byte_identical_leaves_the_folder_untouched` |
-| `no-silent-model-calls` | `src/treasure_island/runs.py` | `test_no_silent_model_calls_a_missing_reply_fails_the_replay` |
+| `manifest-varies` | `src/treasure_island/saved_game.py` | `test_manifest_varies_holds_times_cost_and_cache_hits`, `test_manifest_varies_two_identical_runs_differ_nowhere_else` |
+| `replay-byte-identical` | `src/treasure_island/cli.py`, `src/treasure_island/saved_game.py` | `test_everything_cached_replay_is_byte_identical_with_no_keys_or_network`, `test_everything_cached_replay_fails_if_a_log_changed`, `test_everything_cached_replay_leaves_the_folder_untouched` |
+| `no-silent-model-calls` | `src/treasure_island/runs.py` | `test_no_silent_model_calls_a_missing_reply_fails_with_no_backend` |
 | `plays-live` | `src/treasure_island/cli.py`, `src/treasure_island/saved_game.py` | `test_plays_live_run_opens_the_view_by_default`, `test_plays_live_no_watch_opens_nothing_and_never_waits`, `test_plays_live_stays_open_at_a_terminal_but_not_in_a_script` |
-| `paced-from-cache` | `src/treasure_island/runs.py` | `test_paced_from_cache_a_new_game_plays_turn_by_turn`, `test_paced_from_cache_a_cached_game_plays_turn_by_turn_too` |
-| `cache-across-runs` | `src/treasure_island/runs.py`, `src/treasure_island/agents.py` | `test_cache_across_runs_a_longer_game_keeps_a_scripted_agent_s_memory`, `test_cache_across_runs_a_bigger_crew_keeps_a_scripted_agent_s_count`, `test_cache_across_runs_a_repeat_asks_the_model_nothing`, `test_cache_across_runs_its_folder_alone_regenerates_the_game`, `test_cache_across_runs_only_the_same_request_reuses_a_reply`, `test_cache_across_runs_replay_never_borrows_from_another_run` |
+| `paced-from-cache` | `src/treasure_island/runs.py`, `src/treasure_island/game_loop.py` | `test_paced_from_cache_a_game_plays_turn_by_turn`, `test_paced_from_cache_a_repeat_plays_turn_by_turn_too` |
+| `cache-across-runs` | `src/treasure_island/runs.py` | `test_cache_across_runs_a_repeat_asks_the_model_nothing`, `test_cache_across_runs_its_folder_alone_regenerates_the_game`, `test_cache_across_runs_only_the_same_request_reuses_a_reply`, `test_cache_across_runs_replay_never_borrows_from_another_run` |
 | `same-answer-wins` | `src/treasure_island/runs.py` | `test_same_answer_wins_whatever_the_file_times_say`, `test_same_answer_wins_a_run_with_no_manifest_counts_as_the_oldest`, `test_same_answer_wins_runs_that_started_together_go_by_folder_name`, `test_no_cache_a_later_repeat_reuses_the_newest_replies` |
-| `no-cache` | `src/treasure_island/cli.py`, `src/treasure_island/runs.py` | `test_no_cache_asks_again_into_a_new_folder`, `test_no_cache_a_later_repeat_reuses_the_newest_replies` |
+| `no-cache` | `src/treasure_island/cli.py`, `src/treasure_island/runs.py` | `test_no_cache_asks_again_into_a_new_folder`, `test_no_cache_means_no_earlier_replies_so_the_model_is_asked_again`, `test_no_cache_a_later_repeat_reuses_the_newest_replies` |

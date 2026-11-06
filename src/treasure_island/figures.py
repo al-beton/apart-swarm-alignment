@@ -10,10 +10,11 @@ Implements: figures/named-figures, figures/two-lines, figures/rerun-matches
 
 import dataclasses
 import json
-import tomllib
 from pathlib import Path
 
 from treasure_island import viewer
+from treasure_island.config import parse_config
+from treasure_island.saved_game import config_with_seed
 
 
 @dataclasses.dataclass(frozen=True)
@@ -24,8 +25,10 @@ class Figure:
 
 
 FIGURES = {
-    "sweep-game": Figure("runs/sweep-seed-5", "configs/sweep.toml", 5),
-    "counter-game": Figure("runs/counter-seed-1", "configs/counter.toml", 1),
+    "s-sweep-game": Figure("runs/s-sweep-seed-7", "configs/s-sweep.toml", 7),
+    "say-a-number-game": Figure(
+        "examples/say-a-number", "configs/say-a-number.toml", 7
+    ),
 }
 
 
@@ -39,13 +42,24 @@ def lines(name):
 
 
 def rerun_mismatch(name):
-    """Why the rerun command wouldn't play the committed game, or None if it would."""
+    """Why the rerun command wouldn't play the committed game, or None if it would.
+
+    Both sides go through the parser, because a run's `config.json` holds every
+    lever and default while the file it was played from names only some.
+    """
     figure = FIGURES[name]
-    saved = json.loads(Path(figure.run, "config.json").read_text())
-    wanted = {**tomllib.loads(Path(figure.config).read_text()), "seed": figure.seed}
-    differ = sorted(key for key in saved | wanted if saved.get(key) != wanted.get(key))
+    saved = parse_config(json.loads(Path(figure.run, "config.json").read_text()))
+    wanted = config_with_seed(figure.config, figure.seed)
+    differ = [
+        field.name
+        for field in dataclasses.fields(saved)
+        if getattr(saved, field.name) != getattr(wanted, field.name)
+    ]
     if differ:
-        return f"{name}: {figure.config} --seed {figure.seed} differs from {figure.run} in {', '.join(differ)}."
+        return (
+            f"{name}: {figure.config} --seed {figure.seed} differs from "
+            f"{figure.run} in {', '.join(differ)}."
+        )
     return None
 
 

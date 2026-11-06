@@ -73,8 +73,7 @@ def grid_size(folder, records):
     """The grid size from config.json, or the widest position seen plus one."""
     config = Path(folder) / "config.json"
     if config.exists():
-        saved = json.loads(config.read_text())
-        return saved["grid_size"] if "grid_size" in saved else saved["size"]
+        return json.loads(config.read_text())["grid_size"]
     spots = [r["saw"]["position"] for r in records]
     spots += [r["outcome"]["position"] for r in records]
     return max((max(x, y) for x, y in spots), default=0) + 1
@@ -99,7 +98,7 @@ def pirates_in(folder, records):
     names = _crew_names(records)
     config = Path(folder) / "config.json"
     saved = json.loads(config.read_text()).get("pirates") if config.exists() else None
-    if not isinstance(saved, list):  # the walking skeleton saves only a count
+    if saved is None:
         return _default_pirates(names)
     crew = parse_config({"pirates": saved}).pirates
     return {name: sprite_values(p) for name, p in zip(names, crew, strict=True)}

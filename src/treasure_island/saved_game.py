@@ -1,4 +1,4 @@
-"""A real game as a named run: played into a folder, and replayed from it.
+"""A game as a named run: played into a folder, and replayed from it.
 
 `play_saved` writes `runs/<config>-seed-<N>/`: `config.json` (every lever, defaults
 included, so a later change of default can't change what this run was),
@@ -9,7 +9,7 @@ varies between identical runs).
 `differences` plays the game again from that folder, in a temporary folder and
 with nothing but what's saved, and names any log that doesn't match byte for byte.
 
-Implements: treasure-island/named-runs, treasure-island/everything-cached, runs/plays-live, results/examples-stay-true
+Implements: treasure-island/named-runs, treasure-island/everything-cached, runs/one-game, runs/run-folder, runs/manifest-varies, runs/replay-byte-identical, runs/plays-live, results/examples-stay-true
 """
 
 import datetime
@@ -18,21 +18,12 @@ import tempfile
 import tomllib
 from pathlib import Path
 
-from treasure_island.config import parse_config, save_config
+from treasure_island.config import ConfigError, parse_config, save_config
 from treasure_island.game_loop import write_game
 from treasure_island.runs import new_folder
 from treasure_island.strategies import brains_for
 
 LOGS = ("events.jsonl", "story.txt", "pirates-log.txt")
-
-
-def is_real_config(path):
-    """Whether a config plays the real game: only those name a brain."""
-    return "brain" in tomllib.loads(Path(path).read_text(encoding="utf-8"))
-
-
-def is_real_run(folder):
-    return (Path(folder) / "story.txt").is_file()
 
 
 def _now():
@@ -51,21 +42,24 @@ def play_saved(config_path, seed, on_start=None, pace=0):
     `on_start(folder)` is called once the folder can be watched, before any turn,
     and `pace` waits that many seconds after each turn. Neither changes the game.
     """
-    config = _config_with_seed(config_path, seed)
+    config = config_with_seed(config_path, seed)
     brains_for(config.brain, config)  # a bad brain makes no folder
     folder = new_folder(f"{Path(config_path).stem}-seed-{seed}")
     return write_saved(config_path, seed, folder, on_start, pace)
 
 
-def _config_with_seed(config_path, seed):
+def config_with_seed(config_path, seed):
+    """The config a game of this file and seed plays; it must name a brain."""
     data = tomllib.loads(Path(config_path).read_text(encoding="utf-8"))
+    if "brain" not in data:
+        raise ConfigError(f"{Path(config_path).name} names no brain to play with.")
     return parse_config({**data, "seed": seed})
 
 
 def write_saved(config_path, seed, folder, on_start=None, pace=0):
     """Play the config with this seed into `folder`, which must exist."""
     folder = Path(folder)
-    config = _config_with_seed(config_path, seed)
+    config = config_with_seed(config_path, seed)
     brains = brains_for(config.brain, config)
     save_config(config, folder / "config.json")
     (folder / "replies.jsonl").touch()

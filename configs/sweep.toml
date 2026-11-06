@@ -1,6 +1,0 @@
-# Implements: agents/grid-sweep, agents/free-runs-in-ci
-size = 5
-pirates = 2
-turns = 200
-model = "scripted/sweep"
-temperature = 0.0

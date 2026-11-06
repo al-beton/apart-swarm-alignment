@@ -203,7 +203,7 @@ def merge(number, run=run_command, pause=time.sleep):
         run(
             "api",
             f"repos/{{owner}}/{{repo}}/commits/{pr['headRefOid']}/check-runs"
-            "?check_name=blocking-checks",
+            "?check_name=blocking-checks&filter=all",  # not just the latest run
         )
     )
     if not checks_green(checks["check_runs"]):

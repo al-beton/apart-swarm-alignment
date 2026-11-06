@@ -178,12 +178,11 @@ def test_no_vision_the_view_never_shows_other_pirates_or_the_treasure():
 
 
 def test_no_vision_a_pirate_s_looks_never_reach_its_view():
-    config = parse_config(
-        {"pirates": [{"personality": "bold", "head_text": "Anne", "colour": [1, 2, 3]}]}
-    )
-    prompt = system_prompt(config)
-    assert "bold" not in prompt
+    anne = {"personality": 3, "head_text": "Anne", "colour": [1, 2, 3]}
+    mary = {"personality": 17, "head_text": "Mary", "colour": [9, 8, 7]}
+    prompt = system_prompt(parse_config({"pirates": [anne]}))
     assert "Anne" not in prompt
+    assert prompt == system_prompt(parse_config({"pirates": [mary]}))
 
 
 def test_agent_memory_a_brain_gets_its_own_earlier_turns():

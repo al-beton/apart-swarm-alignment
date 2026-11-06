@@ -109,7 +109,7 @@ def test_actions_shown_digging_and_cheering_differ_from_standing(pose):
 
 
 def test_ground_tiles_are_opaque_and_look_different():
-    assert {"sand", "dug", "water", "sinking-sand"} <= set(TILES)
+    assert {"sand", "grass", "dug", "water", "sinking-sand"} <= set(TILES)
     drawn = {name: make() for name, make in TILES.items()}
     for name, tile in drawn.items():
         assert tile.getextrema()[3] == (255, 255), name

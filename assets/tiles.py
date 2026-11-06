@@ -19,18 +19,32 @@ def _scatter(image, colours, count, seed):
         pixels[rng.randrange(SIZE), rng.randrange(SIZE)] = rgba(rng.choice(colours))
 
 
-def _edges(image):
+def _edges(image, colour=_SAND_EDGE):
     """A faint dotted edge, so a reader can count squares without a heavy grid."""
     pixels = image.load()
     for i in range(0, SIZE, 2):
-        pixels[i, 0] = rgba(_SAND_EDGE)
-        pixels[0, i] = rgba(_SAND_EDGE)
+        pixels[i, 0] = rgba(colour)
+        pixels[0, i] = rgba(colour)
 
 
 def sand(seed=11):
     image = Image.new("RGBA", (SIZE, SIZE), rgba(_SAND))
     _scatter(image, _SAND_MARKS, 150, seed)
     _edges(image)
+    return image
+
+
+def grass():
+    """Soft green with a few tufts: walkable, there to break up the sand."""
+    image = Image.new("RGBA", (SIZE, SIZE), rgba("#7fa35f"))
+    _scatter(image, ("#739856", "#739856", "#8cae6a"), 170, 41)
+    pixels = image.load()
+    tuft = ((0, 0), (1, -1), (2, -2), (3, -1), (4, 0), (2, -1), (2, 0))
+    for x0, y0 in [(6, 12), (29, 8), (17, 25), (37, 30), (8, 39), (27, 42)]:
+        for dx, dy in tuft:
+            pixels[x0 + dx, y0 + dy] = rgba("#55794a")
+        pixels[x0 + 2, y0 - 3] = rgba("#a3c07e")
+    _edges(image, "#739856")
     return image
 
 
@@ -92,6 +106,7 @@ TILES = {
     "sand": sand,
     "sand-2": lambda: sand(12),
     "sand-3": lambda: sand(13),
+    "grass": grass,
     "dug": dug,
     "water": water,
     "water-2": lambda: water(1),

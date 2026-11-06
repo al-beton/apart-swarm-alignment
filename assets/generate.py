@@ -103,6 +103,8 @@ def _scene():
         for x in range(columns):
             name = "water" if x == 7 or (x == 6 and y < 2) else "sand"
             scene.paste(TILES[name](), (x * SIZE, y * SIZE))
+    for cell in [(0, 0), (1, 0), (2, 0), (0, 1), (0, 2), (6, 5), (5, 5)]:
+        scene.paste(TILES["grass"](), (cell[0] * SIZE, cell[1] * SIZE))
     for cell in [(1, 1), (2, 1), (3, 1), (1, 2), (4, 3)]:
         scene.paste(TILES["dug"](), (cell[0] * SIZE, cell[1] * SIZE))
     scene.paste(TILES["sinking-sand"](), (5 * SIZE, 1 * SIZE))

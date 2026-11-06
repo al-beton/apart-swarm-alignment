@@ -9,7 +9,7 @@
 - **label-on-hat:** A label of up to two letters or digits sits in a cream blob on the hat, dark on cream whatever the colour, and stays in the same place from every direction.
 - **four-directions:** Pirates face four directions, each with a standing frame and two walking frames.
 - **actions-shown:** Pirates also have digging and cheering poses.
-- **ground-tiles:** The ground tiles are sand, dug sand that still looks walkable, water that doesn't, and sinking sand.
+- **ground-tiles:** The ground tiles are sand and grass, dug sand that still looks walkable, water that doesn't, and sinking sand.
 - **treasure-shown:** The treasure has a closed chest, an open chest, and the question mark and X that mark its square.
 - **viewer-parts:** The viewer has a speech bubble, a side panel, an arrow for whose turn it is, a portrait and a pixel font.
 - **sheet-shows-everything:** `assets/sheet.png` shows all the art on one page, at game size and in play.

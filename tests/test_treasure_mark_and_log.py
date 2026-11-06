@@ -86,6 +86,33 @@ def test_treasure_mark_an_x_once_it_is_dug_up_and_never_before():
     assert shows(image, 2, 2, "mark-x", ["dug"])
 
 
+def seen_share(image, x, y, mark):
+    """How much of a mark's opaque art actually reaches the frame at this square."""
+    art_mark = art(f"treasure/{mark}")
+    shown = square(image, x, y).convert("RGB")
+    opaque = [
+        (px, py)
+        for px in range(viewer.TILE)
+        for py in range(viewer.TILE)
+        if art_mark.getpixel((px, py))[3] == 255
+    ]
+    same = sum(shown.getpixel(spot) == art_mark.getpixel(spot)[:3] for spot in opaque)
+    return same / len(opaque)
+
+
+@pytest.mark.parametrize("crew", [1, 3, 6])
+def test_treasure_mark_the_x_shows_over_the_crew_standing_on_it(crew):
+    """Digging it up is the moment a reader most wants to see."""
+    names = [f"pirate-{n + 1}" for n in range(crew)]
+    dug_up = {
+        **record(0, [{"action": "dig"}], found=True, position=(1, 1)),
+        "agent": names[0],
+        "crew": {name: [1, 1] for name in names},
+    }
+    image = viewer.frame([dug_up], 0, 3).convert("RGB")
+    assert seen_share(image, 1, 1, "mark-x") > 0.5
+
+
 def test_treasure_mark_a_finished_game_says_where_it_is(saved):
     records = records_of(saved)
     assert viewer.treasure_in(saved, records) == (2, 1)

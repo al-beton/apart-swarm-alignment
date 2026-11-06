@@ -13,6 +13,7 @@
 - **treasure-shown:** The treasure has a closed chest, an open chest, and the question mark and X that mark its square.
 - **viewer-parts:** The viewer has a speech bubble, a side panel, an arrow for whose turn it is, a portrait and a pixel font.
 - **sheet-shows-everything:** `assets/sheet.png` shows all the art on one page, at game size and in play.
+- **sheet-on-every-pr:** Every pull request shows one comment with a sheet of all the art from its latest commit, so nobody has to run anything to see it.
 
 ## Where this is enforced
 
@@ -31,3 +32,4 @@
 | `treasure-shown` | `assets/treasure.py` | `test_treasure_shown_chests_and_marks_exist_and_differ` |
 | `viewer-parts` | `assets/ui.py`, `assets/font.py`, `assets/pirates.py` | `test_viewer_parts_bubble_fits_its_text`, `test_viewer_parts_panel_stretches_to_any_size`, `test_viewer_parts_font_covers_printable_ascii`, `test_viewer_parts_portrait_is_the_head_enlarged` |
 | `sheet-shows-everything` | `assets/generate.py` | `test_sheet_shows_everything_is_committed_and_wide_enough` |
+| `sheet-on-every-pr` | not yet | — |

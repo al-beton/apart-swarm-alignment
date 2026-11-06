@@ -12,8 +12,9 @@ all of it makes the key, and anything added to a request later joins the key.
 
 A run also reuses any earlier run's reply to the same request, since the key says
 the request is identical, and copies it into its own `replies.jsonl`, so its folder
-alone can regenerate it. If two runs answered one request differently, the newest
-answer wins. Replay never borrows: it only reads the folder it's checking. A
+alone can regenerate it. If two runs answered one request differently, the run that
+started last wins, by the time committed in its manifest: file times don't survive a
+clone, so they'd play a different game on another machine. Replay never borrows: it only reads the folder it's checking. A
 scripted agent that remembers its turns always answers for itself: it's free, and
 a look-alike request from another run may follow a different history.
 
@@ -21,7 +22,7 @@ Events and replies are written as they happen, so a run can be followed live. A
 watched run waits out the rest of `PACE_SECONDS` after each turn, which is what
 stops a game from the cache jumping to the end; a slow model is not slowed further.
 
-Implements: runs/run-command, runs/run-folder, runs/replies-keyed, runs/manifest-varies, runs/replay-byte-identical, runs/no-silent-model-calls, runs/paced-from-cache, runs/cache-across-runs, runs/no-cache, agents/one-interface, treasure-island/everything-cached
+Implements: runs/run-command, runs/run-folder, runs/replies-keyed, runs/manifest-varies, runs/replay-byte-identical, runs/no-silent-model-calls, runs/paced-from-cache, runs/cache-across-runs, runs/same-answer-wins, runs/no-cache, agents/one-interface, treasure-island/everything-cached
 """
 
 import dataclasses
@@ -95,9 +96,17 @@ class Replies:
         return text
 
 
+def _started_at(replies_path):
+    """When a run started, as sortable UTC text; "" if it never wrote a manifest."""
+    manifest = replies_path.with_name("manifest.json")
+    return json.loads(manifest.read_text())["started_at"] if manifest.exists() else ""
+
+
 def _earlier_replies():
-    """Every reply earlier runs got, by key, the newest run's answer winning."""
-    paths = sorted(RUNS.glob("*/replies.jsonl"), key=lambda p: (p.stat().st_mtime, p))
+    """Every reply earlier runs got, by key, the last run to start winning."""
+    paths = sorted(
+        RUNS.glob("*/replies.jsonl"), key=lambda p: (_started_at(p), p.parent.name)
+    )
     rows = (json.loads(line) for p in paths for line in p.read_text().splitlines())
     return {row["key"]: row["reply"] for row in rows}
 

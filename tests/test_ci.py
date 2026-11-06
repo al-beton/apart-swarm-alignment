@@ -1,4 +1,4 @@
-# Implements: assets/sheet-on-every-pr, ci/ci-minutes, ci/one-gate, ci/ci-runs-everything, ci/no-model-calls, tooling/how-we-work, specs-and-docs/folder-guides, agent-setup/reuse-old-work, treasure-island/gif-per-change
+# Implements: assets/sheet-on-every-pr, ci/ci-minutes, ci/one-gate, ci/ci-runs-everything, ci/no-model-calls, tooling/how-we-work, specs-and-docs/folder-guides, agent-setup/reuse-old-work, treasure-island/gif-per-change, results/examples-on-every-pr
 """The gate, and the few files a newcomer starts from, are what the spec says."""
 
 import re
@@ -205,7 +205,7 @@ def test_gif_per_change_keeps_write_access_away_from_the_branch_code():
     assert flow["permissions"] == {"contents": "read"}
     jobs = flow["jobs"]
     assert "pull-requests" not in jobs["render"].get("permissions", {})
-    assert jobs["comment"]["permissions"] == {"pull-requests": "write"}
+    assert jobs["comment"]["permissions"]["pull-requests"] == "write"
     assert jobs["comment"]["needs"] == "render"
     uses = [step.get("uses", "") for step in jobs["comment"]["steps"]]
     assert not any("checkout" in use for use in uses)
@@ -226,3 +226,24 @@ def test_gif_per_change_links_the_gif_of_that_commit():
     assert "SHA" in runs
     env = gif_workflow()["jobs"]["comment"]["steps"][0]["env"]
     assert "needs.render.outputs" in env["GIF_URL"]
+
+
+def test_examples_on_every_pr_shows_each_gif_inline_with_its_ending():
+    runs = gif_runs("comment")
+    assert "raw.githubusercontent.com/$REPO/$SHA/examples/$name/game.gif" in runs
+    assert "raw.githubusercontent.com/$REPO/$SHA/examples/$name/story.txt" in runs
+    assert "![$name](" in runs
+    assert "tail -n 1" in runs
+
+
+def test_examples_on_every_pr_reads_the_commit_without_running_its_code():
+    job = gif_workflow()["jobs"]["comment"]
+    assert job["permissions"]["contents"] == "read"
+    assert job["permissions"]["pull-requests"] == "write"
+    assert not any("checkout" in step.get("uses", "") for step in job["steps"])
+
+
+def test_examples_on_every_pr_lists_examples_from_that_commit():
+    runs = gif_runs("comment")
+    assert "contents/examples?ref=$SHA" in runs
+    assert 'select(.type == \\"dir\\")' in runs or 'select(.type == "dir")' in runs

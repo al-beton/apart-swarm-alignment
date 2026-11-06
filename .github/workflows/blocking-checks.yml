@@ -44,12 +44,22 @@ jobs:
       - uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
+      # The README's quick start, exactly as written, with no keys, in a new clone
+      # before anything is installed, so nothing a later step leaves behind can
+      # hide a break. It must print a real animated GIF's path and a real page's.
+      - name: clean-clone
+        run: |
+          git clone --quiet "$GITHUB_WORKSPACE" "$RUNNER_TEMP/clean-clone"
+          cd "$RUNNER_TEMP/clean-clone"
+          printed=$(uv run treasure-island show examples/s-sweep)
+          gif=$(echo "$printed" | sed -n 1p)
+          page=$(echo "$printed" | sed -n 2p)
+          uv run python -c 'import sys; from PIL import Image; sys.exit(Image.open(sys.argv[1]).n_frames < 2)' "$gif"
+          grep -qi '<html' "$page"
       - run: make install
       - run: make lint
       - run: make test
       - run: make spec-check
-      # The README's quick start, exactly as written, with no keys.
-      - run: uv run treasure-island show examples/s-sweep
       # Every figure, rebuilt from committed runs with no keys, for anyone to
       # download from the run (product/spec/figures.md).
       - run: make figures

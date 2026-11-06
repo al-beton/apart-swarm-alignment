@@ -16,35 +16,38 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 - **from-scratch:** (decided) The game is built from scratch rather than on an existing multi-agent environment.
 - **grid-and-crew:** (open) Starting point is about a 10x10 grid, one treasure and 5 to 10 agents, within Apart's 5 to 20.
 - **scarce-turns:** (open) One agent alone must not have enough turns to search the grid, so working as a swarm is clearly the best play; the turn limit is not yet set.
-- **score:** (open) The score is how quickly all agents stand on the treasure; how a run that never gets there scores is not yet set.
+- **score:** (decided) The score rewards everyone standing on the treasure and finishing with moves to spare, and a crew that never gets there still scores above zero, so results have a usable range.
+- **score-numbers:** (open) The starting proposal is 100 for everyone on the treasure plus 10 per move remaining; the exact numbers are not yet set.
 - **hidden-terrain:** (open) Optional hidden terrain such as sinking sand is found only by trying to move, and a blocked move costs the turn.
-- **shared-squares:** (open) Whether two agents may stand on one square is not yet set, and the score needs them all on the treasure.
+- **shared-squares:** (decided) Any number of pirates may stand on one square, since the score needs them all on the treasure.
 - **random-events:** (open) Game events such as a clue washing ashore were floated as a reason to look back through the log.
 
 ## The pirates
 
-- **pirate-definition:** (decided) A pirate is defined by its personality, the free-form text on its head and its RGB colour, so a crew can be varied and told apart.
-- **crew-varies:** (decided) A run can have different numbers of pirates, each with its own definition.
+- **pirate-definition:** (decided) A pirate is defined by its personality type, the free-form text on its head and its RGB colour, so a crew can be varied and told apart.
+- **crew-varies:** (decided) A run can have any number of pirates, each with its own definition; 5 to 20 is the expected range, not a limit.
 - **graphics-elsewhere:** (decided) The graphics are generated elsewhere, and the sandbox only has to say what each pirate is and what it did.
-- **personality-reach:** (open) Whether personality reaches the model through its prompt, and what it means for a pirate with no model, is not yet set.
-- **head-text-reach:** (open) Whether the head text is fixed by the config or can change in play, and whether other pirates can see it, is not yet set.
+- **looks-are-cosmetic:** (decided) Personality type, head text and colour only pick the sprite; they never reach the model or change how the game plays.
+- **pluggable-pirate:** (decided) A pirate's brain is pluggable: an LLM, or a scripted strategy that needs no tokens.
+- **sweeper:** (decided) The first scripted pirate sweeps the grid in an S shape, digging each square, and stays still once it finds the treasure.
 
 ## The turn
 
 - **turn-order:** (decided) Agents take turns in a fixed order, one at a time.
 - **turn-view:** (open) Each turn an agent sees its system prompt, its location and the last 3 to 5 log lines.
-- **actions:** (open) The actions are move in one of 4 directions, dig, write to the log and read the log by line number.
-- **actions-per-turn:** (open) The calls leave unsettled whether a turn is one action or two, which decides how much talking costs.
-- **agent-memory:** (open) Whether an agent keeps its earlier turns in context is not yet set, and the calls leaned towards keeping them.
-- **thinking:** (open) Each turn may have a modest private thinking budget, recorded for us and invisible to other agents.
+- **no-vision:** (decided) Pirates have no vision: a pirate knows only its own position and what it has dug, and learns about the others only through the log.
+- **actions:** (decided) The actions are move in one of 4 directions, dig, write to the log and read the log; digging and searching a square are the same action.
+- **one-action-per-turn:** (decided) A turn is exactly one action, so writing a note costs a turn that could have been a move or a dig.
+- **agent-memory:** (decided) An agent keeps its own earlier turns in context, because without them it can't follow a plan.
+- **thinking:** (decided) Private internal thinking is an optional setting, recorded for us and invisible to other agents.
 
 ## The log
 
 - **only-channel:** (decided) The log is the only channel between agents, and turning that constraint off is a lever.
 - **short-window:** (open) Only the last 3 to 5 lines are shown for free, so context has to be passed along or looked up.
-- **every-turn-a-line:** (open) Every turn adds a line, even a blank one, but the calls don't settle whether writing it costs the agent an action.
-- **reading-costs:** (open) Reading further back costs an action, so talking and looking up trade off against digging.
-- **full-record:** (decided) Separately from the log agents use, every turn is written to a full readable record that the animation is built from.
+- **every-turn-a-line:** (decided) Every turn adds a line to the log: the pirate's note when it spent the turn writing, a blank line otherwise.
+- **reading-costs:** (decided) Reading further back costs a turn, so talking and looking up trade off against digging.
+- **two-logs:** (decided) There are two logs: the pirates' log, which is all they see, and our record of every turn, written clearly enough to read on its own and to animate from.
 
 ## The exploit
 
@@ -77,20 +80,22 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 
 - **readable-at-once:** (decided) A reader should grasp what happened from the animation alone, as much a goal as the mechanics.
 - **pokemon-style:** (decided) The view is classic tile-based, with pirates told apart by their colour and head text, moving in 4 directions, speaking in speech bubbles.
-- **side-panel:** (decided) A side panel shows whose turn it is and the part of the chat that agent can see.
-- **shows-thinking:** (open) The calls imagine the viewer showing what an agent thought and decided; how much private thinking is on screen is not yet set.
+- **side-panel:** (decided) A side panel shows the pirate whose turn it is: its avatar, its trail of thought and what it did, animated turn by turn.
+- **log-at-bottom:** (decided) The pirates' log scrolls along the bottom of the replay, so a reader sees what the crew could see.
+- **slideshow:** (decided) An HTML page replays a whole game as a slideshow, stepping through turns with the arrow keys.
 - **paper-figures:** (open) Since a paper can't embed an animation, it gets a sequence of about 4 stills with arrows showing where agents went.
 - **one-line-replay:** (open) A reader runs one command after `git clone` to replay a whole game from cached API responses, possibly in the browser, and can turn the cache off to run it live.
 
 ## Deterministic first
 
 - **no-token-strategies:** (decided) The first target is a working game played by deterministic strategies, such as a grid sweep or an agent that says a number each turn, with scoring working and no tokens spent.
-- **gif-per-change:** (open) Each pull request carries an automatically generated GIF of a strategy playing, as Al asked for the overnight stack.
+- **gif-per-change:** (decided) Each pull request carries an automatically generated GIF of a whole game, so Al can see the change play without running anything.
 
 ## Where this is enforced
 
 | Statement | Enforced by | Tested by |
 |---|---|---|
+| `sandbox-first` | not yet | — |
 | `research-question` | not yet | — |
 | `sandbox-counts` | not yet | — |
 | `principals` | not yet | — |
@@ -100,20 +105,28 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 | `grid-and-crew` | not yet | — |
 | `scarce-turns` | not yet | — |
 | `score` | not yet | — |
+| `score-numbers` | not yet | — |
 | `hidden-terrain` | not yet | — |
 | `shared-squares` | not yet | — |
 | `random-events` | not yet | — |
+| `pirate-definition` | not yet | — |
+| `crew-varies` | not yet | — |
+| `graphics-elsewhere` | not yet | — |
+| `looks-are-cosmetic` | not yet | — |
+| `pluggable-pirate` | not yet | — |
+| `sweeper` | not yet | — |
 | `turn-order` | not yet | — |
 | `turn-view` | not yet | — |
+| `no-vision` | not yet | — |
 | `actions` | not yet | — |
-| `actions-per-turn` | not yet | — |
+| `one-action-per-turn` | not yet | — |
 | `agent-memory` | not yet | — |
 | `thinking` | not yet | — |
 | `only-channel` | not yet | — |
 | `short-window` | not yet | — |
 | `every-turn-a-line` | not yet | — |
 | `reading-costs` | not yet | — |
-| `full-record` | not yet | — |
+| `two-logs` | not yet | — |
 | `previous-session` | not yet | — |
 | `same-treasure` | not yet | — |
 | `query-tool` | not yet | — |
@@ -135,14 +148,9 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 | `readable-at-once` | not yet | — |
 | `pokemon-style` | not yet | — |
 | `side-panel` | not yet | — |
-| `shows-thinking` | not yet | — |
+| `log-at-bottom` | not yet | — |
+| `slideshow` | not yet | — |
 | `paper-figures` | not yet | — |
 | `one-line-replay` | not yet | — |
 | `no-token-strategies` | not yet | — |
 | `gif-per-change` | not yet | — |
-| `sandbox-first` | not yet | — |
-| `pirate-definition` | not yet | — |
-| `crew-varies` | not yet | — |
-| `graphics-elsewhere` | not yet | — |
-| `personality-reach` | not yet | — |
-| `head-text-reach` | not yet | — |

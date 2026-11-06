@@ -37,7 +37,7 @@ That writes a GIF of a whole game and an HTML page you can step through with the
 | Check a finding: `results/` keeps each one with the games behind it, its question and what it cost | `uv run treasure-island replay results/sample-sweep-seeds/small-crew-seed-1` |
 | Remake the examples, after a change that's meant to show in them | `make examples` |
 | Remake the scripted pirates' reference games | `make reference-games` |
-| Watch a game in the browser, turn by turn, in the approved art: each pirate in its own colour and label, facing the way it moves, with whose turn it is and what each saw (stop it with Ctrl-C) | `uv run treasure-island watch runs/s-sweep-seed-7` |
+| Watch a game in the browser, turn by turn, in the approved art: each pirate in its own colour and label, facing the way it moves, with whose turn it is, what each saw, the treasure's mark and the crew's log along the bottom (stop it with Ctrl-C) | `uv run treasure-island watch runs/s-sweep-seed-7` |
 | See a game the quickest way: its GIF and its page, from one command | `uv run treasure-island show examples/s-sweep` |
 | Bake a game into an animated GIF, from the same drawing code | `uv run treasure-island render runs/s-sweep-seed-7` |
 | Study a game at your own pace: one HTML file you can open or pass on, stepped through with the arrow keys, with no server | `uv run treasure-island slideshow runs/s-sweep-seed-7` |

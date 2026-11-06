@@ -9,7 +9,7 @@
 - **sprite-follows-action:** A pirate faces the way it last moved, walks on the turn it moves, and digs or cheers on the turn it digs, so a reader can see what it did from the animation.
 - **crowds-fan-out:** Pirates sharing a square fan out so every label stays visible, even on the landing square in a corner: up to six keep their labels inside the square, so a neighbouring square can't cover them, and a bigger crowd spreads sideways.
 - **slideshow-file:** `treasure-island slideshow runs/<name>` writes one HTML file holding every turn's frame and story line, which the left and right arrow keys step through, offline and with no server, so a reader can study a game at their own pace or pass it on as a file.
-- **long-log-lines:** The log strip wraps a long line rather than cutting it off, and always shows the newest lines, so a reader never loses what a pirate wrote.
+- **long-log-lines:** The log strip wraps a long line rather than running it off the edge, and shows the newest rows when more than fit, so a reader sees as much of what a pirate wrote as a frame can hold.
 
 ## Where this is enforced
 
@@ -24,4 +24,4 @@
 | `sprite-follows-action` | `src/treasure_island/viewer.py` | `test_sprite_follows_action_a_pirate_faces_the_way_it_moves`, `test_sprite_follows_action_it_keeps_facing_that_way_and_stands_still`, `test_sprite_follows_action_walking_alternates_its_feet`, `test_sprite_follows_action_each_pirate_alternates_its_own_feet`, `test_sprite_follows_action_digging_and_finding_the_treasure`, `test_sprite_follows_action_others_stay_as_they_were` |
 | `crowds-fan-out` | `src/treasure_island/viewer.py` | `test_crowds_fan_out_every_pirate_on_one_square_shows`, `test_crowds_fan_out_up_to_six_labels_stay_inside_their_square`, `test_crowds_fan_out_a_big_crowd_never_stacks_and_stays_on_the_board`, `test_crowds_fan_out_a_pirate_leaving_the_crowd_covers_no_label`, `test_crowds_fan_out_a_lone_pirate_stands_on_its_square`, `test_crowds_fan_out_every_label_shows_on_the_landing_square` |
 | `slideshow-file` | `src/treasure_island/cli.py`, `src/treasure_island/viewer.py` | `test_slideshow_file_one_command_writes_it_next_to_the_run`, `test_slideshow_file_writes_where_asked`, `test_slideshow_file_holds_the_renderer_s_frame_for_every_turn`, `test_slideshow_file_holds_every_turn_s_story`, `test_slideshow_file_a_run_without_stories_still_steps`, `test_slideshow_file_the_arrow_keys_step_through_it`, `test_slideshow_file_needs_no_server_or_network`, `test_slideshow_file_writing_it_opens_no_socket`, `test_slideshow_file_a_pirate_s_words_cannot_break_out_of_the_page`, `test_slideshow_file_the_same_game_writes_the_same_bytes` |
-| `long-log-lines` | not yet | — |
+| `long-log-lines` | `src/treasure_island/viewer.py` | `test_long_log_lines_wrap_and_lose_no_word`, `test_long_log_lines_a_word_too_long_for_a_row_is_split_not_cut`, `test_long_log_lines_keep_the_newest_in_view`, `test_long_log_lines_a_note_too_long_for_the_strip_shows_its_end` |

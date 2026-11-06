@@ -376,6 +376,15 @@ def test_story_record_says_when_there_was_no_log_to_see():
     assert "Saw: nothing, the log is empty." in records[0]["story"]
 
 
+def test_story_record_with_the_window_off_says_so_rather_than_that_the_log_is_empty():
+    game_config = off_the_treasure(log_window=0, turns_per_pirate=1)
+    records = play(game_config, Steps(write("note")), Steps(read(1)))
+    assert "Saw: nothing, the log is empty." in records[0]["story"]
+    second = records[1]["story"]
+    assert "Saw: no lines, the free window is off." in second
+    assert 'found line 1 "note"' in second
+
+
 def test_story_record_a_blank_line_among_notes_says_so():
     brains = [Steps(write("note"), DIG), Steps(DIG)]
     records = play(off_the_treasure(turns_per_pirate=2), *brains)

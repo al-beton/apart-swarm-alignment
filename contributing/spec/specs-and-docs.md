@@ -9,7 +9,7 @@
 - **folder-guides:** Every top-level folder a reader sees has a short README saying what it holds.
 - **no-history:** The codebase describes how things are now, never how they got there.
 - **prompts-are-verbatim:** Prompt files hold exactly the text a model reads, so a spec table row traces them instead of a comment inside them.
-- **runs-are-evidence:** Committed run folders hold exactly what the game wrote, so a spec table row traces them instead of a comment inside them, and JSON Lines logs are never asked for one anywhere; scratch and smoke runs are never committed.
+- **runs-are-evidence:** Committed run folders, in `runs/` or `examples/`, hold exactly what the game wrote, so a spec table row traces them instead of a comment inside them, and JSON Lines logs are never asked for one anywhere; scratch and smoke runs are never committed.
 - **art-is-binary:** Binary images such as PNGs and GIFs can't carry an `Implements:` line, so the spec check never asks them for one or for a home, wherever they are, while the code that draws art traces like any other code.
 - **short-specs:** Spec files stay short enough to read; long ones get split.
 - **readme-keeps-up:** A pull request that adds or changes something a person can run or see updates the README in the same pull request, so the first page anyone reads never falls behind the code.
@@ -25,10 +25,10 @@
 | `everything-traces` | `.github/scripts/spec_check.py`, `.agents/skills/write-spec-change/SKILL.md` | `test_everything_traces_requires_a_table_row_per_statement`, `test_everything_traces_requires_files_to_point_back`, `test_everything_traces_requires_listed_tests_to_exist`, `test_everything_traces_matches_listed_tests_by_their_whole_name`, `test_everything_traces_requires_each_row_to_name_an_enforcer`, `test_everything_traces_blocks_merges_on_broken_links` |
 | `every-file-has-a-home` | `.github/scripts/spec_check.py` | `test_every_file_has_a_home` |
 | `docs-next-to-code` | `.agents/skills/build-issue/SKILL.md`, `.agents/skills/review-pr/SKILL.md` | — |
-| `folder-guides` | `configs/README.md`, `contributing/README.md`, `experiments/README.md`, `product/README.md`, `runs/README.md`, `src/README.md`, `tests/README.md` | `test_folder_guides_every_top_level_folder_has_a_readme` |
+| `folder-guides` | `configs/README.md`, `contributing/README.md`, `examples/README.md`, `experiments/README.md`, `product/README.md`, `runs/README.md`, `src/README.md`, `tests/README.md` | `test_folder_guides_every_top_level_folder_has_a_readme` |
 | `no-history` | `.agents/skills/review-pr/SKILL.md` | — |
 | `prompts-are-verbatim` | `.github/scripts/spec_check.py` | `test_prompts_are_verbatim_and_homed_by_a_table_row`, `test_prompts_are_verbatim_so_they_never_carry_implements_lines` |
-| `runs-are-evidence` | `.github/scripts/spec_check.py`, `.gitignore` | `test_runs_are_evidence_homed_by_a_table_row`, `test_runs_are_evidence_so_they_never_carry_implements_lines`, `test_runs_are_evidence_jsonl_never_asked_for_implements_lines`, `test_runs_are_evidence_compressed_files_never_asked_for_implements_lines`, `test_runs_are_evidence_scratch_and_smoke_runs_stay_ignored` |
+| `runs-are-evidence` | `.github/scripts/spec_check.py`, `.gitignore` | `test_runs_are_evidence_homed_by_a_table_row`, `test_runs_are_evidence_so_they_never_carry_implements_lines`, `test_runs_are_evidence_jsonl_never_asked_for_implements_lines`, `test_runs_are_evidence_compressed_files_never_asked_for_implements_lines`, `test_runs_are_evidence_scratch_and_smoke_runs_stay_ignored`, `test_runs_are_evidence_examples_never_carry_implements_lines` |
 | `art-is-binary` | `.github/scripts/spec_check.py` | `test_art_is_binary_images_never_need_a_home`, `test_art_is_binary_a_gif_a_row_names_is_never_asked_to_point_back` |
 | `short-specs` | `.github/scripts/spec_check.py` | `test_spec_length_warns_over_300_lines` |
 | `readme-keeps-up` | `.github/pull_request_template.md`, `.agents/skills/review-pr/SKILL.md`, `README.md` | — |

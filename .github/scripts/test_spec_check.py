@@ -123,6 +123,23 @@ class SpecCheckTests(unittest.TestCase):
             warnings,
         )
 
+    def test_runs_are_evidence_examples_never_carry_implements_lines(self):
+        spec = SPEC.replace(
+            "`.github/scripts/pr_gate.py`, reviewer",
+            "`.github/scripts/pr_gate.py`, `examples/sweep/**`",
+        )
+        files = {
+            "contributing/spec/pull-requests.md": spec,
+            "examples/sweep/story.txt": "Turn 0: a pirate dug.\n",
+        }
+        self.assertEqual(blocking(warnings_for(**files)), [])
+        files["examples/sweep/story.txt"] = "Implements: pull-requests/closing-block\n"
+        self.assertIn(
+            "examples/sweep/story.txt is run output the game wrote: home it "
+            "with a spec table row, not an Implements: line.",
+            warnings_for(**files),
+        )
+
     def test_runs_are_evidence_jsonl_never_asked_for_implements_lines(self):
         spec = SPEC.replace(
             "`.github/scripts/pr_gate.py`, reviewer",

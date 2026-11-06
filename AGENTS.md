@@ -14,7 +14,7 @@ Al handles accounts, API keys and spending. Agents never put keys in code, confi
 
 ## Pace
 
-This is a hackathon prototype. Aim for the smallest change that works and can be shared. Fix real bugs; decline speculative hardening and edge cases nobody has hit, with a reason. Automatic review stops after three rounds, or sooner when a round finds nothing real.
+This is a hackathon prototype. Submissions close Monday 9 November 2026. Aim for the smallest change that works and can be shared. Fix real bugs; decline speculative hardening and edge cases nobody has hit, with a reason. Automatic review stops after three rounds, or sooner when a round finds nothing real.
 
 ## Commands
 

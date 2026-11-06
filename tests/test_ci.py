@@ -230,9 +230,9 @@ def test_gif_per_change_links_the_gif_of_that_commit():
 
 def test_examples_on_every_pr_shows_each_gif_inline_with_its_ending():
     runs = gif_runs("comment")
-    assert "raw.githubusercontent.com/$REPO/$SHA/examples/$name/game.gif" in runs
-    assert "raw.githubusercontent.com/$REPO/$SHA/examples/$name/story.txt" in runs
-    assert "![$name](" in runs
+    assert "raw.githubusercontent.com/$REPO/$SHA/examples/$name" in runs
+    assert "$raw/story.txt" in runs
+    assert "![$name]($raw/game.gif)" in runs
     assert "tail -n 1" in runs
 
 

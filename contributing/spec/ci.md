@@ -19,5 +19,5 @@
 | `simple-code` | `pyproject.toml` | — |
 | `ci-runs-everything` | `.github/workflows/blocking-checks.yml`, `Makefile` | `test_ci_minutes_the_gate_runs_every_check` |
 | `ci-minutes` | `.github/workflows/blocking-checks.yml`, `Makefile`, `pyproject.toml`, `uv.lock`, `.agents/skills/open-pr/SKILL.md`, `.agents/skills/deliver-issue/SKILL.md` | `test_ci_minutes_the_gate_is_one_job`, `test_ci_minutes_tests_run_in_parallel_with_cached_dependencies`, `test_ci_minutes_the_gate_runs_every_check`, `test_ci_minutes_newer_runs_cancel_older_ones_and_drafts_wait` |
-| `skipped-draft-runs` | not yet | — |
+| `skipped-draft-runs` | `.github/workflows/blocking-checks.yml`, `.github/scripts/deliver.py` | `test_skipped_draft_runs_a_later_skip_does_not_hide_a_pass`, `test_skipped_draft_runs_a_cancelled_run_does_not_hide_a_pass`, `test_skipped_draft_runs_only_skips_is_not_a_pass`, `test_skipped_draft_runs_the_latest_real_run_decides`, `test_skipped_draft_runs_a_newer_unfinished_run_is_not_a_pass`, `test_skipped_draft_runs_other_workflows_do_not_count`, `test_skipped_draft_runs_can_t_cancel_a_ready_run` |
 | `no-model-calls` | `.github/workflows/blocking-checks.yml` | `test_no_model_calls_no_secret_but_the_github_token` |

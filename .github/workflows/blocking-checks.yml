@@ -1,4 +1,4 @@
-# Implements: ci/checks-on-every-pr, ci/one-gate, ci/ci-runs-everything, ci/ci-minutes, ci/no-model-calls, agents/free-runs-in-ci
+# Implements: ci/checks-on-every-pr, ci/one-gate, ci/ci-runs-everything, ci/ci-minutes, ci/no-model-calls, ci/skipped-draft-runs, agents/free-runs-in-ci
 name: blocking-checks
 
 # The one status to require before merging is the `blocking-checks` job: every
@@ -15,9 +15,10 @@ on:
 
 # A newer run for the same pull request cancels the one in progress. Every
 # other run (main, after a merge) is its own group, so none is cancelled or
-# dropped from a queue: each merger waits for its own run.
+# dropped from a queue: each merger waits for its own run. Draft runs have their
+# own group, so a run that will skip itself can't cancel a ready run.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}-${{ github.event.pull_request.draft }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:

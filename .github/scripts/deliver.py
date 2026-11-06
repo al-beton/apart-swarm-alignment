@@ -1,6 +1,6 @@
 """deliver: the mechanical steps of the deliver-issue skill.
 
-Implements: workflow/one-routine, commits/named-paths, review/review-finished, merging/stacked-retarget, merging/main-stays-green, merging/merge-when-clean
+Implements: workflow/one-routine, commits/named-paths, review/review-finished, merging/stacked-retarget, merging/main-stays-green, merging/merge-when-clean, ci/skipped-draft-runs
 
 Usage: `python3 .github/scripts/deliver.py <command> ...`
 
@@ -186,10 +186,28 @@ def resolve(thread, reply, run=run_command):
     )
 
 
+def gate_passed(rollup):
+    """Whether the latest blocking-checks run that really ran has passed.
+
+    A draft's run skips itself and can start after a ready run, and `gh pr checks`
+    shows whichever started last, so skipped and cancelled runs are ignored here.
+    A run that hasn't started yet counts as the latest, and so isn't a pass.
+    """
+    runs = [
+        check
+        for check in rollup
+        if check.get("name") == "blocking-checks"
+        and check.get("conclusion") not in ("SKIPPED", "CANCELLED")
+    ]
+    if not runs:
+        return False
+    latest = max(runs, key=lambda check: check.get("startedAt") or "9999")
+    return latest.get("conclusion") == "SUCCESS"
+
+
 def merge(number, run=run_command, pause=time.sleep):
     pr = _view(number, run)
-    checks = run("pr", "checks", str(number))
-    if not re.search(r"^blocking-checks\tpass\b", checks, re.MULTILINE):
+    if not gate_passed(pr["statusCheckRollup"]):
         raise MergeRefused("blocking-checks isn't green.")
     if not review_finished(review_state(_comments(number, run)), pr["headRefOid"]):
         raise MergeRefused("Codex hasn't finished reviewing the latest commit.")
@@ -243,7 +261,7 @@ def _comments(number, run):
 
 
 def _view(number, run):
-    fields = "number,title,body,headRefName,baseRefName,headRefOid"
+    fields = "number,title,body,headRefName,baseRefName,headRefOid,statusCheckRollup"
     return json.loads(run("pr", "view", str(number), "--json", fields))
 
 

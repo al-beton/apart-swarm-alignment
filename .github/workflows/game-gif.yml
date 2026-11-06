@@ -28,6 +28,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          # The commit the comment names, not a merge with the base branch.
+          ref: ${{ github.event.pull_request.head.sha }}
           persist-credentials: false
       - uses: astral-sh/setup-uv@v6
         with:

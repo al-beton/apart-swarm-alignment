@@ -1,7 +1,7 @@
 """A real game as a named run: played into a folder, and replayed from it.
 
-`play_saved` writes `runs/<config>-seed-<N>/`: `config.json` (the game, with its
-seed and brain), `events.jsonl`, `story.txt` and `pirates-log.txt` (see
+`play_saved` writes `runs/<config>-seed-<N>/`: `config.json` (every lever, defaults
+included, so a later change of default can't change what this run was), `events.jsonl`, `story.txt` and `pirates-log.txt` (see
 game_loop), `replies.jsonl` (every model reply, which scripted brains don't make)
 and `manifest.json` (what varies between identical runs).
 
@@ -11,6 +11,7 @@ with nothing but what's saved, and names any log that doesn't match byte for byt
 Implements: treasure-island/named-runs, treasure-island/everything-cached
 """
 
+import dataclasses
 import datetime
 import json
 import tempfile
@@ -51,7 +52,7 @@ def play_saved(config_path, seed):
     config = parse_config(data)
     brains = brains_for(config.brain, config)
     folder = _new_folder(f"{Path(config_path).stem}-seed-{seed}")
-    _write_json(folder / "config.json", data)
+    _write_json(folder / "config.json", dataclasses.asdict(config))
     (folder / "replies.jsonl").touch()
     started_at = _now()
     write_game(config, brains, folder)

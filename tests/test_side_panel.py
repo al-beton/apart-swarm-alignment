@@ -79,6 +79,12 @@ def test_side_panel_a_repeated_thought_shows_once():
     assert shown(records)["thoughts"] == ["same"]
 
 
+def test_side_panel_the_current_thought_is_always_last():
+    thoughts = ["dig", "walk", "dig", "walk", "dig"]
+    records = [record(2 * i, thinking=thought) for i, thought in enumerate(thoughts)]
+    assert shown(records)["thoughts"] == ["dig", "walk", "dig"]
+
+
 def test_side_panel_never_shows_a_thought_from_a_later_turn():
     records = [record(0, thinking="now"), record(2, thinking="later")]
     assert shown(records, 0)["thoughts"] == ["now"]

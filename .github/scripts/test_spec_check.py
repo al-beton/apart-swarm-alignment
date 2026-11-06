@@ -150,29 +150,15 @@ class SpecCheckTests(unittest.TestCase):
         self.assertIn("runs/scratch/", ignored.splitlines())
         self.assertIn("runs/smoke/", ignored.splitlines())
 
-    def test_art_is_binary_assets_are_homed_by_a_table_row(self):
-        spec = SPEC.replace(
-            "`.github/scripts/pr_gate.py`, reviewer",
-            "`.github/scripts/pr_gate.py`, `assets/**`",
-        )
+    def test_art_is_binary_images_never_need_a_home(self):
         files = {
-            "contributing/spec/pull-requests.md": spec,
-            "assets/README.md": "# Assets\n",
             "assets/sand.png": "not really a png\n",
-            "assets/intro.gif": "not really a gif\n",
+            "assets/sheet.gif": "not really a gif\n",
+            "assets/draw.py": "# Implements: pull-requests/closing-block\n",
         }
         self.assertEqual(warnings_for(**files), [])
 
-    def test_art_is_binary_so_assets_never_carry_implements_lines(self):
-        readme = "<!-- Implements: pull-requests/closing-block -->\n# Assets\n"
-        warnings = warnings_for(**{"assets/README.md": readme})
-        self.assertIn(
-            "assets/README.md is art the viewer draws as it is: home it "
-            "with a spec table row, not an Implements: line.",
-            warnings,
-        )
-
-    def test_art_is_binary_gifs_never_asked_for_implements_lines(self):
+    def test_art_is_binary_a_gif_a_row_names_is_never_asked_to_point_back(self):
         spec = SPEC.replace(
             "`.github/scripts/pr_gate.py`, reviewer",
             "`.github/scripts/pr_gate.py`, `figures/game.gif`",

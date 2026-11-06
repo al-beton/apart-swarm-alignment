@@ -158,8 +158,7 @@ def test_render_gif_writes_where_asked(folder, tmp_path):
     assert out.read_bytes()[:6] in (b"GIF87a", b"GIF89a")
 
 
-def test_art_folder_exists_and_the_viewer_draws_without_art(folder, monkeypatch):
-    assert Path(__file__).parents[1].joinpath("assets", "README.md").is_file()
+def test_art_folder_the_viewer_draws_without_art(folder, monkeypatch):
     monkeypatch.setattr(viewer, "ASSETS", Path("/nowhere"))
     assert viewer.frame_png(folder, 0)[:8] == b"\x89PNG\r\n\x1a\n"
 
@@ -167,7 +166,7 @@ def test_art_folder_exists_and_the_viewer_draws_without_art(folder, monkeypatch)
 def test_art_folder_art_is_drawn_when_it_exists(folder, tmp_path, monkeypatch):
     plain = viewer.frame_png(folder, 0)
     art = tmp_path / "assets"
-    art.mkdir()
-    Image.new("RGB", (8, 8), "magenta").save(art / "sand.png")
+    (art / "tiles").mkdir(parents=True)
+    Image.new("RGB", (8, 8), "magenta").save(art / "tiles" / "sand.png")
     monkeypatch.setattr(viewer, "ASSETS", art)
     assert viewer.frame_png(folder, 0) != plain

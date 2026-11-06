@@ -1,16 +1,14 @@
-# Implements: ci/docs-fast, ci/checks-on-every-pr, ci/one-gate, ci/report-comment, ci/ci-runs-everything, ci/end-to-end, ci/ci-minutes, ci/results-digest, ci/numbers-checked, ci/no-model-calls
+# Implements: ci/checks-on-every-pr, ci/one-gate, ci/ci-runs-everything, ci/ci-minutes, ci/no-model-calls
 name: blocking-checks
 
 # The one status to require before merging is the `blocking-checks` job: every
-# check that gates a merge is a step of it. The demo game, its report and the
-# digest go in `pr-report`, which runs beside it, so the gate never waits on
-# them (contributing/spec/ci.md). Add new gating checks as steps of the gate.
+# check that gates a merge is a step of it (contributing/spec/ci.md). Add new
+# gating checks as steps of the gate.
 on:
   pull_request:
     # edited: re-check the title and description (pr-gate) when they change.
     # No branch filter, so stacked pull requests are checked too.
     types: [opened, edited, synchronize, reopened, ready_for_review]
-  # On main, the same checks, then the "Results digest" issue is updated.
   push:
     branches: [main]
   workflow_dispatch:
@@ -30,89 +28,20 @@ jobs:
     # Drafts wait: marking a pull request ready runs the checks.
     if: github.event_name != 'pull_request' || !github.event.pull_request.draft
     runs-on: ubuntu-latest
-    # The GitHub token is the only secret: CI never calls a model, so it
-    # holds no API key (contributing/spec/ci.md).
+    # CI never calls a model, so it holds no API key (contributing/spec/ci.md).
     permissions:
       contents: read
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-          fetch-depth: 0  # the base branch too, to see what a pull request changed
       # Title and closing block (contributing/spec/pull-requests.md).
       - name: pr-gate
         run: python3 .github/scripts/pr_gate.py
       - uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
-      # A pull request that changes only the paper's text, the submission
-      # pack or READMEs skips the linter, the full suite and the digest, and
-      # runs only the tests that read those files.
-      - id: changes
-        if: github.event_name == 'pull_request'
-        run: python3 .github/scripts/docs_only.py origin/${{ github.base_ref }}
       - run: make install
-      - if: steps.changes.outputs.docs_only != 'true'
-        run: make lint
-      - if: steps.changes.outputs.docs_only != 'true'
-        run: make test
-      - if: steps.changes.outputs.docs_only == 'true'
-        run: uv run pytest -n auto tests/test_readme.py tests/test_paper.py tests/test_paper_source.py tests/test_project_image.py tests/test_figure_commands.py::test_figure_commands_paper_lines_match_the_registry tests/test_explore.py::test_explore_readme_examples_build_and_stop_at_the_spend_question tests/test_modal.py::test_modal_readme_says_how_to_set_up_deploy_run_and_tear_down
+      - run: make lint
+      - run: make test
       - run: make spec-check
-      # The registered experiments a pull request touches, from committed
-      # runs only (no model is called): their numbers checked against the
-      # notes, which fails the gate on a mismatch. Nothing touched, nothing
-      # runs long.
-      - if: github.event_name == 'pull_request' && steps.changes.outputs.docs_only != 'true'
-        run: uv run lab digest --changed-only --since origin/${{ github.base_ref }} --check
-
-  pr-report:
-    # Not the gate: a merge never waits for it.
-    if: github.event_name != 'pull_request' || !github.event.pull_request.draft
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: write
-      issues: write
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-          fetch-depth: 0
-      - uses: astral-sh/setup-uv@v6
-        with:
-          enable-cache: true
-      - run: make install
-      # One free game, its report attached and summed up in a comment. Only
-      # posting the comment may fail quietly.
-      - run: uv run lab run configs/pr-game.yaml --out runs/pr --cache off -y
-      - run: uv run lab report runs/pr --out runs/pr/report.html
-      - run: >-
-          uv run python -c "from collusion_lab.report.markdown import
-          first_screen_markdown as f; print(f('runs/pr'))" > runs/pr/first-screen.md
-      - id: upload
-        uses: actions/upload-artifact@v4
-        with:
-          name: report
-          path: runs/pr/report.html
-      # The results of the registered experiments a pull request touches,
-      # added to the comment (the gate checks their numbers).
-      - if: github.event_name == 'pull_request'
-        run: >-
-          uv run lab digest --changed-only --since origin/${{ github.base_ref }}
-          > runs/pr/digest.md
-      - run: >-
-          python3 .github/scripts/report_comment.py runs/pr/first-screen.md
-          ${{ github.event_name == 'pull_request' && 'runs/pr/digest.md' || '' }}
-        continue-on-error: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPORT_URL: ${{ steps.upload.outputs.artifact-url }}
-      # On main: every registered experiment, in the one "Results digest" issue.
-      - if: github.event_name == 'push'
-        run: uv run lab digest > runs/digest.md
-      - if: github.event_name == 'push'
-        run: python3 .github/scripts/digest_issue.py runs/digest.md
-        continue-on-error: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

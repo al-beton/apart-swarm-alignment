@@ -1,26 +1,15 @@
 # Implements: ci/simple-code, tooling/one-command-each, ci/ci-minutes
 [project]
-name = "collusion-lab"
+name = "treasure-island"
 version = "0.1.0"
 requires-python = ">=3.12,<3.13"
-dependencies = [
-    "litellm>=1.106.2",
-    "python-dotenv>=1.2.4",
-    "pyyaml>=6.0",
-]
-
-[project.scripts]
-lab = "collusion_lab.cli:main"
-
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+dependencies = []
 
 [dependency-groups]
 dev = [
-    "matplotlib>=3.11.2",
     "pytest>=8.3",
     "pytest-xdist>=3.8.0",
+    "pyyaml>=6.0",
     "ruff>=0.7",
 ]
 

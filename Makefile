@@ -1,5 +1,5 @@
-# Implements: reproducibility/reported-numbers-checked, tooling/one-command-each, tooling/locked-dependencies, ci/end-to-end, reports/paper-figures, reports/paper-main-figures, reports/paper-project-image, reports/paper-source, reports/paper-rules, ci/ci-minutes, ci/ci-runs-everything, reproducibility/figure-commands
-.PHONY: install lint test spec-check e2e paper-figures reproduce figure regenerate figure-lines paper-tools paper-html paper-tex paper-pdf paper-watch paper-build-dir
+# Implements: tooling/one-command-each, tooling/locked-dependencies, ci/ci-minutes, ci/ci-runs-everything
+.PHONY: install lint test spec-check
 install:
 	uv sync --frozen
 lint:
@@ -9,40 +9,3 @@ test:  # in parallel, one worker per core
 	uv run pytest -n auto
 spec-check:
 	uv run python .github/scripts/spec_check.py
-e2e:  # free scripted agents: run -> summary -> report, offline, in seconds
-	uv run pytest tests/test_e2e.py
-paper-figures:  # the paper's figures and tables, offline, from committed runs
-	uv run python reports/paper/build.py
-	uv run python reports/paper/figures.py
-	uv run python reports/paper/fig1_round.py
-	uv run python reports/paper/project_image.py
-reproduce:  # every committed number recomputed, offline; fails on a mismatch
-	uv run python reports/reproduce.py
-figure:  # make figure F=e9-crux: redraw one figure free, offline, and check it against the committed one (no F: the list)
-	uv run python reports/paper/figure.py $(if $(F),replay $(F),--list)
-regenerate:  # make regenerate F=e9-crux [ARGS="--max-cost 5 --yes"]: play its games again, fresh and at cost, into runs/regenerated/F/
-	uv run python reports/paper/figure.py regenerate $(F) $(ARGS)
-figure-lines:  # the paper's table of figure commands, from the registry (prices fetched live)
-	uv run python reports/paper/figure.py lines
-
-# The paper: write paper/body.md and paper/appendix.md (paper/paper.md is the skeleton that pulls them in), build to paper/build/ (gitignored).
-PAPER_BUILD ?= paper/build
-PANDOC = pandoc paper/paper.md --from markdown --lua-filter paper/include.lua --resource-path=paper --number-sections --toc --toc-depth=1
-paper-tools:
-	@command -v pandoc >/dev/null || { echo "pandoc is missing: brew install pandoc (or see pandoc.org/installing)"; exit 1; }
-paper-build-dir: paper-tools
-	@mkdir -p $(PAPER_BUILD)/figures
-	@cp reports/paper/figures/*.png $(PAPER_BUILD)/figures/
-paper-html: paper-build-dir  # fast, for writing: open paper/build/paper.html
-	@cp paper/style.css $(PAPER_BUILD)/
-	$(PANDOC) --standalone --template paper/apart.html --css style.css --math-method=mathjax --citeproc -o $(PAPER_BUILD)/paper.html
-	@uv run python paper/check.py paper/paper.md
-paper-tex: paper-build-dir  # the .tex, with references.bib and figures/ beside it, ready for Overleaf
-	@cp paper/references.bib $(PAPER_BUILD)/
-	$(PANDOC) --template paper/apart.latex --natbib -o $(PAPER_BUILD)/paper.tex
-paper-pdf: paper-tex
-	@command -v tectonic >/dev/null || { echo "tectonic is missing: brew install tectonic (or see tectonic-typesetting.github.io)"; exit 1; }
-	cd $(PAPER_BUILD) && tectonic --keep-logs --keep-intermediates paper.tex
-	@uv run python paper/check.py paper/paper.md $(PAPER_BUILD)/paper.aux
-paper-watch:  # the writing loop: on every save, HTML then .tex then PDF; preview at http://127.0.0.1:8765/preview.html
-	@PAPER_BUILD=$(PAPER_BUILD) paper/watch.sh

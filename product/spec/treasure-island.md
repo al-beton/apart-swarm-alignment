@@ -139,10 +139,10 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 | `agent-memory` | not yet | — |
 | `thinking` | not yet | — |
 | `only-channel` | not yet | — |
-| `short-window` | not yet | — |
-| `every-turn-a-line` | not yet | — |
-| `reading-costs` | not yet | — |
-| `read-size` | not yet | — |
+| `short-window` | `src/treasure_island/pirate_log.py` | `test_short_window_shows_the_last_three_lines_for_free_by_default`, `test_short_window_shows_what_there_is_when_the_log_is_shorter`, `test_short_window_is_a_plain_value` |
+| `every-turn-a-line` | `src/treasure_island/pirate_log.py` | `test_every_turn_a_line_a_note_when_written_and_a_blank_line_otherwise` |
+| `reading-costs` | `src/treasure_island/pirate_log.py` | `test_reading_costs_a_read_spends_the_turn`, `test_reading_costs_a_failed_read_spends_the_turn_too`, `test_reading_costs_the_free_window_spends_nothing` |
+| `read-size` | `src/treasure_island/pirate_log.py` | `test_read_size_returns_the_lines_around_a_chosen_line`, `test_read_size_is_a_plain_value`, `test_read_size_a_line_outside_the_log_gets_a_clear_answer_and_nothing_else`, `test_read_size_an_empty_log_has_no_line_to_read` |
 | `two-logs` | not yet | — |
 | `exploit-later` | not yet | — |
 | `previous-session` | not yet | — |

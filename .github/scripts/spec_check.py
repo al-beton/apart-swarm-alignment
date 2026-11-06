@@ -1,6 +1,6 @@
 """spec-check: the spec and the code point at each other.
 
-Implements: specs-and-docs/everything-traces, specs-and-docs/every-file-has-a-home, specs-and-docs/areas, specs-and-docs/spec-is-intent, specs-and-docs/short-specs, specs-and-docs/domains, specs-and-docs/prompts-are-verbatim, specs-and-docs/runs-are-evidence
+Implements: specs-and-docs/everything-traces, specs-and-docs/every-file-has-a-home, specs-and-docs/areas, specs-and-docs/spec-is-intent, specs-and-docs/short-specs, specs-and-docs/domains, specs-and-docs/prompts-are-verbatim, specs-and-docs/runs-are-evidence, specs-and-docs/art-is-binary
 
 The spec lives in product/spec/, experiments/spec/ and contributing/spec/, one
 file per area. Each
@@ -10,7 +10,8 @@ source file names the statements it implements on an `Implements:` line,
 except prompt files (prompts/): models read them verbatim, so a table row
 homes them and they never carry an `Implements:` line. Committed run folders
 (runs/) are the same: output the game wrote, homed by a row such as
-`runs/survey/**`. JSON Lines files never hold a comment, wherever they are.
+`runs/survey/**`, and so is art (assets/), homed by `assets/**`. JSON Lines
+files and binary images never hold a comment, wherever they are.
 
 This script fails (exit 1, GitHub errors) on anything broken, and only warns
 about statements marked "not yet" (planned work) and long spec files:
@@ -38,6 +39,7 @@ from pathlib import Path
 DOMAINS = ("product", "experiments", "contributing")
 PROMPTS = "prompts/"
 RUNS = "runs/"
+ASSETS = "assets/"
 MAX_LINES = 300
 TABLE_HEADING = "## Where this is enforced"
 _NAME = r"[a-z0-9]+(?:-[a-z0-9]+)*"
@@ -55,7 +57,14 @@ _PLACEHOLDER = re.compile(r"[%$][a-z#]+")
 _SKIPPED_DIRS = {".git", ".venv", "node_modules", "dist", "staticfiles"}
 _EXEMPT_NAMES = {"uv.lock", "package-lock.json", ".gitignore"}
 _EXEMPT_SUFFIXES = {".png", ".jpg", ".jpeg", ".svg", ".ico"}
-_NO_COMMENTS = {".json", ".jsonl", ".gz", ".docx", ".pdf"}  # data, archives, documents
+_NO_COMMENTS = {
+    ".json",
+    ".jsonl",
+    ".gz",
+    ".docx",
+    ".pdf",
+    ".gif",
+}  # data, archives, documents, images
 _NO_COMMENT_NAMES = {".python-version", "uv.lock", "package-lock.json", "LICENSE"}
 
 
@@ -193,7 +202,7 @@ def _can_hold_comments(root, path):
         Path(root, path).is_symlink()
         or Path(path).suffix in _NO_COMMENTS
         or _basename(path) in _NO_COMMENT_NAMES
-        or path.startswith((PROMPTS, RUNS))
+        or path.startswith((PROMPTS, RUNS, ASSETS))
     )
 
 
@@ -273,6 +282,8 @@ def _verbatim(path):
         return "a prompt the model reads verbatim"
     if path.startswith(RUNS):
         return "run output the game wrote"
+    if path.startswith(ASSETS):
+        return "art the viewer draws as it is"
     return None
 
 

@@ -27,5 +27,5 @@
 | `no-history` | `.agents/skills/review-pr/SKILL.md` | — |
 | `prompts-are-verbatim` | `.github/scripts/spec_check.py` | `test_prompts_are_verbatim_and_homed_by_a_table_row`, `test_prompts_are_verbatim_so_they_never_carry_implements_lines` |
 | `runs-are-evidence` | `.github/scripts/spec_check.py`, `.gitignore` | `test_runs_are_evidence_homed_by_a_table_row`, `test_runs_are_evidence_so_they_never_carry_implements_lines`, `test_runs_are_evidence_jsonl_never_asked_for_implements_lines`, `test_runs_are_evidence_compressed_files_never_asked_for_implements_lines`, `test_runs_are_evidence_scratch_and_smoke_runs_stay_ignored` |
-| `art-is-binary` | not yet | — |
+| `art-is-binary` | `.github/scripts/spec_check.py` | `test_art_is_binary_assets_are_homed_by_a_table_row`, `test_art_is_binary_so_assets_never_carry_implements_lines`, `test_art_is_binary_gifs_never_asked_for_implements_lines` |
 | `short-specs` | `.github/scripts/spec_check.py` | `test_spec_length_warns_over_300_lines` |

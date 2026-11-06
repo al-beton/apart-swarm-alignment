@@ -154,6 +154,9 @@ wheels = [
 name = "treasure-island"
 version = "0.1.0"
 source = { editable = "." }
+dependencies = [
+    { name = "pillow" },
+]
 
 [package.dev-dependencies]
 dev = [
@@ -165,6 +168,7 @@ dev = [
 ]
 
 [package.metadata]
+requires-dist = [{ name = "pillow", specifier = ">=13.0.0" }]
 
 [package.metadata.requires-dev]
 dev = [

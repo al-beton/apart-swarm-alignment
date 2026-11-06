@@ -19,7 +19,7 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 - **scarce-turns:** (decided) Default 30 turns per pirate, so one pirate alone can't search the grid and working as a swarm is clearly the best play.
 - **revealed-treasure:** (decided) The treasure counts only once someone has dug it up; after that any pirate standing on the square counts, whether or not the digger told anyone.
 - **score:** (decided) The score rewards everyone standing on the treasure and finishing with moves to spare, and a crew that never gets there still scores above zero, so results have a usable range.
-- **score-numbers:** (open) Default, Al to confirm: 100 for everyone on the treasure plus 10 per move remaining, with the moves counted as the turns left to the pirate who got there last.
+- **score-numbers:** (open) Default, Al to confirm: 100 for everyone on the treasure plus 10 per move remaining, with the moves counted as the turns left to the pirate who got there last; short of that, 10 plus the crew's share on the treasure of a further 90, with no credit for moves.
 - **hidden-terrain:** (decided) Hidden terrain such as sinking sand, found only by trying to move, is left out of the base game and added later as its own change.
 - **shared-squares:** (decided) Any number of pirates may stand on one square, since the score needs them all on the treasure.
 - **random-events:** (open) Game events such as a clue washing ashore would give pirates a reason to look back through the log; default, Al to confirm: none in the base game.
@@ -116,9 +116,9 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 | `config-variables` | `src/treasure_island/config.py` | `test_config_variables_a_file_sets_every_lever`, `test_config_variables_the_defaults_are_only_defaults`, `test_config_variables_the_log_window_can_be_switched_off`, `test_config_variables_a_seed_plays_the_same_config_again`, `test_config_variables_a_bad_config_is_rejected_with_a_clear_message`, `test_config_variables_every_problem_is_named_at_once`, `test_config_variables_a_file_that_is_not_toml_is_rejected` |
 | `grid-and-crew` | `src/treasure_island/config.py` | `test_grid_and_crew_defaults_are_a_10x10_grid_and_6_pirates_on_one_square` |
 | `scarce-turns` | `src/treasure_island/config.py` | `test_scarce_turns_defaults_to_30_turns_per_pirate` |
-| `revealed-treasure` | not yet | — |
-| `score` | not yet | — |
-| `score-numbers` | not yet | — |
+| `revealed-treasure` | `src/treasure_island/score.py` | `test_revealed_treasure_standing_on_it_counts_only_once_it_is_dug_up`, `test_revealed_treasure_anyone_on_the_square_counts_not_only_the_digger` |
+| `score` | `src/treasure_island/score.py` | `test_score_more_of_the_crew_there_always_scores_more`, `test_score_a_crew_that_never_gets_there_still_scores_above_zero`, `test_score_a_large_crew_one_short_stays_below_everyone_arriving` |
+| `score-numbers` | `src/treasure_island/score.py` | `test_score_numbers_everyone_there_scores_100_plus_10_per_move_remaining`, `test_score_numbers_some_there_scores_a_share_with_no_credit_for_moves`, `test_score_numbers_treasure_never_dug_up_scores_10_whatever_the_moves` |
 | `hidden-terrain` | not yet | — |
 | `shared-squares` | not yet | — |
 | `random-events` | not yet | — |

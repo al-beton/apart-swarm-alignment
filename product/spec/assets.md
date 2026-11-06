@@ -24,7 +24,7 @@
 | `game-size` | `assets/pixels.py` | `test_game_size_tiles_and_sprites_are_48px` |
 | `any-pirate` | `assets/pirates.py` | `test_any_pirate_takes_any_personality_colour_and_label`, `test_any_pirate_refuses_a_label_that_will_not_fit` |
 | `charming-personalities` | `assets/pirates.py` | `test_charming_personalities_are_twenty_and_all_different` |
-| `label-on-hat` | `assets/pirates.py` | `test_label_on_hat_is_dark_on_cream_whatever_the_colour`, `test_label_on_hat_stays_put_from_every_direction` |
+| `label-on-hat` | `assets/pirates.py`, `src/treasure_island/looks.py` | `test_label_on_hat_is_dark_on_cream_whatever_the_colour`, `test_label_on_hat_stays_put_from_every_direction` |
 | `four-directions` | `assets/pirates.py` | `test_four_directions_each_walk_with_three_frames` |
 | `actions-shown` | `assets/pirates.py` | `test_actions_shown_digging_and_cheering_differ_from_standing` |
 | `ground-tiles` | `assets/tiles.py` | `test_ground_tiles_are_opaque_and_look_different` |

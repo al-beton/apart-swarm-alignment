@@ -85,19 +85,19 @@ def test_pirate_definition_each_pirate_has_its_own_looks():
     config = parse_config(
         {
             "pirates": [
-                {"personality": "bold", "head_text": "Anne", "colour": [255, 0, 0]},
-                {"personality": "shy", "head_text": "Mary", "colour": [0, 0, 255]},
+                {"personality": 7, "head_text": "Anne", "colour": [255, 0, 0]},
+                {"personality": 12, "head_text": "Mary", "colour": [0, 0, 255]},
             ]
         }
     )
     first, second = config.pirates
     assert (first.personality, first.head_text, first.colour) == (
-        "bold",
+        7,
         "Anne",
         (255, 0, 0),
     )
     assert (second.personality, second.head_text, second.colour) == (
-        "shy",
+        12,
         "Mary",
         (0, 0, 255),
     )

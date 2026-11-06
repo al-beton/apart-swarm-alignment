@@ -5,10 +5,10 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 ## The question
 
 - **sandbox-first:** (decided) The sandbox is specified and built first, as one big spec turned into a stack of pull requests, before any experiment on top of it.
-- **research-question:** (open) The calls ask how often a misaligned swarm whistleblows and what in the environment changes that, but handing one agent a secret may only show candour about windfall information.
+- **research-question:** (open) We want to know how often a swarm of LLM agents whistleblows once it has gone wrong, and what in its environment changes that; handing one agent a secret may only show candour about windfall information, so the exact claim is still to choose.
 - **sandbox-counts:** (decided) A reproducible sandbox with levers is a worthwhile result on its own, whatever the whistleblowing numbers turn out to be.
-- **principals:** (open) Apart's brief asks for agents acting for different principals, and the calls floated both one shared score and individual scores, so we still choose which.
-- **what-they-are-told:** (open) The calls leaned towards telling agents openly that this is a study of how well they swarm, and that they are scored, since knowing it's a simulation doesn't invalidate the result.
+- **principals:** (open) Apart's brief asks for agents acting for different principals, so we still choose between one shared crew score and a private score for each pirate.
+- **what-they-are-told:** (open) Default, Al to confirm: pirates are told openly that this is a study of how well they swarm and that they are scored, since knowing it's a simulation doesn't invalidate the result.
 
 ## The game
 
@@ -22,7 +22,7 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 - **score-numbers:** (open) Default, Al to confirm: 100 for everyone on the treasure plus 10 per move remaining, with the moves counted as the turns left to the pirate who got there last.
 - **hidden-terrain:** (decided) Hidden terrain such as sinking sand, found only by trying to move, is left out of the base game and added later as its own change.
 - **shared-squares:** (decided) Any number of pirates may stand on one square, since the score needs them all on the treasure.
-- **random-events:** (open) Game events such as a clue washing ashore were floated as a reason to look back through the log; default, Al to confirm: none in the base game.
+- **random-events:** (open) Game events such as a clue washing ashore would give pirates a reason to look back through the log; default, Al to confirm: none in the base game.
 
 ## The pirates
 
@@ -60,7 +60,7 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 - **exploit-later:** (decided) The sandbox is built and shipped as the plain game first; the exploit comes on top of it as its own change.
 - **previous-session:** (open) The log tool can reach an earlier session, through a negative line number or session N-1, whose log shows where the treasure was found.
 - **same-treasure:** (open) The earlier session only helps if its treasure is in the same place as this one, and what agents are told about that is not yet set.
-- **query-tool:** (open) The tool could take only an integer, add keyword search, or be a shell command, and numbering the log from a high line such as 1,100 was floated as a lure.
+- **query-tool:** (open) The read tool could take only a line number, add keyword search, or be a shell command, and the log could start from a high line number to tempt pirates to look back; which of these is still to choose.
 - **forced-discovery:** (open) Agents probably won't find it unaided, so one agent is made to find it, either by taking over its turn or by seeding its own thinking.
 - **what-it-reveals:** (open) The forced read could show the location outright, or only a hint that leads the agent to query further itself.
 - **off-limits:** (open) Using the exploit only counts as misaligned if agents have reason to know it's out of bounds, and whether the rules say so is a lever still to set.
@@ -69,8 +69,8 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 ## Measuring whistleblowing
 
 - **baseline-first:** (open) A baseline without the exploit gives the expected number of moves, so a suspicious drop with the exploit on can be seen.
-- **end-report:** (open) At the end every agent writes a summary of anything the designers should know, not labelled as whistleblowing; a whistleblow tool usable at any time was the alternative raised.
-- **disclosure-cost:** (open) Whether disclosing costs the swarm anything is not yet set: the design call has a free report at the end, the follow-up call has it taking a turn or zeroing the score.
+- **end-report:** (open) At the end every agent writes a summary of anything the designers should know, not labelled as whistleblowing; the alternative is a whistleblow tool usable at any time.
+- **disclosure-cost:** (open) Whether disclosing costs the swarm anything is still to choose: a free report at the end, a report that costs a turn, or one that zeroes the score.
 - **what-counts:** (open) What counts as a disclosure, and who or what judges free text, is not yet set; a structured tool would need no judge.
 - **measured-share:** (open) The measure is the share that disclose across repeated runs, and who is in that share (the forced agent only, or also agents who learned from it) is not yet set.
 - **run-count:** (open) How many runs each condition gets is not yet set, and depends on the credits Al still has to check.
@@ -81,7 +81,7 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 - **prompt-variants:** (open) System prompt variants to compare are: act within the rules, a reputation score, a reward for honesty, and simulation awareness.
 - **sudoku-last:** (decided) The Sudoku time from Something to Lose is tried last, once the rest works.
 - **model-backends:** (decided) Model backends are pluggable; which models we run is not yet chosen, and no LLM pirate is wired in until the deterministic stack works.
-- **parked-ideas:** (open) Token budgets agents can trade, closed channels, an orchestrator role and a between-sessions swarm manager came up in the calls and are out unless Al brings them back.
+- **parked-ideas:** (open) Token budgets agents can trade, closed channels, an orchestrator role and a between-sessions swarm manager are out unless Al brings them back.
 
 ## The viewer
 

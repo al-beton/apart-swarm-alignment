@@ -6,7 +6,7 @@
 - **manifest-varies:** `manifest.json` holds what varies between identical runs (times, cost and cache hits), so nothing else in the folder has to.
 - **replay-byte-identical:** `treasure-island replay runs/<name>` plays the game again from the stored replies and fails unless its events are byte-identical to `events.jsonl`, with no keys and no network, so anyone can check a committed run for free.
 - **no-silent-model-calls:** Replay never calls a model, and a reply it can't find fails the replay, so checking a run can never cost money.
-- **walking-skeleton:** A tiny game (a grid, moving, digging, one treasure) stands in for the full rules, so the whole path from config to events can be proved before they're settled.
+- **walking-skeleton:** A tiny game (a grid, moving, digging, saying a line, one treasure) stands in for the full rules, so the whole path from config to events can be proved before they're settled.
 
 ## Where this is enforced
 

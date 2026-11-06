@@ -304,25 +304,25 @@ def test_actions_write_and_read_each_end_the_turn_like_any_other():
 
 
 def find_then_walk_away():
-    """Pirate 1 lands on the treasure, digs it up and walks off while pirate 2 waits."""
-    x, y = treasure_of(config())
-    away = "east" if x < 4 else "west"
+    """Pirate 1 steps onto the treasure, digs it up and steps off; pirate 2 stays away."""
+    # This seed's treasure is at x = 1, and the crew lands one square east of it.
+    assert treasure_of(config())[0] == 1
+    pirate_1 = Steps(move("west"), DIG, move("east"))
     return treasure_of(config()), play(
-        on_the_treasure(), Steps(DIG, move(away)), Steps(write("still looking"))
+        off_the_treasure(turns_per_pirate=3), pirate_1, Steps(write("still looking"))
     )
 
 
 def test_the_outcome_says_found_only_on_the_turn_of_the_find():
     _, records = find_then_walk_away()
-    assert records[0]["outcome"]["found_treasure"] is True
-    assert records[1]["outcome"]["found_treasure"] is False
-    assert records[2]["outcome"]["found_treasure"] is False
+    found = [record["outcome"]["found_treasure"] for record in records]
+    assert found == [False, False, True, False, False, False]
 
 
 def test_the_outcome_keeps_the_treasure_where_it_was_found_in_a_frame():
     treasure, records = find_then_walk_away()
-    assert records[2]["outcome"]["position"] != list(treasure)
-    assert scene(records, 2, 5)["treasure"] == list(treasure)
+    assert records[4]["outcome"]["position"] != list(treasure)
+    assert scene(records, 4, 5)["treasure"] == list(treasure)
 
 
 def test_crew_positions_a_real_game_says_where_everyone_starts_each_turn():

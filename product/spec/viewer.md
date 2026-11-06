@@ -8,6 +8,7 @@
 - **sprite-from-definition:** Each pirate's sprite comes from its definition in the run's config, or the default crew's when the run doesn't say, so the viewer shows the crew that was configured.
 - **sprite-follows-action:** A pirate faces the way it last moved, walks on the turn it moves, and digs or cheers on the turn it digs, so a reader can see what it did from the animation.
 - **crowds-fan-out:** Pirates sharing a square fan out so every label stays visible, even on the landing square in a corner: up to six keep their labels inside the square, so a neighbouring square can't cover them, and a bigger crowd spreads sideways.
+- **slideshow-file:** `treasure-island slideshow runs/<name>` writes one HTML file holding every turn's frame and story line, which the left and right arrow keys step through, offline and with no server, so a reader can study a game at their own pace or pass it on as a file.
 
 ## Where this is enforced
 
@@ -21,3 +22,4 @@
 | `sprite-from-definition` | `src/treasure_island/viewer.py` | `test_sprite_from_definition_uses_the_configured_look`, `test_sprite_from_definition_a_run_that_does_not_say_gets_the_default_crew`, `test_sprite_from_definition_the_frame_draws_the_given_look` |
 | `sprite-follows-action` | `src/treasure_island/viewer.py` | `test_sprite_follows_action_a_pirate_faces_the_way_it_moves`, `test_sprite_follows_action_it_keeps_facing_that_way_and_stands_still`, `test_sprite_follows_action_walking_alternates_its_feet`, `test_sprite_follows_action_each_pirate_alternates_its_own_feet`, `test_sprite_follows_action_digging_and_finding_the_treasure`, `test_sprite_follows_action_others_stay_as_they_were` |
 | `crowds-fan-out` | `src/treasure_island/viewer.py` | `test_crowds_fan_out_every_pirate_on_one_square_shows`, `test_crowds_fan_out_up_to_six_labels_stay_inside_their_square`, `test_crowds_fan_out_a_big_crowd_never_stacks_and_stays_on_the_board`, `test_crowds_fan_out_a_pirate_leaving_the_crowd_covers_no_label`, `test_crowds_fan_out_a_lone_pirate_stands_on_its_square`, `test_crowds_fan_out_every_label_shows_on_the_landing_square` |
+| `slideshow-file` | not yet | — |

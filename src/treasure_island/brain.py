@@ -87,11 +87,16 @@ def system_prompt(config):
     )
 
 
+def _log_text(lines):
+    return [f"{line['line']}: {line['text'] or '(blank)'}" for line in lines]
+
+
 @dataclasses.dataclass(frozen=True)
 class EarlierTurn:
-    """One of a pirate's own earlier turns, as it remembers it."""
+    """One of a pirate's own earlier turns, including the log lines it saw then."""
 
     position: tuple
+    log_lines: list
     action: dict
     result: str
     thinking: str | None = None
@@ -99,7 +104,9 @@ class EarlierTurn:
     def as_text(self):
         step = " ".join(str(part) for part in self.action.values())
         thought = f" You were thinking: {self.thinking}" if self.thinking else ""
-        return f"- At {self.position} you did: {step}. {self.result}{thought}"
+        saw = " | ".join(_log_text(self.log_lines))
+        shown = f" The log showed {saw}." if saw else ""
+        return f"- At {self.position}.{shown} You did: {step}. {self.result}{thought}"
 
 
 @dataclasses.dataclass(frozen=True)
@@ -115,9 +122,7 @@ class TurnView:
 
     def as_text(self):
         """The whole view as plain words, which is what an LLM reads."""
-        log = [
-            f"{line['line']}: {line['text'] or '(blank)'}" for line in self.log_lines
-        ]
+        log = _log_text(self.log_lines)
         earlier = [turn.as_text() for turn in self.earlier_turns]
         now = f"You are {self.name}, at {self.position}, "
         now += f"with {self.turns_left} turns left."
@@ -166,11 +171,13 @@ class PirateSeat:
         decision = self._brain.decide(view)
         if not is_action(decision.action):
             raise BadToolCall(f"{json.dumps(decision.action)} is not a tool call")
-        self._pending = (position, decision)
+        self._pending = (position, log_lines, decision)
         return decision
 
     def remember(self, result):
         """Tell the pirate what its last action did, for its later turns."""
-        position, decision = self._pending
-        earlier = EarlierTurn(position, decision.action, result, decision.thinking)
+        position, log_lines, decision = self._pending
+        earlier = EarlierTurn(
+            position, log_lines, decision.action, result, decision.thinking
+        )
         self._earlier = (*self._earlier, earlier)

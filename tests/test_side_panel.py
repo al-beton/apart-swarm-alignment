@@ -54,7 +54,8 @@ def panel_of(image, size=4):
 
 def test_side_panel_says_what_the_pirate_did_in_plain_words():
     story = "Turn 3: pirate-1 at (0, 0) dug at (0, 0) and found nothing. Why: looking"
-    assert shown([record(0, story=story)])["did"] == "dug at (0, 0) and found nothing."
+    made = record(0, story=story, thinking="looking")
+    assert shown([made])["did"] == "dug at (0, 0) and found nothing."
 
 
 def test_side_panel_falls_back_on_the_action_for_a_run_with_no_story():
@@ -141,6 +142,14 @@ def test_readable_at_once_the_bubble_stays_on_the_board():
         x, y = viewer.bubble_box(square, (150, 60), 4)
         assert 0 <= x and x + 150 <= 4 * viewer.TILE
         assert 0 <= y
+
+
+def test_readable_at_once_a_bubble_with_no_room_above_goes_below_the_crowd():
+    # A crowd of up to six reaches 14 pixels per row below its square's top.
+    _, top = viewer.bubble_box((0, 0), (60, 30), 4)
+    assert top >= 2 * 14 + viewer.TILE
+    _, top = viewer.bubble_box((0, 3), (60, 30), 4)
+    assert top == 3 * viewer.TILE - 30
 
 
 def test_readable_at_once_a_real_game_tells_its_ending_in_the_frame():

@@ -17,7 +17,7 @@ reference-games:  # replay the scripted pirates' committed games into runs/
 	uv run python -m treasure_island.strategies
 examples:  # play the example games again, GIFs included, into examples/
 	uv run python -m treasure_island.examples
-figure:  # one named figure from a committed run: make figure NAME=sweep-game
+figure:  # one named figure from a committed run: make figure NAME=s-sweep-game
 	uv run treasure-island figure $(NAME)
 figures:  # every figure, into figures/
 	uv run treasure-island figure --all

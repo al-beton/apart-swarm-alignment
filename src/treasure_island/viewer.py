@@ -18,7 +18,7 @@ The side panel is the art's parchment with the acting pirate's portrait, what it
 in plain words and a trail of its recent thoughts, all wrapped to fit: a reader should
 be able to follow the game from the frames alone.
 
-Implements: treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/crowds-fan-out, treasure-island/pokemon-style, viewer/slideshow-file, treasure-island/slideshow
+Implements: treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/crowds-fan-out, treasure-island/pokemon-style, viewer/slideshow-file, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom
 """
 
 import base64
@@ -33,11 +33,13 @@ from pathlib import Path
 from PIL import Image, ImageChops
 
 import assets
-from assets.font import draw_text, wrap
+from assets.font import draw_text, text_width, wrap
 from assets.pirates import pirate, portrait
 from assets.ui import panel, speech_bubble
 from treasure_island.config import parse_config
+from treasure_island.game_state import GameState
 from treasure_island.looks import sprite_values
+from treasure_island.pirates_log import one_line
 
 ASSETS = Path(assets.__file__).parent
 SAND_TILES = ("sand", "sand-2", "sand-3")
@@ -60,7 +62,11 @@ LINE = 12
 _DID_LINES = 3
 _THOUGHT_LINES = 6
 _BUBBLE_CHARACTERS = 90
+STRIP_ROWS = 5
+STRIP = 24 + (STRIP_ROWS + 1) * LINE + 4  # the parchment's edges, a heading and rows
+_STRIP_LEFT = 14
 FRAME_MS = 600
+_PLACES_THE_TREASURE = ("grid_size", "crew_size", "landing_square", "seed")
 
 
 def records_in(folder):
@@ -73,8 +79,7 @@ def grid_size(folder, records):
     """The grid size from config.json, or the widest position seen plus one."""
     config = Path(folder) / "config.json"
     if config.exists():
-        saved = json.loads(config.read_text())
-        return saved["grid_size"] if "grid_size" in saved else saved["size"]
+        return json.loads(config.read_text())["grid_size"]
     spots = [r["saw"]["position"] for r in records]
     spots += [r["outcome"]["position"] for r in records]
     return max((max(x, y) for x, y in spots), default=0) + 1
@@ -99,7 +104,7 @@ def pirates_in(folder, records):
     names = _crew_names(records)
     config = Path(folder) / "config.json"
     saved = json.loads(config.read_text()).get("pirates") if config.exists() else None
-    if not isinstance(saved, list):  # the walking skeleton saves only a count
+    if saved is None:
         return _default_pirates(names)
     crew = parse_config({"pirates": saved}).pirates
     return {name: sprite_values(p) for name, p in zip(names, crew, strict=True)}
@@ -178,16 +183,51 @@ def _thoughts(records, turn):
     return thoughts[-THOUGHTS:]
 
 
-def scene(records, turn, size):
+def treasure_in(folder, records):
+    """The treasure's square for the reader's mark, or None if the run doesn't say.
+
+    A finished game's last record says. A game still being played has it from its
+    config, since the seed places it. Only the viewer asks: pirates never see it.
+    """
+    game_over = records[-1].get("game_over") if records else None
+    if game_over:
+        return tuple(game_over["treasure"])
+    path = Path(folder) / "config.json"
+    saved = json.loads(path.read_text()) if path.exists() else {}
+    if any(field not in saved for field in _PLACES_THE_TREASURE):
+        return None
+    return GameState(*(saved[field] for field in _PLACES_THE_TREASURE)).treasure
+
+
+def _log_so_far(records, turn):
+    """The pirates' log as it stands after `turn`: each turn added one line to it."""
+    lines = []
+    for number, record in enumerate(records[: turn + 1], start=1):
+        words = [a["text"] for a in record["did"] if a["action"] == "write"]
+        lines.append((number, " ".join(one_line(word) for word in words)))
+    return lines
+
+
+def _mark(records, treasure, found):
+    """Which mark the reader sees and where: an X once dug up, else a question mark."""
+    if found:
+        return ("mark-x", tuple(found))
+    known = treasure
+    if known is None and records and records[-1].get("game_over"):
+        known = tuple(records[-1]["game_over"]["treasure"])
+    return ("mark-question", tuple(known)) if known else None
+
+
+def scene(records, turn, size, treasure=None):
     """What the frame for `turn` shows, from the records up to and including it."""
     positions = dict(records[turn].get("crew", {}))
     for record in records:
         positions.setdefault(record["agent"], record["saw"]["position"])
-    treasure = None
+    found = None
     for record in records[: turn + 1]:
         positions[record["agent"]] = record["outcome"]["position"]
         if record["outcome"]["found_treasure"]:
-            treasure = record["outcome"]["position"]
+            found = record["outcome"]["position"]
     current = records[turn]
     return {
         "size": size,
@@ -198,7 +238,9 @@ def scene(records, turn, size):
         "did": _did(current),
         "thoughts": _thoughts(records, turn),
         "log": [line["text"] for line in current["log_shown"]],
-        "treasure": treasure,
+        "treasure": found,
+        "mark": _mark(records, treasure, found),
+        "log_so_far": _log_so_far(records, turn),
         "poses": _poses(records, turn),
         "dug": _dug(records, turn),
     }
@@ -233,10 +275,14 @@ def _draw_ground(image, size, shown):
         for y in range(size):
             name = "dug" if (x, y) in shown["dug"] else _ground_tile(x, y)
             image.paste(_art(f"tiles/{name}"), (x * TILE, y * TILE))
-    if shown["treasure"]:
-        mark = _art("treasure/mark-x")
-        x, y = shown["treasure"]
-        image.paste(mark, (x * TILE, y * TILE), mark)
+    if shown["mark"] and shown["mark"][0] == "mark-question":
+        _draw_mark(image, shown)
+
+
+def _draw_mark(image, shown):
+    name, (x, y) = shown["mark"]
+    mark = _art(f"treasure/{name}")
+    image.paste(mark, (x * TILE, y * TILE), mark)
 
 
 def fanned(count, square, size):
@@ -347,19 +393,44 @@ def _panel_image(shown, height, look):
     return image
 
 
-def frame(records, turn, size, pirates=None):
-    """The image for one turn: ground, pirates, bubble and the side panel."""
+def log_rows(lines, width):
+    """The rows of the log strip: every line wrapped, the newest in view."""
+    columns = width // text_width("x")
+    rows = []
+    # Only the newest lines can be in view, so a long game costs no more than a short.
+    for number, text in lines[-STRIP_ROWS:]:
+        rows += wrap(f"{number}: {text}".rstrip(), columns)
+    return rows[-STRIP_ROWS:]
+
+
+def _strip_image(shown, width):
+    image = panel(width, STRIP)
+    draw_text(image, (_STRIP_LEFT, 12), "The pirates' log")
+    rows = log_rows(shown["log_so_far"], width - 2 * _STRIP_LEFT)
+    for row, text in enumerate(rows, start=1):
+        draw_text(image, (_STRIP_LEFT, 14 + row * LINE), text)
+    return image
+
+
+def frame(records, turn, size, pirates=None, treasure=None):
+    """The image for one turn: ground, pirates, bubble, side panel and log strip."""
     pirates = pirates or _default_pirates(_crew_names(records))
-    shown = scene(records, turn, size)
+    shown = scene(records, turn, size, treasure)
     grid = max(size, 1) * TILE
-    height = max(grid, PANEL_HEIGHT)
-    image = Image.new("RGB", (grid + PANEL, height), "#2b2b2b")
+    board = max(grid, PANEL_HEIGHT)
+    image = Image.new("RGB", (grid + PANEL, board + STRIP), "#2b2b2b")
     _draw_ground(image, size, shown)
     _draw_pirates(image, shown, pirates)
     _draw_bubble(image, shown["positions"][shown["acting"]], shown["bubble"], size)
     _draw_labels(image, shown, pirates)
-    side = _panel_image(shown, height, pirates[shown["acting"]])
+    # The X goes over everything, because whoever dug it up is standing on it, and it's
+    # the moment a reader most wants to see. It's open enough for labels to show through.
+    if shown["mark"] and shown["mark"][0] == "mark-x":
+        _draw_mark(image, shown)
+    side = _panel_image(shown, board, pirates[shown["acting"]])
     image.paste(side, (grid, 0), side)
+    strip = _strip_image(shown, grid + PANEL)
+    image.paste(strip, (0, board), strip)
     return image
 
 
@@ -373,7 +444,8 @@ def frame_png(folder, turn):
     """The PNG the page serves for one turn, read fresh from the run folder."""
     records = records_in(folder)
     size = grid_size(folder, records)
-    return _png(frame(records, turn, size, pirates_in(folder, records)))
+    pirates = pirates_in(folder, records)
+    return _png(frame(records, turn, size, pirates, treasure_in(folder, records)))
 
 
 def gif(folder):
@@ -381,8 +453,9 @@ def gif(folder):
     records = records_in(folder)
     size = grid_size(folder, records)
     pirates = pirates_in(folder, records)
+    treasure = treasure_in(folder, records)
     frames = [
-        Image.open(io.BytesIO(_png(frame(records, turn, size, pirates))))
+        Image.open(io.BytesIO(_png(frame(records, turn, size, pirates, treasure))))
         for turn in range(len(records))
     ]
     out = io.BytesIO()

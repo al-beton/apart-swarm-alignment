@@ -1,6 +1,0 @@
-# Implements: agents/counter, agents/free-runs-in-ci
-size = 5
-pirates = 2
-turns = 10
-model = "scripted/counter"
-temperature = 0.0

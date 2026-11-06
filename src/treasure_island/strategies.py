@@ -1,4 +1,4 @@
-"""The scripted pirates: strategies that play the real game and spend no tokens.
+"""The scripted pirates: strategies that play the game and spend no tokens.
 
 Each is a brain, like any other. Everything a strategy knows comes from its view
 (its position and its own earlier turns), so it remembers nothing itself and a

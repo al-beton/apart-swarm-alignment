@@ -3,16 +3,16 @@
 `run` opens the live view unless told not to. At a terminal it keeps the page up
 after the game ends, until Ctrl-C; a script gets its prompt back when the game ends.
 
-Implements: tooling/package-and-cli, runs/run-command, runs/replay-byte-identical, runs/plays-live, runs/no-cache, viewer/watch-live, viewer/render-gif, viewer/slideshow-file, treasure-island/named-runs, treasure-island/everything-cached, treasure-island/one-line-replay, figures/named-figures
+Implements: tooling/package-and-cli, runs/one-game, runs/run-command, runs/replay-byte-identical, runs/plays-live, runs/no-cache, viewer/watch-live, viewer/render-gif, viewer/slideshow-file, treasure-island/named-runs, treasure-island/everything-cached, treasure-island/one-line-replay, figures/named-figures
 """
 
 import argparse
 import sys
 import threading
 import webbrowser
-from pathlib import Path
 
 from treasure_island import figures, runs, saved_game, viewer
+from treasure_island.config import ConfigError
 
 
 def _serve_until_interrupted():
@@ -23,21 +23,21 @@ def _serve_until_interrupted():
         pass
 
 
+def _reporting_a_bad_config(play):
+    try:
+        play()
+    except ConfigError as problem:
+        print(f"Can't play this config: {problem}", file=sys.stderr)
+        return 1
+    return 0
+
+
 def _run(args):
-    if saved_game.is_real_config(args.config):
-
-        def play(on_start=None, pace=0):
-            return saved_game.play_saved(args.config, args.seed, on_start, pace)
-
-    else:
-
-        def play(on_start=None, pace=0):
-            use_cache = not args.no_cache
-            return runs.run(args.config, args.seed, use_cache, on_start, pace)
+    def play(on_start=None, pace=0):
+        return saved_game.play_saved(args.config, args.seed, on_start, pace)
 
     if args.no_watch:
-        print(play())
-        return 0
+        return _reporting_a_bad_config(lambda: print(play()))
 
     def open_the_view(folder):
         httpd = viewer.server(folder, port=0)
@@ -46,33 +46,20 @@ def _run(args):
         print(f"Watching {folder} at {url}", flush=True)
         webbrowser.open(url)
 
-    play(open_the_view, runs.PACE_SECONDS)
+    code = _reporting_a_bad_config(lambda: play(open_the_view, runs.PACE_SECONDS))
+    if code:
+        return code
     if sys.stdin.isatty():
         _serve_until_interrupted()
     return 0
 
 
-def _replay_real(folder):
-    if different := saved_game.differences(folder):
+def _replay(args):
+    if different := saved_game.differences(args.folder):
         names = ", ".join(different)
         print(f"Replay failed: these don't match: {names}.", file=sys.stderr)
         return 1
-    print(f"{folder}: both logs and the story rebuilt, byte-identical.")
-    return 0
-
-
-def _replay(args):
-    if saved_game.is_real_run(args.folder):
-        return _replay_real(args.folder)
-    try:
-        rebuilt = runs.replay(args.folder)
-    except runs.MissingReply as missing:
-        print(f"Replay failed: {missing}", file=sys.stderr)
-        return 1
-    if rebuilt != (Path(args.folder) / "events.jsonl").read_bytes():
-        print("Replay failed: the events differ from events.jsonl.", file=sys.stderr)
-        return 1
-    print(f"{args.folder}: events rebuilt, byte-identical.")
+    print(f"{args.folder}: both logs and the story rebuilt, byte-identical.")
     return 0
 
 
@@ -130,7 +117,7 @@ def main(argv=None):
     run.add_argument(
         "--no-cache",
         action="store_true",
-        help="ignore earlier runs' replies and ask for them again",
+        help="ask every model again; scripted brains ask nothing, so they play the same game",
     )
     run.set_defaults(handler=_run)
     replay = commands.add_parser(

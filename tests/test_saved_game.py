@@ -1,4 +1,4 @@
-# Implements: treasure-island/named-runs, treasure-island/everything-cached, treasure-island/brain-in-config
+# Implements: treasure-island/named-runs, treasure-island/everything-cached, treasure-island/brain-in-config, runs/replay-byte-identical
 """`treasure-island run` and `replay` on the real game."""
 
 import json

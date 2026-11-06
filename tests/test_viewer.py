@@ -51,7 +51,7 @@ RECORDS = [
 def folder(tmp_path):
     run = tmp_path / "runs" / "small-seed-1"
     run.mkdir(parents=True)
-    (run / "config.json").write_text(json.dumps({"size": 3, "seed": 1}) + "\n")
+    (run / "config.json").write_text(json.dumps({"grid_size": 3, "seed": 1}) + "\n")
     (run / "events.jsonl").write_text("".join(json.dumps(r) + "\n" for r in RECORDS))
     return run
 
@@ -69,9 +69,9 @@ def test_one_renderer_the_gif_holds_exactly_the_frames_the_page_serves(
     drawn = []
     draw = viewer.frame
 
-    def counted(records, turn, size, pirates=None):
+    def counted(records, turn, *rest):
         drawn.append(turn)
-        return draw(records, turn, size, pirates)
+        return draw(records, turn, *rest)
 
     monkeypatch.setattr(viewer, "frame", counted)
     frames = list(png_frames(viewer.gif(folder)))

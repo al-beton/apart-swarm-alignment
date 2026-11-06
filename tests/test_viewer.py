@@ -124,26 +124,38 @@ def test_crowds_fan_out_every_pirate_on_one_square_shows(count):
         assert viewer.rgb(sprite_values(pirate_look)[1]) in colours
 
 
-@pytest.mark.parametrize("count", [2, 6, 20])
+def label_box(sprite_at, values):
+    """Where a pirate's label lands on the frame: (left, top, right, bottom)."""
+    drawn = pirate(*values, "down", 0).convert("RGB")
+    bare = pirate(values[0], values[1], "", "down", 0).convert("RGB")
+    left, top, right, bottom = ImageChops.difference(drawn, bare).getbbox()
+    x, y = sprite_at
+    return left + x, top + y, right + x, bottom + y
+
+
+@pytest.mark.parametrize("count", [1, 2, 3, 4, 5, 6])
 @pytest.mark.parametrize("square", [(0, 0), (4, 4), (2, 2)])
-def test_crowds_fan_out_stays_on_the_board_and_never_stacks(count, square):
+def test_crowds_fan_out_up_to_six_labels_stay_inside_their_square(count, square):
     spots = viewer.fanned(count, square, size=5)
-    assert len(set(spots)) == count
-    far = 5 * viewer.TILE - viewer.TILE
-    assert all(0 <= x <= far and 0 <= y <= far for x, y in spots)
+    left, top = square[0] * viewer.TILE, square[1] * viewer.TILE
+    for spot in spots:
+        box = label_box(spot, (1, "#2f6fc0", "12"))
+        assert left <= box[0] and box[2] <= left + viewer.TILE, (spot, box)
+        assert top <= box[1] and box[3] <= top + viewer.TILE, (spot, box)
 
 
-@pytest.mark.parametrize("count", [2, 3, 6, 20])
-@pytest.mark.parametrize("acting", [0, -1])
-def test_crowds_fan_out_every_label_shows_on_the_landing_square(count, acting):
-    """Nothing, not the acting pirate or its bubble, covers anyone's label."""
-    _, together = crowd_of(count, square=(0, 0))
-    turn = list(range(count))[acting]
-    image = viewer.frame(together, turn, 5).convert("RGB")
-    looks = parse_config({"crew_size": count}).pirates
-    spots = viewer.fanned(count, (0, 0), size=5)
-    for look_of, spot in zip(looks, spots, strict=True):
-        values = sprite_values(look_of)
+@pytest.mark.parametrize("square", [(0, 0), (4, 4), (2, 2)])
+def test_crowds_fan_out_a_big_crowd_never_stacks_and_stays_on_the_board(square):
+    spots = viewer.fanned(20, square, size=8)
+    assert len(set(spots)) == 20
+    board = 8 * viewer.TILE
+    for spot in spots:
+        box = label_box(spot, (1, "#2f6fc0", "12"))
+        assert 0 <= box[0] and box[2] <= board and 0 <= box[1] and box[3] <= board
+
+
+def assert_every_label_shows(image, looks_and_spots):
+    for values, spot in looks_and_spots:
         with_label = pirate(*values, "down", 0)
         bare = pirate(values[0], values[1], "", "down", 0)
         label = [
@@ -156,6 +168,41 @@ def test_crowds_fan_out_every_label_shows_on_the_landing_square(count, acting):
         for x, y in label:
             shown = image.getpixel((spot[0] + x, spot[1] + y))
             assert shown == with_label.getpixel((x, y))[:3], (values[2], x, y)
+
+
+def test_crowds_fan_out_a_pirate_leaving_the_crowd_covers_no_label():
+    agents, _ = crowd_of(6, square=(0, 0))
+    crew = {agent: [0, 0] for agent in agents}
+    leaving = record(
+        0,
+        agents[0],
+        [0, 0],
+        [1, 0],
+        crew=crew,
+        did=[{"action": "write", "text": "hello"}],
+    )
+    image = viewer.frame([leaving], 0, 5).convert("RGB")
+    looks = [sprite_values(p) for p in parse_config({"crew_size": 6}).pirates]
+    stayed = viewer.fanned(5, (0, 0), size=5)
+    assert_every_label_shows(
+        image,
+        [
+            *zip(looks[1:], stayed, strict=True),
+            (looks[0], viewer.fanned(1, (1, 0), size=5)[0]),
+        ],
+    )
+
+
+@pytest.mark.parametrize("count", [2, 3, 6, 20])
+@pytest.mark.parametrize("acting", [0, -1])
+def test_crowds_fan_out_every_label_shows_on_the_landing_square(count, acting):
+    """Nothing, not the acting pirate or its bubble, covers anyone's label."""
+    _, together = crowd_of(count, square=(0, 0))
+    turn = list(range(count))[acting]
+    image = viewer.frame(together, turn, 8).convert("RGB")
+    looks = [sprite_values(p) for p in parse_config({"crew_size": count}).pirates]
+    spots = viewer.fanned(count, (0, 0), size=8)
+    assert_every_label_shows(image, zip(looks, spots, strict=True))
 
 
 def test_crowds_fan_out_a_lone_pirate_stands_on_its_square():

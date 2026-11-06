@@ -160,7 +160,6 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
-    { name = "pillow" },
     { name = "pytest" },
     { name = "pytest-xdist" },
     { name = "pyyaml" },
@@ -172,7 +171,6 @@ requires-dist = [{ name = "pillow", specifier = ">=13.0.0" }]
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "pillow", specifier = ">=13.0.0" },
     { name = "pytest", specifier = ">=8.3" },
     { name = "pytest-xdist", specifier = ">=3.8.0" },
     { name = "pyyaml", specifier = ">=6.0" },

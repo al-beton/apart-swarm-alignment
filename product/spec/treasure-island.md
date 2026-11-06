@@ -185,7 +185,7 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 | `slideshow` | not yet | — |
 | `paper-figures` | not yet | — |
 | `named-runs` | not yet | — |
-| `everything-cached` | not yet | — |
+| `everything-cached` | `src/treasure_island/runs.py` | `test_cache_across_runs_a_repeat_asks_the_model_nothing`, `test_no_cache_asks_again_into_a_new_folder`, `test_no_silent_model_calls_a_missing_reply_fails_the_replay` |
 | `one-line-replay` | not yet | — |
 | `python-stack` | not yet | — |
 | `no-token-strategies` | `src/treasure_island/game_loop.py`, `src/treasure_island/strategies.py` | `test_no_token_strategies_a_whole_game_needs_no_network` |

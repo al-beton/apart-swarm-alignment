@@ -1,5 +1,5 @@
-# Implements: tooling/one-command-each, tooling/locked-dependencies, ci/ci-minutes, ci/ci-runs-everything
-.PHONY: install lint test spec-check
+# Implements: tooling/one-command-each, tooling/locked-dependencies, ci/ci-minutes, ci/ci-runs-everything, assets/remade-by-one-command
+.PHONY: install lint test spec-check assets
 install:
 	uv sync --frozen
 lint:
@@ -9,3 +9,5 @@ test:  # in parallel, one worker per core
 	uv run pytest -n auto
 spec-check:
 	uv run python .github/scripts/spec_check.py
+assets:  # redraw every image in assets/
+	uv run python -m assets.generate

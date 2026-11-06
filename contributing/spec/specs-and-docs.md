@@ -10,6 +10,7 @@
 - **no-history:** The codebase describes how things are now, never how they got there.
 - **prompts-are-verbatim:** Prompt files hold exactly the text a model reads, so a spec table row traces them instead of a comment inside them.
 - **runs-are-evidence:** Committed run folders hold exactly what the game wrote, so a spec table row traces them instead of a comment inside them, and JSON Lines logs are never asked for one anywhere; scratch and smoke runs are never committed.
+- **art-is-binary:** Files in `assets/` are art the viewer draws as it is, so a spec table row traces them instead of a comment inside them, and binary images such as GIFs are never asked for one anywhere.
 - **short-specs:** Spec files stay short enough to read; long ones get split.
 
 ## Where this is enforced
@@ -26,4 +27,5 @@
 | `no-history` | `.agents/skills/review-pr/SKILL.md` | — |
 | `prompts-are-verbatim` | `.github/scripts/spec_check.py` | `test_prompts_are_verbatim_and_homed_by_a_table_row`, `test_prompts_are_verbatim_so_they_never_carry_implements_lines` |
 | `runs-are-evidence` | `.github/scripts/spec_check.py`, `.gitignore` | `test_runs_are_evidence_homed_by_a_table_row`, `test_runs_are_evidence_so_they_never_carry_implements_lines`, `test_runs_are_evidence_jsonl_never_asked_for_implements_lines`, `test_runs_are_evidence_compressed_files_never_asked_for_implements_lines`, `test_runs_are_evidence_scratch_and_smoke_runs_stay_ignored` |
+| `art-is-binary` | not yet | — |
 | `short-specs` | `.github/scripts/spec_check.py` | `test_spec_length_warns_over_300_lines` |

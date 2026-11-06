@@ -162,14 +162,17 @@ def _did(record):
 
 
 def _thoughts(records, turn):
-    """This pirate's own latest thoughts, oldest first, without repeats."""
+    """This pirate's own latest thoughts, oldest first, the current one last.
+
+    Only a thought repeated turn after turn collapses: one it comes back to counts again.
+    """
     agent = records[turn]["agent"]
     thoughts = []
     for record in records[: turn + 1]:
         thought = record.get("thinking")
         if record["agent"] == agent and thought:
             thought = " ".join(thought.split())
-            if thought not in thoughts:
+            if not thoughts or thoughts[-1] != thought:
                 thoughts.append(thought)
     return thoughts[-THOUGHTS:]
 

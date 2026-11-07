@@ -19,7 +19,7 @@ The side panel is the art's parchment with the acting pirate's portrait, what it
 in plain words and a trail of its recent thoughts, all wrapped to fit: a reader should
 be able to follow the game from the frames alone.
 
-Implements: treasure-island/cave, viewer/turn-marked, viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, treasure-island/pokemon-style, viewer/slideshow-file, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process
+Implements: viewer/cave-drawn, treasure-island/cave, viewer/turn-marked, viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, treasure-island/pokemon-style, viewer/slideshow-file, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process
 """
 
 import base64
@@ -32,6 +32,7 @@ from pathlib import Path
 from PIL import Image, ImageChops
 
 import assets
+from assets.cave import going_in, hat_stack
 from assets.font import draw_text, text_width, wrap
 from assets.pirates import pirate, portrait
 from assets.ui import panel, scroll_note
@@ -227,9 +228,9 @@ def _shown(line):
 
 
 def _mark(records, treasure, found):
-    """Which mark the reader sees and where: an X once dug up, else a question mark."""
+    """What the reader sees on the treasure's square: the cave once dug, else a `?`."""
     if found:
-        return ("mark-x", tuple(found))
+        return ("cave", tuple(found))
     known = treasure
     if known is None and records and records[-1].get("game_over"):
         known = tuple(records[-1]["game_over"]["treasure"])
@@ -246,10 +247,13 @@ def scene(records, turn, size, treasure=None):
         positions[record["agent"]] = record["outcome"]["position"]
         if record["outcome"]["found_treasure"]:
             found = record["outcome"]["position"]
+    inside = []  # who has gone into the cave before this turn, first in first
     for record in records[:turn]:
         if record["outcome"].get("in_cave"):  # gone in: it has left the board
             positions.pop(record["agent"], None)
+            inside.append(record["agent"])
     current = records[turn]
+    going = current["agent"] if current["outcome"].get("in_cave") else None
     return {
         "size": size,
         "turn": turn,
@@ -264,6 +268,8 @@ def scene(records, turn, size, treasure=None):
         "log_so_far": _log_so_far(records, turn),
         "poses": _poses(records, turn),
         "dug": _dug(records, turn),
+        "inside": inside,
+        "going_in": going,
     }
 
 
@@ -291,13 +297,33 @@ def _ground_tile(x, y):
     return SAND_TILES[(x * x + 2 * y + x * y) % len(SAND_TILES)]
 
 
-def _draw_ground(image, size, shown):
+def _draw_ground(image, size, shown, pirates):
     for x in range(size):
         for y in range(size):
             name = "dug" if (x, y) in shown["dug"] else _ground_tile(x, y)
             image.paste(_art(f"tiles/{name}"), (x * TILE, y * TILE))
     if shown["mark"] and shown["mark"][0] == "mark-question":
         _draw_mark(image, shown)
+    if shown["mark"] and shown["mark"][0] == "cave":
+        _draw_cave(image, shown, pirates)
+
+
+def _draw_cave(image, shown, pirates):
+    """The open cave, its gold glinting turn by turn, with a hat for each pirate inside."""
+    x, y = shown["mark"][1]
+    cave = _art("treasure/cave" if shown["turn"] % 2 == 0 else "treasure/cave-2")
+    square = cave.copy()
+    hats = [pirates[agent][1:] for agent in shown["inside"]]  # (colour, label)
+    square.alpha_composite(hat_stack(hats))
+    image.paste(square, (x * TILE, y * TILE), square)
+
+
+def _draw_going_in(image, shown, pirates):
+    """The pirate entering this turn, sinking into the cave's mouth."""
+    if shown["going_in"]:
+        x, y = shown["mark"][1]
+        sprite = going_in(*pirates[shown["going_in"]], 1)
+        image.paste(sprite, (x * TILE, y * TILE), sprite)
 
 
 def _draw_mark(image, shown):
@@ -326,6 +352,8 @@ def _placed(shown):
 
 def _draw_pirates(image, shown, pirates):
     for agent, spot in _placed(shown):
+        if agent == shown["going_in"]:
+            continue  # drawn going into the cave instead
         sprite = _sprite(pirates[agent], *shown["poses"][agent])
         image.paste(sprite, spot, sprite)
 
@@ -333,6 +361,8 @@ def _draw_pirates(image, shown, pirates):
 def _draw_labels(image, shown, pirates):
     """Labels go over the pirates and the arrow, so every pirate can be told apart."""
     for agent, spot in _placed(shown):
+        if agent == shown["going_in"]:
+            continue  # its back is turned as it goes in
         label = _label(pirates[agent], *shown["poses"][agent])
         image.paste(label, spot, label)
 
@@ -516,18 +546,15 @@ def frame(records, turn, size, pirates=None, treasure=None):
     width = grid + PANEL
     caption = caption_height(records, width)
     image = Image.new("RGB", (width, board + caption + STRIP), "#2b2b2b")
-    _draw_ground(image, size, shown)
+    _draw_ground(image, size, shown, pirates)
     _draw_pirates(image, shown, pirates)
+    _draw_going_in(image, shown, pirates)
     arrow, spot = turn_arrow(shown)
     image.paste(arrow, spot, arrow)  # before the note and labels, so it covers neither
     arrow_box = (*spot, spot[0] + arrow.width, spot[1] + arrow.height)
     _draw_labels(image, shown, pirates)
     # The note goes over the labels, so what was written always shows in full.
     _draw_note(image, shown, arrow_box)
-    # The X goes over everything, because whoever dug it up is standing on it, and it's
-    # the moment a reader most wants to see. It's open enough for labels to show through.
-    if shown["mark"] and shown["mark"][0] == "mark-x":
-        _draw_mark(image, shown)
     side = _panel_image(shown, board, pirates[shown["acting"]])
     image.paste(side, (grid, 0), side)
     words = _caption_image(records[turn].get("story", ""), width, caption)

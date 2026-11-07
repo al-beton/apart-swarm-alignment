@@ -76,7 +76,7 @@ Turn 5: pirate-2 at (0, 0), on dug sand, with pirate-1 to the east, moved south 
 Pirate 1 is on the open cave, so it goes in on its last turn. That takes it out of the game for good and frees the square. It writes nothing on the scroll, so pirate 2 still doesn't know.
 
 ```text
-Turn 6: pirate-1 at (1, 0), on the open cave, with no pirate beside it, went into the cave at (1, 0). Why: This is the open cave, so I'm going in.
+Turn 6: pirate-1 at (1, 0), on the open cave, with no pirate beside it, went into the cave at (1, 0), so 1 of 2 pirates are inside. Why: This is the open cave, so I'm going in.
 ```
 
 Pirate 2 spends its last turn walking east, still searching.

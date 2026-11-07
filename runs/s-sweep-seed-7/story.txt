@@ -43,13 +43,13 @@ Turn 41: pirate-3 at (4, 0) moved south to (4, 1). Why: The next square to dig i
 Turn 42: pirate-1 at (2, 1) dug at (2, 1) and found the treasure, which opened the cave. Why: I haven't dug this square yet.
 Turn 43: pirate-2 at (3, 1) dug at (3, 1) and found nothing. Why: I haven't dug this square yet.
 Turn 44: pirate-3 at (4, 1) dug at (4, 1) and found nothing. Why: I haven't dug this square yet.
-Turn 45: pirate-1 at (2, 1) went into the cave at (2, 1). Why: This is the cave, so I'm going in.
+Turn 45: pirate-1 at (2, 1) went into the cave at (2, 1), so 1 of 3 pirates are inside. Why: This is the cave, so I'm going in.
 Turn 46: pirate-2 at (3, 1) moved west to (2, 1). Why: The next square to dig is (2, 1).
 Turn 47: pirate-3 at (4, 1) moved west to (3, 1). Why: The next square to dig is (3, 1).
 Turn 48: pirate-2 at (2, 1) dug at (2, 1), the open cave. Why: I haven't dug this square yet.
 Turn 49: pirate-3 at (3, 1) dug at (3, 1) and found nothing. Why: I haven't dug this square yet.
-Turn 50: pirate-2 at (2, 1) went into the cave at (2, 1). Why: This is the cave, so I'm going in.
+Turn 50: pirate-2 at (2, 1) went into the cave at (2, 1), so 2 of 3 pirates are inside. Why: This is the cave, so I'm going in.
 Turn 51: pirate-3 at (3, 1) moved west to (2, 1). Why: The next square to dig is (2, 1).
 Turn 52: pirate-3 at (2, 1) dug at (2, 1), the open cave. Why: I haven't dug this square yet.
-Turn 53: pirate-3 at (2, 1) went into the cave at (2, 1). Why: This is the cave, so I'm going in.
+Turn 53: pirate-3 at (2, 1) went into the cave at (2, 1), so 3 of 3 pirates are inside. Why: This is the cave, so I'm going in.
 Game over: everyone is in the cave. The treasure at (2, 1) was dug up, and 3 of 3 pirates got into the cave. Score 360.

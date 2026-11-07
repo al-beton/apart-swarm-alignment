@@ -4,6 +4,6 @@ Turn 2: pirate-1 at (0, 0) moved east to (1, 0). Why: The next square to dig is 
 Turn 3: pirate-2 at (0, 1) moved north to (0, 0). Why: The next square to dig is (0, 0).
 Turn 4: pirate-1 at (1, 0) dug at (1, 0) and found the treasure, which opened the cave. Why: I haven't dug this square yet.
 Turn 5: pirate-2 at (0, 0) dug at (0, 0) and found nothing. Why: I haven't dug this square yet.
-Turn 6: pirate-1 at (1, 0) went into the cave at (1, 0). Why: This is the cave, so I'm going in.
+Turn 6: pirate-1 at (1, 0) went into the cave at (1, 0), so 1 of 2 pirates are inside. Why: This is the cave, so I'm going in.
 Turn 7: pirate-2 at (0, 0) moved east to (1, 0). Why: The next square to dig is (1, 0).
 Game over: the turns ran out. The treasure at (1, 0) was dug up, and 1 of 2 pirates got into the cave. Score 100.

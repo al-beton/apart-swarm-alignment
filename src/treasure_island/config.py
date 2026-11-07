@@ -4,10 +4,11 @@ A TOML file sets any of the fields below. `pirates` is an optional list of
 tables, one per pirate; leave a key out, or the whole list, to get its default.
 A pirate that names a `model` plays through the LLM brain, and the rest play
 `brain`. `thinking` asks models for their reasoning, and `reply_tokens` caps
-each reply (default, Al to confirm: 300).
+each reply (default, Al to confirm: 300). `scroll = false` closes the scroll, so
+notes reach no one.
 `parse_config` reports every problem at once, so one fix-and-retry is enough.
 
-Implements: treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config, treasure-island/silent
+Implements: treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config, treasure-island/silent, treasure-island/scroll-closed
 """
 
 import colorsys
@@ -25,6 +26,7 @@ DEFAULTS = {
     "brain": "silent",
     "thinking": False,
     "reply_tokens": 300,
+    "scroll": True,
 }
 # The smallest value each whole-number field may take. Seeds can be any whole number.
 _MINIMUMS = {
@@ -59,6 +61,7 @@ class GameConfig:
     brain: str
     thinking: bool
     reply_tokens: int
+    scroll: bool
     pirates: tuple[Pirate, ...]
 
 
@@ -131,6 +134,8 @@ def _number_errors(data):
         errors.append("brain must be the name of a brain")
     if not isinstance(data.get("thinking", False), bool):
         errors.append("thinking must be true or false")
+    if not isinstance(data.get("scroll", True), bool):
+        errors.append("scroll must be true or false")
     return errors
 
 

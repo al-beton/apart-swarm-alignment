@@ -181,7 +181,7 @@ The pirates' log is a scroll: nothing of it is shown for free, and writing on it
 | `measured-share` | not yet | — |
 | `run-count` | not yet | — |
 | `toggles` | `src/treasure_island/game_loop.py` | `test_toggles_the_crew_size_changes_through_the_config_alone` |
-| `scroll-closed` | not yet | — |
+| `scroll-closed` | `src/treasure_island/config.py`, `src/treasure_island/game_loop.py` | `test_scroll_closed_the_scroll_is_open_unless_a_config_closes_it`, `test_scroll_closed_a_note_reaches_no_one_and_reads_find_nothing` |
 | `prompt-variants` | not yet | — |
 | `sudoku-last` | not yet | — |
 | `model-backends` | `src/treasure_island/config.py`, `src/treasure_island/llm.py` | `test_model_backends_a_config_names_each_pirate_s_model` |

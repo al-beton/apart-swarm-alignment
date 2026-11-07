@@ -36,6 +36,7 @@
     }
   ],
   "reply_tokens": 300,
+  "scroll": true,
   "seed": 7,
   "thinking": false,
   "turns_per_pirate": 20

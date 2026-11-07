@@ -22,7 +22,7 @@ from assets.pirates import (
 from assets.pixels import SIZE
 from assets.tiles import TILES
 from assets.treasure import ITEMS
-from assets.ui import panel, quill, scroll_note
+from assets.ui import open_scroll, panel, quill, scroll_note
 
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS = ROOT / "assets"
@@ -143,6 +143,14 @@ def test_viewer_parts_scroll_note_carries_the_quill():
     assert solid.getbbox()
     wanted = Image.composite(feather, corner, solid)
     assert corner.tobytes() == wanted.tobytes()
+
+
+def test_viewer_parts_open_scroll_is_small_and_holds_no_words():
+    held = open_scroll()
+    assert held.width <= SIZE and held.height <= SIZE
+    assert held.getchannel("A").getextrema() == (0, 255)
+    # It's art, not text: the same image whatever the scroll says.
+    assert held.tobytes() == open_scroll().tobytes()
 
 
 def test_viewer_parts_panel_stretches_to_any_size():

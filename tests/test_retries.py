@@ -52,7 +52,9 @@ def toml(tmp_path, monkeypatch):
 
 
 def play(toml, backend):
-    folder = saved_game.play_saved(toml, 0, models=Models(backend, agree=lambda: True))
+    # No cache: each game here must ask its backend, not an earlier game's replies.
+    models = Models(backend, cache=False, agree=lambda: True)
+    folder = saved_game.play_saved(toml, 0, models=models)
     return folder, (folder / "story.txt").read_text().splitlines()
 
 
@@ -62,8 +64,8 @@ def dns():
 
 def test_retries_dropped_calls_a_dropped_call_is_tried_again(toml, waits):
     backend = Flaky(dns(), TimeoutError("timed out"))
-    folder, story = play(toml, backend)
-    assert backend.calls == 3
+    _, story = play(toml, backend)
+    assert backend.errors == []  # both failures were tried past
     assert story[-1].startswith("Game over:")
     assert waits == list(retries.WAITS[:2])
 
@@ -88,8 +90,9 @@ def test_retries_dropped_calls_the_story_is_the_same_on_replay(toml, waits):
 def test_retries_dropped_calls_a_5xx_is_retried_but_a_4xx_is_not(toml, waits):
     gone = urllib.error.HTTPError("https://x.invalid", 503, "busy", None, None)
     backend = Flaky(gone)
-    play(toml, backend)
-    assert backend.calls == 2
+    _, story = play(toml, backend)
+    assert backend.errors == []
+    assert story[-1].startswith("Game over:")
     refused = urllib.error.HTTPError("https://x.invalid", 401, "no", None, None)
     with pytest.raises(urllib.error.HTTPError):
         play(toml, Flaky(refused))

@@ -119,3 +119,14 @@ def test_turn_marked_on_the_top_row_the_arrow_points_up_from_under_its_feet():
     assert top >= viewer.TILE
     pointing_down = viewer._art("ui/turn-arrow")
     assert arrow.tobytes() == pointing_down.transpose(Image.FLIP_TOP_BOTTOM).tobytes()
+
+
+def test_turn_marked_a_crowd_on_the_bottom_row_keeps_the_arrow_on_the_board():
+    crowd = {f"pirate-{n}": [0, 9] for n in range(1, 7)}
+    for acting in crowd:
+        records = [record(0, acting, (0, 9), crew=crowd)]
+        image, on_board = board(records, 0, 10)
+        arrow, (left, top) = viewer.turn_arrow(viewer.scene(records, 0, 10))
+        assert 0 <= top and top + arrow.height <= 10 * viewer.TILE, acting
+        assert drawn_at(image, arrow, (left, top)), acting
+        assert yellow(on_board) == yellow(arrow), acting

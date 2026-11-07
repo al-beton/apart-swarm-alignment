@@ -365,7 +365,8 @@ def turn_arrow(shown):
 
     Where that's off the board or on another pirate's label (in a crowd, the
     pirate behind stands 14 pixels higher), it goes under the feet instead,
-    pointing up (default, Al to confirm).
+    pointing up, and failing that, above the crowd's square over the pirate's
+    column (default, Al to confirm). Each place must be on the board.
     """
     placed = _placed(shown)
     x, y = dict(placed)[shown["acting"]]
@@ -377,10 +378,17 @@ def turn_arrow(shown):
     down = _art("ui/turn-arrow")
     up = down.transpose(Image.FLIP_TOP_BOTTOM)
     left = x + _ARROW_LEFT
-    candidates = [(down, (left, y - ARROW_ROOM)), (up, (left, y + TILE + 2))]
+    square_top = shown["positions"][shown["acting"]][1] * TILE
+    candidates = [
+        (down, (left, y - ARROW_ROOM)),
+        (up, (left, y + TILE + 2)),
+        (down, (left, square_top - ARROW_ROOM)),
+    ]
+    bottom = shown["size"] * TILE
     for arrow, (ax, ay) in candidates:
         box = (ax, ay, ax + arrow.width, ay + arrow.height)
-        if ay >= 0 and not any(_overlap(box, label) for label in labels):
+        on_board = ay >= 0 and box[3] <= bottom
+        if on_board and not any(_overlap(box, label) for label in labels):
             return arrow, (ax, ay)
     return candidates[1]
 

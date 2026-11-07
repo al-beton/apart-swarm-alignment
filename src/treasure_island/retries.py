@@ -1,6 +1,7 @@
 """Model calls that drop are tried again, with backoff, before a live run gives up.
 
-A dropped connection, a DNS failure, a timeout or a 5xx answer is the network's
+A dropped connection, a DNS failure, a timeout, a reply cut off part way
+(`http.client.IncompleteRead` and the like) or a 5xx answer is the network's
 fault, not the model's, so `Retrying` tries the call again after `WAITS` seconds,
 5 tries over about a minute (default, Al to confirm). Anything else, a 4xx answer
 say, is raised at once. After the last try the game stops, saying how to resume:
@@ -12,6 +13,7 @@ reply can keep it and the story can say so on that turn, live and on replay.
 Implements: treasure-island/retries-dropped-calls
 """
 
+import http.client
 import time
 import urllib.error
 
@@ -27,7 +29,9 @@ def dropped(error):
     """Whether this error is the network's fault, so the same call may work again."""
     if isinstance(error, urllib.error.HTTPError):
         return error.code >= 500
-    if isinstance(error, (urllib.error.URLError, TimeoutError, ConnectionError)):
+    # HTTPException: the connection broke while the reply was being read.
+    network = (urllib.error.URLError, TimeoutError, ConnectionError)
+    if isinstance(error, (*network, http.client.HTTPException)):
         return True
     if type(error).__name__ in _DROPPED:
         return True

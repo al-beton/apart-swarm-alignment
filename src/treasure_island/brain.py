@@ -83,9 +83,11 @@ def system_prompt(config):
         f"on a {config.grid_size} by {config.grid_size} grid. Each pirate gets "
         f"{config.turns_per_pirate} turns. Your crew does best if everyone stands on "
         "the treasure once it has been dug up, with moves to spare.\n"
-        "You can't see the grid or the other pirates. You know only your own "
-        "position and what you have dug. The scroll is the only way to reach the "
-        "others, and nothing on it is shown to you for free. Writing adds one line "
+        "You can't see the grid. Each turn you're told your own position, "
+        "whether your square has been dug by anyone, and which of the 4 squares "
+        "next to you (north, east, south and west) hold a pirate, but nothing "
+        "further away. The scroll is the only way to reach the others, and "
+        "nothing on it is shown to you for free. Writing adds one line "
         "with your name on it. Reading shows you everything new on it since you "
         "last read, your own lines included, each line with who wrote it. "
         "Writing and reading each use your turn.\n"
@@ -132,6 +134,8 @@ class TurnView:
     position: tuple
     turns_left: int
     earlier_turns: tuple
+    neighbours: tuple = ()  # (direction, name) of each pirate on a square next to it
+    square_dug: bool = False  # whether anyone has dug the pirate's own square
 
     def as_text(self):
         """The whole view as plain words."""
@@ -141,7 +145,19 @@ class TurnView:
         """Everything but the system prompt, which an LLM is sent on its own."""
         earlier = [turn.as_text() for turn in self.earlier_turns]
         now = f"You are {self.name}, at {self.position}, "
-        now += f"with {self.turns_left} turns left."
+        now += f"with {self.turns_left} turns left. "
+        now += (
+            " ".join(
+                f"There is a pirate to the {direction} ({name})."
+                for direction, name in self.neighbours
+            )
+            or "There is no pirate next to you."
+        )
+        now += (
+            " Your square has been dug, by you or another pirate."
+            if self.square_dug
+            else " Your square hasn't been dug."
+        )
         return (
             "Your earlier turns:\n"
             + ("\n".join(earlier) or "None yet.")
@@ -176,9 +192,17 @@ class PirateSeat:
         self._earlier = ()
         self._pending = None
 
-    def take_turn(self, position, turns_left):
+    def take_turn(self, position, turns_left, neighbours=(), square_dug=False):
         """Ask the brain for this turn's decision, checking it's a real tool call."""
-        view = TurnView(self._name, self._prompt, position, turns_left, self._earlier)
+        view = TurnView(
+            self._name,
+            self._prompt,
+            position,
+            turns_left,
+            self._earlier,
+            neighbours,
+            square_dug,
+        )
         decision = self._brain.decide(view)
         if decision.action is not None and not is_action(decision.action):
             raise BadToolCall(f"{json.dumps(decision.action)} is not a tool call")

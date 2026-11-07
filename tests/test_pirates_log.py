@@ -38,7 +38,12 @@ def test_every_turn_a_line_lines_fit_the_event_log_format():
     record = {
         "turn": 0,
         "agent": "pirate-2",
-        "saw": {"position": [0, 0], "prompt": ""},
+        "saw": {
+            "position": [0, 0],
+            "prompt": "",
+            "neighbours": {},
+            "square_dug": False,
+        },
         "did": [{"action": "read"}],
         "log_shown": scroll.read("pirate-2").lines,
         "outcome": {"position": [0, 0], "found_treasure": False},

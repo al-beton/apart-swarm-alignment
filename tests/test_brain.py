@@ -71,7 +71,12 @@ def test_tools_only_a_tool_call_becomes_an_event_log_action(name, arguments, act
     record = {
         "turn": 0,
         "agent": "pirate-a",
-        "saw": {"position": [0, 0], "prompt": ""},
+        "saw": {
+            "position": [0, 0],
+            "prompt": "",
+            "neighbours": {},
+            "square_dug": False,
+        },
         "did": [action],
         "log_shown": [],
         "outcome": {"position": [0, 0], "found_treasure": False},

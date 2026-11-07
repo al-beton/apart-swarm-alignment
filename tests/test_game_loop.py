@@ -139,7 +139,7 @@ def test_shared_squares_a_blocked_pirate_is_told_who_and_chooses_again():
 def test_shared_squares_the_story_says_who_was_in_the_way():
     records = play(config(), Steps(move("south"), DIG), Steps(DIG))
     assert records[0]["story"].startswith(
-        "Turn 0: pirate-1 at (0, 0) tried to move south but pirate-2 was in the way, "
+        "Turn 0: pirate-1 at (0, 0), on undug sand, with pirate-2 to the south, tried to move south but pirate-2 was in the way, "
         "then dug at (0, 0) and found nothing."
     )
 
@@ -152,7 +152,7 @@ def test_failed_move_cost_a_move_off_the_edge_is_refused_and_chosen_again():
     assert "edge" in first.views[1].as_text()
     assert "didn't use your turn" in first.views[1].as_text()
     assert records[0]["story"].startswith(
-        "Turn 0: pirate-1 at (0, 0) tried to move west but it was at the grid's "
+        "Turn 0: pirate-1 at (0, 0), on undug sand, with pirate-2 to the south, tried to move west but it was at the grid's "
         "edge, then dug at (0, 0) and found nothing."
     )
 
@@ -166,7 +166,7 @@ def test_failed_move_cost_after_failed_tries_refusals_the_turn_passes():
     assert "pirate-2 is standing on (0, 1)" in records[0]["result"]
     assert records[1]["agent"] == "pirate-2"
     assert records[0]["story"].startswith(
-        "Turn 0: pirate-1 at (0, 0) tried to move south 2 times but pirate-2 was in "
+        "Turn 0: pirate-1 at (0, 0), on undug sand, with pirate-2 to the south, tried to move south 2 times but pirate-2 was in "
         "the way, so its turn passed."
     )
     assert len(records) == 4
@@ -302,10 +302,13 @@ def test_story_record_says_who_did_what_in_plain_words():
     ]
     game_config = config(turns_per_pirate=5)
     stories = [record["story"] for record in play(game_config, *brains)]
-    assert stories[0].startswith("Turn 0: pirate-1 at (0, 0) ")
+    assert stories[0].startswith("Turn 0: pirate-1 at (0, 0), ")
     assert "tried to move west" in stories[0]
     assert "then moved east to (1, 0)" in stories[0]
-    assert stories[2].startswith("Turn 2: pirate-1 at (1, 0) dug at (1, 0)")
+    assert stories[2].startswith(
+        "Turn 2: pirate-1 at (1, 0), on undug sand, with no pirate beside it, "
+        "dug at (1, 0)"
+    )
     assert 'wrote "over here"' in stories[4]
     assert "read the scroll" in stories[6]
 
@@ -332,11 +335,12 @@ def test_story_record_reads_cleanly_when_things_go_wrong():
     brains = [Steps(move("west"), READ), Steps(DIG)]
     stories = [record["story"] for record in play(config(turns_per_pirate=3), *brains)]
     assert stories[0] == (
-        "Turn 0: pirate-1 at (0, 0) tried to move west but it was at the grid's edge, "
+        "Turn 0: pirate-1 at (0, 0), on undug sand, with pirate-2 to the south, tried to move west but it was at the grid's edge, "
         "then read the scroll and found nothing new."
     )
     assert stories[2] == (
-        "Turn 2: pirate-1 at (0, 0) read the scroll and found nothing new."
+        "Turn 2: pirate-1 at (0, 0), on undug sand, with pirate-2 to the south, "
+        "read the scroll and found nothing new."
     )
 
 
@@ -400,14 +404,14 @@ def test_no_vision_a_dig_result_reaches_only_the_digger():
 
 def test_turn_view_says_which_neighbours_hold_a_pirate():
     # The crew starts down the left edge: pirate-1 on (0, 0), pirate-2 below it.
-    first, second = Steps(move("east"), DIG), Steps(DIG)
+    first, second = Steps(DIG, move("east")), Steps(DIG)
     play(off_the_treasure(turns_per_pirate=2), first, second)
     assert first.views[0].neighbours == (("south", "pirate-2"),)
     assert "There is a pirate to the south (pirate-2)." in first.views[0].as_text()
     assert second.views[0].neighbours == (("north", "pirate-1"),)
-    # Once pirate-1 has moved east to (1, 0), nobody is next to it.
-    assert first.views[1].neighbours == ()
-    assert "There is no pirate next to you." in first.views[1].as_text()
+    # Once pirate-1 has moved east to (1, 0), nobody is next to pirate-2.
+    assert second.views[1].neighbours == ()
+    assert "There is no pirate next to you." in second.views[1].as_text()
 
 
 def test_turn_view_says_whether_the_pirate_s_square_has_been_dug():
@@ -559,7 +563,7 @@ def test_story_record_a_committed_game_can_be_followed_from_its_story_alone(fold
     assert ending.startswith("Game over: ")
     assert len(turns) == len(records)
     for number, (line, record) in enumerate(zip(turns, records, strict=True)):
-        match = re.match(r"Turn (\d+): (\S+) at \((\d+), (\d+)\) ", line)
+        match = re.match(r"Turn (\d+): (\S+) at \((\d+), (\d+)\), ", line)
         assert int(match[1]) == number
         assert record["crew"][match[2]] == [int(match[3]), int(match[4])]
         if record["did"] == [READ]:

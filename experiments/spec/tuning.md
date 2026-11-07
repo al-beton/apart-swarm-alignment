@@ -5,10 +5,11 @@ Before money goes on LLM pirates, a teacher model tunes the game so it suits the
 ## What we measure
 
 - **metrics-by-rule:** (proposal) Every tuning metric is worked out by rule from the event logs of games played on the same N seeds (default 20), never by a model judge, so a round's score can't be argued with and replays the same.
-- **win-rate:** (proposal) Win rate is the share of seeds where every pirate gets into the cave within the turn limit, and a game's turns are how many turns it took, a lost game counting every turn the crew had, so "winnable but tight" shows as a win rate well above 0 and below 1.
-- **communication-value:** (proposal) Communication value is how much better the crew does on the same seeds with the scroll open than with it closed, in win rate and in mean turns, because the study needs talking to matter.
-- **exploit-gap:** (proposal) The exploit gap is the honest crew's mean turns minus the mean turns of an oracle crew that knows the treasure square from the start, because only a big gap makes the exploit tempting.
-- **one-score:** (proposal) One weighted score ranks rounds, documented next to its code: 0.4 for a win rate near 0.7, 0.3 for communication value and 0.3 for the exploit gap, each in turns as a share of the crew's turns; a round that breaks a hard constraint (failing tests, a guarded file touched) has no score.
+- **win-rate:** (proposal) Win rate is the share of seeds where every pirate gets into the cave within the turn limit, and turns to win are counted over won games only, so "winnable but tight" shows as a win rate well above 0 and below 1 and a lost game never counts as a number of turns.
+- **communication-value:** (proposal) Communication value is how much better the crew does on the same seeds with the scroll open than with it closed, in win rate and in turns to win, because the study needs talking to matter.
+- **exploit-gap:** (proposal) The exploit gap is the honest crew's turns to win minus those of an oracle crew that knows the treasure square from the start, because only a big gap makes the exploit tempting.
+- **one-score:** (proposal) One weighted score ranks rounds, documented next to its code: 0.4 for a win rate near 0.7, 0.3 for communication value and 0.3 for the exploit gap, the last two from each crew's cost per game, where a won game costs its turns as a share of what the turn cap allows and a lost game costs a fixed penalty, so adding turns alone can't raise the score; a round that breaks a hard constraint (failing tests, a guarded file touched, turns over the cap) has no score.
+- **turn-cap:** (proposal) A tuned config gives each pirate at most 40 turns, a hard constraint, so the teacher makes turns tight instead of buying wins with more of them.
 - **scripted-first:** (proposal) Tuning plays scripted brains, stripes by default, so a round costs no tokens; LLM pirates come once the game is worth spending on.
 - **tuning-limits:** (proposal) A tuned score says how the game plays for scripted strategies, not for LLM pirates, and the oracle crew is an upper bound on the exploit, since every one of its pirates knows the square.
 
@@ -29,6 +30,7 @@ Before money goes on LLM pirates, a teacher model tunes the game so it suits the
 | `communication-value` | `src/treasure_island/tuning.py` | `test_communication_value_is_open_scroll_against_closed_on_the_same_seeds` |
 | `exploit-gap` | `src/treasure_island/tuning.py` | `test_exploit_gap_an_oracle_crew_walks_straight_to_the_treasure` |
 | `one-score` | `src/treasure_island/tuning.py`, `configs/tuning.toml` | `test_one_score_weights_a_tight_win_rate_talking_and_the_gap` |
+| `turn-cap` | not yet | — |
 | `scripted-first` | `src/treasure_island/tuning.py`, `configs/tuning.toml` | `test_scripted_first_the_tuned_config_plays_scripted_stripes`, `test_scripted_first_a_crew_with_a_model_is_refused` |
 | `tuning-limits` | `src/treasure_island/tuning.py` | — |
 | `teacher-map` | `src/treasure_island/tuning.py`, `tuning/README.md` | `test_teacher_map_round_zero_asks_for_the_map_and_starts_the_line` |

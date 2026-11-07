@@ -42,8 +42,9 @@ class Estimate:
         found = (
             f"This crew can make up to {self.calls} model calls (each pirate with "
             "a model, every try at every turn, as a failed move tries again, and "
-            "once more after a reply that isn't a tool call). Earlier runs hold {self.cached} replies from these pirates with "
-            f"this seed, and those cost nothing. At most about {self.tokens} tokens"
+            "once more after a reply that isn't a tool call). Earlier runs hold "
+            f"{self.cached} replies from these pirates with this seed, and those "
+            f"cost nothing. At most about {self.tokens} tokens"
         )
         if self.cost_usd is not None:
             return f"{found}, costing at most ${self.cost_usd:.2f}."

@@ -1,14 +1,22 @@
 # Implements: treasure-island/retries-dropped-calls
 """A model call that drops is tried again with backoff; only the last failure stops."""
 
+import http.client
+import io
 import json
 import socket
 import urllib.error
+import urllib.request
+from pathlib import Path
 
 import pytest
 
 from treasure_island import retries, saved_game
+from treasure_island.llm import TOOL_DEFINITIONS
+from treasure_island.openrouter import OpenRouter
 from treasure_island.saved_game import Models
+
+HERE = Path(__file__).parent
 
 DIG = json.dumps({"tool": "dig", "arguments": {}})
 CONFIG = """
@@ -106,3 +114,37 @@ def test_retries_dropped_calls_only_the_last_failure_stops_the_run(toml, waits):
     assert "run the same command again" in story[-1]
     manifest = json.loads((folder / "manifest.json").read_text())
     assert "stopped" in manifest
+
+
+class CutOff(io.BytesIO):
+    """A reply whose connection drops after the headers, part way through the body."""
+
+    def read(self, *size):
+        raise http.client.IncompleteRead(b'{"choi', 900)
+
+
+def test_retries_dropped_calls_a_reply_cut_off_part_way_is_tried_again(
+    waits, monkeypatch
+):
+    whole = json.dumps(json.loads((HERE / "openrouter-reply.json").read_text()))
+    answers = [CutOff(), io.BytesIO(whole.encode())]
+    monkeypatch.setattr(
+        urllib.request, "urlopen", lambda request, timeout=None: answers.pop(0)
+    )
+    backend = retries.Retrying(OpenRouter("some/model", "not-a-real-key"))
+    request = {
+        "agent": "pirate-1",
+        "model": "openrouter/some/model",
+        "seed": 0,
+        "system": "rules",
+        "messages": [{"role": "user", "content": "your turn"}],
+        "tools": TOOL_DEFINITIONS,
+        "max_tokens": 300,
+        "thinking": False,
+        "thinking_tokens": 0,
+    }
+    text, _ = backend(request)
+    assert json.loads(text)["tool"] == "move"
+    assert backend.last_retries == 1
+    assert waits == [retries.WAITS[0]]
+    assert retries.dropped(http.client.RemoteDisconnected("gone"))

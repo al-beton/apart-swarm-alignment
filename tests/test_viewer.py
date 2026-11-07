@@ -1,4 +1,4 @@
-# Implements: event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/crowds-fan-out, treasure-island/pokemon-style
+# Implements: event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, treasure-island/pokemon-style
 """Watching a run in the browser and rendering it to a GIF from one renderer."""
 
 import io
@@ -15,6 +15,7 @@ from PIL import Image, ImageChops, ImageStat
 from assets.pirates import pirate
 from treasure_island import cli, viewer
 from treasure_island.config import parse_config
+from treasure_island.game_state import starting_squares
 from treasure_island.looks import sprite_values
 
 
@@ -106,52 +107,18 @@ def test_crew_positions_a_frame_shows_a_pirate_before_its_first_turn():
     assert scene["bubble"] == "move east"
 
 
-def crowd_of(count, square=(1, 1)):
+def crew_of(count, size):
+    """A crew standing where a real game starts it, each on its own square."""
     agents = [f"pirate-{number + 1}" for number in range(count)]
-    return agents, [
-        record(turn, agent, [*square], [*square], crew={a: [*square] for a in agents})
-        for turn, agent in enumerate(agents)
-    ]
-
-
-@pytest.mark.parametrize("count", [2, 5, 6])
-def test_crowds_fan_out_every_pirate_on_one_square_shows(count):
-    _, together = crowd_of(count)
-    image = viewer.frame(together, count - 1, 5).convert("RGB")
-    board = image.crop((0, 0, 5 * viewer.TILE, 5 * viewer.TILE))
-    colours = {colour for _, colour in board.getcolors(1 << 24)}
-    for pirate_look in parse_config({"crew_size": count}).pirates:
-        assert viewer.rgb(sprite_values(pirate_look)[1]) in colours
-
-
-def label_box(sprite_at, values):
-    """Where a pirate's label lands on the frame: (left, top, right, bottom)."""
-    drawn = pirate(*values, "down", 0).convert("RGB")
-    bare = pirate(values[0], values[1], "", "down", 0).convert("RGB")
-    left, top, right, bottom = ImageChops.difference(drawn, bare).getbbox()
-    x, y = sprite_at
-    return left + x, top + y, right + x, bottom + y
-
-
-@pytest.mark.parametrize("count", [1, 2, 3, 4, 5, 6])
-@pytest.mark.parametrize("square", [(0, 0), (4, 4), (2, 2)])
-def test_crowds_fan_out_up_to_six_labels_stay_inside_their_square(count, square):
-    spots = viewer.fanned(count, square, size=5)
-    left, top = square[0] * viewer.TILE, square[1] * viewer.TILE
-    for spot in spots:
-        box = label_box(spot, (1, "#2f6fc0", "12"))
-        assert left <= box[0] and box[2] <= left + viewer.TILE, (spot, box)
-        assert top <= box[1] and box[3] <= top + viewer.TILE, (spot, box)
-
-
-@pytest.mark.parametrize("square", [(0, 0), (4, 4), (2, 2)])
-def test_crowds_fan_out_a_big_crowd_never_stacks_and_stays_on_the_board(square):
-    spots = viewer.fanned(20, square, size=8)
-    assert len(set(spots)) == 20
-    board = 8 * viewer.TILE
-    for spot in spots:
-        box = label_box(spot, (1, "#2f6fc0", "12"))
-        assert 0 <= box[0] and box[2] <= board and 0 <= box[1] and box[3] <= board
+    squares = dict(zip(agents, starting_squares(size), strict=False))
+    return (
+        agents,
+        squares,
+        [
+            record(turn, agent, [*squares[agent]], [*squares[agent]], crew=squares)
+            for turn, agent in enumerate(agents)
+        ],
+    )
 
 
 def assert_every_label_shows(image, looks_and_spots):
@@ -170,43 +137,16 @@ def assert_every_label_shows(image, looks_and_spots):
             assert shown == with_label.getpixel((x, y))[:3], (values[2], x, y)
 
 
-def test_crowds_fan_out_a_pirate_leaving_the_crowd_covers_no_label():
-    agents, _ = crowd_of(6, square=(0, 0))
-    crew = {agent: [0, 0] for agent in agents}
-    leaving = record(
-        0,
-        agents[0],
-        [0, 0],
-        [1, 0],
-        crew=crew,
-        did=[{"action": "write", "text": "hello"}],
-    )
-    image = viewer.frame([leaving], 0, 5).convert("RGB")
-    looks = [sprite_values(p) for p in parse_config({"crew_size": 6}).pirates]
-    stayed = viewer.fanned(5, (0, 0), size=5)
-    assert_every_label_shows(
-        image,
-        [
-            *zip(looks[1:], stayed, strict=True),
-            (looks[0], viewer.fanned(1, (1, 0), size=5)[0]),
-        ],
-    )
-
-
-@pytest.mark.parametrize("count", [2, 3, 6, 20])
+@pytest.mark.parametrize("count", [2, 6, 20])
 @pytest.mark.parametrize("acting", [0, -1])
-def test_crowds_fan_out_every_label_shows_on_the_landing_square(count, acting):
-    """Nothing, not the acting pirate or its bubble, covers anyone's label."""
-    _, together = crowd_of(count, square=(0, 0))
+def test_frame_shows_the_swarm_every_pirate_on_its_own_square(count, acting):
+    """Each pirate is drawn on its square, and nothing covers anyone's label."""
+    _, squares, crew = crew_of(count, size=8)
     turn = list(range(count))[acting]
-    image = viewer.frame(together, turn, 8).convert("RGB")
+    image = viewer.frame(crew, turn, 8).convert("RGB")
     looks = [sprite_values(p) for p in parse_config({"crew_size": count}).pirates]
-    spots = viewer.fanned(count, (0, 0), size=8)
+    spots = [(x * viewer.TILE, y * viewer.TILE) for x, y in squares.values()]
     assert_every_label_shows(image, zip(looks, spots, strict=True))
-
-
-def test_crowds_fan_out_a_lone_pirate_stands_on_its_square():
-    assert viewer.fanned(1, (2, 3), size=5) == [(2 * viewer.TILE, 3 * viewer.TILE)]
 
 
 def tile_at(image, x, y):
@@ -374,7 +314,7 @@ def on_ground_dug(image, x, y, sprite):
 
 
 def test_sprite_follows_action_others_stay_as_they_were():
-    agents, together = crowd_of(2)
+    agents, _, together = crew_of(2, size=3)
     moved = {**together[0], "did": [{"action": "move", "direction": "east"}]}
     poses = viewer.scene([moved, together[1]], 1, 3)["poses"]
     assert poses[agents[0]] == ("right", 0)

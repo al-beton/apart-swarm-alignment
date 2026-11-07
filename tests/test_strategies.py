@@ -23,30 +23,28 @@ ROOT = Path(__file__).resolve().parents[1]
 DIG = {"action": "dig"}
 
 
-def game_of(grid=4, crew=1, turns=16, seed=0, landing=(0, 0)):
+def game_of(grid=4, crew=1, turns=16, seed=0):
     return parse_config(
-        {
-            "grid_size": grid,
-            "crew_size": crew,
-            "turns_per_pirate": turns,
-            "seed": seed,
-            "landing_square": list(landing),
-        }
+        {"grid_size": grid, "crew_size": crew, "turns_per_pirate": turns, "seed": seed}
     )
 
 
 def seed_with_treasure(grid, wanted=None, avoid=None):
     """A seed placing the treasure on `wanted`, or anywhere but `avoid`."""
     for seed in range(5000):
-        treasure = GameState(grid, 1, (0, 0), seed).treasure
+        treasure = GameState(grid, 1, seed).treasure
         if treasure == wanted or (wanted is None and treasure not in avoid):
             return seed
     raise AssertionError("no such seed")
 
 
-def sweep(config):
+def sweep(config, start=None):
+    """A sweeping crew's game, its only pirate moved to `start` if given."""
     brains = [Sweeper(config.grid_size) for _ in range(config.crew_size)]
-    return list(Game(config, brains).records())
+    game = Game(config, brains)
+    if start:
+        game.state.positions = [start]
+    return list(game.records())
 
 
 def dug_squares(records):
@@ -74,7 +72,7 @@ def test_sweeper_walks_an_s_and_digs_each_square():
 def test_sweeper_walks_to_the_corner_from_anywhere():
     # It digs what it walks over, so it reaches the corner after 3 squares west.
     seed = seed_with_treasure(4, avoid={(2, 2), (1, 2), (0, 2), (0, 1), (0, 0)})
-    records = sweep(game_of(landing=(2, 2), seed=seed, turns=10))
+    records = sweep(game_of(seed=seed, turns=10), start=(2, 2))
     assert [record["did"][0].get("direction") for record in records[:7]] == [
         None,
         "west",
@@ -88,7 +86,7 @@ def test_sweeper_walks_to_the_corner_from_anywhere():
 
 
 def test_sweeper_stays_still_once_it_finds_the_treasure():
-    # Pirate 2 only writes, staying on the landing square, so the game goes on.
+    # Pirate 2 only writes, staying on its starting square, so the game goes on.
     config = game_of(
         grid=2, crew=2, turns=10, seed=seed_with_treasure(2, wanted=(1, 0))
     )
@@ -106,16 +104,17 @@ def test_sweeper_stays_still_once_it_finds_the_treasure():
 
 
 def test_sweeper_scores_what_the_rules_predict():
-    # By hand: the treasure at (2, 1) is square 7 of the S, 15 turns in. The crew
-    # walks together, so all 3 stand on it when pirate 1 digs on its 15th turn,
-    # which ends the game after 14 full rounds and leaves it 5 of its 20 turns.
+    # By the rules: only one pirate fits on the treasure's square, so whoever digs
+    # it up stands there alone and the game plays all 3 x 20 turns. One of three
+    # on the treasure scores 10 plus a third of a further 90.
     config = load_config(ROOT / "configs/s-sweep.toml")
     assert (config.crew_size, config.turns_per_pirate, config.seed) == (3, 20, 7)
     records = sweep(config)
-    assert records[-1]["game_over"]["treasure"] == [2, 1]
-    assert records[-1]["game_over"]["moves_remaining"] == 5
-    assert records[-1]["game_over"]["score"] == 150
-    assert len(records) == 3 * 14 + 1
+    over = records[-1]["game_over"]
+    assert (over["treasure"], over["treasure_dug_up"]) == ([2, 1], True)
+    assert over["reason"] == "the turns ran out"
+    assert over["score"] == 40
+    assert len(records) == 3 * 20
 
 
 def test_say_a_number_writes_the_next_number_each_turn_and_never_digs():
@@ -162,5 +161,5 @@ def test_reference_games_pass_the_validator(name):
 def test_reference_games_tell_a_story_that_ends_with_the_score():
     story = (ROOT / "runs/reference-s-sweep/story.txt").read_text().splitlines()
     assert story[0].startswith("Turn 0: pirate-1 at (0, 0) dug at (0, 0)")
-    assert story[-1].startswith("Game over: everyone is on the treasure.")
-    assert "Score 150" in story[-1]
+    assert story[-1].startswith("Game over: the turns ran out.")
+    assert "Score 40" in story[-1]

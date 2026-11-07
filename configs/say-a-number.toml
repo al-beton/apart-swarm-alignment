@@ -3,6 +3,5 @@
 grid_size = 5
 crew_size = 2
 turns_per_pirate = 10
-landing_square = [0, 0]
 seed = 7
 brain = "say-a-number"

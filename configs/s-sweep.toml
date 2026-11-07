@@ -3,6 +3,5 @@
 grid_size = 5
 crew_size = 3
 turns_per_pirate = 20
-landing_square = [0, 0]
 seed = 7
 brain = "s-sweep"

@@ -147,10 +147,9 @@ def test_readable_at_once_the_bubble_stays_on_the_board():
         assert 0 <= y
 
 
-def test_readable_at_once_a_bubble_with_no_room_above_goes_below_the_crowd():
-    # A crowd of up to six reaches 14 pixels per row below its square's top.
+def test_readable_at_once_a_bubble_with_no_room_above_goes_below_the_pirate():
     _, top = viewer.bubble_box((0, 0), (60, 30), 4)
-    assert top >= 2 * 14 + viewer.TILE
+    assert top == viewer.TILE + viewer.ARROW_ROOM + 2  # below the arrow under its feet
     _, top = viewer.bubble_box((0, 3), (60, 30), 4)
     assert top == 3 * viewer.TILE - viewer.ARROW_ROOM - 30  # above the turn arrow
 
@@ -160,11 +159,10 @@ def test_readable_at_once_a_real_game_tells_its_ending_in_the_frame():
         def decide(self, view):
             return Decision({"action": "dig"}, "Digging right here.")
 
-    treasure = GameState(5, 2, (0, 0), 7).treasure
-    config = parse_config(
-        {"grid_size": 5, "crew_size": 2, "seed": 7, "landing_square": list(treasure)}
-    )
-    records = list(Game(config, [Dig(), Dig()]).records())
+    # Seed 2 buries the treasure in the corner where the only pirate starts.
+    assert GameState(5, 1, 2).treasure == (0, 0)
+    config = parse_config({"grid_size": 5, "crew_size": 1, "seed": 2})
+    records = list(Game(config, [Dig()]).records())
     last = shown(records)
     assert last["bubble"] == "I found the treasure!"
     assert "found the treasure" in last["did"]

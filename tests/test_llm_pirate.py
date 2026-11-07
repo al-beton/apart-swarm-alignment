@@ -20,7 +20,6 @@ DIG = json.dumps({"tool": "dig", "arguments": {}})
 CONFIG = """
 grid_size = 3
 turns_per_pirate = 3
-landing_square = [0, 0]
 brain = "s-sweep"
 
 [[pirates]]

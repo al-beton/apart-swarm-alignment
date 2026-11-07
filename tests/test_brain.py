@@ -1,4 +1,4 @@
-# Implements: treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/thinking, treasure-island/what-they-are-told
+# Implements: treasure-island/failed-move-cost, treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/thinking, treasure-island/what-they-are-told
 """Any brain plugs in through one turn view and the same four tool calls."""
 
 import dataclasses
@@ -141,6 +141,16 @@ def test_turn_view_system_prompt_gives_the_rules_and_every_action():
         assert expected in prompt
     for tool in TOOLS:
         assert tool["name"] in prompt
+
+
+def test_failed_move_cost_the_rules_say_a_failed_move_is_chosen_again():
+    prompt = system_prompt(parse_config({"failed_tries": 4}))
+    assert "doesn't use your turn" in prompt
+    assert "another pirate" in prompt
+    assert "4 failed" in prompt
+    move = next(tool for tool in TOOLS if tool["name"] == "move")
+    assert "uses your turn" not in move["description"]
+    assert "another pirate" in move["description"]
 
 
 def test_turn_view_the_system_prompt_explains_the_scroll_in_plain_words():

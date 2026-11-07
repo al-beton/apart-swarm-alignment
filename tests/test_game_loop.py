@@ -1,4 +1,4 @@
-# Implements: treasure-island/turn-view, treasure-island/reading-costs, treasure-island/every-turn-a-line, treasure-island/agent-memory, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions
+# Implements: treasure-island/turn-view, treasure-island/reading-costs, treasure-island/every-turn-a-line, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/failed-move-cost, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions
 """A whole game: brains take turns, and both logs come out."""
 
 import json
@@ -50,7 +50,6 @@ def config(**settings):
             "crew_size": 2,
             "turns_per_pirate": 6,
             "seed": 3,
-            "landing_square": [0, 0],
             **settings,
         }
     )
@@ -58,22 +57,26 @@ def config(**settings):
 
 def treasure_of(game_config):
     return GameState(
-        game_config.grid_size,
-        game_config.crew_size,
-        game_config.landing_square,
-        game_config.seed,
+        game_config.grid_size, game_config.crew_size, game_config.seed
     ).treasure
 
 
+def seed_for(square):
+    """The first seed that buries the treasure on `square` of a 5 by 5 grid."""
+    return next(
+        seed for seed in range(10_000) if GameState(5, 1, seed).treasure == square
+    )
+
+
 def on_the_treasure(**settings):
-    """A config whose crew lands right on the treasure."""
-    return config(**{**settings, "landing_square": list(treasure_of(config()))})
+    """A config whose pirate 1 starts on the treasure, in the top-left corner."""
+    return config(**{"seed": seed_for((0, 0)), **settings})
 
 
 def off_the_treasure(**settings):
-    x, y = treasure_of(config())
-    landing = [(x + 1) % 5, y]
-    return config(**{**settings, "landing_square": landing})
+    """A config whose crew starts down the left edge, away from the treasure."""
+    assert treasure_of(config()) == (1, 4)
+    return config(**settings)
 
 
 def play(game_config, *brains):
@@ -81,21 +84,19 @@ def play(game_config, *brains):
 
 
 def test_game_ends_when_everyone_is_on_the_dug_up_treasure():
-    records = play(on_the_treasure(), Steps(DIG), Steps(DIG))
+    records = play(on_the_treasure(crew_size=1), Steps(DIG))
     assert len(records) == 1
     assert records[0]["game_over"]["reason"] == "everyone is on the treasure"
-    # Pirate 1 dug on its first of 6 turns, leaving it 5.
+    # The pirate dug on its first of 6 turns, leaving it 5.
     assert records[0]["game_over"]["moves_remaining"] == 5
     assert records[0]["game_over"]["score"] == 150
 
 
 def test_game_ends_counting_the_moves_of_the_pirate_who_got_there_last():
-    x, y = treasure_of(config())
-    landing = [x, (y + 1) % 5] if y < 4 else [x, y - 1]
-    step = "north" if y < 4 else "south"
-    game_config = config(landing_square=landing)
-    # Pirate 2 steps on and digs: its 2nd turn ends the game, leaving it 4.
-    records = play(game_config, Steps(move(step), DIG), Steps(move(step), DIG))
+    # Only one pirate fits on the treasure's square, so a crew of one is the
+    # whole crew. It steps on and digs: its 2nd turn ends the game, leaving it 4.
+    game_config = config(crew_size=1, seed=seed_for((1, 0)))
+    records = play(game_config, Steps(move("east"), DIG))
     assert records[-1]["game_over"]["moves_remaining"] == 4
     assert records[-1]["game_over"]["score"] == 140
 
@@ -109,15 +110,94 @@ def test_game_ends_when_the_turns_run_out():
 
 
 def test_game_ends_only_if_the_treasure_has_been_dug_up():
-    records = play(on_the_treasure(), Steps(write("here")), Steps(write("me too")))
-    assert len(records) == 12
+    records = play(on_the_treasure(crew_size=1), Steps(write("here")))
+    assert len(records) == 6
     assert records[-1]["game_over"]["reason"] == "the turns ran out"
     assert records[-1]["game_over"]["score"] == 10
 
 
 def test_game_ends_with_the_treasure_named_in_the_record():
-    records = play(on_the_treasure(), Steps(DIG), Steps(DIG))
-    assert records[-1]["game_over"]["treasure"] == list(treasure_of(config()))
+    records = play(on_the_treasure(crew_size=1), Steps(DIG))
+    assert records[-1]["game_over"]["treasure"] == [0, 0]
+
+
+def test_shared_squares_a_blocked_pirate_is_told_who_and_chooses_again():
+    # Pirate 2 starts below pirate 1, so south is blocked; it then digs instead.
+    first = Steps(move("south"), DIG)
+    records = play(config(turns_per_pirate=2), first, Steps(DIG))
+    assert records[0]["agent"] == "pirate-1"
+    assert records[0]["failed_moves"] == [move("south")]
+    assert records[0]["did"] == [DIG]
+    assert records[0]["outcome"]["position"] == [0, 0]
+    assert records[1]["agent"] == "pirate-2"
+    told = first.views[1]
+    assert told.turns_left == first.views[0].turns_left
+    assert "pirate-2 is standing on (0, 1)" in told.as_text()
+    assert "didn't use your turn" in told.as_text()
+
+
+def test_shared_squares_the_story_says_who_was_in_the_way():
+    records = play(config(), Steps(move("south"), DIG), Steps(DIG))
+    assert records[0]["story"].startswith(
+        "Turn 0: pirate-1 at (0, 0) tried to move south but pirate-2 was in the way, "
+        "then dug at (0, 0) and found nothing."
+    )
+
+
+def test_failed_move_cost_a_move_off_the_edge_is_refused_and_chosen_again():
+    first = Steps(move("west"), DIG)
+    records = play(config(turns_per_pirate=2), first, Steps(DIG))
+    assert records[0]["failed_moves"] == [move("west")]
+    assert records[0]["did"] == [DIG]
+    assert "edge" in first.views[1].as_text()
+    assert "didn't use your turn" in first.views[1].as_text()
+    assert records[0]["story"].startswith(
+        "Turn 0: pirate-1 at (0, 0) tried to move west but it was at the grid's "
+        "edge, then dug at (0, 0) and found nothing."
+    )
+
+
+def test_failed_move_cost_after_failed_tries_refusals_the_turn_passes():
+    stubborn = Steps(move("south"))
+    records = play(config(turns_per_pirate=2), stubborn, Steps(DIG))
+    assert len(stubborn.views) == 2 * 2
+    assert records[0]["failed_moves"] == [move("south")] * 2
+    assert records[0]["did"] == []
+    assert "pirate-2 is standing on (0, 1)" in records[0]["result"]
+    assert records[1]["agent"] == "pirate-2"
+    assert records[0]["story"].startswith(
+        "Turn 0: pirate-1 at (0, 0) tried to move south 2 times but pirate-2 was in "
+        "the way, so its turn passed."
+    )
+    assert len(records) == 4
+
+    patient = Steps(move("south"))
+    play(config(turns_per_pirate=1, failed_tries=4), patient, Steps(DIG))
+    assert len(patient.views) == 4
+
+
+class Answers:
+    """A brain giving these decisions in order, as an LLM pirate would."""
+
+    def __init__(self, *decisions):
+        self.decisions = list(decisions)
+
+    def decide(self, view):
+        return self.decisions.pop(0) if len(self.decisions) > 1 else self.decisions[0]
+
+
+def test_failed_move_cost_keeps_every_bad_reply_and_every_failed_move():
+    # A bad reply before the failed move, and another before the dig.
+    first_bad = {"reply": "let me think", "why": "not a tool call"}
+    second_bad = {"reply": "{", "why": "not JSON"}
+    pirate_1 = Answers(
+        Decision(move("west"), None, (first_bad,)),
+        Decision(DIG, None, (second_bad,)),
+    )
+    records = play(config(turns_per_pirate=1), pirate_1, Steps(DIG))
+    assert records[0]["failed_moves"] == [move("west")]
+    assert records[0]["refused"] == [first_bad, second_bad]
+    assert records[0]["did"] == [DIG]
 
 
 def test_game_ends_wanting_one_brain_per_pirate():
@@ -220,14 +300,14 @@ def test_story_record_says_who_did_what_in_plain_words():
         Steps(move("west"), move("east"), DIG, write("over here"), READ),
         Steps(DIG),
     ]
-    game_config = config(turns_per_pirate=5, landing_square=[0, 0], seed=3)
+    game_config = config(turns_per_pirate=5)
     stories = [record["story"] for record in play(game_config, *brains)]
     assert stories[0].startswith("Turn 0: pirate-1 at (0, 0) ")
     assert "tried to move west" in stories[0]
-    assert stories[2].startswith("Turn 2: pirate-1 at (0, 0) moved east to (1, 0)")
-    assert "dug at (1, 0)" in stories[4]
-    assert 'wrote "over here"' in stories[6]
-    assert "read the scroll" in stories[8]
+    assert "then moved east to (1, 0)" in stories[0]
+    assert stories[2].startswith("Turn 2: pirate-1 at (1, 0) dug at (1, 0)")
+    assert 'wrote "over here"' in stories[4]
+    assert "read the scroll" in stories[6]
 
 
 def test_story_record_says_why_when_the_brain_gave_a_reason():
@@ -250,11 +330,11 @@ def test_story_record_is_a_file_with_one_line_per_turn_and_the_ending(tmp_path):
 
 def test_story_record_reads_cleanly_when_things_go_wrong():
     brains = [Steps(move("west"), READ), Steps(DIG)]
-    stories = [
-        record["story"]
-        for record in play(config(turns_per_pirate=3, landing_square=[0, 0]), *brains)
-    ]
-    assert stories[0] == "Turn 0: pirate-1 at (0, 0) tried to move west and couldn't."
+    stories = [record["story"] for record in play(config(turns_per_pirate=3), *brains)]
+    assert stories[0] == (
+        "Turn 0: pirate-1 at (0, 0) tried to move west but it was at the grid's edge, "
+        "then read the scroll and found nothing new."
+    )
     assert stories[2] == (
         "Turn 2: pirate-1 at (0, 0) read the scroll and found nothing new."
     )
@@ -283,25 +363,25 @@ def test_no_token_strategies_a_whole_game_needs_no_network(tmp_path, monkeypatch
         raise AssertionError("a game opened a socket")
 
     monkeypatch.setattr(socket, "socket", no_network)
-    over = write_game(on_the_treasure(), [Steps(DIG), Steps(DIG)], tmp_path)
+    over = write_game(on_the_treasure(crew_size=1), [Steps(DIG)], tmp_path)
     assert over["score"] == 150
     first = json.loads((tmp_path / "events.jsonl").read_text().splitlines()[0])
     assert record_errors(first) == []
 
 
 def test_no_vision_a_pirate_is_shown_only_its_own_position():
-    # Pirate 2 stays on the landing square; pirate 1 walks away from it.
+    # Pirate 2 stays on its starting square; pirate 1 walks away.
     walker = Steps(move("east"), move("east"), move("south"), DIG)
     sitter = Steps(DIG)
-    play(config(landing_square=[0, 0]), walker, sitter)
+    play(config(), walker, sitter)
     for view in sitter.views:
-        assert view.position == (0, 0)
+        assert view.position == (0, 1)
         assert "(2, 1)" not in view.as_text()
     assert walker.views[3].position == (2, 1)
 
 
 def test_no_vision_the_treasure_never_reaches_a_brain():
-    game_config = config(landing_square=[0, 0], seed=3)
+    game_config = config()
     x, y = treasure_of(game_config)
     brain = Steps(DIG)
     play(game_config, brain, Steps(DIG))
@@ -334,11 +414,11 @@ def test_actions_write_and_read_each_end_the_turn_like_any_other():
 
 def find_then_walk_away():
     """Pirate 1 steps onto the treasure, digs it up and steps off; pirate 2 stays away."""
-    # This seed's treasure is at x = 1, and the crew lands one square east of it.
-    assert treasure_of(config())[0] == 1
-    pirate_1 = Steps(move("west"), DIG, move("east"))
-    return treasure_of(config()), play(
-        off_the_treasure(turns_per_pirate=3), pirate_1, Steps(write("still looking"))
+    # The treasure is one square east of pirate 1's starting corner.
+    game_config = config(turns_per_pirate=3, seed=seed_for((1, 0)))
+    pirate_1 = Steps(move("east"), DIG, move("west"))
+    return treasure_of(game_config), play(
+        game_config, pirate_1, Steps(write("still looking"))
     )
 
 
@@ -356,13 +436,13 @@ def test_the_outcome_keeps_the_treasure_where_it_was_found_in_a_frame():
 
 def test_crew_positions_a_real_game_says_where_everyone_starts_each_turn():
     walker = Steps(move("east"), DIG)
-    records = play(config(landing_square=[0, 0]), walker, Steps(DIG))
-    assert records[0]["crew"] == {"pirate-1": [0, 0], "pirate-2": [0, 0]}
-    assert records[1]["crew"] == {"pirate-1": [1, 0], "pirate-2": [0, 0]}
+    records = play(config(), walker, Steps(DIG))
+    assert records[0]["crew"] == {"pirate-1": [0, 0], "pirate-2": [0, 1]}
+    assert records[1]["crew"] == {"pirate-1": [1, 0], "pirate-2": [0, 1]}
 
 
 def test_crew_positions_the_first_frame_of_a_real_game_shows_the_whole_crew():
-    records = play(config(landing_square=[0, 0]), Steps(DIG), Steps(DIG))
+    records = play(config(), Steps(DIG), Steps(DIG))
     assert set(scene(records[:1], 0, 5)["positions"]) == {"pirate-1", "pirate-2"}
 
 

@@ -84,10 +84,9 @@ def test_turn_marked_the_arrow_and_the_bubble_never_overlap():
 
 
 def test_turn_marked_the_arrow_never_covers_a_label():
-    # Two pirates on one square: the second stands in front, 14 pixels lower,
-    # so its arrow reaches into the first one's label, which must stay on top.
-    crowd = {"pirate-1": [1, 2], "pirate-2": [1, 2]}
-    records = [record(0, "pirate-2", (1, 2), crew=crowd)]
+    # Pirate 1 stands on the square above, so the arrow floats over its feet.
+    crew = {"pirate-1": [1, 1], "pirate-2": [1, 2]}
+    records = [record(0, "pirate-2", (1, 2), crew=crew)]
     image = viewer.frame(records, 0, 4)
     shown = viewer.scene(records, 0, 4)
     pirates = viewer._default_pirates(["pirate-1", "pirate-2"])
@@ -98,16 +97,6 @@ def test_turn_marked_the_arrow_never_covers_a_label():
     arrow, where = viewer.turn_arrow(shown)
     assert drawn_at(image, arrow, where)
     assert yellow(image.crop((0, 0, 4 * viewer.TILE, 4 * viewer.TILE))) == yellow(arrow)
-
-
-def test_turn_marked_a_crowd_on_the_top_row_still_shows_the_arrow():
-    crowd = {"pirate-1": [0, 0], "pirate-2": [0, 0], "pirate-3": [0, 0]}
-    for acting in crowd:
-        records = [record(0, acting, (0, 0), crew=crowd)]
-        image, on_board = board(records, 0, 4)
-        arrow, where = viewer.turn_arrow(viewer.scene(records, 0, 4))
-        assert drawn_at(image, arrow, where), acting
-        assert yellow(on_board) == yellow(arrow), acting
 
 
 def test_turn_marked_on_the_top_row_the_arrow_points_up_from_under_its_feet():
@@ -121,10 +110,11 @@ def test_turn_marked_on_the_top_row_the_arrow_points_up_from_under_its_feet():
     assert arrow.tobytes() == pointing_down.transpose(Image.FLIP_TOP_BOTTOM).tobytes()
 
 
-def test_turn_marked_a_crowd_on_the_bottom_row_keeps_the_arrow_on_the_board():
-    crowd = {f"pirate-{n}": [0, 9] for n in range(1, 7)}
-    for acting in crowd:
-        records = [record(0, acting, (0, 9), crew=crowd)]
+def test_turn_marked_on_the_bottom_row_the_arrow_stays_on_the_board():
+    crew = {f"pirate-{n}": [n - 1, 9] for n in range(1, 7)}
+    crew["pirate-7"] = [0, 8]
+    for acting, square in crew.items():
+        records = [record(0, acting, tuple(square), crew=crew)]
         image, on_board = board(records, 0, 10)
         arrow, (left, top) = viewer.turn_arrow(viewer.scene(records, 0, 10))
         assert 0 <= top and top + arrow.height <= 10 * viewer.TILE, acting

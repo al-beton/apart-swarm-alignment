@@ -17,11 +17,12 @@ Fields stay in reading order rather than sorted, so a person reading a record
 meets who and what before the long prompt. Pirates are named `pirate-1` upwards,
 matching the numbered art. A brain that gives no reason just has no "Why".
 
-Implements: runs/stops-cleanly, agents/ask-once-more, treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/turn-view, treasure-island/agent-memory, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process
+Implements: runs/stops-cleanly, agents/ask-once-more, treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/turn-view, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/failed-move-cost, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process
 """
 
 import json
 import time
+from itertools import groupby
 from pathlib import Path
 
 from treasure_island.brain import PirateSeat
@@ -63,6 +64,18 @@ def _square(position):
     return f"({position[0]}, {position[1]})"
 
 
+def _with_refusals(refused, did):
+    """What a turn did, after any moves that were refused."""
+    said = []
+    for (action, why), tries in groupby(refused):
+        count = len(list(tries))
+        times = f" {count} times" if count > 1 else ""
+        said.append(f"tried to move {action['direction']}{times} but {why}")
+    if not said:
+        return did
+    return ", then ".join(said) + (f", then {did}" if did else ", so its turn passed")
+
+
 class Game:
     def __init__(self, config, brains):
         if len(brains) != config.crew_size:
@@ -70,9 +83,7 @@ class Game:
                 f"The config has {config.crew_size} pirates but {len(brains)} brains."
             )
         self.config = config
-        self.state = GameState(
-            config.grid_size, config.crew_size, config.landing_square, config.seed
-        )
+        self.state = GameState(config.grid_size, config.crew_size, config.seed)
         self.log = PiratesLog()
         self.names = [f"pirate-{number + 1}" for number in range(config.crew_size)]
         self._minds = [_Recording(brain) for brain in brains]
@@ -134,9 +145,27 @@ class Game:
             )
         }
         self._found_this_turn = False
-        decision = self._seats[pirate].take_turn(start, turns_left)
-        result, did, read_lines = self._act(decision.action, start, name)
-        self._seats[pirate].remember(result, read_lines)
+        seat, refused, bad_replies = self._seats[pirate], [], []
+        while True:
+            decision = seat.take_turn(start, turns_left)
+            bad_replies += decision.refused
+            refusal = self._refusal(decision.action)
+            if refusal is None:
+                result, did, read_lines = self._act(decision.action, start, name)
+                done = [decision.action] if decision.action else []
+                break
+            told, why = refusal
+            refused.append((decision.action, why))
+            if len(refused) < self.config.failed_tries:
+                seat.remember(f"{told} That didn't use your turn: choose again.")
+                continue
+            # A brain that keeps choosing a failed action loses the turn instead.
+            self.state.pass_turn()
+            result = f"{told} That was your last try, so your turn passed."
+            did, read_lines, done = "", [], []
+            break
+        seat.remember(result, read_lines)
+        did = _with_refusals(refused, did)
         story = f"Turn {turn}: {name} at {_square(start)} {did}."
         if decision.thinking:
             story += f" Why: {_one_line(decision.thinking)}"
@@ -145,7 +174,8 @@ class Game:
             "agent": name,
             "story": story,
             "happened": f"{did}.",
-            "did": [decision.action] if decision.action else [],
+            "did": done,
+            **({"failed_moves": [action for action, _ in refused]} if refused else {}),
             "result": result,
             "outcome": {
                 "position": list(self.state.positions[pirate]),
@@ -157,9 +187,25 @@ class Game:
         }
         if decision.thinking:
             record["thinking"] = decision.thinking
-        if decision.refused:
-            record["refused"] = list(decision.refused)
+        if bad_replies:
+            record["refused"] = bad_replies
         return record, turns_left - 1
+
+    def _refusal(self, action):
+        """What the pirate is told and the story's reason if its move can't happen."""
+        if not action or action["action"] != "move":
+            return None
+        refused = self.state.refusal(action["direction"])
+        if refused is None:
+            return None
+        if refused.blocked_by is None:
+            edge = "edge" in refused.message
+            why = "it was at the grid's edge" if edge else "there's no such direction"
+            return refused.message, why
+        blocker = self.names[refused.blocked_by]
+        x, y = self.state.positions[refused.blocked_by]
+        told = f"You can't move {action['direction']}: {blocker} is standing on ({x}, {y})."
+        return told, f"{blocker} was in the way"
 
     def _act(self, action, start, name):
         """Do the action; return what the pirate is told, a story and lines read."""
@@ -171,9 +217,7 @@ class Game:
 
     def _move(self, action, start, name):
         direction = action["direction"]
-        result = self.state.move(direction)
-        if not result.ok:
-            return result.message, f"tried to move {direction} and couldn't", []
+        result = self.state.move(direction)  # refused moves never get this far
         end = self.state.positions[self.state.current_pirate - 1]
         return result.message, f"moved {direction} to {_square(end)}", []
 

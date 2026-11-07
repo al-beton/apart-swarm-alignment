@@ -36,7 +36,6 @@ REQUEST = {
 CONFIG = f"""
 grid_size = 3
 turns_per_pirate = 2
-landing_square = [0, 0]
 brain = "s-sweep"
 
 [[pirates]]

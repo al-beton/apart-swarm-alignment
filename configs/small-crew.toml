@@ -2,7 +2,6 @@
 # Two pirates on a small grid, so a whole game fits on one screen.
 grid_size = 3
 crew_size = 2
-turns_per_pirate = 20
-landing_square = [0, 0]
+turns_per_pirate = 4
 seed = 7
 brain = "s-sweep"

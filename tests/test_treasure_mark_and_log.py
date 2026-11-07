@@ -129,7 +129,7 @@ def test_treasure_mark_a_game_still_being_played_has_it_from_its_config(saved):
     [
         {"size": 3, "seed": 1},
         {"grid_size": 3, "seed": 1},
-        {"grid_size": 3, "crew_size": 2, "landing_square": [0, 0]},
+        {"grid_size": 3, "crew_size": 2},
     ],
 )
 def test_treasure_mark_a_run_that_does_not_say_shows_no_question_mark(tmp_path, config):

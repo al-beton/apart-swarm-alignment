@@ -41,9 +41,10 @@ class Estimate:
     def as_text(self, cap_usd):
         found = (
             f"This crew can make up to {self.calls} model calls (each pirate with "
-            "a model, every turn, and once more after a reply that isn't a tool "
-            f"call). Earlier runs hold {self.cached} replies from these pirates with "
-            f"this seed, and those cost nothing. At most about {self.tokens} tokens"
+            "a model, every try at every turn, as a failed move tries again, and "
+            "once more after a reply that isn't a tool call). Earlier runs hold "
+            f"{self.cached} replies from these pirates with this seed, and those "
+            f"cost nothing. At most about {self.tokens} tokens"
         )
         if self.cost_usd is not None:
             return f"{found}, costing at most ${self.cost_usd:.2f}."
@@ -61,12 +62,13 @@ def estimate(config):
         for index, pirate in enumerate(config.pirates)
         if pirate.model
     ]
-    per_pirate = config.turns_per_pirate * ASKS
+    # A failed move asks again in the same turn, and each try can ask twice.
+    tries = config.turns_per_pirate * config.failed_tries
+    per_pirate = tries * ASKS
     fixed = len(system_prompt(config)) + len(json.dumps(TOOL_DEFINITIONS))
     retry = config.reply_tokens * CHARS_PER_TOKEN + TURN_CHARS
-    asked = math.ceil(
-        (fixed + config.turns_per_pirate * TURN_CHARS + retry) / CHARS_PER_TOKEN
-    )
+    # Every try, failed or not, adds a line to the pirate's own earlier turns.
+    asked = math.ceil((fixed + tries * TURN_CHARS + retry) / CHARS_PER_TOKEN)
     wanted = {(name, model) for name, model in with_models}
     cached = sum(
         1

@@ -73,29 +73,41 @@ class GameState:
         """End the turn of a pirate who acted elsewhere, as writing or reading do."""
         self.turn += 1
 
-    def move(self, direction):
-        """Move the current pirate one square, onto a free square on the grid.
+    def refusal(self, direction):
+        """Why the current pirate can't move this way, or None if it can.
 
-        A move off the grid costs the turn. A move onto another pirate is refused
-        and costs nothing, so the pirate can choose again.
+        A refused move changes nothing and doesn't end the turn, so the pirate
+        can choose again.
         """
         if direction not in STEPS:
             known = ", ".join(STEPS)
-            message = f"There is no direction '{direction}': use one of {known}."
-            return self._end_turn(Result(False, message))
+            return Result(
+                False, f"There is no direction '{direction}': use one of {known}."
+            )
         x, y = self.positions[self.current_pirate]
         step_x, step_y = STEPS[direction]
         target = (x + step_x, y + step_y)
         if not self._on_grid(*target):
             message = f"You can't move {direction}: ({x}, {y}) is at the grid's edge."
-            return self._end_turn(Result(False, message))
+            return Result(False, message)
         if target in self.positions:
             message = (
                 f"You can't move {direction}: another pirate is standing on "
                 f"({target[0]}, {target[1]})."
             )
-            # Refused rather than failed: the turn stays with this pirate.
             return Result(False, message, blocked_by=self.positions.index(target))
+        return None
+
+    def move(self, direction):
+        """Move the current pirate one square, onto a free square on the grid.
+
+        A move that can't happen is refused, and the turn stays with the pirate.
+        """
+        if refused := self.refusal(direction):
+            return refused
+        x, y = self.positions[self.current_pirate]
+        step_x, step_y = STEPS[direction]
+        target = (x + step_x, y + step_y)
         self.positions[self.current_pirate] = target
         message = f"You moved {direction} to ({target[0]}, {target[1]})."
         return self._end_turn(Result(True, message))

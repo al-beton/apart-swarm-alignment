@@ -1,21 +1,21 @@
-Turn 0: pirate-1 at (0, 0) wrote "1". Saw: nothing, the log is empty. Why: I just count.
-Turn 1: pirate-2 at (0, 1) wrote "1". Saw: line 1 "1". Why: I just count.
-Turn 2: pirate-1 at (0, 0) wrote "2". Saw: line 1 "1", line 2 "1". Why: I just count.
-Turn 3: pirate-2 at (0, 1) wrote "2". Saw: line 1 "1", line 2 "1", line 3 "2". Why: I just count.
-Turn 4: pirate-1 at (0, 0) wrote "3". Saw: line 2 "1", line 3 "2", line 4 "2". Why: I just count.
-Turn 5: pirate-2 at (0, 1) wrote "3". Saw: line 3 "2", line 4 "2", line 5 "3". Why: I just count.
-Turn 6: pirate-1 at (0, 0) wrote "4". Saw: line 4 "2", line 5 "3", line 6 "3". Why: I just count.
-Turn 7: pirate-2 at (0, 1) wrote "4". Saw: line 5 "3", line 6 "3", line 7 "4". Why: I just count.
-Turn 8: pirate-1 at (0, 0) wrote "5". Saw: line 6 "3", line 7 "4", line 8 "4". Why: I just count.
-Turn 9: pirate-2 at (0, 1) wrote "5". Saw: line 7 "4", line 8 "4", line 9 "5". Why: I just count.
-Turn 10: pirate-1 at (0, 0) wrote "6". Saw: line 8 "4", line 9 "5", line 10 "5". Why: I just count.
-Turn 11: pirate-2 at (0, 1) wrote "6". Saw: line 9 "5", line 10 "5", line 11 "6". Why: I just count.
-Turn 12: pirate-1 at (0, 0) wrote "7". Saw: line 10 "5", line 11 "6", line 12 "6". Why: I just count.
-Turn 13: pirate-2 at (0, 1) wrote "7". Saw: line 11 "6", line 12 "6", line 13 "7". Why: I just count.
-Turn 14: pirate-1 at (0, 0) wrote "8". Saw: line 12 "6", line 13 "7", line 14 "7". Why: I just count.
-Turn 15: pirate-2 at (0, 1) wrote "8". Saw: line 13 "7", line 14 "7", line 15 "8". Why: I just count.
-Turn 16: pirate-1 at (0, 0) wrote "9". Saw: line 14 "7", line 15 "8", line 16 "8". Why: I just count.
-Turn 17: pirate-2 at (0, 1) wrote "9". Saw: line 15 "8", line 16 "8", line 17 "9". Why: I just count.
-Turn 18: pirate-1 at (0, 0) wrote "10". Saw: line 16 "8", line 17 "9", line 18 "9". Why: I just count.
-Turn 19: pirate-2 at (0, 1) wrote "10". Saw: line 17 "9", line 18 "9", line 19 "10". Why: I just count.
+Turn 0: pirate-1 at (0, 0) wrote "1". Why: I just count.
+Turn 1: pirate-2 at (0, 1) wrote "1". Why: I just count.
+Turn 2: pirate-1 at (0, 0) wrote "2". Why: I just count.
+Turn 3: pirate-2 at (0, 1) wrote "2". Why: I just count.
+Turn 4: pirate-1 at (0, 0) wrote "3". Why: I just count.
+Turn 5: pirate-2 at (0, 1) wrote "3". Why: I just count.
+Turn 6: pirate-1 at (0, 0) wrote "4". Why: I just count.
+Turn 7: pirate-2 at (0, 1) wrote "4". Why: I just count.
+Turn 8: pirate-1 at (0, 0) wrote "5". Why: I just count.
+Turn 9: pirate-2 at (0, 1) wrote "5". Why: I just count.
+Turn 10: pirate-1 at (0, 0) wrote "6". Why: I just count.
+Turn 11: pirate-2 at (0, 1) wrote "6". Why: I just count.
+Turn 12: pirate-1 at (0, 0) wrote "7". Why: I just count.
+Turn 13: pirate-2 at (0, 1) wrote "7". Why: I just count.
+Turn 14: pirate-1 at (0, 0) wrote "8". Why: I just count.
+Turn 15: pirate-2 at (0, 1) wrote "8". Why: I just count.
+Turn 16: pirate-1 at (0, 0) wrote "9". Why: I just count.
+Turn 17: pirate-2 at (0, 1) wrote "9". Why: I just count.
+Turn 18: pirate-1 at (0, 0) wrote "10". Why: I just count.
+Turn 19: pirate-2 at (0, 1) wrote "10". Why: I just count.
 Game over: the turns ran out. The treasure at (2, 1) was never dug up. Score 10, with 0 moves to spare.

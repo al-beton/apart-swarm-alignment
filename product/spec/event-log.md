@@ -3,8 +3,8 @@
 - **one-record-per-turn:** A run's event log is a JSON Lines file with one object per turn, in play order, with `turn` counting up from 0, so everything visual can be rebuilt from that one file.
 - **who-acted:** Each record names the pirate that took the turn in `agent`, so a reader can follow one pirate through a run.
 - **what-they-saw:** Each record's `saw` holds the pirate's `position` as `[x, y]` at the start of its turn and the `prompt` text it was given, so anyone can judge a decision from what the pirate knew.
-- **what-they-did:** Each record's `did` lists the turn's actions, each named by `action`: `move` with a `direction` of `north`, `east`, `south` or `west`; `dig`; `read` with a `line` number; or `write` with its `text`, so a viewer can draw any turn, including one with no action.
-- **what-the-log-showed:** Each record's `log_shown` lists every log line shown to the pirate that turn, as a `line` number and its `text`, so a reader sees the chat that pirate saw, and any earlier session it reached.
+- **what-they-did:** Each record's `did` lists the turn's actions, each named by `action`: `move` with a `direction` of `north`, `east`, `south` or `west`; `dig`; `read`, which takes nothing else; or `write` with its `text`, so a viewer can draw any turn, including one with no action.
+- **what-the-log-showed:** Each record's `log_shown` lists every log line shown to the pirate that turn, as a `line` number and its `text`, and who wrote it in `by` when that's known, so a reader sees the chat that pirate saw, and any earlier session it reached.
 - **the-outcome:** Each record's `outcome` holds the pirate's `position` as `[x, y]` after its turn and whether it `found_treasure` on that turn, so scoring and the animation need no replay of the rules.
 - **crew-positions:** Each record's `crew` says where every pirate stands at the start of the turn, so a frame can show the whole crew from the first turn, whether the run is still being played or long finished.
 - **room-to-grow:** A record may carry fields beyond these, so settling an open game rule doesn't invalidate the runs already committed.
@@ -18,7 +18,7 @@
 | `who-acted` | `src/treasure_island/event_log.py` | `test_who_acted_needs_a_named_agent` |
 | `what-they-saw` | `src/treasure_island/event_log.py` | `test_what_they_saw_needs_a_position_and_a_prompt` |
 | `what-they-did` | `src/treasure_island/event_log.py` | `test_what_they_did_accepts_each_action`, `test_what_they_did_accepts_a_turn_with_no_action`, `test_what_they_did_rejects_a_malformed_action`, `test_what_they_did_must_be_a_list` |
-| `what-the-log-showed` | `src/treasure_island/event_log.py` | `test_what_the_log_showed_needs_numbered_lines`, `test_what_the_log_showed_can_reach_an_earlier_session` |
+| `what-the-log-showed` | `src/treasure_island/event_log.py` | `test_what_the_log_showed_needs_numbered_lines`, `test_what_the_log_showed_may_say_who_wrote_each_line`, `test_what_the_log_showed_can_reach_an_earlier_session` |
 | `the-outcome` | `src/treasure_island/event_log.py`, `src/treasure_island/game_loop.py` | `test_the_outcome_needs_a_position_and_whether_treasure_was_found`, `test_the_outcome_says_found_only_on_the_turn_of_the_find`, `test_the_outcome_keeps_the_treasure_where_it_was_found_in_a_frame` |
 | `crew-positions` | `src/treasure_island/game_loop.py`, `src/treasure_island/viewer.py` | `test_crew_positions_a_frame_shows_a_pirate_before_its_first_turn`, `test_crew_positions_a_real_game_says_where_everyone_starts_each_turn`, `test_crew_positions_the_first_frame_of_a_real_game_shows_the_whole_crew` |
 | `room-to-grow` | `src/treasure_island/event_log.py` | `test_room_to_grow_allows_extra_fields` |

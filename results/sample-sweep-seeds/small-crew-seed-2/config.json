@@ -2,7 +2,6 @@
   "brain": "s-sweep",
   "crew_size": 2,
   "grid_size": 3,
-  "log_window": 3,
   "pirates": [
     {
       "colour": [
@@ -23,7 +22,6 @@
       "personality": 2
     }
   ],
-  "read_size": 3,
   "seed": 2,
   "turns_per_pirate": 4
 }

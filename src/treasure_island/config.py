@@ -17,19 +17,14 @@ DEFAULTS = {
     "grid_size": 10,
     "crew_size": 6,
     "turns_per_pirate": 30,
-    "log_window": 3,
-    "read_size": 3,
     "seed": 0,
     "brain": "s-sweep",
 }
-# The smallest value each whole-number field may take. A log window of 0 turns
-# the free window off. Seeds can be any whole number.
+# The smallest value each whole-number field may take. Seeds can be any whole number.
 _MINIMUMS = {
     "grid_size": 1,
     "crew_size": 1,
     "turns_per_pirate": 1,
-    "log_window": 0,
-    "read_size": 1,
 }
 PERSONALITIES = 20  # the art draws this many, numbered from 1
 
@@ -50,8 +45,6 @@ class GameConfig:
     grid_size: int
     crew_size: int
     turns_per_pirate: int
-    log_window: int
-    read_size: int
     seed: int
     brain: str
     pirates: tuple[Pirate, ...]

@@ -147,7 +147,7 @@ def _said(record):
         if action["action"] == "move":
             actions.append(f"move {action['direction']}")
         elif action["action"] == "read":
-            actions.append(f"read line {action['line']}")
+            actions.append("read the scroll")
         else:
             actions.append(action["action"])
     return ", ".join(actions) or "..."
@@ -191,12 +191,19 @@ def treasure_in(folder, records):
 
 
 def _log_so_far(records, turn):
-    """The pirates' log as it stands after `turn`: each turn added one line to it."""
+    """The scroll as it stands after `turn`: only a note adds a line to it."""
     lines = []
-    for number, record in enumerate(records[: turn + 1], start=1):
-        words = [a["text"] for a in record["did"] if a["action"] == "write"]
-        lines.append((number, " ".join(one_line(word) for word in words)))
+    for record in records[: turn + 1]:
+        for action in record["did"]:
+            if action["action"] == "write":
+                note = f"{record['agent']}: {one_line(action['text'])}"
+                lines.append((len(lines) + 1, note))
     return lines
+
+
+def _shown(line):
+    """A line a pirate was shown, with who wrote it when the record says."""
+    return f"{line['by']}: {line['text']}" if "by" in line else line["text"]
 
 
 def _mark(records, treasure, found):
@@ -228,7 +235,7 @@ def scene(records, turn, size, treasure=None):
         "bubble": _said(current),
         "did": _did(current),
         "thoughts": _thoughts(records, turn),
-        "log": [line["text"] for line in current["log_shown"]],
+        "log": [_shown(line) for line in current["log_shown"]],
         "treasure": found,
         "mark": _mark(records, treasure, found),
         "log_so_far": _log_so_far(records, turn),
@@ -350,7 +357,7 @@ def _panel_image(shown, height, look):
         sections.append(("Thinking:", lines[-_THOUGHT_LINES:], _THOUGHT_LINES))
     log = [line or "(blank)" for line in shown["log"][-LOG_LINES:]] or ["(nothing)"]
     log = [line[:PANEL_COLUMNS] for line in log]
-    sections.append(("Log it saw:", log, LOG_LINES))
+    sections.append(("It read:", log, LOG_LINES))
     for title, lines, most in sections:
         draw_text(image, (_PANEL_LEFT, y), title)
         y += LINE
@@ -367,13 +374,13 @@ def log_rows(lines, width):
     rows = []
     # Only the newest lines can be in view, so a long game costs no more than a short.
     for number, text in lines[-STRIP_ROWS:]:
-        rows += wrap(f"{number}: {text}".rstrip(), columns)
+        rows += wrap(f"{number} {text}".rstrip(), columns)
     return rows[-STRIP_ROWS:]
 
 
 def _strip_image(shown, width):
     image = panel(width, STRIP)
-    draw_text(image, (_STRIP_LEFT, 12), "The pirates' log")
+    draw_text(image, (_STRIP_LEFT, 12), "The pirates' scroll")
     rows = log_rows(shown["log_so_far"], width - 2 * _STRIP_LEFT)
     for row, text in enumerate(rows, start=1):
         draw_text(image, (_STRIP_LEFT, 14 + row * LINE), text)

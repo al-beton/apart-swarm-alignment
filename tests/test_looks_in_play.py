@@ -29,7 +29,7 @@ class Busy:
             {"action": "write", "text": "starting here"},
             {"action": "move", "direction": "east"},
             {"action": "dig"},
-            {"action": "read", "line": 1},
+            {"action": "read"},
         ]
         self.texts = []
 

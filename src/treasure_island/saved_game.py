@@ -127,16 +127,19 @@ def write_saved(config, folder, on_start=None, pace=0, models=ASK_EVERY_MODEL):
     }
     if "stopped" in ending:
         manifest["stopped"] = ending["stopped"]
-    if refused := refused_replies(folder):
+    if refused := refused_replies(folder, ending.get("refused")):
         manifest["refused_replies"] = refused
     text = json.dumps(manifest, indent=2, sort_keys=True) + "\n"
     (folder / "manifest.json").write_text(text, encoding="utf-8")
     return folder
 
 
-def refused_replies(folder):
-    """How many replies each pirate gave that weren't valid actions, if any."""
-    counts = collections.Counter()
+def refused_replies(folder, unrecorded=None):
+    """How many replies each pirate gave that weren't valid actions, if any.
+
+    `unrecorded` adds those of a turn a stopped game never recorded.
+    """
+    counts = collections.Counter(unrecorded or {})
     for line in (Path(folder) / "events.jsonl").read_text().splitlines():
         record = json.loads(line)
         counts[record["agent"]] += len(record.get("refused", []))

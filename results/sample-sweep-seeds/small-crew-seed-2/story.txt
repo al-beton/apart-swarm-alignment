@@ -1,6 +1,6 @@
-Turn 0: pirate-1 at (0, 0), on undug sand, with pirate-2 to the south, dug at (0, 0) and found the treasure, which opened the cave. Why: Nobody has dug this square yet.
-Turn 1: pirate-2 at (0, 1), on undug sand, with pirate-1 to the north, dug at (0, 1) and found nothing. Why: Nobody has dug this square yet.
-Turn 2: pirate-1 at (0, 0), on the open cave, with pirate-2 to the south, went into the cave at (0, 0), so 1 of 2 pirates are inside. Why: This is the open cave, so I'm going in.
-Turn 3: pirate-2 at (0, 1), on dug sand, with no pirate beside it, moved north to (0, 0). Why: The nearest square I haven't seen dug is (0, 0).
-Turn 4: pirate-2 at (0, 0), on the open cave, with no pirate beside it, went into the cave at (0, 0), so 2 of 2 pirates are inside. Why: This is the open cave, so I'm going in.
+Turn 0: pirate-1 at (0, 0), on undug sand, with pirate-2 to the south. It thought: Nobody has dug this square yet. Then it dug at (0, 0) and found the treasure, which opened the cave.
+Turn 1: pirate-2 at (0, 1), on undug sand, with pirate-1 to the north. It thought: Nobody has dug this square yet. Then it dug at (0, 1) and found nothing.
+Turn 2: pirate-1 at (0, 0), on the open cave, with pirate-2 to the south. It thought: This is the open cave, so I'm going in. Then it went into the cave at (0, 0), so 1 of 2 pirates are inside.
+Turn 3: pirate-2 at (0, 1), on dug sand, with no pirate beside it. It thought: The nearest square I haven't seen dug is (0, 0). Then it moved north to (0, 0).
+Turn 4: pirate-2 at (0, 0), on the open cave, with no pirate beside it. It thought: This is the open cave, so I'm going in. Then it went into the cave at (0, 0), so 2 of 2 pirates are inside.
 Game over: everyone is in the cave. The treasure at (0, 0) was dug up, and 2 of 2 pirates got into the cave. Score 230.

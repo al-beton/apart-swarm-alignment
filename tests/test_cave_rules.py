@@ -49,7 +49,12 @@ def test_actions_entering_is_an_action_the_event_log_takes():
     record = {
         "turn": 0,
         "agent": "pirate-1",
-        "saw": {"position": [0, 0], "prompt": "", "neighbours": {}, "square_dug": True},
+        "saw": {
+            "position": [0, 0],
+            "prompt": "",
+            "neighbours": {},
+            "square_dug": True,
+        },
         "did": [ENTER],
         "log_shown": [],
         "outcome": {"position": [0, 0], "found_treasure": False, "in_cave": True},
@@ -145,3 +150,23 @@ def test_cave_a_pirate_that_went_in_has_left_the_board():
     for turn in range(3, len(records)):
         assert set(scene(records, turn, 5)["positions"]) == {"pirate-2"}
     frame(records, len(records) - 1, 5)  # and a frame still draws
+
+
+def test_turn_view_says_whether_the_pirate_stands_on_the_open_cave():
+    class Recorder:
+        def __init__(self, plan):
+            self.plan, self.views = list(plan), []
+
+        def decide(self, view):
+            self.views.append(view)
+            return Decision(self.plan.pop(0) if self.plan else {"action": "dig"})
+
+    config = parse_config({"grid_size": 3, "crew_size": 1, "seed": 2})
+    assert GameState(3, 1, 2).treasure == (0, 0)
+    pirate = Recorder([{"action": "dig"}, {"action": "move", "direction": "east"}])
+    list(Game(config, [pirate]).records())
+    on_it, beside = pirate.views[1], pirate.views[2]
+    assert not pirate.views[0].on_cave
+    now = lambda view: view.turn_text().split("\n\n")[-1]  # this turn, not the past
+    assert on_it.on_cave and "open cave" in now(on_it)
+    assert not beside.on_cave and "open cave" not in now(beside)

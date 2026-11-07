@@ -10,7 +10,7 @@ thought inside `reply_tokens`, which caps each reply. `score_in_cave` and
 default, Al to confirm.
 `parse_config` reports every problem at once, so one fix-and-retry is enough.
 
-Implements: treasure-island/model-reasoning, treasure-island/score-numbers, treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config
+Implements: treasure-island/model-reasoning, treasure-island/score-numbers, treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config, treasure-island/silent
 """
 
 import colorsys
@@ -25,7 +25,7 @@ DEFAULTS = {
     "turns_per_pirate": 30,
     "failed_tries": 2,
     "seed": 0,
-    "brain": "s-sweep",
+    "brain": "silent",
     "thinking": True,
     "thinking_tokens": 1024,
     "reply_tokens": 300,

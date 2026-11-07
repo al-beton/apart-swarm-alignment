@@ -124,6 +124,7 @@ class EarlierTurn:
     read_lines: list = dataclasses.field(default_factory=list)
     neighbours: tuple = ()  # what it was told then of the pirates next to it
     square_dug: bool = False  # and whether its square had been dug
+    on_cave: bool = False  # and whether it stood on the open cave
 
     def as_text(self):
         step = (
@@ -134,6 +135,8 @@ class EarlierTurn:
         thought = f" You were thinking: {self.thinking}" if self.thinking else ""
         found = f" It said: {_scroll_text(self.read_lines)}." if self.read_lines else ""
         ground = "on a dug square" if self.square_dug else "on an undug square"
+        if self.on_cave:
+            ground = "on the open cave"
         beside = " and ".join(
             f"{name} to the {direction}" for direction, name in self.neighbours
         )
@@ -153,6 +156,7 @@ class TurnView:
     earlier_turns: tuple
     neighbours: tuple = ()  # (direction, name) of each pirate on a square next to it
     square_dug: bool = False  # whether anyone has dug the pirate's own square
+    on_cave: bool = False  # whether it stands on the open cave
 
     def as_text(self):
         """The whole view as plain words."""
@@ -175,6 +179,8 @@ class TurnView:
             if self.square_dug
             else " Your square hasn't been dug."
         )
+        if self.on_cave:
+            now += " You're standing on the open cave: enter it to go in."
         return (
             "Your earlier turns:\n"
             + ("\n".join(earlier) or "None yet.")
@@ -209,7 +215,9 @@ class PirateSeat:
         self._earlier = ()
         self._pending = None
 
-    def take_turn(self, position, turns_left, neighbours=(), square_dug=False):
+    def take_turn(
+        self, position, turns_left, neighbours=(), square_dug=False, on_cave=False
+    ):
         """Ask the brain for this turn's decision, checking it's a real tool call."""
         view = TurnView(
             self._name,
@@ -219,16 +227,17 @@ class PirateSeat:
             self._earlier,
             neighbours,
             square_dug,
+            on_cave,
         )
         decision = self._brain.decide(view)
         if decision.action is not None and not is_action(decision.action):
             raise BadToolCall(f"{json.dumps(decision.action)} is not a tool call")
-        self._pending = (position, decision, neighbours, square_dug)
+        self._pending = (position, decision, neighbours, square_dug, on_cave)
         return decision
 
     def remember(self, result, read_lines=()):
         """Tell the pirate what its last action did, and any lines its read found."""
-        position, decision, neighbours, square_dug = self._pending
+        position, decision, neighbours, square_dug, on_cave = self._pending
         earlier = EarlierTurn(
             position,
             decision.action,
@@ -237,5 +246,6 @@ class PirateSeat:
             list(read_lines),
             neighbours,
             square_dug,
+            on_cave,
         )
         self._earlier = (*self._earlier, earlier)

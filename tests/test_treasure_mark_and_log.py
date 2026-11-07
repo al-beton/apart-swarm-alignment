@@ -15,7 +15,7 @@ from treasure_island.game_loop import Game, write_game
 from treasure_island.pirates_log import PiratesLog
 
 ROOT = Path(__file__).resolve().parents[1]
-SAVED = ROOT / "runs/s-sweep-seed-7"
+SAVED = ROOT / "runs/silent-seed-7"
 CREW = {"pirate-1": [0, 0]}
 
 
@@ -73,7 +73,7 @@ def test_treasure_mark_a_question_mark_from_the_start():
     assert shows(image, 2, 2, "mark-question", viewer.SAND_TILES)
 
 
-def test_treasure_mark_an_x_once_it_is_dug_up_and_never_before():
+def test_treasure_mark_the_cave_once_it_is_dug_up_and_never_before():
     dig = [{"action": "dig"}]
     records = [
         record(0, position=(2, 2)),
@@ -81,36 +81,13 @@ def test_treasure_mark_an_x_once_it_is_dug_up_and_never_before():
         record(2, [{"action": "move", "direction": "west"}], position=(1, 2)),
     ]
     assert viewer.scene(records, 0, 3, (2, 2))["mark"] == ("mark-question", (2, 2))
-    assert viewer.scene(records, 1, 3, (2, 2))["mark"] == ("mark-x", (2, 2))
+    assert viewer.scene(records, 1, 3, (2, 2))["mark"] == ("cave", (2, 2))
     image = viewer.frame(records, 2, 3, None, (2, 2))
-    assert shows(image, 2, 2, "mark-x", ["dug"])
-
-
-def seen_share(image, x, y, mark):
-    """How much of a mark's opaque art actually reaches the frame at this square."""
-    art_mark = art(f"treasure/{mark}")
-    shown = square(image, x, y).convert("RGB")
-    opaque = [
-        (px, py)
-        for px in range(viewer.TILE)
-        for py in range(viewer.TILE)
-        if art_mark.getpixel((px, py))[3] == 255
-    ]
-    same = sum(shown.getpixel(spot) == art_mark.getpixel(spot)[:3] for spot in opaque)
-    return same / len(opaque)
-
-
-@pytest.mark.parametrize("crew", [1, 3, 6])
-def test_treasure_mark_the_x_shows_over_the_crew_standing_on_it(crew):
-    """Digging it up is the moment a reader most wants to see."""
-    names = [f"pirate-{n + 1}" for n in range(crew)]
-    dug_up = {
-        **record(0, [{"action": "dig"}], found=True, position=(1, 1)),
-        "agent": names[0],
-        "crew": {name: [1, 1] for name in names},
-    }
-    image = viewer.frame([dug_up], 0, 3).convert("RGB")
-    assert seen_share(image, 1, 1, "mark-x") > 0.5
+    ground = art("tiles/dug").copy()
+    ground.alpha_composite(art("treasure/cave"))
+    assert (
+        square(image, 2, 2).convert("RGB").tobytes() == ground.convert("RGB").tobytes()
+    )
 
 
 def test_treasure_mark_a_finished_game_says_where_it_is(saved):

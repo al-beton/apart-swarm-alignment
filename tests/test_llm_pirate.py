@@ -14,13 +14,13 @@ from treasure_island.game_loop import Game
 from treasure_island.llm import TOOL_DEFINITIONS, LLMPirate
 from treasure_island.runs import Replies
 from treasure_island.saved_game import Models
-from treasure_island.strategies import Sweeper, brains_for
+from treasure_island.strategies import Silent, brains_for
 
 DIG = json.dumps({"tool": "dig", "arguments": {}})
 CONFIG = """
 grid_size = 3
 turns_per_pirate = 3
-brain = "s-sweep"
+brain = "silent"
 
 [[pirates]]
 model = "fake/digger"
@@ -67,10 +67,10 @@ def one_turn(model, config=None, tmp_path=None, name="pirate-1"):
 
 
 def test_model_per_pirate_a_pirate_with_a_model_gets_the_llm_brain(tmp_path):
-    config = parse_config({"brain": "s-sweep", "pirates": [{"model": "fake/a"}, {}]})
+    config = parse_config({"brain": "silent", "pirates": [{"model": "fake/a"}, {}]})
     brains = brains_for(config.brain, config, Replies(tmp_path / "r.jsonl"))
     assert isinstance(brains[0], LLMPirate)
-    assert isinstance(brains[1], Sweeper)
+    assert isinstance(brains[1], Silent)
 
 
 def test_model_per_pirate_the_model_is_saved_with_the_config(tmp_path):

@@ -137,7 +137,7 @@ def main(argv=None):
     )
     commands = parser.add_subparsers(dest="command")
     run = commands.add_parser("run", help="play one game into a new run folder")
-    run.add_argument("config", help="a TOML file, such as configs/s-sweep.toml")
+    run.add_argument("config", help="a TOML file, such as configs/silent.toml")
     run.add_argument("--seed", type=int, required=True)
     run.add_argument(
         "--no-watch",
@@ -176,7 +176,7 @@ def main(argv=None):
     show = commands.add_parser(
         "show", help="write a run's GIF and its HTML page, the quickest way to see it"
     )
-    show.add_argument("folder", help="a run folder, such as examples/s-sweep")
+    show.add_argument("folder", help="a run folder, such as examples/silent")
     show.set_defaults(handler=_show)
     render = commands.add_parser("render", help="bake a run into an animated GIF")
     render.add_argument("folder", help="a run folder, such as runs/<name>")

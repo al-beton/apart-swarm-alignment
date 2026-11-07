@@ -179,7 +179,7 @@ DIGS = {
 CONFIG = f"""
 grid_size = 2
 turns_per_pirate = 2
-brain = "s-sweep"
+brain = "silent"
 
 [[pirates]]
 model = "adaption/{MODEL}"

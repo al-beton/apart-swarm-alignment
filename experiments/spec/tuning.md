@@ -16,7 +16,7 @@ Before money goes on LLM pirates, a teacher model tunes the game so it suits the
 
 - **teacher-map:** (proposal) Round 0 has the teacher read the repository and write `tuning/MAP.md` (the knobs, how to play a game, what the logs record), so the loop keeps up with whatever the game has become.
 - **teacher-rounds:** (proposal) Each round the teacher works in its own git worktree on branch `tuning/round-<n>`, started from the best round so far, with a brief holding the goal, the metrics' definitions, every earlier round's metrics and diff, and the files it may and may not change; the round is kept only if the tests pass and the score goes up.
-- **diff-guard:** (proposal) A round whose diff touches the tuning harness, its tests, `prompts/slots/**` or judge code is rejected, and one that changes game code must add or change a test, so the teacher can't raise the score by changing how it's measured; config numbers and `prompts/base.md` are its first levers.
+- **diff-guard:** (proposal) A round whose diff touches the tuning harness, its tests, the scripted strategies it measures with, `prompts/slots/**`, judge code, or anything outside the config, `prompts/base.md`, the game's code, tests, product spec and committed games is rejected, and one that changes game code must add or change a test, so the teacher can't raise the score by changing how it's measured; config numbers and `prompts/base.md` are its first levers.
 - **human-picks:** (proposal) A person picks the winning round from the branches the loop leaves; the loop never merges or pushes.
 - **teacher-no-api:** (proposal) The teacher is Claude Code run headless on the person's own login, never on an API key, and tests use a fake teacher, so CI never calls a model.
 

@@ -148,6 +148,7 @@ def test_turn_view_the_system_prompt_explains_the_scroll_in_plain_words():
     assert "scroll" in prompt
     assert "nothing on it is shown to you for free" in prompt.lower()
     assert "everything new" in prompt.lower()
+    assert "your own lines included" in prompt.lower()
     assert "window" not in prompt.lower()
 
 

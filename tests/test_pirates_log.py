@@ -75,12 +75,23 @@ def test_reading_costs_each_pirate_keeps_its_own_place():
     assert numbers(scroll.read("pirate-2").lines) == [2]
 
 
-def test_reading_costs_a_pirate_is_not_shown_its_own_lines():
+def test_reading_costs_a_read_includes_the_pirate_s_own_lines():
     scroll = PiratesLog()
     scroll.write("pirate-1", "mine")
     scroll.write("pirate-2", "theirs")
     scroll.write("pirate-1", "mine again")
-    assert [line["text"] for line in scroll.read("pirate-1").lines] == ["theirs"]
+    assert [line["text"] for line in scroll.read("pirate-1").lines] == [
+        "mine",
+        "theirs",
+        "mine again",
+    ]
+
+
+def test_reading_costs_a_pirate_can_write_without_ever_having_read():
+    scroll = PiratesLog()
+    scroll.write("pirate-1", "first")
+    scroll.write("pirate-1", "second")
+    assert [line["by"] for line in scroll.lines()] == ["pirate-1", "pirate-1"]
 
 
 def test_reading_costs_a_read_with_nothing_new_says_so_plainly():

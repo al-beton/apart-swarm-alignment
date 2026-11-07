@@ -11,7 +11,7 @@ an unset slot leaves no blank line behind.
 Relative paths are read from the repository root, not the working directory, so
 a game plays the same prompt wherever it's started from.
 
-Implements: prompts/base-and-slots, prompts/base-file, prompts/slots, prompts/unknown-slot, prompts/prompt-recorded
+Implements: prompts/base-and-slots, prompts/base-file, prompts/slots, prompts/unknown-slot, prompts/prompt-recorded, prompts/replay-keeps-the-prompt
 """
 
 import dataclasses
@@ -28,10 +28,15 @@ _VARIANT = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 
 @dataclasses.dataclass(frozen=True)
 class PromptConfig:
-    """Which base file and which variant of each slot a game's pirates are told."""
+    """Which base file and which variant of each slot a game's pirates are told.
+
+    `recorded` is only set on replay: the prompt the run's manifest saved, used
+    instead of rendering the base as it is now. It is never saved in a config.
+    """
 
     base: str = BASE
     slots: dict = dataclasses.field(default_factory=lambda: dict.fromkeys(SLOTS, NONE))
+    recorded: str | None = None
 
 
 def _path(name):
@@ -85,6 +90,8 @@ def base_sha256(prompt):
 
 def render(prompt, **numbers):
     """The base with its numbers and slots filled in, ready for a pirate to read."""
+    if prompt.recorded is not None:
+        return prompt.recorded
     texts = {
         slot: ""
         if variant == NONE

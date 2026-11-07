@@ -8,7 +8,7 @@ each reply (default, Al to confirm: 300). An optional `[prompt]` table picks the
 system prompt's base file and slots (see prompts).
 `parse_config` reports every problem at once, so one fix-and-retry is enough.
 
-Implements: treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config, treasure-island/silent, prompts/slots, prompts/unknown-slot, prompts/prompt-recorded
+Implements: treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config, treasure-island/silent, prompts/slots, prompts/unknown-slot, prompts/prompt-recorded, prompts/replay-keeps-the-prompt
 """
 
 import colorsys
@@ -206,5 +206,7 @@ def load_config(path):
 
 def save_config(config, path):
     """Write every lever, defaults included, so `parse_config` can read it back."""
-    text = json.dumps(dataclasses.asdict(config), indent=2, sort_keys=True)
+    data = dataclasses.asdict(config)
+    del data["prompt"]["recorded"]  # replay only, see prompts.PromptConfig
+    text = json.dumps(data, indent=2, sort_keys=True)
     Path(path).write_text(text + "\n", encoding="utf-8")

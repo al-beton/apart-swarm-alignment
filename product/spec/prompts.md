@@ -18,4 +18,4 @@
 | `shipped-variants` | `prompts/slots/**` | `test_shipped_variants_each_is_a_file_that_goes_into_the_prompt`, `test_shipped_variants_ai_research_study_says_it_is_a_study_and_they_are_scored` |
 | `unknown-slot` | `src/treasure_island/prompts.py`, `src/treasure_island/config.py` | `test_unknown_slot_is_rejected_saying_which` |
 | `prompt-recorded` | `src/treasure_island/prompts.py`, `src/treasure_island/config.py`, `src/treasure_island/saved_game.py` | `test_prompt_recorded_in_the_run_s_config_and_manifest` |
-| `replay-keeps-the-prompt` | not yet | — |
+| `replay-keeps-the-prompt` | `src/treasure_island/saved_game.py`, `src/treasure_island/prompts.py`, `src/treasure_island/config.py` | `test_replay_keeps_the_prompt_after_the_base_is_edited` |

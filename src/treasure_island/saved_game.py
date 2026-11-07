@@ -16,7 +16,7 @@ says why in its manifest, and its replay stops at the same turn for that reason.
 `differences` plays the game again from that folder, in a temporary folder and
 with nothing but what's saved, and names any log that doesn't match byte for byte.
 
-Implements: runs/yes-before-spending, runs/spending-cap, runs/stops-cleanly, agents/plays-then-replays, runs/cache-across-runs, runs/no-cache, treasure-island/named-runs, treasure-island/everything-cached, runs/one-game, runs/run-folder, runs/manifest-varies, runs/replay-byte-identical, runs/plays-live, results/examples-stay-true, agents/key-from-the-environment, prompts/prompt-recorded
+Implements: prompts/replay-keeps-the-prompt, runs/yes-before-spending, runs/spending-cap, runs/stops-cleanly, agents/plays-then-replays, runs/cache-across-runs, runs/no-cache, treasure-island/named-runs, treasure-island/everything-cached, runs/one-game, runs/run-folder, runs/manifest-varies, runs/replay-byte-identical, runs/plays-live, results/examples-stay-true, agents/key-from-the-environment, prompts/prompt-recorded
 """
 
 import dataclasses
@@ -145,9 +145,12 @@ def differences(folder):
         json.loads((folder / "config.json").read_text(encoding="utf-8"))
     )
     manifest = folder / "manifest.json"  # reference games have none
-    stopped = (
-        json.loads(manifest.read_text()).get("stopped") if manifest.exists() else None
-    )
+    saved = json.loads(manifest.read_text()) if manifest.exists() else {}
+    stopped = saved.get("stopped")
+    if recorded := saved.get("prompt", {}).get("system_prompt"):
+        # What the pirates were told, not the base file as it reads now.
+        prompt = dataclasses.replace(config.prompt, recorded=recorded)
+        config = dataclasses.replace(config, prompt=prompt)
 
     def stop_where_it_stopped(request):
         raise GameStopped(stopped)

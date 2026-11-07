@@ -1,4 +1,4 @@
-# Implements: assets/plain-files, assets/remade-by-one-command, assets/sheet-shows-everything
+# Implements: assets/plain-files, assets/remade-by-one-command, assets/sheet-shows-everything, assets/treasure-cave
 """Draws every image in assets/ from code: `make assets` or `python -m assets.generate`."""
 
 from pathlib import Path
@@ -6,6 +6,7 @@ from pathlib import Path
 from PIL import Image
 
 from assets import catwalk
+from assets.cave import cave, going_in, hat_stack
 from assets.font import FONT_HEIGHT, draw_text, font_sheet, text_width
 from assets.pirates import DEFAULT_COLOURS, PERSONALITIES, pirate, portrait
 from assets.pixels import DARK, SIZE
@@ -110,8 +111,10 @@ def _scene():
         scene.paste(TILES["dug"](), (cell[0] * SIZE, cell[1] * SIZE))
     scene.paste(TILES["sinking-sand"](), (5 * SIZE, 1 * SIZE))
     scene.paste(TILES["dug"](), (5 * SIZE, 4 * SIZE))
-    _place(scene, ITEMS["mark-x"](), (5, 4))
-    _place(scene, ITEMS["treasure-open"](), (5, 4))
+    _place(scene, cave(), (5, 4))
+    _place(
+        scene, hat_stack([(DEFAULT_COLOURS[6], "7"), (DEFAULT_COLOURS[7], "8")]), (5, 4)
+    )
     _place(scene, ITEMS["mark-question"](), (0, 5))
     crew = [
         ((2, 3), 1, "right", 1),
@@ -156,9 +159,27 @@ def _log():
     return frame
 
 
+def _cave_row():
+    """The cave alone, with three and six inside, and a pirate going in."""
+    crew = [(DEFAULT_COLOURS[n - 1], str(n)) for n in range(1, 7)]
+    items = [("cave", cave(0)), ("cave-2", cave(1))]
+    for count in (1, 3, 6):
+        square = TILES["dug"]()
+        square.alpha_composite(cave())
+        square.alpha_composite(hat_stack(crew[:count]))
+        items.append((f"{count} inside", square))
+    for step in (0, 1, 2):
+        square = TILES["dug"]()
+        square.alpha_composite(cave())
+        square.alpha_composite(hat_stack(crew[:2]))
+        square.alpha_composite(going_in(3, crew[2][0], "3", step))
+        items.append((f"going in {step}", square))
+    return items
+
+
 def contact_sheet():
     """All the art on one page, to judge it at a glance."""
-    sheet = Image.new("RGBA", (1024, 956), _BACKGROUND)
+    sheet = Image.new("RGBA", (1024, 1104), _BACKGROUND)
     _heading(
         sheet, 18, "The crew", "20 personalities, any colour, 48px squares at real size"
     )
@@ -169,22 +190,27 @@ def contact_sheet():
     _labelled_row(sheet, 278, [(name, make()) for name, make in TILES.items()])
     _heading(sheet, 398, "Treasure", "enlarged 2x, on no background")
     _labelled_row(sheet, 426, [(name, make()) for name, make in ITEMS.items()])
-    _heading(sheet, 546, "In play", "the viewer parts together, at real size")
-    sheet.alpha_composite(_scene(), (24, 574))
-    sheet.alpha_composite(_side_panel(), (416, 574))
-    sheet.alpha_composite(_log(), (24, 870))
-    _parts(sheet)
+    _heading(
+        sheet, 546, "Treasure cave", "hats stack by the door, first in at the bottom"
+    )
+    _labelled_row(sheet, 574, _cave_row())
+    top = 722
+    _heading(sheet, top - 28, "In play", "the viewer parts together, at real size")
+    sheet.alpha_composite(_scene(), (24, top))
+    sheet.alpha_composite(_side_panel(), (416, top))
+    sheet.alpha_composite(_log(), (24, top + 296))
+    _parts(sheet, top)
     return sheet
 
 
-def _parts(sheet):
+def _parts(sheet, top):
     """The viewer's raw parts, beside the scene they build."""
     font = font_sheet()
-    draw_text(sheet, (632, 574), "font", _MUTED)
+    draw_text(sheet, (632, top), "font", _MUTED)
     sheet.alpha_composite(
-        font.resize((font.width * 2, font.height * 2), Image.NEAREST), (632, 586)
+        font.resize((font.width * 2, font.height * 2), Image.NEAREST), (632, top + 12)
     )
-    x, y = 632, 586 + font.height * 2 + 16
+    x, y = 632, top + 12 + font.height * 2 + 16
     for name, image in (
         ("arrow", turn_arrow()),
         ("tail", bubble_tail()),
@@ -202,6 +228,7 @@ def build():
     images = {f"pirates/pirate-{n:02}.png": pirate_sheet(n) for n in PERSONALITIES}
     images |= {f"tiles/{name}.png": make() for name, make in TILES.items()}
     images |= {f"treasure/{name}.png": make() for name, make in ITEMS.items()}
+    images |= {"treasure/cave.png": cave(0), "treasure/cave-2.png": cave(1)}
     images |= {
         "ui/font.png": font_sheet(),
         "ui/turn-arrow.png": turn_arrow(),

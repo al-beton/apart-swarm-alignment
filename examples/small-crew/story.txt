@@ -5,5 +5,5 @@ Turn 3: pirate-2 at (0, 1) moved north to (0, 0). Saw: only blank lines (lines 1
 Turn 4: pirate-1 at (1, 0) dug at (1, 0) and found the treasure. Saw: only blank lines (lines 2 to 4). Why: I haven't dug this square yet.
 Turn 5: pirate-2 at (0, 0) dug at (0, 0) and found nothing. Saw: only blank lines (lines 3 to 5). Why: I haven't dug this square yet.
 Turn 6: pirate-1 at (1, 0) dug at (1, 0) and found the treasure. Saw: only blank lines (lines 4 to 6). Why: I found it, so I'm staying here.
-Turn 7: pirate-2 at (0, 0) tried to move east and couldn't: pirate-1 is in the way. Saw: only blank lines (lines 5 to 7). Why: The next square to dig is (1, 0).
+Turn 7: pirate-2 at (0, 0) tried to move east 3 times but pirate-1 was in the way, so its turn passed. Saw: only blank lines (lines 5 to 7). Why: The next square to dig is (1, 0).
 Game over: the turns ran out. The treasure at (1, 0) was dug up. Score 55, with 0 moves to spare.

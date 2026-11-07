@@ -44,18 +44,18 @@ Turn 42: pirate-1 at (2, 1) dug at (2, 1) and found the treasure. Saw: only blan
 Turn 43: pirate-2 at (3, 1) dug at (3, 1) and found nothing. Saw: only blank lines (lines 41 to 43). Why: I haven't dug this square yet.
 Turn 44: pirate-3 at (4, 1) dug at (4, 1) and found nothing. Saw: only blank lines (lines 42 to 44). Why: I haven't dug this square yet.
 Turn 45: pirate-1 at (2, 1) dug at (2, 1) and found the treasure. Saw: only blank lines (lines 43 to 45). Why: I found it, so I'm staying here.
-Turn 46: pirate-2 at (3, 1) tried to move west and couldn't: pirate-1 is in the way. Saw: only blank lines (lines 44 to 46). Why: The next square to dig is (2, 1).
-Turn 47: pirate-3 at (4, 1) tried to move west and couldn't: pirate-2 is in the way. Saw: only blank lines (lines 45 to 47). Why: The next square to dig is (3, 1).
+Turn 46: pirate-2 at (3, 1) tried to move west 3 times but pirate-1 was in the way, so its turn passed. Saw: only blank lines (lines 44 to 46). Why: The next square to dig is (2, 1).
+Turn 47: pirate-3 at (4, 1) tried to move west 3 times but pirate-2 was in the way, so its turn passed. Saw: only blank lines (lines 45 to 47). Why: The next square to dig is (3, 1).
 Turn 48: pirate-1 at (2, 1) dug at (2, 1) and found the treasure. Saw: only blank lines (lines 46 to 48). Why: I found it, so I'm staying here.
-Turn 49: pirate-2 at (3, 1) tried to move west and couldn't: pirate-1 is in the way. Saw: only blank lines (lines 47 to 49). Why: The next square to dig is (2, 1).
-Turn 50: pirate-3 at (4, 1) tried to move west and couldn't: pirate-2 is in the way. Saw: only blank lines (lines 48 to 50). Why: The next square to dig is (3, 1).
+Turn 49: pirate-2 at (3, 1) tried to move west 3 times but pirate-1 was in the way, so its turn passed. Saw: only blank lines (lines 47 to 49). Why: The next square to dig is (2, 1).
+Turn 50: pirate-3 at (4, 1) tried to move west 3 times but pirate-2 was in the way, so its turn passed. Saw: only blank lines (lines 48 to 50). Why: The next square to dig is (3, 1).
 Turn 51: pirate-1 at (2, 1) dug at (2, 1) and found the treasure. Saw: only blank lines (lines 49 to 51). Why: I found it, so I'm staying here.
-Turn 52: pirate-2 at (3, 1) tried to move west and couldn't: pirate-1 is in the way. Saw: only blank lines (lines 50 to 52). Why: The next square to dig is (2, 1).
-Turn 53: pirate-3 at (4, 1) tried to move west and couldn't: pirate-2 is in the way. Saw: only blank lines (lines 51 to 53). Why: The next square to dig is (3, 1).
+Turn 52: pirate-2 at (3, 1) tried to move west 3 times but pirate-1 was in the way, so its turn passed. Saw: only blank lines (lines 50 to 52). Why: The next square to dig is (2, 1).
+Turn 53: pirate-3 at (4, 1) tried to move west 3 times but pirate-2 was in the way, so its turn passed. Saw: only blank lines (lines 51 to 53). Why: The next square to dig is (3, 1).
 Turn 54: pirate-1 at (2, 1) dug at (2, 1) and found the treasure. Saw: only blank lines (lines 52 to 54). Why: I found it, so I'm staying here.
-Turn 55: pirate-2 at (3, 1) tried to move west and couldn't: pirate-1 is in the way. Saw: only blank lines (lines 53 to 55). Why: The next square to dig is (2, 1).
-Turn 56: pirate-3 at (4, 1) tried to move west and couldn't: pirate-2 is in the way. Saw: only blank lines (lines 54 to 56). Why: The next square to dig is (3, 1).
+Turn 55: pirate-2 at (3, 1) tried to move west 3 times but pirate-1 was in the way, so its turn passed. Saw: only blank lines (lines 53 to 55). Why: The next square to dig is (2, 1).
+Turn 56: pirate-3 at (4, 1) tried to move west 3 times but pirate-2 was in the way, so its turn passed. Saw: only blank lines (lines 54 to 56). Why: The next square to dig is (3, 1).
 Turn 57: pirate-1 at (2, 1) dug at (2, 1) and found the treasure. Saw: only blank lines (lines 55 to 57). Why: I found it, so I'm staying here.
-Turn 58: pirate-2 at (3, 1) tried to move west and couldn't: pirate-1 is in the way. Saw: only blank lines (lines 56 to 58). Why: The next square to dig is (2, 1).
-Turn 59: pirate-3 at (4, 1) tried to move west and couldn't: pirate-2 is in the way. Saw: only blank lines (lines 57 to 59). Why: The next square to dig is (3, 1).
+Turn 58: pirate-2 at (3, 1) tried to move west 3 times but pirate-1 was in the way, so its turn passed. Saw: only blank lines (lines 56 to 58). Why: The next square to dig is (2, 1).
+Turn 59: pirate-3 at (4, 1) tried to move west 3 times but pirate-2 was in the way, so its turn passed. Saw: only blank lines (lines 57 to 59). Why: The next square to dig is (3, 1).
 Game over: the turns ran out. The treasure at (2, 1) was dug up. Score 40, with 0 moves to spare.

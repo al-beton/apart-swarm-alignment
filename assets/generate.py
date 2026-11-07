@@ -12,7 +12,15 @@ from assets.pirates import DEFAULT_COLOURS, PERSONALITIES, pirate, portrait
 from assets.pixels import DARK, SIZE
 from assets.tiles import TILES, sand
 from assets.treasure import ITEMS
-from assets.ui import note_slices, panel, panel_slices, quill, scroll_note, turn_arrow
+from assets.ui import (
+    note_slices,
+    open_scroll,
+    panel,
+    panel_slices,
+    quill,
+    scroll_note,
+    turn_arrow,
+)
 
 ASSETS = Path(__file__).resolve().parent
 
@@ -207,6 +215,7 @@ def _parts(sheet, top):
     for name, image in (
         ("arrow", turn_arrow()),
         ("quill", quill()),
+        ("open", open_scroll()),
         ("note", note_slices()),
         ("panel", panel_slices()),
     ):
@@ -227,6 +236,7 @@ def build():
         "ui/turn-arrow.png": turn_arrow(),
         "ui/note.png": note_slices(),
         "ui/quill.png": quill(),
+        "ui/open-scroll.png": open_scroll(),
         "ui/panel.png": panel_slices(),
         "sheet.png": contact_sheet(),
     }

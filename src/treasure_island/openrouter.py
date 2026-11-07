@@ -9,12 +9,13 @@ A reply with no cost stops the game, since the spending cap couldn't count it.
 
 Default, Al to confirm: the model may answer without a tool (`tool_choice` "auto"),
 since some models refuse to be forced, and thinking off sends no reasoning setting,
-so each model reasons as it does by default and its reasoning isn't kept.
+so each model reasons as it does by default and its reasoning isn't kept. Thinking
+on asks for reasoning within `thinking_tokens`, on top of the reply's cap.
 
 `OpenRouter.check_key` asks OpenRouter about a key, not a model, so it spends nothing.
 It never says the key's `label`, since OpenRouter's label is the key, masked.
 
-Implements: agents/openrouter-backend, agents/check-keys
+Implements: treasure-island/model-reasoning, agents/openrouter-backend, agents/check-keys, agents/normal-temperature
 """
 
 import json
@@ -37,11 +38,12 @@ def _body(model_id, request):
         ],
         "tools": [{"type": "function", "function": tool} for tool in request["tools"]],
         "tool_choice": "auto",
-        "max_tokens": request["max_tokens"],
+        "max_tokens": request["max_tokens"] + request["thinking_tokens"],
         "seed": request["seed"],
     }
     if request["thinking"]:
-        body["reasoning"] = {"enabled": True}
+        # The reasoning's own budget, on top of the reply's.
+        body["reasoning"] = {"max_tokens": request["thinking_tokens"]}
     return body
 
 
@@ -62,6 +64,7 @@ def _reply_text(message, thinking):
 
 
 class OpenRouter:
+    THINKS = "built-in"  # its models' own reasoning, where they return it
     """A backend for one OpenRouter model: `backend(request)` -> (text, cost)."""
 
     def __init__(self, model_id, key):

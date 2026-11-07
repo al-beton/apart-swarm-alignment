@@ -18,7 +18,7 @@ and spends nothing. `backends` makes one for each run, with the key from `ADAPTI
 key goes only to the SDK's client, so it never reaches a request, a reply or a
 run folder.
 
-Implements: agents/adaption-backend, agents/adaption-cost, agents/check-keys
+Implements: treasure-island/model-reasoning, agents/adaption-backend, agents/adaption-cost, agents/check-keys, agents/normal-temperature
 """
 
 import json
@@ -27,6 +27,7 @@ from treasure_island.game_loop import GameStopped
 
 # Model id -> (credits per million input tokens, credits per million output tokens).
 RATES = {"deepseek-v4-flash": (0.044, 0.133)}
+THINKS = "built-in"  # its models' own reasoning, returned as summaries
 
 
 def client(key):
@@ -94,7 +95,8 @@ class AdaptionBackend:
             instructions=request["system"],
             input=request["messages"],
             tools=[{"type": "function", **tool} for tool in request["tools"]],
-            max_output_tokens=request["max_tokens"],
+            # The Responses API counts reasoning as output, so its budget adds on.
+            max_output_tokens=request["max_tokens"] + request["thinking_tokens"],
         )
         usage = response.usage
         if usage is None:

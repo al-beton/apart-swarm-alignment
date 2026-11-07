@@ -134,7 +134,8 @@ def test_openrouter_backend_the_manifest_totals_the_reply_s_cost(
     folder = offline / capsys.readouterr().out.splitlines()[-1]
     manifest = json.loads((folder / "manifest.json").read_text())
     assert fake.sent
-    assert manifest["cost_usd"] == round(len(fake.sent) * RECORDED["usage"]["cost"], 6)
+    total = len(fake.sent) * RECORDED["usage"]["cost"]
+    assert manifest["cost_usd"] == pytest.approx(total)
     assert KEY not in "".join(p.read_text() for p in folder.iterdir())
 
 

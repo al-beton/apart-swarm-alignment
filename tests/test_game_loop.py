@@ -548,7 +548,10 @@ def test_story_record_a_committed_game_can_be_followed_from_its_story_alone(fold
         assert int(match[1]) == number
         assert record["crew"][match[2]] == [int(match[3]), int(match[4])]
         if record["did"] == [READ]:
-            assert "read the scroll and found" in line
+            got = record["log_shown"]
+            said = "found nothing new" if not got else f"got {len(got)} new line"
+            assert f"read the scroll and {said}" in line
+            assert all(f'"{shown["text"]}"' not in line for shown in got)
 
 
 def test_story_record_a_note_cannot_change_what_the_panel_says_happened():

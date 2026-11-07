@@ -1,7 +1,7 @@
 # Merging
 
 - **squash-only:** Pull requests are squash-merged, so noisy histories never reach main.
-- **merge-is-authorised:** Al may always merge; a reviewer agent may merge a pull request it didn't author once its own review passed; nobody else may.
+- **merge-is-authorised:** Al may always merge; the builder who opened a pull request, or any reviewer agent, may merge it once `merge-when-clean` holds; nobody else may, so a clean pull request never waits for another agent.
 - **merge-when-clean:** A pull request merges only when checks are green on its latest commit (its last real run passed, whatever a skipped draft run that started later shows), Codex has finished reviewing that commit, every finding is resolved and the closing block is right.
 - **stacked-retarget:** Before a merged branch is deleted, every pull request based on it is moved to main, so none closes by accident.
 - **main-stays-green:** After every merge, main's checks run again and must pass.

@@ -36,13 +36,14 @@ For each thread `D wait-review` printed:
 
 1. Real (a bug, a contradiction, code that doesn't do what the spec says)? Spec change if the behaviour changes, then a failing test, then the fix, each committed; push.
 2. `D resolve <thread-id> "Fixed in <sha>: …"`, or `"Not changed: <reason>"` for findings you decline.
-3. If anything changed behaviour, `D request-review <pr>` and go back to step 2.3.
+3. Fix the P1 findings, all in one push. Answer every other finding "follow-up" with `D resolve`, and open an issue only for a real bug.
+4. After that push, `D request-review <pr>` once, so Codex has finished on the latest commit and `D merge` will accept it. Answer anything it finds that isn't a P1 "follow-up" in the same way (default, Al to confirm).
 
-**Stop after three rounds,** or sooner when a round finds nothing real. Decline what's left with a reason, or open an issue for it.
+**One round only.** There's no second round of findings.
 
-## 4. Hand over for merging
+## 4. Merge it yourself
 
-A builder never merges its own pull request. When checks are green and Codex has finished with no open threads: update the description (tests count, review rounds), label the pull request `in-review`, swap the issue's `in-progress` for `in-review` (`gh issue edit <n> --add-label in-review --remove-label in-progress`), and tell the delivery lead in one line. A reviewer reviews it (`review-pr`) and merges it (`merge-pr`): `D merge <pr>` refuses unless `blocking-checks` is green, Codex has finished on the latest commit, every thread is resolved and the description has a closing block. Then it:
+The builder merges its own pull request once it is clean (`merge-pr`). When checks are green and Codex has finished on the latest commit with no open threads, update the description (tests count, review round) and run `D merge <pr>`. It refuses unless `blocking-checks` is green, Codex has finished on the latest commit, every thread is resolved and the description has a closing block. Then it:
 
 1. moves any pull request based on this branch to `main` (deleting a base branch closes the pull requests on it);
 2. squash-merges with the pull request title as subject and the closing block as body;
@@ -53,7 +54,7 @@ Fails: if main's checks fail, fix it at once in a new pull request; nothing else
 
 ## 5. Report
 
-Builder: say which pull request is waiting for review. Reviewer: say what merged (pull request link, merge commit), which issues closed, how many review rounds there were and what was declined, and anything Al should know.
+Say what merged (pull request link, merge commit), which issues closed, how many review rounds there were and what was declined, and anything Al should know.
 
 ## Shell traps seen so far
 

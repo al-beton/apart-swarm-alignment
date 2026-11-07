@@ -15,4 +15,4 @@ description: Address review findings on a Treasure Island pull request (from an 
 
    Findings with no thread (in a review summary) get one pull request comment covering them.
 4. **Check again:** `blocking-checks` green. If the fixes change behaviour, ask for another review.
-5. **Stop after three automatic review rounds,** or sooner when a round finds nothing real; decline what's left with a reason or open an issue for it. `python3 .github/scripts/deliver.py resolve THREAD REPLY` replies and resolves in one step.
+5. **One automatic review round:** fix P1 findings in one push; reply "follow-up" to the rest and resolve them, opening an issue only for a real bug. `python3 .github/scripts/deliver.py resolve THREAD REPLY` replies and resolves in one step.

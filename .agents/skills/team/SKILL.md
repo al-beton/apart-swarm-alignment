@@ -15,8 +15,8 @@ Al talks to the manager, Specker and Visual Assets. Everyone else works from Git
 | **Specker** | Talks with Al and owns `product/spec/treasure-island.md` | — |
 | **Visual Assets** | Talks with Al and owns `assets/` | — |
 | **Delivery lead** | Owns the queue: picks the next `ready` issue, assigns it to one builder, keeps the labels below current, tells the manager what merged | builds or merges |
-| **Builder** (one or two) | Delivers its assigned issue with `deliver-issue` steps 1 to 4, then labels it `in-review` and tells the lead in one line; starts the next issue from `main` | merges its own pull request |
-| **Reviewer** (one or two) | Reviews pull requests labelled `in-review` (`review-pr`); if its review passes, merges (`merge-pr`) | merges a pull request it authored |
+| **Builder** (one or two) | Delivers its assigned issue with `deliver-issue` steps 1 to 4, merging its own pull request once it is clean, and tells the lead in one line; starts the next issue from `main` | merges before checks are green and Codex has finished on the latest commit |
+| **Reviewer** (one or two) | Sweeps: merges any clean pull request nobody merged (`merge-pr`), moves stacked pull requests onto `main` when files overlap or one isn't clean, keeps `main` green; a full review (`review-pr`) is optional | merges a pull request that isn't clean |
 | **Codex** | Reviews every pull request adversarially when it's marked ready or asked (`@codex review`) | merges |
 | **Researcher** | Runs experiments with the game: specs in `experiments/spec/`, then runs, then findings notes | spends without Al's yes |
 
@@ -28,7 +28,7 @@ Each open issue carries exactly one of these:
 |---|---|---|
 | `ready` | well specced, unblocked, nobody on it | manager or lead |
 | `in-progress` | a builder is on it | the builder, when it starts |
-| `in-review` | its pull request is green, Codex has finished, and it waits for a reviewer | the builder, when it hands over |
+| `in-review` | its pull request is open and waits for its checks or Codex's round; its builder merges it once it's clean | the builder, when it opens the pull request |
 | `blocked` | waiting on Al or another issue; the issue says on what | whoever finds the block |
 | `on-hold` | parked on purpose until Al or the manager picks it up again | manager |
 

@@ -17,7 +17,7 @@ from treasure_island import saved_game, viewer
 # examples/README.md.
 EXAMPLES = {
     "silent": ("configs/silent.toml", 7),
-    "say-a-number": ("configs/say-a-number.toml", 7),
+    "stripes": ("configs/stripes.toml", 7),
     "scribe": ("configs/scribe.toml", 7),
     "small-crew": ("configs/small-crew.toml", 7),
 }

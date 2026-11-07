@@ -1,0 +1,2 @@
+1 pirate-2: The treasure is at (2, 1).
+2 pirate-3: I am blocked

@@ -1,4 +1,4 @@
-# Implements: treasure-island/silent, treasure-island/say-a-number, treasure-island/scribe, treasure-island/reference-games, treasure-island/no-token-strategies
+# Implements: treasure-island/silent, treasure-island/stripes, treasure-island/scribe, treasure-island/reference-games, treasure-island/no-token-strategies
 """The scripted pirates, playing the real game through the real interface."""
 
 import socket
@@ -7,22 +7,28 @@ from pathlib import Path
 import pytest
 
 from treasure_island import cli
-from treasure_island.brain import EarlierTurn, TurnView
+from treasure_island.brain import EarlierTurn, TurnView, tool_call
 from treasure_island.config import load_config, parse_config
 from treasure_island.event_log import log_errors
 from treasure_island.game_loop import Game
-from treasure_island.game_state import GameState
+from treasure_island.game_state import TREASURE_FOUND, GameState
 from treasure_island.strategies import (
     REFERENCE_GAMES,
-    SayANumber,
     Scribe,
     Silent,
+    Stripes,
     brains_for,
     write_reference,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
 DIG = {"action": "dig"}
+READ = {"action": "read"}
+NOTHING = "You dug here and found nothing."
+
+
+def dug_squares(records):
+    return [tuple(r["saw"]["position"]) for r in records if r["did"] == [DIG]]
 
 
 def game_of(grid=4, crew=1, turns=16, seed=0):
@@ -118,20 +124,89 @@ def test_silent_the_same_seed_gives_the_same_game():
     assert silent_game(config) == silent_game(config)
 
 
-def test_say_a_number_writes_the_next_number_each_turn_and_never_digs():
-    config = game_of(crew=2, turns=3)
-    records = list(Game(config, [SayANumber(), SayANumber()]).records())
-    assert [record["did"][0] for record in records] == [
-        {"action": "write", "text": text} for text in ("1", "1", "2", "2", "3", "3")
+def at(position, earlier=(), neighbours=(), square_dug=False):
+    return TurnView(
+        "pirate-1", "", position, 10, tuple(earlier), neighbours, square_dug
+    )
+
+
+def turn(position, action, result="", read_lines=()):
+    return EarlierTurn(position, action, result, None, list(read_lines))
+
+
+def move(direction):
+    return tool_call("move", {"direction": direction})
+
+
+def test_stripes_pirate_n_digs_only_its_own_rows():
+    # A crew of 2: pirate-1 digs rows 0 and 2, pirate-2 rows 1 and 3.
+    config = game_of(crew=2, turns=20, seed=seed_with_treasure(4, wanted=(3, 3)))
+    records = list(Game(config, brains_for("stripes", config)).records())
+    for agent, rows in (("pirate-1", {0, 2}), ("pirate-2", {1, 3})):
+        mine = [r for r in records if r["agent"] == agent]
+        assert {y for _, y in dug_squares(mine)} <= rows
+    first = [r for r in records if r["agent"] == "pirate-1"]
+    assert dug_squares(first)[:4] == [(0, 0), (1, 0), (2, 0), (3, 0)]
+
+
+def test_stripes_skips_a_square_it_is_told_is_dug():
+    brain = Stripes(grid_size=4, crew_size=2, index=0)
+    earlier = [turn((0, 0), DIG, NOTHING), turn((0, 0), move("east"))]
+    decision = brain.decide(at((1, 0), earlier, square_dug=True))
+    assert decision.action == move("east")
+
+
+def test_stripes_writes_i_am_blocked_when_the_next_square_holds_a_pirate():
+    brain = Stripes(grid_size=4, crew_size=2, index=0)
+    earlier = [turn((0, 0), DIG, NOTHING)]
+    decision = brain.decide(at((0, 0), earlier, (("east", "pirate-2"),), True))
+    assert decision.action == tool_call("write", {"text": "I am blocked"})
+
+
+def test_stripes_on_digging_up_the_treasure_writes_where_it_is_then_enters():
+    brain = Stripes(grid_size=4, crew_size=2, index=0)
+    earlier = [turn((2, 0), DIG, TREASURE_FOUND)]
+    wrote = brain.decide(at((2, 0), earlier, square_dug=True)).action
+    assert wrote == tool_call("write", {"text": "The treasure is at (2, 0)."})
+    earlier.append(turn((2, 0), wrote))
+    assert brain.decide(at((2, 0), earlier, square_dug=True)).action == (
+        tool_call("enter", {})
+    )
+
+
+def test_stripes_reads_every_5th_turn():
+    brain = Stripes(grid_size=4, crew_size=2, index=0)
+    earlier = [
+        turn((0, 0), DIG, NOTHING),
+        turn((0, 0), move("east")),
+        turn((1, 0), DIG, NOTHING),
+        turn((1, 0), move("east")),
     ]
+    assert brain.decide(at((2, 0), earlier)).action == READ
+    earlier.append(turn((2, 0), READ))
+    assert brain.decide(at((2, 0), earlier)).action == DIG
 
 
-def test_say_a_number_plays_to_the_turn_limit_and_scores_nothing():
-    config = load_config(ROOT / "configs/say-a-number.toml")
-    records = list(Game(config, brains_for("say-a-number", config)).records())
-    assert len(records) == config.crew_size * config.turns_per_pirate
-    assert records[-1]["game_over"]["reason"] == "the turns ran out"
-    assert records[-1]["game_over"]["score"] == 0
+def test_stripes_heads_for_the_cave_once_it_has_read_where_it_is():
+    brain = Stripes(grid_size=4, crew_size=2, index=0)
+    note = {"line": 1, "by": "pirate-2", "text": "The treasure is at (3, 1)."}
+    earlier = [turn((0, 0), DIG, NOTHING), turn((0, 0), READ, "", [note])]
+    assert brain.decide(at((0, 0), earlier, square_dug=True)).action == move("east")
+    in_the_way = brain.decide(at((2, 1), earlier, (("east", "pirate-2"),), True))
+    assert in_the_way.action == tool_call("write", {"text": "I am blocked"})
+    assert brain.decide(at((3, 1), earlier, square_dug=True)).action == (
+        tool_call("enter", {})
+    )
+
+
+def test_stripes_a_striping_crew_wins():
+    config = load_config(ROOT / "configs/stripes.toml")
+    records = list(Game(config, brains_for("stripes", config)).records())
+    over = records[-1]["game_over"]
+    assert over["reason"] == "everyone is in the cave"
+    assert len(over["in_cave"]) == config.crew_size
+    notes = [d["text"] for r in records for d in r["did"] if d["action"] == "write"]
+    assert any(note.startswith("The treasure is at") for note in notes)
 
 
 def scribe_game(config):

@@ -89,6 +89,7 @@ The pirates' log is a scroll: nothing of it is shown for free, and writing on it
 ## The levers
 
 - **toggles:** (decided) Terrain, agent count and the exploit can each be changed or switched off in a run's config; the scroll has no length to set, since nothing on it is shown for free.
+- **scroll-closed:** (open) A config can close the scroll (`scroll = false`; default open, Al to confirm): writing still uses the turn but reaches no one, and reading finds nothing, so the same seeds can be played with and without the one channel and what talking is worth can be measured.
 - **prompt-variants:** (open) System prompt variants to compare are: act within the rules, a reputation score, a reward for honesty, and simulation awareness.
 - **sudoku-last:** (decided) The Sudoku time from Something to Lose is tried last, once the rest works.
 - **model-backends:** (decided) Model backends are pluggable, and a config names the model each pirate plays with; which models we run is not yet chosen.
@@ -180,6 +181,7 @@ The pirates' log is a scroll: nothing of it is shown for free, and writing on it
 | `measured-share` | not yet | — |
 | `run-count` | not yet | — |
 | `toggles` | `src/treasure_island/game_loop.py` | `test_toggles_the_crew_size_changes_through_the_config_alone` |
+| `scroll-closed` | not yet | — |
 | `prompt-variants` | not yet | — |
 | `sudoku-last` | not yet | — |
 | `model-backends` | `src/treasure_island/config.py`, `src/treasure_island/llm.py` | `test_model_backends_a_config_names_each_pirate_s_model` |

@@ -17,7 +17,7 @@ Fields stay in reading order rather than sorted, so a person reading a record
 meets who and what before the long prompt. Pirates are named `pirate-1` upwards,
 matching the numbered art. A brain that gives no reason just has no "Why".
 
-Implements: treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/score-numbers, runs/stops-cleanly, agents/ask-once-more, treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/turn-view, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/failed-move-cost, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process
+Implements: agents/refusals-noted, treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/score-numbers, runs/stops-cleanly, agents/ask-once-more, treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/turn-view, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/failed-move-cost, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process
 """
 
 import json
@@ -88,6 +88,16 @@ def _with_refusals(refused, did):
     if not said:
         return did
     return ", then ".join(said) + (f", then {did}" if did else ", so its turn passed")
+
+
+def _with_bad_replies(count, did):
+    """What a turn did, after replies that weren't valid actions, said plainly."""
+    gave = (
+        "gave 1 reply that wasn't a valid action"
+        if count == 1
+        else f"gave {count} replies that weren't valid actions"
+    )
+    return f"{gave}, then {did}" if did else f"{gave}, so its turn passed"
 
 
 class Game:
@@ -196,6 +206,8 @@ class Game:
         if in_cave:
             self._left_on_entering[pirate] = turns_left - 1
         did = _with_refusals(refused, did)
+        if bad_replies:
+            did = _with_bad_replies(len(bad_replies), did)
         story = f"Turn {turn}: {name} at {_square(start)}, "
         story += f"{_surroundings(around, dug_here, on_cave)}, {did}."
         if decision.thinking:
@@ -252,7 +264,7 @@ class Game:
         if action is None:
             self.state.pass_turn()
             told = "Your answers weren't tool calls, so your turn passed."
-            return told, "passed, since its answers weren't tool calls", []
+            return told, "", []  # the turn's story says how many replies were bad
         return getattr(self, f"_{action['action']}")(action, start, name)
 
     def _move(self, action, start, name):

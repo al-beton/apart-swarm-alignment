@@ -374,7 +374,9 @@ def test_watch_live_the_command_names_its_address(folder, capsys, monkeypatch):
     assert f"http://127.0.0.1:{started['port']}/" in capsys.readouterr().out
 
 
-def test_render_gif_writes_one_frame_per_turn_next_to_the_run(folder, capsys):
+def test_render_gif_writes_one_frame_per_turn_and_each_walk_next_to_the_run(
+    folder, capsys
+):
     assert cli.main(["render", str(folder)]) == 0
     out = folder.with_suffix(".gif")
     assert out.exists()

@@ -578,7 +578,8 @@ def _caption_image(story, width, height):
     return image
 
 
-def frame(records, turn, size, pirates=None, treasure=None, step=None):
+# One argument over the limit: `step` sits beside the others every caller already passes.
+def frame(records, turn, size, pirates=None, treasure=None, step=None):  # noqa: PLR0913
     """The image for one turn: ground, pirates, turn arrow, note, panel, caption, log."""
     pirates = pirates or _default_pirates(_crew_names(records))
     shown = scene(records, turn, size, treasure, step)

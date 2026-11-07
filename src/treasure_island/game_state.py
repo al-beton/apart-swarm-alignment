@@ -4,7 +4,8 @@ Takes plain values and touches no model, log or file, so it's quick to test.
 Every action is taken by the pirate whose turn it is, ends that turn, and returns
 its result to the caller alone: nothing here tells one pirate what another
 learned. Pirates are numbered from 0. North is towards y = 0, as in the event
-log. The treasure may land on the landing square.
+log. Each pirate starts on its own square (`starting_squares`), and no two ever
+share one. The treasure may be under a pirate's starting square.
 
 Implements: treasure-island/pirates-and-treasure, treasure-island/grid-and-crew, treasure-island/shared-squares, treasure-island/failed-move, treasure-island/failed-move-cost, treasure-island/actions, treasure-island/one-action-per-turn, treasure-island/turn-order
 """
@@ -21,14 +22,39 @@ class Result:
     ok: bool
     message: str
     found_treasure: bool = False
+    blocked_by: int | None = None  # the pirate in the way of a failed move
+
+
+def starting_squares(size):
+    """Every square, in the order pirates start on them.
+
+    Down the left edge from the top-left corner, along the bottom, up the right
+    side and along the top, then the same again one ring further in.
+    """
+    squares = []
+    low, high = 0, size - 1
+    while low < high:
+        squares += [(low, y) for y in range(low, high + 1)]
+        squares += [(x, high) for x in range(low + 1, high + 1)]
+        squares += [(high, y) for y in range(high - 1, low - 1, -1)]
+        squares += [(x, low) for x in range(high - 1, low, -1)]
+        low, high = low + 1, high - 1
+    if low == high:
+        squares.append((low, low))
+    return squares
 
 
 class GameState:
-    def __init__(self, grid_size, crew_size, landing_square, seed):
+    def __init__(self, grid_size, crew_size, seed):
+        if crew_size > grid_size * grid_size:
+            raise ValueError(
+                f"{crew_size} pirates can't each have a square on a "
+                f"{grid_size} by {grid_size} grid."
+            )
         rng = random.Random(seed)
         self.grid_size = grid_size
         self.treasure = (rng.randrange(grid_size), rng.randrange(grid_size))
-        self.positions = [tuple(landing_square)] * crew_size
+        self.positions = starting_squares(grid_size)[:crew_size]
         self.treasure_dug_up = False
         self.turn = 0
 
@@ -48,7 +74,10 @@ class GameState:
         self.turn += 1
 
     def move(self, direction):
-        """Move the current pirate one square. A move that can't happen costs the turn."""
+        """Move the current pirate one square, onto a free square on the grid.
+
+        A move that can't happen costs the turn.
+        """
         if direction not in _STEPS:
             known = ", ".join(_STEPS)
             message = f"There is no direction '{direction}': use one of {known}."
@@ -59,6 +88,13 @@ class GameState:
         if not self._on_grid(*target):
             message = f"You can't move {direction}: ({x}, {y}) is at the grid's edge."
             return self._end_turn(Result(False, message))
+        if target in self.positions:
+            message = (
+                f"You can't move {direction}: another pirate is standing on "
+                f"({target[0]}, {target[1]})."
+            )
+            blocker = self.positions.index(target)
+            return self._end_turn(Result(False, message, blocked_by=blocker))
         self.positions[self.current_pirate] = target
         message = f"You moved {direction} to ({target[0]}, {target[1]})."
         return self._end_turn(Result(True, message))

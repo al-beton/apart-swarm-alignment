@@ -19,13 +19,12 @@ The side panel is the art's parchment with the acting pirate's portrait, what it
 in plain words and a trail of its recent thoughts, all wrapped to fit: a reader should
 be able to follow the game from the frames alone.
 
-Implements: viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/crowds-fan-out, treasure-island/pokemon-style, viewer/slideshow-file, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process
+Implements: viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, treasure-island/pokemon-style, viewer/slideshow-file, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process
 """
 
 import base64
 import io
 import json
-import math
 from functools import cache
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -44,11 +43,6 @@ from treasure_island.pirates_log import one_line
 ASSETS = Path(assets.__file__).parent
 SAND_TILES = ("sand", "sand-2", "sand-3")
 TILE = 48
-# How far apart pirates sharing a square stand, which is the size of a two-letter
-# label, and where a label sits on a sprite: (left, top, right, bottom).
-_FAN = (20, 14)
-_LABEL_BOX = (14, 2, 34, 16)
-_ROWS = 3
 _FACING = {"north": "up", "south": "down", "east": "right", "west": "left"}
 PANEL = 260
 PANEL_COLUMNS = 38
@@ -67,7 +61,7 @@ STRIP = 24 + (STRIP_ROWS + 1) * LINE + 4  # the parchment's edges, a heading and
 _STRIP_LEFT = 14
 _CAPTION_ROWS = 2  # the least a caption keeps room for
 FRAME_MS = 600
-_PLACES_THE_TREASURE = ("grid_size", "crew_size", "landing_square", "seed")
+_PLACES_THE_TREASURE = ("grid_size", "crew_size", "seed")
 
 
 def records_in(folder):
@@ -282,26 +276,6 @@ def _draw_mark(image, shown):
     image.paste(mark, (x * TILE, y * TILE), mark)
 
 
-def fanned(count, square, size):
-    """Where `count` pirates on one square stand, in pixels.
-
-    Two columns of three rows fit six labels inside a square, which is what stops a
-    neighbour's label landing on one. A bigger crowd adds columns, moved along if
-    needed to keep every label on the board.
-    """
-    across = math.ceil(count / _ROWS)
-    spots = []
-    for place in range(count):
-        column, row = place // _ROWS, place % _ROWS
-        x = square[0] * TILE + (2 * column - across + 1) * _FAN[0] // 2
-        spots.append((x, square[1] * TILE + row * _FAN[1]))
-    lefts = [x for x, _ in spots]
-    board = size * TILE
-    shift = max(-(min(lefts) + _LABEL_BOX[0]), 0)
-    shift += min(board - (max(lefts) + _LABEL_BOX[2]), 0)
-    return [(x + shift, y) for x, y in spots]
-
-
 @cache
 def _label(look, pose, frame):
     """Only the label's pixels of a sprite: what it has that the bare sprite hasn't."""
@@ -314,12 +288,9 @@ def _label(look, pose, frame):
 
 def _placed(shown):
     """Each pirate and where it stands, whoever's acting last so it's drawn on top."""
-    crowds = {}
-    for agent, position in shown["positions"].items():
-        crowds.setdefault(tuple(position), []).append(agent)
-    placed = []
-    for square, agents in crowds.items():
-        placed += zip(agents, fanned(len(agents), square, shown["size"]), strict=True)
+    placed = [
+        (agent, (x * TILE, y * TILE)) for agent, (x, y) in shown["positions"].items()
+    ]
     return sorted(placed, key=lambda spot: spot[0] == shown["acting"])
 
 
@@ -330,19 +301,19 @@ def _draw_pirates(image, shown, pirates):
 
 
 def _draw_labels(image, shown, pirates):
-    """Labels go over everything, so a crowd can always be told apart."""
+    """Labels go over everything, bubbles included, so every pirate can be told apart."""
     for agent, spot in _placed(shown):
         label = _label(pirates[agent], *shown["poses"][agent])
         image.paste(label, spot, label)
 
 
 def bubble_box(position, bubble_size, size):
-    """Where a bubble goes: above the pirate, or below the crowd if there's no room."""
+    """Where a bubble goes: above the pirate, or below it if there's no room."""
     x, y = position
     width, height = bubble_size
     left = min(x * TILE + 6, max(0, size * TILE - width))
     above = y * TILE - height
-    return left, above if above >= 0 else y * TILE + TILE + (_ROWS - 1) * _FAN[1]
+    return left, above if above >= 0 else y * TILE + TILE
 
 
 def _draw_bubble(image, position, text, size):

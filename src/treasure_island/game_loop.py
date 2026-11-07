@@ -13,7 +13,7 @@ Fields stay in reading order rather than sorted, so a person reading a record
 meets who and what before the long prompt. Pirates are named `pirate-1` upwards,
 matching the numbered art. A brain that gives no reason just has no "Why".
 
-Implements: treasure-island/agent-memory, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process
+Implements: treasure-island/agent-memory, treasure-island/failed-move, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process
 """
 
 import json
@@ -68,9 +68,7 @@ class Game:
                 f"The config has {config.crew_size} pirates but {len(brains)} brains."
             )
         self.config = config
-        self.state = GameState(
-            config.grid_size, config.crew_size, config.landing_square, config.seed
-        )
+        self.state = GameState(config.grid_size, config.crew_size, config.seed)
         self.log = PiratesLog(config.log_window, config.read_size)
         self.names = [f"pirate-{number + 1}" for number in range(config.crew_size)]
         self._minds = [_Recording(brain) for brain in brains]
@@ -176,6 +174,10 @@ class Game:
         direction = action["direction"]
         result = self.state.move(direction)
         self.log.pass_turn()
+        if result.blocked_by is not None:
+            blocker = self.names[result.blocked_by]
+            did = f"tried to move {direction} and couldn't: {blocker} is in the way"
+            return result.message, did, []
         if not result.ok:
             return result.message, f"tried to move {direction} and couldn't", []
         end = self.state.positions[self.state.current_pirate - 1]

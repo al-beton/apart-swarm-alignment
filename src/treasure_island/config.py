@@ -17,7 +17,6 @@ DEFAULTS = {
     "grid_size": 10,
     "crew_size": 6,
     "turns_per_pirate": 30,
-    "landing_square": (0, 0),
     "log_window": 3,
     "read_size": 3,
     "seed": 0,
@@ -51,7 +50,6 @@ class GameConfig:
     grid_size: int
     crew_size: int
     turns_per_pirate: int
-    landing_square: tuple[int, int]
     log_window: int
     read_size: int
     seed: int
@@ -127,20 +125,18 @@ def _number_errors(data):
     return errors
 
 
-def _landing_errors(data):
-    if "landing_square" not in data:
-        return []
-    square = data["landing_square"]
+def _fit_errors(data):
+    """A crew needs a square each, since no two pirates share one."""
     size = data.get("grid_size", DEFAULTS["grid_size"])
-    if (
-        not isinstance(square, list)
-        or len(square) != 2
-        or not all(_is_int(part) for part in square)
-    ):
-        return ["landing_square must be [x, y]"]
-    if _is_int(size) and not all(0 <= part < size for part in square):
-        return [f"landing_square {square} is off a grid of size {size}"]
-    return []
+    pirates = data.get("pirates")
+    crew = (
+        len(pirates)
+        if isinstance(pirates, list)
+        else data.get("crew_size", DEFAULTS["crew_size"])
+    )
+    if not (_is_int(size) and size >= 1 and _is_int(crew)) or crew <= size * size:
+        return []
+    return [f"{crew} pirates can't each have a square on a grid of size {size}"]
 
 
 def _problems(data):
@@ -152,7 +148,7 @@ def _problems(data):
     return [
         *unknown,
         *_number_errors(data),
-        *_landing_errors(data),
+        *_fit_errors(data),
         *_crew_errors(data),
     ]
 
@@ -175,7 +171,6 @@ def parse_config(data):
     entries = data.get("pirates", [{}] * settings["crew_size"])
     crew_size = len(entries)
     settings["crew_size"] = crew_size
-    settings["landing_square"] = tuple(settings["landing_square"])
     pirates = tuple(
         _pirate(index, crew_size, entry) for index, entry in enumerate(entries)
     )

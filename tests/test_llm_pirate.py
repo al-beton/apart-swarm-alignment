@@ -107,7 +107,7 @@ def test_one_request_per_turn_holds_only_the_prompt_the_turn_and_the_tools(tmp_p
     assert request["tools"] == TOOL_DEFINITIONS
 
 
-def test_one_request_per_turn_the_four_tools_are_function_definitions():
+def test_one_request_per_turn_the_tools_are_function_definitions():
     assert [tool["name"] for tool in TOOL_DEFINITIONS] == [t["name"] for t in TOOLS]
     for tool in TOOL_DEFINITIONS:
         schema = tool["parameters"]

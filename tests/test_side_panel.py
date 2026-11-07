@@ -188,7 +188,7 @@ def test_readable_at_once_a_real_game_tells_its_ending_in_the_frame():
     assert GameState(5, 1, 2).treasure == (0, 0)
     config = parse_config({"grid_size": 5, "crew_size": 1, "seed": 2})
     records = list(Game(config, [Dig()]).records())
-    last = shown(records)
+    last = shown(records[:1])  # the turn it dug the treasure up
     assert last["note"] is None
     assert "found the treasure" in last["did"]
     assert last["thoughts"] == ["Digging right here."]

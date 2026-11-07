@@ -2,8 +2,8 @@ Turn 0: pirate-1 at (0, 0), on undug sand, with pirate-2 to the south, dug at (0
 Turn 1: pirate-2 at (0, 1), on undug sand, with pirate-1 to the north, dug at (0, 1) and found nothing. Why: I haven't dug this square yet.
 Turn 2: pirate-1 at (0, 0), on dug sand, with pirate-2 to the south, moved east to (1, 0). Why: The next square to dig is (1, 0).
 Turn 3: pirate-2 at (0, 1), on dug sand, with no pirate beside it, moved north to (0, 0). Why: The next square to dig is (0, 0).
-Turn 4: pirate-1 at (1, 0), on undug sand, with pirate-2 to the west, dug at (1, 0) and found the treasure. Why: I haven't dug this square yet.
+Turn 4: pirate-1 at (1, 0), on undug sand, with pirate-2 to the west, dug at (1, 0) and found the treasure, which opened the cave. Why: I haven't dug this square yet.
 Turn 5: pirate-2 at (0, 0), on dug sand, with pirate-1 to the east, dug at (0, 0) and found nothing. Why: I haven't dug this square yet.
-Turn 6: pirate-1 at (1, 0), on dug sand, with pirate-2 to the west, dug at (1, 0) and found the treasure. Why: I found it, so I'm staying here.
-Turn 7: pirate-2 at (0, 0), on dug sand, with pirate-1 to the east, tried to move east 2 times but pirate-1 was in the way, so its turn passed. Why: The next square to dig is (1, 0).
-Game over: the turns ran out. The treasure at (1, 0) was dug up. Score 55, with 0 moves to spare.
+Turn 6: pirate-1 at (1, 0), on dug sand, with pirate-2 to the west, went into the cave at (1, 0). Why: This is the cave, so I'm going in.
+Turn 7: pirate-2 at (0, 0), on dug sand, with no pirate beside it, moved east to (1, 0). Why: The next square to dig is (1, 0).
+Game over: the turns ran out. The treasure at (1, 0) was dug up, and 1 of 2 pirates got into the cave. Score 100.

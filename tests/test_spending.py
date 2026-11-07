@@ -215,3 +215,13 @@ def test_stops_cleanly_a_run_stopped_before_its_first_turn_replays(toml):
     folder = saved_game.play_saved(toml, 0, models=Models(FakeModel()))
     assert (folder / "events.jsonl").read_text() == ""
     assert saved_game.differences(folder) == []
+
+
+def test_cost_before_run_prints_the_numbers_it_found(toml):
+    saved_game.play_saved(toml, 0, models=Models(FakeModel(), agree=yes))
+    found = estimate(load_config(toml))
+    text = found.as_text(1.0)
+    assert f"{found.calls} model calls" in text
+    assert f"hold {found.cached} replies" in text
+    assert f"about {found.tokens} tokens" in text
+    assert "{" not in text

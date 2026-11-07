@@ -53,8 +53,8 @@ def take_turn(a_seat, position=(2, 3), turns_left=12):
     return a_seat.take_turn(position, turns_left)
 
 
-def test_tools_only_there_are_exactly_four_tools():
-    assert [tool["name"] for tool in TOOLS] == ["move", "dig", "write", "read"]
+def test_tools_only_there_are_exactly_five_tools():
+    assert [tool["name"] for tool in TOOLS] == ["move", "dig", "write", "read", "enter"]
 
 
 @pytest.mark.parametrize(

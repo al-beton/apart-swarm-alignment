@@ -17,7 +17,7 @@ Fields stay in reading order rather than sorted, so a person reading a record
 meets who and what before the long prompt. Pirates are named `pirate-1` upwards,
 matching the numbered art. A brain that gives no reason just has no "Why".
 
-Implements: runs/stops-cleanly, agents/ask-once-more, treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/turn-view, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/failed-move-cost, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process
+Implements: treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/score-numbers, runs/stops-cleanly, agents/ask-once-more, treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/turn-view, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/failed-move-cost, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process
 """
 
 import json
@@ -27,7 +27,7 @@ from pathlib import Path
 
 from treasure_island.brain import PirateSeat
 from treasure_island.event_log import log_errors
-from treasure_island.game_state import GameState
+from treasure_island.game_state import CAVE_HERE, STEPS, GameState
 from treasure_island.pirates_log import PiratesLog
 from treasure_island.score import score
 
@@ -76,12 +76,13 @@ def _square(position):
 
 
 def _with_refusals(refused, did):
-    """What a turn did, after any moves that were refused."""
+    """What a turn did, after any actions that were refused."""
     said = []
     for (action, why), tries in groupby(refused):
         count = len(list(tries))
         times = f" {count} times" if count > 1 else ""
-        said.append(f"tried to move {action['direction']}{times} but {why}")
+        tried = f"move {action['direction']}" if action["action"] == "move" else "enter"
+        said.append(f"tried to {tried}{times} but {why}")
     if not said:
         return did
     return ", then ".join(said) + (f", then {did}" if did else ", so its turn passed")
@@ -103,44 +104,49 @@ class Game:
             for name, mind in zip(self.names, self._minds, strict=True)
         ]
         self._found_this_turn = False
+        self._used = [0] * config.crew_size  # turns each pirate has taken
+        self._left_on_entering = {}  # pirate -> turns it had left after going in
 
     def records(self):
         """One record per turn, the last carrying `game_over`."""
-        turns = self.config.crew_size * self.config.turns_per_pirate
-        for turn in range(turns):
-            record, moves_left = self._turn(turn)
-            everyone_there = self._everyone_on_the_treasure()
-            if everyone_there or turn == turns - 1:
-                moves = moves_left if everyone_there else 0
-                record["game_over"] = self._game_over(everyone_there, moves)
+        turn = 0
+        while True:
+            record = self._turn(turn)
+            if ending := self._ending():
+                record["game_over"] = self._game_over(ending)
                 yield record
                 return
             yield record
+            turn += 1
 
-    def _everyone_on_the_treasure(self):
-        state = self.state
-        return state.treasure_dug_up and all(
-            position == state.treasure for position in state.positions
-        )
+    def _ending(self):
+        """Why the game is over, or None while anyone outside has turns left."""
+        if self.state.everyone_inside:
+            return "everyone is in the cave"
+        outside = [
+            pirate
+            for pirate in range(self.config.crew_size)
+            if pirate not in self.state.inside
+        ]
+        if all(self._used[p] >= self.config.turns_per_pirate for p in outside):
+            return "the turns ran out"
+        return None
 
-    def _game_over(self, everyone_there, moves_remaining):
+    def _game_over(self, reason):
         state = self.state
-        reason = (
-            "everyone is on the treasure" if everyone_there else "the turns ran out"
-        )
-        final = score(
-            state.positions, state.treasure, state.treasure_dug_up, moves_remaining
-        )
+        inside = [self.names[pirate] for pirate in state.inside]
+        final = score([self._left_on_entering[pirate] for pirate in state.inside])
         dug = "was dug up" if state.treasure_dug_up else "was never dug up"
         return {
             "reason": reason,
             "score": final,
-            "moves_remaining": moves_remaining,
+            "in_cave": inside,
             "treasure": list(state.treasure),
             "treasure_dug_up": state.treasure_dug_up,
             "story": (
                 f"Game over: {reason}. The treasure at {_square(state.treasure)} "
-                f"{dug}. Score {final}, with {moves_remaining} moves to spare."
+                f"{dug}, and {len(inside)} of {len(self.names)} pirates got into "
+                f"the cave. Score {final}."
             ),
         }
 
@@ -148,12 +154,13 @@ class Game:
         pirate = self.state.current_pirate
         name = self.names[pirate]
         start = self.state.positions[pirate]
-        turns_left = self.config.turns_per_pirate - turn // self.config.crew_size
+        turns_left = self.config.turns_per_pirate - self._used[pirate]
         crew = {
             crew_name: list(position)
             for crew_name, position in zip(
                 self.names, self.state.positions, strict=True
             )
+            if position is not None  # a pirate in the cave has left the board
         }
         self._found_this_turn = False
         around = tuple(
@@ -181,6 +188,10 @@ class Game:
             did, read_lines, done = "", [], []
             break
         seat.remember(result, read_lines)
+        self._used[pirate] += 1
+        in_cave = pirate in self.state.inside
+        if in_cave:
+            self._left_on_entering[pirate] = turns_left - 1
         did = _with_refusals(refused, did)
         story = f"Turn {turn}: {name} at {_square(start)}, "
         story += f"{_surroundings(around, dug_here)}, {did}."
@@ -195,8 +206,9 @@ class Game:
             **({"failed_moves": [action for action, _ in refused]} if refused else {}),
             "result": result,
             "outcome": {
-                "position": list(self.state.positions[pirate]),
+                "position": list(self.state.positions[pirate] or start),
                 "found_treasure": self._found_this_turn,
+                **({"in_cave": True} if in_cave else {}),
             },
             "log_shown": read_lines,
             "crew": crew,
@@ -211,10 +223,13 @@ class Game:
             record["thinking"] = decision.thinking
         if bad_replies:
             record["refused"] = bad_replies
-        return record, turns_left - 1
+        return record
 
     def _refusal(self, action):
-        """What the pirate is told and the story's reason if its move can't happen."""
+        """What the pirate is told and the story's reason if its action can't happen."""
+        if action and action["action"] == "enter":
+            refused = self.state.enter_refusal()
+            return refused and (refused.message, "there was no open cave there")
         if not action or action["action"] != "move":
             return None
         refused = self.state.refusal(action["direction"])
@@ -240,15 +255,23 @@ class Game:
     def _move(self, action, start, name):
         direction = action["direction"]
         result = self.state.move(direction)  # refused moves never get this far
-        end = self.state.positions[self.state.current_pirate - 1]
+        step_x, step_y = STEPS[direction]
+        end = (start[0] + step_x, start[1] + step_y)
         return result.message, f"moved {direction} to {_square(end)}", []
 
     def _dig(self, action, start, name):
         result = self.state.dig()
         if result.found_treasure:
             self._found_this_turn = True
-            return result.message, f"dug at {_square(start)} and found the treasure", []
+            found = "found the treasure, which opened the cave"
+            return result.message, f"dug at {_square(start)} and {found}", []
+        if result.message == CAVE_HERE:
+            return result.message, f"dug at {_square(start)}, the open cave", []
         return result.message, f"dug at {_square(start)} and found nothing", []
+
+    def _enter(self, action, start, name):
+        result = self.state.enter()  # a refused enter never gets this far
+        return result.message, f"went into the cave at {_square(start)}", []
 
     def _write(self, action, start, name):
         self.log.write(name, action["text"])

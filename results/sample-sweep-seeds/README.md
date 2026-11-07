@@ -17,12 +17,12 @@ uv run treasure-island run configs/small-crew.toml --seed 2 --no-watch
 
 ## What it shows
 
-Yes. Each game's `story.txt` ends with its score. With 4 turns each, the sweep only finds a treasure close to where its pirates start.
+Yes. Each game's `story.txt` ends with its score. With 4 turns each, the sweep only finds a treasure close to where its pirates start, and only then can the crew get into the cave.
 
 | Game | Treasure | Dug up on | The story's last line says |
 |---|---|---|---|
-| `small-crew-seed-1/` | (0, 2) | never | Score 10, with 0 moves to spare |
-| `small-crew-seed-2/` | (0, 0) | turn 0 | Score 55, with 0 moves to spare |
+| `small-crew-seed-1/` | (0, 2) | never | Score 0. |
+| `small-crew-seed-2/` | (0, 0) | turn 0 | Score 220. |
 
 It can't show anything about a model's behaviour, because these pirates are scripted, and it can't show a trend from two seeds.
 

@@ -84,14 +84,18 @@ def test_adaption_backend_serves_models_named_adaption_slash_id(key):
         backend_for("elsewhere/some-model")
 
 
-def test_adaption_backend_sends_the_rules_the_turn_and_the_four_function_tools():
+def test_adaption_backend_sends_the_rules_the_turn_and_every_tool_as_a_function():
     _, _, sent = answer()
     assert sent["model"] == MODEL
     assert sent["instructions"] == "the rules"
     assert sent["input"] == REQUEST["messages"]
     assert sent["max_output_tokens"] == 300
-    assert [tool["type"] for tool in sent["tools"]] == ["function"] * 4
-    assert [tool["name"] for tool in sent["tools"]] == ["move", "dig", "write", "read"]
+    assert [tool["type"] for tool in sent["tools"]] == ["function"] * len(
+        TOOL_DEFINITIONS
+    )
+    assert [tool["name"] for tool in sent["tools"]] == [
+        tool["name"] for tool in TOOL_DEFINITIONS
+    ]
     assert sent["tools"][0]["parameters"] == TOOL_DEFINITIONS[0]["parameters"]
 
 

@@ -2,8 +2,8 @@
 
 A model named `adaption/<model id>` goes to Adaption's Responses API through its
 `adaption` SDK, the only way its docs show to call a model. The request carries
-the rules as instructions, the turn's messages as input, the four tools as
-function tools and the reply cap. The first function call in the reply becomes
+the rules as instructions, the turn's messages as input, the pirate's tools
+as function tools and the reply cap. The first function call in the reply becomes
 the JSON the LLM brain reads; a reply with no function call comes back as its
 words, so the brain can say why and ask once more.
 

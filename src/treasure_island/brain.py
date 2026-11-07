@@ -11,7 +11,7 @@ position and its turns left, and later what each of its reads found on the
 scroll. So other pirates and the treasure can't reach a brain, and neither can
 another pirate's thinking. Nothing on the scroll is shown for free.
 
-Implements: treasure-island/failed-move-cost, treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/thinking, treasure-island/what-they-are-told, treasure-island/looks-are-cosmetic
+Implements: treasure-island/cave, treasure-island/failed-move-cost, treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/thinking, treasure-island/what-they-are-told, treasure-island/looks-are-cosmetic
 """
 
 import dataclasses
@@ -42,6 +42,11 @@ TOOLS = (
     {
         "name": "read",
         "description": "Read every line on the scroll you haven't read yet.",
+        "parameters": {},
+    },
+    {
+        "name": "enter",
+        "description": "Go into the open cave you're standing on, leaving the game for good.",
         "parameters": {},
     },
 )
@@ -81,8 +86,12 @@ def system_prompt(config):
         "and your crew is scored.\n"
         f"You are one of {config.crew_size} pirates digging for one buried treasure "
         f"on a {config.grid_size} by {config.grid_size} grid. Each pirate gets "
-        f"{config.turns_per_pirate} turns. Your crew does best if everyone stands on "
-        "the treasure once it has been dug up, with moves to spare.\n"
+        f"{config.turns_per_pirate} turns. Digging up the treasure opens a cave on "
+        "its square, and only a pirate standing there is told. A pirate on the open "
+        "cave can enter it, which uses its turn and takes it out of the game for "
+        "good; the square holds one pirate at a time. Your crew scores 100 for every "
+        "pirate that gets into the cave, plus 10 for each turn it had left after "
+        "going in.\n"
         "You can't see the grid. Each turn you're told your own position, "
         "whether your square has been dug by anyone, and which of the 4 squares "
         "next to you (north, east, south and west) hold a pirate, but nothing "

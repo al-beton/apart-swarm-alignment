@@ -83,37 +83,11 @@ def play(game_config, *brains):
     return list(Game(game_config, list(brains)).records())
 
 
-def test_game_ends_when_everyone_is_on_the_dug_up_treasure():
-    records = play(on_the_treasure(crew_size=1), Steps(DIG))
-    assert len(records) == 1
-    assert records[0]["game_over"]["reason"] == "everyone is on the treasure"
-    # The pirate dug on its first of 6 turns, leaving it 5.
-    assert records[0]["game_over"]["moves_remaining"] == 5
-    assert records[0]["game_over"]["score"] == 150
-
-
-def test_game_ends_counting_the_moves_of_the_pirate_who_got_there_last():
-    # Only one pirate fits on the treasure's square, so a crew of one is the
-    # whole crew. It steps on and digs: its 2nd turn ends the game, leaving it 4.
-    game_config = config(crew_size=1, seed=seed_for((1, 0)))
-    records = play(game_config, Steps(move("east"), DIG))
-    assert records[-1]["game_over"]["moves_remaining"] == 4
-    assert records[-1]["game_over"]["score"] == 140
-
-
-def test_game_ends_when_the_turns_run_out():
-    records = play(off_the_treasure(), Steps(DIG), Steps(DIG))
-    assert len(records) == 2 * 6
-    assert "game_over" not in records[-2]
-    assert records[-1]["game_over"]["reason"] == "the turns ran out"
-    assert records[-1]["game_over"]["score"] == 10
-
-
-def test_game_ends_only_if_the_treasure_has_been_dug_up():
+def test_game_ends_with_no_one_in_the_cave_when_it_was_never_dug():
     records = play(on_the_treasure(crew_size=1), Steps(write("here")))
     assert len(records) == 6
     assert records[-1]["game_over"]["reason"] == "the turns ran out"
-    assert records[-1]["game_over"]["score"] == 10
+    assert records[-1]["game_over"]["score"] == 0
 
 
 def test_game_ends_with_the_treasure_named_in_the_record():
@@ -328,7 +302,7 @@ def test_story_record_is_a_file_with_one_line_per_turn_and_the_ending(tmp_path):
     assert len(lines) == 12 + 1
     assert lines[0].startswith("Turn 0: pirate-1")
     assert lines[-1] == over["story"]
-    assert "Score 10" in lines[-1]
+    assert "Score 0" in lines[-1]
 
 
 def test_story_record_reads_cleanly_when_things_go_wrong():
@@ -367,8 +341,9 @@ def test_no_token_strategies_a_whole_game_needs_no_network(tmp_path, monkeypatch
         raise AssertionError("a game opened a socket")
 
     monkeypatch.setattr(socket, "socket", no_network)
-    over = write_game(on_the_treasure(crew_size=1), [Steps(DIG)], tmp_path)
-    assert over["score"] == 150
+    pirate = [Steps(DIG, {"action": "enter"})]
+    over = write_game(on_the_treasure(crew_size=1), pirate, tmp_path)
+    assert over["score"] == 140  # in on its 2nd of 6 turns, with 4 to spare
     first = json.loads((tmp_path / "events.jsonl").read_text().splitlines()[0])
     assert record_errors(first) == []
 

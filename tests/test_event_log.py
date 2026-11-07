@@ -105,6 +105,7 @@ def test_what_they_saw_needs_neighbours_and_whether_the_square_was_dug(path, val
         {"action": "move", "direction": "north"},
         {"action": "dig"},
         {"action": "read"},
+        {"action": "enter"},
         {"action": "write", "text": ""},
     ],
 )

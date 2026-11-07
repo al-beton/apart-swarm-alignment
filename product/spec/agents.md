@@ -12,7 +12,6 @@
 - **plays-then-replays:** A whole game plays through a fake backend, then replays byte-identical from the replies its folder stored, with no backend at all, so an LLM game costs money once and is free to check ever after.
 - **adaption-backend:** A model named `adaption/<model id>` is served by Adaption's Responses API through its Python SDK, with the four tools as function tools, so our runs spend the hackathon's Adaption credits.
 - **adaption-cost:** An Adaption reply's cost comes from its token usage at the model's listed rate in credits per million tokens, and a model with no listed rate is refused before anything is asked; default, Al to confirm: a credit counts as a dollar, so the manifest's `cost_usd` totals it.
-- **key-before-game:** A run whose crew needs a key that isn't set fails before the game starts, with a message naming the variable to set, and keys come only from the environment, so no key ever lands in code, configs, logs, run folders or commits.
 - **free-runs-in-ci:** A full game with each scripted brain completes in CI without an API call or a key, so the whole path from config to logs is proved at no cost.
 - **committed-runs:** A game of each scripted brain is committed under `runs/`, passes the event-log validator and replays byte-identical, so the visuals have evidence to build from without rerunning anything.
 
@@ -23,15 +22,14 @@
 | `backend-interface` | `src/treasure_island/backends.py`, `src/treasure_island/runs.py` | `test_backend_interface_a_backend_gives_reply_text_and_its_cost` |
 | `no-model-yet` | `src/treasure_island/backends.py` | `test_no_model_yet_every_model_is_refused` |
 | `openrouter-backend` | `src/treasure_island/openrouter.py`, `src/treasure_island/backends.py`, `tests/openrouter-reply.json` | `test_openrouter_backend_a_tool_call_comes_back_in_the_one_reply_form`, `test_openrouter_backend_asks_with_the_four_tools_and_the_key`, `test_openrouter_backend_a_reply_with_no_tool_call_is_passed_on_to_be_refused`, `test_openrouter_backend_the_manifest_totals_the_reply_s_cost`, `test_openrouter_backend_a_reply_with_no_cost_stops_the_run` |
-| `key-from-the-environment` | `src/treasure_island/backends.py`, `src/treasure_island/saved_game.py`, `.env.example` | `test_key_from_the_environment_a_missing_key_stops_the_run_before_the_game`, `test_key_from_the_environment_env_example_names_the_key_with_no_value` |
+| `key-from-the-environment` | `src/treasure_island/backends.py`, `src/treasure_island/saved_game.py`, `.env.example` | `test_key_from_the_environment_a_missing_key_stops_the_run_before_the_game`, `test_key_from_the_environment_env_example_names_the_key_with_no_value`, `test_key_from_the_environment_an_adaption_run_without_its_key_stops_first`, `test_key_from_the_environment_env_example_names_the_adaption_key` |
 | `model-per-pirate` | `src/treasure_island/config.py`, `src/treasure_island/strategies.py` | `test_model_per_pirate_a_pirate_with_a_model_gets_the_llm_brain`, `test_model_per_pirate_the_model_is_saved_with_the_config`, `test_model_per_pirate_a_model_must_be_text` |
 | `one-request-per-turn` | `src/treasure_island/llm.py` | `test_one_request_per_turn_holds_only_the_prompt_the_turn_and_the_tools`, `test_one_request_per_turn_the_four_tools_are_function_definitions` |
 | `reply-is-a-tool-call` | `src/treasure_island/llm.py` | `test_reply_is_a_tool_call_becomes_the_action` |
 | `ask-once-more` | `src/treasure_island/llm.py`, `src/treasure_island/game_loop.py` | `test_ask_once_more_a_bad_reply_is_recorded_and_the_pirate_is_told_why`, `test_ask_once_more_every_kind_of_bad_reply_gets_a_reason`, `test_ask_once_more_a_second_bad_reply_passes_the_turn` |
 | `reply-cap` | `src/treasure_island/config.py`, `src/treasure_island/llm.py` | `test_reply_cap_defaults_to_300_tokens_and_a_config_can_set_it` |
 | `plays-then-replays` | `src/treasure_island/llm.py`, `src/treasure_island/saved_game.py` | `test_plays_then_replays_a_whole_game_through_a_fake_backend`, `test_plays_then_replays_with_no_backend_a_missing_reply_spends_nothing` |
-| `adaption-backend` | not yet | — |
-| `adaption-cost` | not yet | — |
-| `key-before-game` | not yet | — |
+| `adaption-backend` | `src/treasure_island/adaption_backend.py`, `src/treasure_island/backends.py`, `pyproject.toml` | `test_adaption_backend_serves_models_named_adaption_slash_id`, `test_adaption_backend_sends_the_rules_the_turn_and_the_four_function_tools`, `test_adaption_backend_turns_a_function_call_into_the_reply_the_brain_reads`, `test_adaption_backend_passes_the_reasoning_on_only_when_thinking_is_on`, `test_adaption_backend_a_reply_with_no_tool_call_comes_back_as_its_words` |
+| `adaption-cost` | `src/treasure_island/adaption_backend.py`, `src/treasure_island/backends.py` | `test_adaption_cost_comes_from_token_usage_at_the_listed_rate`, `test_adaption_cost_its_rate_prices_a_run_before_it_starts`, `test_adaption_cost_a_model_with_no_listed_rate_is_refused`, `test_adaption_cost_is_totalled_in_the_manifest` |
 | `free-runs-in-ci` | `configs/s-sweep.toml`, `configs/say-a-number.toml`, `.github/workflows/blocking-checks.yml` | `test_free_runs_in_ci_each_scripted_brain_plays_a_full_game` |
 | `committed-runs` | `runs/s-sweep-seed-7/**`, `runs/reference-s-sweep/**`, `runs/reference-say-a-number/**` | `test_committed_runs_pass_the_validator_and_replay_byte_identical` |

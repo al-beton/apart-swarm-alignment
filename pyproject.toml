@@ -1,4 +1,4 @@
-# Implements: ci/simple-code, tooling/one-command-each, tooling/package-and-cli, ci/ci-minutes, viewer/render-gif, viewer/art-folder, treasure-island/python-stack
+# Implements: ci/simple-code, tooling/one-command-each, tooling/package-and-cli, ci/ci-minutes, viewer/render-gif, viewer/art-folder, treasure-island/python-stack, agents/adaption-backend
 [project]
 name = "treasure-island"
 version = "0.1.0"

@@ -5,25 +5,42 @@ the model's name, so nothing can spend money by accident. Each backend reads its
 key from one environment variable, which `.env.example` names, and a missing key
 is refused when the backend is made, before any game starts. A backend that knows
 its model's price adds it to `PRICES`, so a run can say what it may cost before it
-starts; OpenRouter's prices vary by model, so its replies' own costs are counted.
+starts; OpenRouter's prices vary by model, so its replies' own costs are counted,
+and Adaption's rates are listed in adaption_backend.
 
-Implements: agents/backend-interface, agents/no-model-yet, agents/openrouter-backend, agents/key-from-the-environment, runs/cost-before-run
+Implements: agents/backend-interface, agents/no-model-yet, agents/openrouter-backend, agents/adaption-backend, agents/adaption-cost, agents/key-from-the-environment, runs/cost-before-run
 """
 
 import os
 
+from treasure_island import adaption_backend
 from treasure_island.config import ConfigError
 from treasure_island.openrouter import OpenRouter
 
 # Model name -> (USD per million input tokens, USD per million output tokens).
 PRICES = {}
 
+
+def _adaption(model_id, key):
+    if model_id not in adaption_backend.RATES:
+        raise UnknownModel(
+            f"There's no listed rate for adaption/{model_id}, so its cost can't "
+            "be counted; add its rate to RATES in adaption_backend.py."
+        )
+    return adaption_backend.AdaptionBackend(model_id, adaption_backend.client(key))
+
+
 # Model-name prefix -> (the backend, the environment variable holding its key)
-BACKENDS = {"openrouter/": (OpenRouter, "OPENROUTER_API_KEY")}
+BACKENDS = {
+    "openrouter/": (OpenRouter, "OPENROUTER_API_KEY"),
+    "adaption/": (_adaption, "ADAPTION_API_KEY"),
+}
 
 
 def price_for(model):
     """The model's price per million tokens, in and out, or None if not known."""
+    if model.startswith("adaption/"):  # credits, counted as dollars
+        return adaption_backend.RATES.get(model.removeprefix("adaption/"))
     return PRICES.get(model)
 
 

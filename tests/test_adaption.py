@@ -1,4 +1,4 @@
-# Implements: agents/adaption-backend, agents/adaption-cost, agents/key-before-game
+# Implements: agents/adaption-backend, agents/adaption-cost, agents/key-from-the-environment
 """The Adaption backend, tested against a reply in the SDK's own shape, offline."""
 
 import json
@@ -7,9 +7,9 @@ from pathlib import Path
 import pytest
 from adaption.types import Response
 
-from treasure_island import adaption_backend, backends, cli, saved_game
+from treasure_island import adaption_backend, cli, saved_game
 from treasure_island.adaption_backend import RATES, AdaptionBackend
-from treasure_island.backends import MissingKey, UnknownModel, backend_for
+from treasure_island.backends import MissingKey, UnknownModel, backend_for, price_for
 from treasure_island.llm import TOOL_DEFINITIONS
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -119,6 +119,11 @@ def test_adaption_cost_comes_from_token_usage_at_the_listed_rate():
     assert RATES[MODEL] == (0.044, 0.133)
 
 
+def test_adaption_cost_its_rate_prices_a_run_before_it_starts():
+    assert price_for(f"adaption/{MODEL}") == RATES[MODEL]
+    assert price_for("adaption/some-unlisted-model") is None
+
+
 def test_adaption_cost_a_model_with_no_listed_rate_is_refused(key):
     with pytest.raises(UnknownModel, match="rate"):
         backend_for("adaption/some-unlisted-model")
@@ -126,7 +131,7 @@ def test_adaption_cost_a_model_with_no_listed_rate_is_refused(key):
 
 def test_adaption_cost_is_totalled_in_the_manifest(tmp_path, monkeypatch, key):
     monkeypatch.chdir(tmp_path)
-    monkeypatch.setattr(adaption_backend, "_client", lambda: FakeClient(DIGS))
+    monkeypatch.setattr(adaption_backend, "client", lambda key: FakeClient(DIGS))
     path = tmp_path / "adaption.toml"
     path.write_text(CONFIG)
     folder = saved_game.play_saved(path, 0)
@@ -153,7 +158,7 @@ model = "adaption/{MODEL}"
 """
 
 
-def test_key_before_game_a_missing_key_fails_before_the_game_starts(
+def test_key_from_the_environment_an_adaption_run_without_its_key_stops_first(
     tmp_path, monkeypatch, capsys
 ):
     monkeypatch.delenv("ADAPTION_API_KEY", raising=False)
@@ -167,6 +172,6 @@ def test_key_before_game_a_missing_key_fails_before_the_game_starts(
     assert "ADAPTION_API_KEY" in capsys.readouterr().err
 
 
-def test_key_before_game_the_example_env_names_the_key_with_no_value():
+def test_key_from_the_environment_env_example_names_the_adaption_key():
     lines = (ROOT / ".env.example").read_text().splitlines()
     assert "ADAPTION_API_KEY=" in lines

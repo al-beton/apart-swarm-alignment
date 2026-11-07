@@ -70,18 +70,19 @@ def test_one_renderer_the_gif_holds_exactly_the_frames_the_page_serves(
     drawn = []
     draw = viewer.frame
 
-    def counted(records, turn, *rest):
+    def counted(records, turn, *rest, **named):
         drawn.append(turn)
-        return draw(records, turn, *rest)
+        return draw(records, turn, *rest, **named)
 
     monkeypatch.setattr(viewer, "frame", counted)
     frames = list(png_frames(viewer.gif(folder)))
-    assert drawn == list(range(len(RECORDS)))
+    steps = [(t, s) for t in range(len(RECORDS)) for s in viewer.walk_steps(RECORDS, t)]
+    assert drawn == [turn for turn, _ in steps]
     served = [
-        Image.open(io.BytesIO(viewer.frame_png(folder, turn))).convert("RGB")
-        for turn in range(len(RECORDS))
+        Image.open(io.BytesIO(viewer.frame_png(folder, turn, step))).convert("RGB")
+        for turn, step in steps
     ]
-    assert drawn == 2 * list(range(len(RECORDS)))
+    assert drawn == 2 * [turn for turn, _ in steps]
     for frame, page in zip(frames, served, strict=True):
         assert frame.size == page.size
         # A GIF frame holds at most 256 colours, so compare within that loss.
@@ -356,6 +357,10 @@ def test_watch_live_the_page_follows_the_log_as_it_is_written(folder, server):
     kind, png = get(server, "/frame/3.png")
     assert kind == "image/png"
     assert png == viewer.frame_png(folder, 3)
+    # A move's walking frames are served too, and the page knows how many there are.
+    assert json.loads(get(server, "/steps/0")[1]) == {"steps": 4}
+    assert get(server, "/frame/0.png?step=2")[1] == viewer.frame_png(folder, 0, 2)
+    assert b"/steps/" in page
 
 
 def test_watch_live_the_command_names_its_address(folder, capsys, monkeypatch):
@@ -374,7 +379,8 @@ def test_render_gif_writes_one_frame_per_turn_next_to_the_run(folder, capsys):
     out = folder.with_suffix(".gif")
     assert out.exists()
     assert str(out) in capsys.readouterr().out
-    assert len(list(png_frames(out.read_bytes()))) == len(RECORDS)
+    # One frame per turn, and the walking frames of the one move (default 4 in all).
+    assert len(list(png_frames(out.read_bytes()))) == len(RECORDS) + 3
 
 
 def test_render_gif_writes_where_asked(folder, tmp_path):

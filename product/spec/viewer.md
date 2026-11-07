@@ -2,7 +2,7 @@
 
 - **one-renderer:** Every frame of a run, whether shown in the browser or baked into a GIF, is drawn by the same code from the event log, so the two can never show a different game.
 - **frame-shows-the-swarm:** A frame shows the grid, every pirate on it, whose turn it is, what that pirate said in a speech bubble and the log lines it saw, so a reader grasps a turn at a glance without reading the events.
-- **turn-marked:** The pirate whose turn it is has the turn arrow over its hat in every frame, whether or not it speaks, and the arrow covers neither a pirate's label nor the speech bubble, so a reader finds it on the board at once; default, Al to confirm: a pirate on the top row, with no room above it, has the arrow under its feet, pointing up.
+- **turn-marked:** The pirate whose turn it is has the turn arrow over its hat in every frame, whether or not it speaks, and the arrow covers neither a pirate's label nor the speech bubble, so a reader finds it on the board at once; default, Al to confirm: where the board has no room above the pirate, or the arrow would land on another pirate's label in a crowd, it goes under the pirate's feet, pointing up, and the bubble goes below it.
 - **watch-live:** `treasure-island watch runs/<name>` opens a browser page that follows the run's event log as it's written, and steps through a finished run the same way, so a game is as much fun to watch as to read.
 - **render-gif:** `treasure-island render runs/<name>` writes an animated GIF of the whole run, one frame per turn, so a game can be shared where no browser runs, such as a pull request.
 - **art-folder:** The viewer draws pirates, tiles and the treasure from `assets/` and has no plain shape to fall back on, so a reader always sees the approved art, and missing art is an error rather than a different picture.
@@ -19,7 +19,7 @@
 |---|---|---|
 | `one-renderer` | `src/treasure_island/viewer.py` | `test_one_renderer_the_gif_holds_exactly_the_frames_the_page_serves`, `test_one_renderer_rendering_twice_gives_an_identical_gif` |
 | `frame-shows-the-swarm` | `src/treasure_island/viewer.py` | `test_frame_shows_the_swarm_every_pirate_whose_turn_the_bubble_and_the_log`, `test_crowds_fan_out_every_pirate_on_one_square_shows`, `test_frame_shows_the_swarm_as_an_image_with_grid_panel_and_log` |
-| `turn-marked` | not yet | — |
+| `turn-marked` | `src/treasure_island/viewer.py` | `test_turn_marked_every_frame_has_exactly_one_arrow_over_the_acting_pirate`, `test_turn_marked_a_turn_with_no_speech_still_marks_the_pirate`, `test_turn_marked_the_arrow_and_the_bubble_never_overlap`, `test_turn_marked_the_arrow_never_covers_a_label`, `test_turn_marked_a_crowd_on_the_top_row_still_shows_the_arrow`, `test_turn_marked_on_the_top_row_the_arrow_points_up_from_under_its_feet` |
 | `watch-live` | `src/treasure_island/cli.py`, `src/treasure_island/viewer.py` | `test_watch_live_the_page_follows_the_log_as_it_is_written`, `test_watch_live_the_command_names_its_address` |
 | `render-gif` | `src/treasure_island/cli.py`, `src/treasure_island/viewer.py` | `test_render_gif_writes_one_frame_per_turn_next_to_the_run`, `test_render_gif_writes_where_asked` |
 | `art-folder` | `src/treasure_island/viewer.py`, `pyproject.toml` | `test_art_folder_every_empty_square_is_a_sand_tile_from_the_assets`, `test_art_folder_a_pirate_is_exactly_its_sprite_and_never_a_shape`, `test_art_folder_a_dug_square_and_a_found_treasure_use_their_art`, `test_art_folder_missing_art_is_an_error_not_a_different_picture`, `test_art_folder_the_art_loads_from_outside_the_repository` |

@@ -19,7 +19,7 @@ The side panel is the art's parchment with the acting pirate's portrait, what it
 in plain words and a trail of its recent thoughts, all wrapped to fit: a reader should
 be able to follow the game from the frames alone.
 
-Implements: viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/crowds-fan-out, treasure-island/pokemon-style, viewer/slideshow-file, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process
+Implements: viewer/turn-marked, viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/crowds-fan-out, treasure-island/pokemon-style, viewer/slideshow-file, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process
 """
 
 import base64
@@ -49,6 +49,10 @@ TILE = 48
 _FAN = (20, 14)
 _LABEL_BOX = (14, 2, 34, 16)
 _ROWS = 3
+# The turn arrow floats this far above the acting pirate's hat, centred, as on the
+# art sheet, so it never covers the label; a bubble goes above the arrow.
+ARROW_ROOM = 14
+_ARROW_LEFT = 16
 _FACING = {"north": "up", "south": "down", "east": "right", "west": "left"}
 PANEL = 260
 PANEL_COLUMNS = 38
@@ -348,15 +352,47 @@ def bubble_box(position, bubble_size, size):
     x, y = position
     width, height = bubble_size
     left = min(x * TILE + 6, max(0, size * TILE - width))
-    above = y * TILE - height
+    above = y * TILE - ARROW_ROOM - height
     return left, above if above >= 0 else y * TILE + TILE + (_ROWS - 1) * _FAN[1]
 
 
-def _draw_bubble(image, position, text, size):
+def _overlap(a, b):
+    return a[0] < b[2] and b[0] < a[2] and a[1] < b[3] and b[1] < a[3]
+
+
+def turn_arrow(shown):
+    """The turn arrow and where it goes: over the acting pirate's hat.
+
+    Where that's off the board or on another pirate's label (in a crowd, the
+    pirate behind stands 14 pixels higher), it goes under the feet instead,
+    pointing up (default, Al to confirm).
+    """
+    placed = _placed(shown)
+    x, y = dict(placed)[shown["acting"]]
+    labels = [
+        (lx + _LABEL_BOX[0], ly + _LABEL_BOX[1], lx + _LABEL_BOX[2], ly + _LABEL_BOX[3])
+        for agent, (lx, ly) in placed
+        if agent != shown["acting"]
+    ]
+    down = _art("ui/turn-arrow")
+    up = down.transpose(Image.FLIP_TOP_BOTTOM)
+    left = x + _ARROW_LEFT
+    candidates = [(down, (left, y - ARROW_ROOM)), (up, (left, y + TILE + 2))]
+    for arrow, (ax, ay) in candidates:
+        box = (ax, ay, ax + arrow.width, ay + arrow.height)
+        if ay >= 0 and not any(_overlap(box, label) for label in labels):
+            return arrow, (ax, ay)
+    return candidates[1]
+
+
+def _draw_bubble(image, position, text, size, arrow_box):
     if len(text) > _BUBBLE_CHARACTERS:
         text = text[: _BUBBLE_CHARACTERS - 3] + "..."
     bubble = speech_bubble(text)
-    image.paste(bubble, bubble_box(position, bubble.size, size), bubble)
+    x, y = bubble_box(position, bubble.size, size)
+    if _overlap((x, y, x + bubble.width, y + bubble.height), arrow_box):
+        y = arrow_box[3] + 2  # an arrow under the feet: the bubble goes below it
+    image.paste(bubble, (x, y), bubble)
 
 
 def wrapped(text):
@@ -440,7 +476,7 @@ def _caption_image(story, width, height):
 
 
 def frame(records, turn, size, pirates=None, treasure=None):
-    """The image for one turn: ground, pirates, bubble, panel, caption and log strip."""
+    """The image for one turn: ground, pirates, turn arrow, bubble, panel, caption, log."""
     pirates = pirates or _default_pirates(_crew_names(records))
     shown = scene(records, turn, size, treasure)
     grid = max(size, 1) * TILE
@@ -450,7 +486,13 @@ def frame(records, turn, size, pirates=None, treasure=None):
     image = Image.new("RGB", (width, board + caption + STRIP), "#2b2b2b")
     _draw_ground(image, size, shown)
     _draw_pirates(image, shown, pirates)
-    _draw_bubble(image, shown["positions"][shown["acting"]], shown["bubble"], size)
+    arrow, spot = turn_arrow(shown)
+    image.paste(
+        arrow, spot, arrow
+    )  # before the bubble and labels, so it covers neither
+    arrow_box = (*spot, spot[0] + arrow.width, spot[1] + arrow.height)
+    acting = shown["positions"][shown["acting"]]
+    _draw_bubble(image, acting, shown["bubble"], size, arrow_box)
     _draw_labels(image, shown, pirates)
     # The X goes over everything, because whoever dug it up is standing on it, and it's
     # the moment a reader most wants to see. It's open enough for labels to show through.

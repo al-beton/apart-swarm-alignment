@@ -30,7 +30,9 @@ def drawn_at(image, overlay, position):
 
 
 def yellow(image):
-    return sum(1 for pixel in image.convert("RGB").getdata() if pixel == YELLOW)
+    return sum(
+        1 for pixel in image.convert("RGB").get_flattened_data() if pixel == YELLOW
+    )
 
 
 def board(records, turn, size):
@@ -92,6 +94,20 @@ def test_turn_marked_the_arrow_never_covers_a_label():
     for agent, spot in viewer._placed(shown):
         label = viewer._label(pirates[agent], *shown["poses"][agent])
         assert drawn_at(image, label, spot), agent
+    # ...and the arrow goes where it can still be seen.
+    arrow, where = viewer.turn_arrow(shown)
+    assert drawn_at(image, arrow, where)
+    assert yellow(image.crop((0, 0, 4 * viewer.TILE, 4 * viewer.TILE))) == yellow(arrow)
+
+
+def test_turn_marked_a_crowd_on_the_top_row_still_shows_the_arrow():
+    crowd = {"pirate-1": [0, 0], "pirate-2": [0, 0], "pirate-3": [0, 0]}
+    for acting in crowd:
+        records = [record(0, acting, (0, 0), crew=crowd)]
+        image, on_board = board(records, 0, 4)
+        arrow, where = viewer.turn_arrow(viewer.scene(records, 0, 4))
+        assert drawn_at(image, arrow, where), acting
+        assert yellow(on_board) == yellow(arrow), acting
 
 
 def test_turn_marked_on_the_top_row_the_arrow_points_up_from_under_its_feet():

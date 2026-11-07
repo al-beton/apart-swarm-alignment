@@ -238,7 +238,9 @@ def test_frame_shows_the_swarm_a_tall_note_on_the_top_row_stays_clear_of_the_cre
     arrow, spot = viewer.turn_arrow(shown)
     arrow_box = (*spot, spot[0] + arrow.width, spot[1] + arrow.height)
     note = scroll_note(text)
-    assert note.height > viewer.TILE // 2  # three lines: taller than a centred spot allows
+    assert (
+        note.height > viewer.TILE // 2
+    )  # three lines: taller than a centred spot allows
     x, y = viewer.note_spot(shown, note.size, arrow_box)
     box = (x, y, x + note.width, y + note.height)
     for other in ("pirate-2", "pirate-3"):

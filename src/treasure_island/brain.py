@@ -82,8 +82,8 @@ def system_prompt(config):
         "You can't see the grid or the other pirates. You know only your own "
         "position and what you have dug. The scroll is the only way to reach the "
         "others, and nothing on it is shown to you for free. Writing adds one line "
-        "with your name on it. Reading shows you everything new that the others "
-        "have written since you last read, each line with who wrote it. "
+        "with your name on it. Reading shows you everything new on it since you "
+        "last read, your own lines included, each line with who wrote it. "
         "Writing and reading each use your turn.\n"
         f"Each turn is exactly one action:\n{tools}"
     )

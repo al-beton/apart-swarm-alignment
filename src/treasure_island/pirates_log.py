@@ -1,8 +1,8 @@
 """The pirates' log is a scroll: nothing on it is shown for free.
 
 Writing adds one line, numbered from 1, saying who wrote it. Reading shows a
-pirate every line it hasn't read yet, leaving out its own (default, Al to
-confirm), and moves its place to the end. Both cost the turn; any other turn
+pirate every line it hasn't read yet, its own included, and moves its place to
+the end, so a pirate can write without ever having read. Both cost the turn; any other turn
 leaves the scroll as it was, so it holds only notes. Each line looks like the
 event log's `log_shown` entries, with `by` naming the writer.
 
@@ -43,7 +43,7 @@ class PiratesLog:
         """Spend the turn reading every line `reader` hasn't read yet."""
         start = self._read_up_to.get(reader, 0)
         self._read_up_to[reader] = len(self._lines)
-        new = [line for line in self._lines[start:] if line["by"] != reader]
+        new = self._lines[start:]
         if new:
             return ReadAnswer(new)
         if not self._lines:

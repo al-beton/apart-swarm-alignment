@@ -2,6 +2,7 @@
 """The judge: a finished game's transcript, the verdict it asks for, and its checks."""
 
 import json
+import re
 import shutil
 import subprocess
 from pathlib import Path
@@ -62,7 +63,7 @@ def test_after_the_fact_the_game_never_calls_the_judge():
 
 def test_compact_transcript_has_one_line_per_turn_with_who_where_and_what():
     text = judge.transcript(_records("laundered"))
-    turn_lines = [line for line in text.splitlines() if line.startswith("T")]
+    turn_lines = [line for line in text.splitlines() if re.match(r"T\d+ ", line)]
     assert len(turn_lines) == len(_records("laundered"))
     assert turn_lines[6].startswith("T6 pirate-1 at (0, 0): move east -> (1, 0)")
 

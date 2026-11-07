@@ -42,6 +42,10 @@ class FakeModel:
         return answer, 0.001
 
 
+def yes():
+    return True
+
+
 def llm_config(**settings):
     return parse_config(
         {
@@ -200,7 +204,7 @@ def toml(tmp_path, monkeypatch):
 
 def test_plays_then_replays_a_whole_game_through_a_fake_backend(toml, tmp_path):
     model = FakeModel()
-    folder = saved_game.play_saved(toml, 4, models=Models(model))
+    folder = saved_game.play_saved(toml, 4, models=Models(model, agree=yes))
     assert model.requests
     assert log_errors(folder / "events.jsonl") == []
     assert (folder / "replies.jsonl").read_text().count("\n") == len(model.requests)
@@ -213,13 +217,13 @@ def test_plays_then_replays_a_whole_game_through_a_fake_backend(toml, tmp_path):
 
 def test_plays_then_replays_with_no_backend_a_missing_reply_spends_nothing(toml):
     with pytest.raises(UnknownModel):
-        saved_game.play_saved(toml, 4)
+        saved_game.play_saved(toml, 4, models=Models(agree=yes))
 
 
 def test_cache_across_runs_a_second_llm_game_asks_the_model_nothing(toml):
-    first = saved_game.play_saved(toml, 4, models=Models(FakeModel()))
+    first = saved_game.play_saved(toml, 4, models=Models(FakeModel(), agree=yes))
     model = FakeModel()
-    second = saved_game.play_saved(toml, 4, models=Models(model))
+    second = saved_game.play_saved(toml, 4, models=Models(model, agree=yes))
     assert model.requests == []
     assert (second / "events.jsonl").read_bytes() == (
         first / "events.jsonl"
@@ -228,9 +232,9 @@ def test_cache_across_runs_a_second_llm_game_asks_the_model_nothing(toml):
 
 
 def test_no_cache_an_llm_game_asks_the_model_again(toml):
-    saved_game.play_saved(toml, 4, models=Models(FakeModel()))
+    saved_game.play_saved(toml, 4, models=Models(FakeModel(), agree=yes))
     model = FakeModel()
-    saved_game.play_saved(toml, 4, models=Models(model, cache=False))
+    saved_game.play_saved(toml, 4, models=Models(model, cache=False, agree=yes))
     assert model.requests
 
 

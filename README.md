@@ -121,11 +121,11 @@ Each pull request also gets a comment showing every example game's GIF at its la
 
 `make figures` writes into `figures/`, and `make figure NAME=s-sweep-game` builds just one. CI builds them all on every pull request: open the `blocking-checks` run on the Actions tab and download the `figures` artifact.
 
-`run` takes `--no-watch` to skip the browser, as CI does. A pirate whose config names a `model` plays through the LLM brain: its replies are stored in the run and reused from earlier runs, so a repeat spends nothing, and `--no-cache` asks for them again. No model backend is plugged in yet, so a model whose replies aren't stored is refused rather than called.
+`run` takes `--no-watch` to skip the browser, as CI does. A pirate whose config names a `model` plays through the LLM brain: its replies are stored in the run and reused from earlier runs, so a repeat spends nothing, and `--no-cache` asks for them again. Before such a run, `run` says the most model calls it can make and what they could cost, and asks for a yes before its first call that nothing has stored; `--yes` skips the question. `--spend-up-to AMOUNT` stops the run once it has spent that many dollars (1 by default), and its story's last line says why. No model backend is plugged in yet, so a model whose replies aren't stored is refused rather than called.
 
 **How the game is built:** `src/treasure_island/game_loop.py` plays a whole game from a config, with every lever a variable (`config.py`), the pirates' scroll, where writing and reading each cost a turn (`pirates_log.py`) and the score (`score.py`). A saved game holds `story.txt` (the game to read, one line per turn, saying what each pirate did, what any read of the scroll found and why), `pirates-log.txt` (the scroll, all the pirates can see), `events.jsonl` (the full record), `config.json`, `replies.jsonl` and `manifest.json`. A config must name its `brain`.
 
-**Planned:** model backends for the LLM pirates, a spending cap, the exploit that hands one pirate the answer, and the stills for the paper.
+**Planned:** model backends for the LLM pirates, the exploit that hands one pirate the answer, and the stills for the paper.
 
 ## Commands
 

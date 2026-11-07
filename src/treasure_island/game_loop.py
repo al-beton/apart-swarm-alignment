@@ -49,10 +49,7 @@ def _story(saw, decision, did):
     """A turn's line of the story, in the turn's own order: saw, thought, did."""
     if not decision.thinking:
         return f"{saw}, {did}."
-    thought = _one_line(decision.thinking).rstrip()
-    if not thought.endswith((".", "!", "?")):
-        thought += "."
-    return f"{saw}. It thought: {thought} Then it {did}."
+    return f"{saw}. It thought: {_sentence(decision.thinking)} Then it {did}."
 
 
 class GameStopped(Exception):
@@ -86,6 +83,12 @@ def _lines_read(lines):
 
 def _square(position):
     return f"({position[0]}, {position[1]})"
+
+
+def _sentence(thinking):
+    """A pirate's thinking on one line, ending like a sentence."""
+    thought = _one_line(thinking).rstrip()
+    return thought if thought.endswith((".", "!", "?")) else thought + "."
 
 
 def _with_refusals(refused, did):

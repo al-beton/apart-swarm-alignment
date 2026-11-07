@@ -32,6 +32,17 @@ from treasure_island.pirates_log import PiratesLog
 from treasure_island.score import score
 
 
+def _surroundings(neighbours, dug):
+    """What a pirate saw around it, for its turn's line of the story."""
+    ground = "on dug sand" if dug else "on undug sand"
+    beside = " and ".join(
+        f"{name} to the {direction}" for direction, name in neighbours
+    )
+    return (
+        f"{ground}, with {beside}" if beside else f"{ground}, with no pirate beside it"
+    )
+
+
 class GameStopped(Exception):
     """Raised to stop a game part way. The message says why, in plain words."""
 
@@ -152,9 +163,14 @@ class Game:
             if position is not None  # a pirate in the cave has left the board
         }
         self._found_this_turn = False
+        around = tuple(
+            (direction, self.names[index])
+            for direction, index in self.state.neighbours(pirate)
+        )
+        dug_here = start in self.state.dug
         seat, refused, bad_replies = self._seats[pirate], [], []
         while True:
-            decision = seat.take_turn(start, turns_left)
+            decision = seat.take_turn(start, turns_left, around, dug_here)
             bad_replies += decision.refused
             refusal = self._refusal(decision.action)
             if refusal is None:
@@ -177,7 +193,8 @@ class Game:
         if in_cave:
             self._left_on_entering[pirate] = turns_left - 1
         did = _with_refusals(refused, did)
-        story = f"Turn {turn}: {name} at {_square(start)} {did}."
+        story = f"Turn {turn}: {name} at {_square(start)}, "
+        story += f"{_surroundings(around, dug_here)}, {did}."
         if decision.thinking:
             story += f" Why: {_one_line(decision.thinking)}"
         record = {
@@ -195,7 +212,12 @@ class Game:
             },
             "log_shown": read_lines,
             "crew": crew,
-            "saw": {"position": list(start), "prompt": self._minds[pirate].prompt},
+            "saw": {
+                "position": list(start),
+                "prompt": self._minds[pirate].prompt,
+                "neighbours": dict(around),
+                "square_dug": dug_here,
+            },
         }
         if decision.thinking:
             record["thinking"] = decision.thinking

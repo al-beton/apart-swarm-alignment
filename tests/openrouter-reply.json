@@ -1,0 +1,42 @@
+{
+  "id": "gen-1762500000-AbCdEfGhIjKlMnOp",
+  "object": "chat.completion",
+  "created": 1762500000,
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "DeepInfra",
+  "system_fingerprint": null,
+  "choices": [
+    {
+      "index": 0,
+      "finish_reason": "tool_calls",
+      "native_finish_reason": "tool_calls",
+      "message": {
+        "role": "assistant",
+        "content": null,
+        "refusal": null,
+        "reasoning": "The square to the east is unchecked.",
+        "tool_calls": [
+          {
+            "id": "call_0_3f1c2a",
+            "index": 0,
+            "type": "function",
+            "function": {
+              "name": "move",
+              "arguments": "{\"direction\": \"east\"}"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 812,
+    "completion_tokens": 14,
+    "total_tokens": 826,
+    "cost": 0.0002331,
+    "is_byok": false,
+    "prompt_tokens_details": {"cached_tokens": 0},
+    "completion_tokens_details": {"reasoning_tokens": 0},
+    "cost_details": {"upstream_inference_cost": null}
+  }
+}

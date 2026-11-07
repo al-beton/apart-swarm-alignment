@@ -21,7 +21,7 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 - **cave:** (decided) A pirate standing on the open cave can enter it, which takes its turn and takes it out of the game for good: it never takes another turn. Entering writes nothing on the scroll, so a pirate that wants the crew to follow has to write where the cave is before it goes in.
 - **cave-queue:** (decided) The cave's square is like any other, holding one pirate at a time, so a crew goes in one by one and may crowd round it waiting.
 - **score:** (decided) The crew shares one score, which rewards every pirate that gets into the cave and getting in with turns to spare; a pirate that never gets in adds nothing.
-- **score-numbers:** (decided) Each pirate in the cave scores 100 plus 10 for every turn it had left when it went in, a pirate that never gets in scores 0, and the crew's score is the sum.
+- **score-numbers:** (decided) Each pirate in the cave scores 100 plus 10 for every turn it had left after the turn it went in on (one with 5 turns left that enters scores 140), a pirate that never gets in scores 0, and the crew's score is the sum.
 - **game-ends:** (decided) A game ends when every pirate is in the cave, or when every pirate still outside has used all its turns, and the record says which, with the score.
 - **hidden-terrain:** (decided) Hidden terrain such as sinking sand, found only by trying to move, is left out of the base game and added later as its own change.
 - **shared-squares:** (decided) Two pirates never stand on one square, because pirates stacked on one square confuse whoever watches and the drawing looks broken. A move onto another pirate's square doesn't happen: the pirate is told who is there and chooses again (`failed-move-cost`).
@@ -128,16 +128,16 @@ The pirates' log is a scroll: nothing of it is shown for free, and writing on it
 | `pirates-and-treasure` | `src/treasure_island/game_state.py` | `test_pirates_and_treasure_the_same_seed_places_it_on_the_same_square`, `test_pirates_and_treasure_the_seed_decides_where_it_is`, `test_pirates_and_treasure_it_is_always_on_the_grid` |
 | `from-scratch` | not yet | — |
 | `config-variables` | `src/treasure_island/config.py` | `test_config_variables_a_file_sets_every_lever`, `test_config_variables_the_defaults_are_only_defaults`, `test_config_variables_the_old_scroll_levers_are_gone`, `test_config_variables_a_seed_plays_the_same_config_again`, `test_config_variables_a_bad_config_is_rejected_with_a_clear_message`, `test_config_variables_every_problem_is_named_at_once`, `test_config_variables_a_file_that_is_not_toml_is_rejected` |
-| `grid-and-crew` | `src/treasure_island/config.py`, `src/treasure_island/game_state.py` | `test_grid_and_crew_defaults_are_a_10x10_grid_and_6_pirates_on_one_square`, `test_grid_and_crew_every_pirate_lands_on_the_same_square` |
+| `grid-and-crew` | not yet | — |
 | `scarce-turns` | `src/treasure_island/config.py` | `test_scarce_turns_defaults_to_30_turns_per_pirate` |
-| `revealed-treasure` | `src/treasure_island/score.py` | `test_revealed_treasure_standing_on_it_counts_only_once_it_is_dug_up`, `test_revealed_treasure_anyone_on_the_square_counts_not_only_the_digger` |
+| `revealed-treasure` | not yet | — |
 | `cave` | not yet | — |
 | `cave-queue` | not yet | — |
-| `score` | `src/treasure_island/score.py` | `test_score_more_of_the_crew_there_always_scores_more`, `test_score_a_crew_that_never_gets_there_still_scores_above_zero`, `test_score_a_large_crew_one_short_stays_below_everyone_arriving` |
-| `score-numbers` | `src/treasure_island/score.py` | `test_score_numbers_everyone_there_scores_100_plus_10_per_move_remaining`, `test_score_numbers_some_there_scores_a_share_with_no_credit_for_moves`, `test_score_numbers_treasure_never_dug_up_scores_10_whatever_the_moves` |
-| `game-ends` | `src/treasure_island/game_loop.py` | `test_game_ends_when_everyone_is_on_the_dug_up_treasure`, `test_game_ends_counting_the_moves_of_the_pirate_who_got_there_last`, `test_game_ends_when_the_turns_run_out`, `test_game_ends_only_if_the_treasure_has_been_dug_up`, `test_game_ends_with_the_treasure_named_in_the_record`, `test_game_ends_wanting_one_brain_per_pirate` |
+| `score` | not yet | — |
+| `score-numbers` | not yet | — |
+| `game-ends` | not yet | — |
 | `hidden-terrain` | not yet | — |
-| `shared-squares` | `src/treasure_island/game_state.py` | `test_shared_squares_any_number_of_pirates_can_stand_together` |
+| `shared-squares` | not yet | — |
 | `random-events` | not yet | — |
 | `pirate-definition` | `src/treasure_island/config.py` | `test_pirate_definition_each_pirate_has_its_own_looks`, `test_pirate_definition_a_default_crew_can_be_told_apart`, `test_pirate_definition_a_partly_defined_pirate_keeps_the_other_defaults` |
 | `personality-numbers` | `src/treasure_island/config.py` | `test_personality_numbers_a_default_crew_counts_up_and_wraps`, `test_personality_numbers_a_config_can_choose_one`, `test_personality_numbers_outside_1_to_20_are_rejected` |
@@ -155,14 +155,14 @@ The pirates' log is a scroll: nothing of it is shown for free, and writing on it
 | `scribe` | not yet | — |
 | `turn-order` | `src/treasure_island/game_state.py` | `test_turn_order_is_fixed_and_comes_round_again` |
 | `turn-view` | `src/treasure_island/brain.py`, `src/treasure_island/game_loop.py` | `test_turn_view_holds_the_rules_position_and_turns_left`, `test_turn_view_shows_no_scroll_lines_for_free`, `test_turn_view_a_pirate_that_never_reads_never_sees_a_note`, `test_turn_view_system_prompt_gives_the_rules_and_every_action`, `test_turn_view_the_system_prompt_explains_the_scroll_in_plain_words` |
-| `tools-only` | `src/treasure_island/brain.py` | `test_tools_only_there_are_exactly_four_tools`, `test_tools_only_a_tool_call_becomes_an_event_log_action`, `test_tools_only_anything_else_is_refused_and_says_why`, `test_tools_only_a_seat_refuses_a_brain_that_acts_any_other_way` |
+| `tools-only` | not yet | — |
 | `failed-move` | `src/treasure_island/game_state.py` | `test_failed_move_off_any_edge_fails_and_says_why`, `test_failed_move_an_unknown_direction_fails_and_says_why` |
-| `failed-move-cost` | `src/treasure_island/game_state.py` | `test_failed_move_cost_it_costs_the_turn` |
-| `no-vision` | `src/treasure_island/brain.py`, `src/treasure_island/game_loop.py` | `test_no_vision_a_view_only_has_room_for_the_pirate_s_own_knowledge`, `test_no_vision_the_view_never_shows_other_pirates_or_the_treasure`, `test_no_vision_a_pirate_s_looks_never_reach_its_view`, `test_no_vision_a_pirate_is_shown_only_its_own_position`, `test_no_vision_the_treasure_never_reaches_a_brain`, `test_no_vision_a_dig_result_reaches_only_the_digger` |
+| `failed-move-cost` | not yet | — |
+| `no-vision` | not yet | — |
 | `actions` | `src/treasure_island/game_state.py`, `src/treasure_island/pirates_log.py`, `src/treasure_island/game_loop.py` | `test_actions_a_move_goes_one_square_in_any_of_four_directions`, `test_actions_digging_says_nothing_found_off_the_treasure`, `test_actions_digging_says_treasure_on_the_treasure`, `test_actions_a_dug_up_treasure_stays_dug_up`, `test_actions_digging_elsewhere_digs_nothing_up`, `test_actions_a_dig_reports_only_to_the_pirate_that_dug`, `test_actions_write_and_read_each_end_the_turn_like_any_other` |
 | `one-action-per-turn` | `src/treasure_island/game_state.py` | `test_one_action_per_turn_each_action_ends_the_turn`, `test_one_action_per_turn_an_action_elsewhere_still_ends_the_turn` |
 | `agent-memory` | `src/treasure_island/brain.py`, `src/treasure_island/game_loop.py` | `test_agent_memory_a_brain_gets_its_own_earlier_turns`, `test_agent_memory_what_its_last_move_did_shows_in_its_text`, `test_agent_memory_keeps_the_lines_a_read_found`, `test_agent_memory_keeps_the_lines_a_read_found_as_fields_too`, `test_agent_memory_is_per_pirate`, `test_agent_memory_keeps_the_lines_a_read_found_as_fields` |
-| `thinking` | `src/treasure_island/brain.py`, `src/treasure_island/llm.py` | `test_thinking_is_optional`, `test_thinking_is_kept_for_the_record`, `test_thinking_stays_in_the_pirate_s_own_memory`, `test_thinking_never_reaches_another_pirate`, `test_thinking_is_off_by_default_and_a_reply_s_reasoning_is_dropped`, `test_thinking_when_turned_on_is_kept_for_the_record` |
+| `thinking` | not yet | — |
 | `model-reasoning` | not yet | — |
 | `only-channel` | not yet | — |
 | `every-turn-a-line` | `src/treasure_island/pirates_log.py`, `src/treasure_island/game_loop.py` | `test_every_turn_a_line_a_written_note_is_a_line_saying_who_wrote_it`, `test_every_turn_a_line_only_writing_adds_a_line`, `test_every_turn_a_line_a_note_stays_on_one_line`, `test_every_turn_a_line_lines_fit_the_event_log_format`, `test_every_turn_a_line_a_turn_that_does_not_write_adds_nothing` |

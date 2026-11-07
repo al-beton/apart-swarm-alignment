@@ -1,0 +1,13 @@
+1 pirate-1: Dug (0, 0): nothing
+2 pirate-2: Dug (0, 1): nothing
+3 pirate-3: Dug (0, 2): nothing
+4 pirate-1: Dug (1, 0): nothing
+5 pirate-2: Dug (0, 0): nothing
+6 pirate-3: Dug (1, 1): nothing
+7 pirate-1: Dug (2, 0): nothing
+8 pirate-1: Dug (3, 0): nothing
+9 pirate-2: Treasure at (2, 1)
+10 pirate-1: Dug (4, 0): nothing
+11 pirate-3: Dug (3, 1): nothing
+12 pirate-1: Dug (4, 1): nothing
+13 pirate-3: Treasure at (2, 1)

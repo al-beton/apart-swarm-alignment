@@ -34,7 +34,7 @@ from PIL import Image, ImageChops
 import assets
 from assets.font import draw_text, text_width, wrap
 from assets.pirates import pirate, portrait
-from assets.ui import panel, speech_bubble
+from assets.ui import panel, scroll_note
 from treasure_island.config import parse_config
 from treasure_island.game_state import GameState
 from treasure_island.looks import sprite_values
@@ -55,7 +55,8 @@ THOUGHTS = 3
 LINE = 12
 _DID_LINES = 3
 _THOUGHT_LINES = 6
-_BUBBLE_CHARACTERS = 90
+_NOTE_CHARACTERS = 90
+STRIP_TITLE = "The scroll"
 STRIP_ROWS = 5
 STRIP = 24 + (STRIP_ROWS + 1) * LINE + 4  # the parchment's edges, a heading and rows
 _STRIP_LEFT = 14
@@ -135,8 +136,21 @@ def _dug(records, turn):
     }
 
 
+def _note(record):
+    """What a pirate wrote on its turn, or None: only writing is drawn over a pirate."""
+    words = [a["text"] for a in record["did"] if a["action"] == "write"]
+    return " ".join(words) if words else None
+
+
+def _read(record):
+    """The lines a read returned, or None on a turn that didn't read."""
+    if not any(action["action"] == "read" for action in record["did"]):
+        return None
+    return [_shown(line) for line in record["log_shown"]]
+
+
 def _said(record):
-    """What a pirate's turn says in its bubble: its words, else its actions."""
+    """A turn in plain words, for a record that doesn't say what happened."""
     if record["outcome"]["found_treasure"]:
         return "I found the treasure!"
     words = [a["text"] for a in record["did"] if a["action"] == "write"]
@@ -232,10 +246,10 @@ def scene(records, turn, size, treasure=None):
         "turn": turn,
         "positions": positions,
         "acting": current["agent"],
-        "bubble": _said(current),
+        "note": _note(current),
         "did": _did(current),
         "thoughts": _thoughts(records, turn),
-        "log": [_shown(line) for line in current["log_shown"]],
+        "read": _read(current),
         "treasure": found,
         "mark": _mark(records, treasure, found),
         "log_so_far": _log_so_far(records, turn),
@@ -308,26 +322,28 @@ def _draw_pirates(image, shown, pirates):
 
 
 def _draw_labels(image, shown, pirates):
-    """Labels go over everything, bubbles included, so every pirate can be told apart."""
+    """Labels go over everything, notes included, so every pirate can be told apart."""
     for agent, spot in _placed(shown):
         label = _label(pirates[agent], *shown["poses"][agent])
         image.paste(label, spot, label)
 
 
-def bubble_box(position, bubble_size, size):
-    """Where a bubble goes: above the pirate, or below it if there's no room."""
+def note_box(position, note_size, size):
+    """Where a note goes: above the pirate, or below it if there's no room."""
     x, y = position
-    width, height = bubble_size
+    width, height = note_size
     left = min(x * TILE + 6, max(0, size * TILE - width))
     above = y * TILE - height
     return left, above if above >= 0 else y * TILE + TILE
 
 
-def _draw_bubble(image, position, text, size):
-    if len(text) > _BUBBLE_CHARACTERS:
-        text = text[: _BUBBLE_CHARACTERS - 3] + "..."
-    bubble = speech_bubble(text)
-    image.paste(bubble, bubble_box(position, bubble.size, size), bubble)
+def _draw_note(image, position, text, size):
+    if text is None:
+        return
+    if len(text) > _NOTE_CHARACTERS:
+        text = text[: _NOTE_CHARACTERS - 3] + "..."
+    note = scroll_note(text)
+    image.paste(note, note_box(position, note.size, size), note)
 
 
 def wrapped(text):
@@ -355,9 +371,10 @@ def _panel_image(shown, height, look):
         lines = [line for thought in shown["thoughts"] for line in wrapped(thought)]
         # The latest thought matters most, so older lines are the ones to go.
         sections.append(("Thinking:", lines[-_THOUGHT_LINES:], _THOUGHT_LINES))
-    log = [line or "(blank)" for line in shown["log"][-LOG_LINES:]] or ["(nothing)"]
-    log = [line[:PANEL_COLUMNS] for line in log]
-    sections.append(("It read:", log, LOG_LINES))
+    if shown["read"] is not None:
+        read = [line or "(blank)" for line in shown["read"][-LOG_LINES:]]
+        read = [line[:PANEL_COLUMNS] for line in read or ["(nothing new)"]]
+        sections.append(("It read:", read, LOG_LINES))
     for title, lines, most in sections:
         draw_text(image, (_PANEL_LEFT, y), title)
         y += LINE
@@ -380,7 +397,7 @@ def log_rows(lines, width):
 
 def _strip_image(shown, width):
     image = panel(width, STRIP)
-    draw_text(image, (_STRIP_LEFT, 12), "The pirates' scroll")
+    draw_text(image, (_STRIP_LEFT, 12), STRIP_TITLE)
     rows = log_rows(shown["log_so_far"], width - 2 * _STRIP_LEFT)
     for row, text in enumerate(rows, start=1):
         draw_text(image, (_STRIP_LEFT, 14 + row * LINE), text)
@@ -411,7 +428,7 @@ def _caption_image(story, width, height):
 
 
 def frame(records, turn, size, pirates=None, treasure=None):
-    """The image for one turn: ground, pirates, bubble, panel, caption and log strip."""
+    """The image for one turn: ground, pirates, note, panel, caption and log strip."""
     pirates = pirates or _default_pirates(_crew_names(records))
     shown = scene(records, turn, size, treasure)
     grid = max(size, 1) * TILE
@@ -421,7 +438,7 @@ def frame(records, turn, size, pirates=None, treasure=None):
     image = Image.new("RGB", (width, board + caption + STRIP), "#2b2b2b")
     _draw_ground(image, size, shown)
     _draw_pirates(image, shown, pirates)
-    _draw_bubble(image, shown["positions"][shown["acting"]], shown["bubble"], size)
+    _draw_note(image, shown["positions"][shown["acting"]], shown["note"], size)
     _draw_labels(image, shown, pirates)
     # The X goes over everything, because whoever dug it up is standing on it, and it's
     # the moment a reader most wants to see. It's open enough for labels to show through.

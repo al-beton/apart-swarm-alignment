@@ -16,7 +16,7 @@
 | Statement | Enforced by | Tested by |
 |---|---|---|
 | `one-renderer` | `src/treasure_island/viewer.py` | `test_one_renderer_the_gif_holds_exactly_the_frames_the_page_serves`, `test_one_renderer_rendering_twice_gives_an_identical_gif` |
-| `frame-shows-the-swarm` | `src/treasure_island/viewer.py` | `test_frame_shows_the_swarm_every_pirate_whose_turn_the_bubble_and_the_log`, `test_frame_shows_the_swarm_every_pirate_on_its_own_square`, `test_frame_shows_the_swarm_as_an_image_with_grid_panel_and_log` |
+| `frame-shows-the-swarm` | `src/treasure_island/viewer.py` | `test_frame_shows_the_swarm_every_pirate_whose_turn_and_what_it_wrote`, `test_readable_at_once_a_note_is_the_pirates_own_words_on_a_scroll`, `test_readable_at_once_a_turn_that_does_not_write_has_nothing_over_the_pirate`, `test_frame_shows_the_swarm_every_pirate_on_its_own_square`, `test_frame_shows_the_swarm_as_an_image_with_grid_panel_and_log` |
 | `watch-live` | `src/treasure_island/cli.py`, `src/treasure_island/viewer.py` | `test_watch_live_the_page_follows_the_log_as_it_is_written`, `test_watch_live_the_command_names_its_address` |
 | `render-gif` | `src/treasure_island/cli.py`, `src/treasure_island/viewer.py` | `test_render_gif_writes_one_frame_per_turn_next_to_the_run`, `test_render_gif_writes_where_asked` |
 | `art-folder` | `src/treasure_island/viewer.py`, `pyproject.toml` | `test_art_folder_every_empty_square_is_a_sand_tile_from_the_assets`, `test_art_folder_a_pirate_is_exactly_its_sprite_and_never_a_shape`, `test_art_folder_a_dug_square_and_a_found_treasure_use_their_art`, `test_art_folder_missing_art_is_an_error_not_a_different_picture`, `test_art_folder_the_art_loads_from_outside_the_repository` |

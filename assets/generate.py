@@ -12,14 +12,7 @@ from assets.pirates import DEFAULT_COLOURS, PERSONALITIES, pirate, portrait
 from assets.pixels import DARK, SIZE
 from assets.tiles import TILES, sand
 from assets.treasure import ITEMS
-from assets.ui import (
-    bubble_slices,
-    bubble_tail,
-    panel,
-    panel_slices,
-    speech_bubble,
-    turn_arrow,
-)
+from assets.ui import note_slices, panel, panel_slices, quill, scroll_note, turn_arrow
 
 ASSETS = Path(__file__).resolve().parent
 
@@ -128,8 +121,8 @@ def _scene():
         sprite = pirate(number, DEFAULT_COLOURS[number - 1], str(number), pose, frame)
         _place(scene, sprite, cell)
     _place(scene, turn_arrow(), (2, 3), (16, -14))
-    bubble = speech_bubble("I'll search row 1, the rest of you take row 2.")
-    scene.alpha_composite(bubble, (2 * SIZE + 18, 3 * SIZE - 14 - bubble.height))
+    note = scroll_note("I'll search row 1, the rest of you take row 2.")
+    scene.alpha_composite(note, (2 * SIZE + 18, 3 * SIZE - 14 - note.height))
     return scene
 
 
@@ -213,8 +206,8 @@ def _parts(sheet, top):
     x, y = 632, top + 12 + font.height * 2 + 16
     for name, image in (
         ("arrow", turn_arrow()),
-        ("tail", bubble_tail()),
-        ("bubble", bubble_slices()),
+        ("quill", quill()),
+        ("note", note_slices()),
         ("panel", panel_slices()),
     ):
         big = image.resize((image.width * 2, image.height * 2), Image.NEAREST)
@@ -232,8 +225,8 @@ def build():
     images |= {
         "ui/font.png": font_sheet(),
         "ui/turn-arrow.png": turn_arrow(),
-        "ui/bubble.png": bubble_slices(),
-        "ui/bubble-tail.png": bubble_tail(),
+        "ui/note.png": note_slices(),
+        "ui/quill.png": quill(),
         "ui/panel.png": panel_slices(),
         "sheet.png": contact_sheet(),
     }

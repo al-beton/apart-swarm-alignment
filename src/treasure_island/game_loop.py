@@ -17,7 +17,7 @@ Fields stay in reading order rather than sorted, so a person reading a record
 meets who and what before the long prompt. Pirates are named `pirate-1` upwards,
 matching the numbered art. A brain that gives no reason just has no "Why".
 
-Implements: treasure-island/cave-leak, treasure-island/thinking, treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/score-numbers, runs/stops-cleanly, agents/ask-once-more, treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/turn-view, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/failed-move-cost, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process, agents/refusals-noted
+Implements: treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/thinking, treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/score-numbers, runs/stops-cleanly, agents/ask-once-more, treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/turn-view, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/failed-move-cost, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process, agents/refusals-noted
 """
 
 import json
@@ -209,11 +209,13 @@ class Game:
         dug_here = start in self.state.dug
         on_cave = self.state.treasure_dug_up and start == self.state.treasure
         seat, refused, bad_replies = self._seats[pirate], [], []
+        dropped = 0
         # Kept until the turn's record is made, in case the game stops part way.
         self.unfinished = (name, bad_replies)
         while True:
             decision = seat.take_turn(start, turns_left, around, dug_here, on_cave)
             bad_replies += decision.refused
+            dropped += decision.retried
             refusal = self._refusal(decision.action, decision.refused)
             if refusal is None:
                 result, did, read_lines = self._act(decision.action, start, name)
@@ -238,6 +240,9 @@ class Game:
         did = _with_refusals(refused, did)
         if bad_replies:
             did = _with_bad_replies(len(bad_replies), did)
+        if dropped:
+            times = "1 time" if dropped == 1 else f"{dropped} times"
+            did = f"its model call dropped {times} and was tried again, then {did}"
         saw = f"Turn {turn}: {name} at {_square(start)}, "
         story = _story(saw + _surroundings(around, dug_here, on_cave), decision, did)
         record = {

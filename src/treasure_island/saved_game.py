@@ -15,7 +15,7 @@ says why in its manifest, and its replay stops at the same turn for that reason.
 `differences` plays the game again from that folder, in a temporary folder and
 with nothing but what's saved, and names any log that doesn't match byte for byte.
 
-Implements: agents/reasoning-looked-up, runs/yes-before-spending, runs/spending-cap, runs/stops-cleanly, agents/plays-then-replays, runs/cache-across-runs, runs/no-cache, treasure-island/named-runs, treasure-island/everything-cached, runs/one-game, runs/run-folder, runs/manifest-varies, runs/replay-byte-identical, runs/plays-live, results/examples-stay-true, agents/key-from-the-environment, agents/refusals-noted
+Implements: treasure-island/retries-dropped-calls, agents/reasoning-looked-up, runs/yes-before-spending, runs/spending-cap, runs/stops-cleanly, agents/plays-then-replays, runs/cache-across-runs, runs/no-cache, treasure-island/named-runs, treasure-island/everything-cached, runs/one-game, runs/run-folder, runs/manifest-varies, runs/replay-byte-identical, runs/plays-live, results/examples-stay-true, agents/key-from-the-environment, agents/refusals-noted
 """
 
 import collections
@@ -29,6 +29,7 @@ from pathlib import Path
 from treasure_island.backends import backend_for, looked_up_thinking
 from treasure_island.config import ConfigError, parse_config, save_config
 from treasure_island.game_loop import GameStopped, write_game
+from treasure_island.retries import Retrying
 from treasure_island.runs import Replies, earlier_replies, new_folder
 from treasure_island.spending import CAP_USD, Guard
 from treasure_island.strategies import brains_for
@@ -129,7 +130,7 @@ def write_saved(config, folder, on_start=None, pace=0, models=ASK_EVERY_MODEL):
     guard = Guard(models.backend or _every_model(config), models.cap_usd, models.agree)
     replies = Replies(
         folder / "replies.jsonl",
-        guard,
+        Retrying(guard),
         earlier_replies() if models.cache else None,
     )
     brains = brains_for(config.brain, config, replies)

@@ -422,7 +422,8 @@ def note_spot(shown, note_size, arrow_box):
     x, y = shown["positions"][shown["acting"]]
     width, height = note_size
     edge = size * TILE
-    middle = y * TILE + (TILE - height) // 2
+    # Beside the writer, level with it, but kept on the board at the top or bottom.
+    middle = min(max(0, y * TILE + (TILE - height) // 2), max(0, edge - height))
     candidates = [
         (min(x * TILE + 6, max(0, edge - width)), y * TILE - ARROW_ROOM - height),
         ((x + 1) * TILE + 2, middle),

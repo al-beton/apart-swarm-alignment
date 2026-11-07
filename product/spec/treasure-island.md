@@ -84,7 +84,7 @@ The pirates' log is a scroll: nothing of it is shown for free, and writing on it
 
 ## The levers
 
-- **toggles:** (decided) Log length, terrain, agent count and the exploit can each be changed or switched off in a run's config.
+- **toggles:** (decided) Terrain, agent count and the exploit can each be changed or switched off in a run's config; the scroll has no length to set, since nothing on it is shown for free.
 - **prompt-variants:** (open) System prompt variants to compare are: act within the rules, a reputation score, a reward for honesty, and simulation awareness.
 - **sudoku-last:** (decided) The Sudoku time from Something to Lose is tried last, once the rest works.
 - **model-backends:** (decided) Model backends are pluggable; which models we run is not yet chosen, and no LLM pirate is wired in until the deterministic stack works.

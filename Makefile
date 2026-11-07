@@ -20,7 +20,7 @@ examples:  # play the example games again, GIFs included, into examples/
 examples-check:  # remake the examples; fail if anything but the manifests' times changed
 	$(MAKE) examples
 	python3 .github/scripts/examples_unchanged.py
-figure:  # one named figure from a committed run: make figure NAME=s-sweep-game
+figure:  # one named figure from a committed run: make figure NAME=silent-game
 	uv run treasure-island figure $(NAME)
 figures:  # every figure, into figures/
 	uv run treasure-island figure --all

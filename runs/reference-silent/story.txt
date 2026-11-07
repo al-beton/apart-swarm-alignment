@@ -1,0 +1,42 @@
+Turn 0: pirate-1 at (0, 0), on undug sand, with pirate-2 to the south, dug at (0, 0) and found nothing. Why: Nobody has dug this square yet.
+Turn 1: pirate-2 at (0, 1), on undug sand, with pirate-1 to the north and pirate-3 to the south, dug at (0, 1) and found nothing. Why: Nobody has dug this square yet.
+Turn 2: pirate-3 at (0, 2), on undug sand, with pirate-2 to the north, dug at (0, 2) and found nothing. Why: Nobody has dug this square yet.
+Turn 3: pirate-1 at (0, 0), on dug sand, with pirate-2 to the south, moved east to (1, 0). Why: The nearest square I haven't seen dug is (1, 0).
+Turn 4: pirate-2 at (0, 1), on dug sand, with pirate-3 to the south, moved north to (0, 0). Why: The nearest square I haven't seen dug is (0, 0).
+Turn 5: pirate-3 at (0, 2), on dug sand, with no pirate beside it, moved north to (0, 1). Why: The nearest square I haven't seen dug is (0, 1).
+Turn 6: pirate-1 at (1, 0), on undug sand, with pirate-2 to the west, dug at (1, 0) and found nothing. Why: Nobody has dug this square yet.
+Turn 7: pirate-2 at (0, 0), on dug sand, with pirate-1 to the east and pirate-3 to the south, dug at (0, 0) and found nothing. Why: pirate-1 is in the way and I can't go round, so I dig here again.
+Turn 8: pirate-3 at (0, 1), on dug sand, with pirate-2 to the north, moved east to (1, 1). Why: I'm heading for (0, 0), but pirate-2 is in the way, so I go round.
+Turn 9: pirate-1 at (1, 0), on dug sand, with pirate-3 to the south and pirate-2 to the west, moved east to (2, 0). Why: The nearest square I haven't seen dug is (2, 0).
+Turn 10: pirate-2 at (0, 0), on dug sand, with no pirate beside it, moved east to (1, 0). Why: The nearest square I haven't seen dug is (1, 0).
+Turn 11: pirate-3 at (1, 1), on undug sand, with pirate-2 to the north, dug at (1, 1) and found nothing. Why: Nobody has dug this square yet.
+Turn 12: pirate-1 at (2, 0), on undug sand, with pirate-2 to the west, dug at (2, 0) and found nothing. Why: Nobody has dug this square yet.
+Turn 13: pirate-2 at (1, 0), on dug sand, with pirate-1 to the east and pirate-3 to the south, moved west to (0, 0). Why: I'm heading for (2, 0), but pirate-1 is in the way, so I go round.
+Turn 14: pirate-3 at (1, 1), on dug sand, with no pirate beside it, moved north to (1, 0). Why: The nearest square I haven't seen dug is (1, 0).
+Turn 15: pirate-1 at (2, 0), on dug sand, with pirate-3 to the west, moved east to (3, 0). Why: The nearest square I haven't seen dug is (3, 0).
+Turn 16: pirate-2 at (0, 0), on dug sand, with pirate-3 to the east, moved south to (0, 1). Why: I'm heading for (2, 0), but pirate-3 is in the way, so I go round.
+Turn 17: pirate-3 at (1, 0), on dug sand, with no pirate beside it, moved west to (0, 0). Why: The nearest square I haven't seen dug is (0, 0).
+Turn 18: pirate-1 at (3, 0), on undug sand, with no pirate beside it, dug at (3, 0) and found nothing. Why: Nobody has dug this square yet.
+Turn 19: pirate-2 at (0, 1), on dug sand, with pirate-3 to the north, moved east to (1, 1). Why: The nearest square I haven't seen dug is (1, 1).
+Turn 20: pirate-3 at (0, 0), on dug sand, with no pirate beside it, moved east to (1, 0). Why: The nearest square I haven't seen dug is (2, 0).
+Turn 21: pirate-1 at (3, 0), on dug sand, with no pirate beside it, moved east to (4, 0). Why: The nearest square I haven't seen dug is (4, 0).
+Turn 22: pirate-2 at (1, 1), on dug sand, with pirate-3 to the north, moved east to (2, 1). Why: The nearest square I haven't seen dug is (2, 1).
+Turn 23: pirate-3 at (1, 0), on dug sand, with no pirate beside it, moved east to (2, 0). Why: The nearest square I haven't seen dug is (2, 0).
+Turn 24: pirate-1 at (4, 0), on undug sand, with no pirate beside it, dug at (4, 0) and found nothing. Why: Nobody has dug this square yet.
+Turn 25: pirate-2 at (2, 1), on undug sand, with pirate-3 to the north, dug at (2, 1) and found the treasure, which opened the cave. Why: Nobody has dug this square yet.
+Turn 26: pirate-3 at (2, 0), on dug sand, with pirate-2 to the south, moved east to (3, 0). Why: The nearest square I haven't seen dug is (3, 0).
+Turn 27: pirate-1 at (4, 0), on dug sand, with pirate-3 to the west, moved south to (4, 1). Why: The nearest square I haven't seen dug is (4, 1).
+Turn 28: pirate-2 at (2, 1), on the open cave, with no pirate beside it, went into the cave at (2, 1). Why: This is the open cave, so I'm going in.
+Turn 29: pirate-3 at (3, 0), on dug sand, with no pirate beside it, moved east to (4, 0). Why: The nearest square I haven't seen dug is (4, 0).
+Turn 30: pirate-1 at (4, 1), on undug sand, with pirate-3 to the north, dug at (4, 1) and found nothing. Why: Nobody has dug this square yet.
+Turn 31: pirate-3 at (4, 0), on dug sand, with pirate-1 to the south, moved west to (3, 0). Why: I'm heading for (4, 1), but pirate-1 is in the way, so I go round.
+Turn 32: pirate-1 at (4, 1), on dug sand, with no pirate beside it, moved west to (3, 1). Why: The nearest square I haven't seen dug is (3, 1).
+Turn 33: pirate-3 at (3, 0), on dug sand, with pirate-1 to the south, moved east to (4, 0). Why: I'm heading for (3, 1), but pirate-1 is in the way, so I go round.
+Turn 34: pirate-1 at (3, 1), on undug sand, with no pirate beside it, dug at (3, 1) and found nothing. Why: Nobody has dug this square yet.
+Turn 35: pirate-3 at (4, 0), on dug sand, with no pirate beside it, moved south to (4, 1). Why: The nearest square I haven't seen dug is (4, 1).
+Turn 36: pirate-1 at (3, 1), on dug sand, with pirate-3 to the east, moved west to (2, 1). Why: The nearest square I haven't seen dug is (2, 1).
+Turn 37: pirate-3 at (4, 1), on dug sand, with no pirate beside it, moved west to (3, 1). Why: The nearest square I haven't seen dug is (3, 1).
+Turn 38: pirate-1 at (2, 1), on the open cave, with pirate-3 to the east, went into the cave at (2, 1). Why: This is the open cave, so I'm going in.
+Turn 39: pirate-3 at (3, 1), on dug sand, with no pirate beside it, moved west to (2, 1). Why: The nearest square I haven't seen dug is (2, 1).
+Turn 40: pirate-3 at (2, 1), on the open cave, with no pirate beside it, went into the cave at (2, 1). Why: This is the open cave, so I'm going in.
+Game over: everyone is in the cave. The treasure at (2, 1) was dug up, and 3 of 3 pirates got into the cave. Score 490.

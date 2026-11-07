@@ -51,7 +51,7 @@ jobs:
         run: |
           git clone --quiet "$GITHUB_WORKSPACE" "$RUNNER_TEMP/clean-clone"
           cd "$RUNNER_TEMP/clean-clone"
-          printed=$(uv run treasure-island show examples/s-sweep)
+          printed=$(uv run treasure-island show examples/silent)
           gif=$(echo "$printed" | sed -n 1p)
           page=$(echo "$printed" | sed -n 2p)
           uv run python -c 'import sys; from PIL import Image; sys.exit(Image.open(sys.argv[1]).n_frames < 2)' "$gif"

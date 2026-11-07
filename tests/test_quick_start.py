@@ -94,7 +94,7 @@ def test_one_line_replay_ci_runs_it_before_anything_is_installed_with_no_keys():
 FAKE_UV = """#!/bin/sh
 if [ "$2" = "treasure-island" ]; then
   [ -e left-behind.txt ] && { echo "the clone holds an uncommitted file" >&2; exit 3; }
-  [ "$*" = "run treasure-island show examples/s-sweep" ] || exit 4
+  [ "$*" = "run treasure-island show examples/silent" ] || exit 4
   {python} {writer} {mode}
   exit $?
 fi

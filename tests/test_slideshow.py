@@ -19,8 +19,8 @@ ROOT = Path(__file__).resolve().parents[1]
 def saved(tmp_path, monkeypatch):
     """A copy of a committed game, in a folder of its own."""
     monkeypatch.chdir(tmp_path)
-    shutil.copytree(ROOT / "runs/s-sweep-seed-7", tmp_path / "runs/s-sweep-seed-7")
-    return tmp_path / "runs/s-sweep-seed-7"
+    shutil.copytree(ROOT / "runs/silent-seed-7", tmp_path / "runs/silent-seed-7")
+    return tmp_path / "runs/silent-seed-7"
 
 
 def turns_in(page):

@@ -2,6 +2,10 @@
   "cache_hits": 0,
   "cache_misses": 0,
   "cost_usd": 0,
-  "finished_at": "2026-11-07T11:51:11.865532+00:00",
-  "started_at": "2026-11-07T11:51:11.862863+00:00"
+  "finished_at": "2026-11-07T12:12:25.313723+00:00",
+  "prompt": {
+    "base_sha256": "b3dcb7f66ab10fee8d4d8e1f9a4c4cf0af0fbfbd9346c4b1ef8dcf4ac3ac394e",
+    "system_prompt": "You are one of 3 pirates digging for one buried treasure on a 5 by 5 grid. Each pirate gets 20 turns. Digging up the treasure opens a cave on its square, and only a pirate standing there is told. A pirate on the open cave can enter it, which uses its turn and takes it out of the game for good; the square holds one pirate at a time. Your crew scores 100 for every pirate that gets into the cave, plus 10 for each turn it had left after going in.\nYou can't see the grid. Each turn you're told your own position, whether your square has been dug by anyone, and which of the 4 squares next to you (north, east, south and west) hold a pirate, but nothing further away. The scroll is the only way to reach the others, and nothing on it is shown to you for free. Writing adds one line with your name on it. Reading shows you everything new on it since you last read, your own lines included, each line with who wrote it. Writing and reading each use your turn.\nA move that fails, off the grid or onto another pirate, doesn't use your turn: you're told why and choose again. After 2 failed moves in one turn, your turn passes.\nEach turn is exactly one action:\n- move: Walk one square. A move off the grid or onto another pirate fails without using your turn, and you choose again. (direction must be one of north, east, south, west)\n- dig: Dig your square, which is also how you search it.\n- write: Write a note on the scroll, the only way to reach the other pirates. (text must be your note, on one line)\n- read: Read every line on the scroll you haven't read yet.\n- enter: Go into the open cave you're standing on, leaving the game for good."
+  },
+  "started_at": "2026-11-07T12:12:25.308312+00:00"
 }

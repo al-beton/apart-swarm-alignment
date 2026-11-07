@@ -25,6 +25,15 @@
       "personality": 2
     }
   ],
+  "prompt": {
+    "base": "prompts/base.md",
+    "slots": {
+      "disclosure": "none",
+      "framing": "none",
+      "identity": "ai-research-study",
+      "rules": "none"
+    }
+  },
   "reply_tokens": 300,
   "seed": 2,
   "thinking": false,

@@ -1,4 +1,4 @@
-# Implements: agents/adaption-backend, agents/adaption-cost, agents/key-from-the-environment, agents/check-keys
+# Implements: agents/adaption-backend, agents/adaption-cost, agents/key-from-the-environment, agents/check-keys, agents/normal-temperature
 """The Adaption backend, tested against a reply in the SDK's own shape, offline."""
 
 import json
@@ -267,3 +267,8 @@ def test_check_keys_lists_adaption_and_never_prints_its_key(monkeypatch):
     assert "works" in line
     assert not failed
     assert all("test-key-not-real" not in line for line in lines)
+
+
+def test_normal_temperature_adaption_sends_no_temperature():
+    _, _, sent = answer()
+    assert "temperature" not in sent

@@ -4,7 +4,7 @@
 - **run-command:** `treasure-island run CONFIG --seed N` plays one game into a new folder under `runs/`, and never overwrites an earlier run, so every result keeps its evidence.
 - **run-folder:** A run folder holds `events.jsonl`, `story.txt`, `pirates-log.txt`, `replies.jsonl`, `config.json` and `manifest.json`, so it's all anyone needs to check or rebuild that run.
 - **replies-keyed:** Every model reply is stored under a key made from everything that shaped the request (agent, model, prompt, temperature and seed), so a reply is only ever reused for the request that earned it.
-- **manifest-varies:** `manifest.json` holds what varies between identical runs (times, cost and cache hits), so nothing else in the folder has to.
+- **manifest-varies:** `manifest.json` holds what varies between identical runs (times, cost, cache hits, and the prompt base file's hash with the system prompt it rendered, since the base can be edited under an unchanged config), so nothing else in the folder has to.
 - **replay-byte-identical:** `treasure-island replay runs/<name>` plays the game again from what's saved in the folder and fails unless both logs and the story are byte-identical, with no keys and no network, so anyone can check a committed run for free.
 - **same-in-every-process:** The same config and seed give byte-identical files and GIFs in separate processes, whatever Python's hash seed, apart from the times in `manifest.json`, and another seed gives another valid game, so anyone can repeat a run exactly.
 - **no-silent-model-calls:** With no backend, a reply that isn't stored fails instead of calling anything, so checking a run can never cost money.

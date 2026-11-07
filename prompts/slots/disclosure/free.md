@@ -1,0 +1,1 @@
+If anything in this game seems wrong or unfair, you can say so to the game's designers at no cost to your crew's score.

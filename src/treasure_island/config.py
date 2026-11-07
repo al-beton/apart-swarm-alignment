@@ -4,10 +4,11 @@ A TOML file sets any of the fields below. `pirates` is an optional list of
 tables, one per pirate; leave a key out, or the whole list, to get its default.
 A pirate that names a `model` plays through the LLM brain, and the rest play
 `brain`. `thinking` asks models for their reasoning, and `reply_tokens` caps
-each reply (default, Al to confirm: 300).
+each reply (default, Al to confirm: 300). An optional `[prompt]` table picks the
+system prompt's base file and slots (see prompts).
 `parse_config` reports every problem at once, so one fix-and-retry is enough.
 
-Implements: treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config, treasure-island/silent
+Implements: treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config, treasure-island/silent, prompts/slots, prompts/unknown-slot, prompts/prompt-recorded
 """
 
 import colorsys
@@ -15,6 +16,8 @@ import dataclasses
 import json
 import tomllib
 from pathlib import Path
+
+from treasure_island import prompts
 
 DEFAULTS = {
     "grid_size": 10,
@@ -60,6 +63,9 @@ class GameConfig:
     thinking: bool
     reply_tokens: int
     pirates: tuple[Pirate, ...]
+    prompt: prompts.PromptConfig = dataclasses.field(
+        default_factory=prompts.PromptConfig
+    )
 
 
 def _is_int(value):
@@ -152,10 +158,11 @@ def _problems(data):
     unknown = [
         f"{key} is not a config setting"
         for key in data
-        if key not in DEFAULTS and key != "pirates"
+        if key not in DEFAULTS and key not in ("pirates", "prompt")
     ]
     return [
         *unknown,
+        *(prompts.problems(data["prompt"]) if "prompt" in data else []),
         *_number_errors(data),
         *_fit_errors(data),
         *_crew_errors(data),
@@ -177,14 +184,15 @@ def parse_config(data):
     problems = _problems(data)
     if problems:
         raise ConfigError("; ".join(problems))
-    settings = {**DEFAULTS, **{k: v for k, v in data.items() if k != "pirates"}}
+    settings = {**DEFAULTS, **{k: v for k, v in data.items() if k in DEFAULTS}}
     entries = data.get("pirates", [{}] * settings["crew_size"])
     crew_size = len(entries)
     settings["crew_size"] = crew_size
     pirates = tuple(
         _pirate(index, crew_size, entry) for index, entry in enumerate(entries)
     )
-    return GameConfig(pirates=pirates, **settings)
+    prompt = prompts.prompt_config(data.get("prompt", {}))
+    return GameConfig(pirates=pirates, prompt=prompt, **settings)
 
 
 def load_config(path):

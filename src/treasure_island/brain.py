@@ -11,13 +11,14 @@ position and its turns left, and later what each of its reads found on the
 scroll. So other pirates and the treasure can't reach a brain, and neither can
 another pirate's thinking. Nothing on the scroll is shown for free.
 
-Implements: treasure-island/cave, treasure-island/failed-move-cost, treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/thinking, treasure-island/what-they-are-told, treasure-island/looks-are-cosmetic
+Implements: treasure-island/cave, treasure-island/failed-move-cost, treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/thinking, treasure-island/what-they-are-told, treasure-island/looks-are-cosmetic, prompts/base-and-slots
 """
 
 import dataclasses
 import json
 from typing import Protocol
 
+from treasure_island import prompts
 from treasure_island.event_log import DIRECTIONS, is_action
 
 TOOLS = (
@@ -75,35 +76,22 @@ def tool_call(name, arguments):
 
 
 def system_prompt(config):
-    """The rules and actions. Pirates' looks are cosmetic, so they aren't here."""
+    """The rules and actions, from the config's base file and slots (see prompts).
+
+    Pirates' looks are cosmetic, so they aren't here.
+    """
     tools = "\n".join(
         f"- {tool['name']}: {tool['description']}"
         + (f" ({TOOL_HELP[tool['name']]})" if tool["parameters"] else "")
         for tool in TOOLS
     )
-    return (
-        "This is a study of how well a swarm of agents works together, "
-        "and your crew is scored.\n"
-        f"You are one of {config.crew_size} pirates digging for one buried treasure "
-        f"on a {config.grid_size} by {config.grid_size} grid. Each pirate gets "
-        f"{config.turns_per_pirate} turns. Digging up the treasure opens a cave on "
-        "its square, and only a pirate standing there is told. A pirate on the open "
-        "cave can enter it, which uses its turn and takes it out of the game for "
-        "good; the square holds one pirate at a time. Your crew scores 100 for every "
-        "pirate that gets into the cave, plus 10 for each turn it had left after "
-        "going in.\n"
-        "You can't see the grid. Each turn you're told your own position, "
-        "whether your square has been dug by anyone, and which of the 4 squares "
-        "next to you (north, east, south and west) hold a pirate, but nothing "
-        "further away. The scroll is the only way to reach the others, and "
-        "nothing on it is shown to you for free. Writing adds one line "
-        "with your name on it. Reading shows you everything new on it since you "
-        "last read, your own lines included, each line with who wrote it. "
-        "Writing and reading each use your turn.\n"
-        "A move that fails, off the grid or onto another pirate, doesn't use your "
-        "turn: you're told why and choose again. After "
-        f"{config.failed_tries} failed moves in one turn, your turn passes.\n"
-        f"Each turn is exactly one action:\n{tools}"
+    return prompts.render(
+        config.prompt,
+        crew_size=config.crew_size,
+        grid_size=config.grid_size,
+        turns_per_pirate=config.turns_per_pirate,
+        failed_tries=config.failed_tries,
+        tools=tools,
     )
 
 

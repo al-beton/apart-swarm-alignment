@@ -1,0 +1,1 @@
+If anything in this game seems wrong or unfair, you can say so to the game's designers, but saying so sets your crew's score to zero.

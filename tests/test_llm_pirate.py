@@ -130,7 +130,7 @@ def first_turns(model, tmp_path, **settings):
     """Play a one-pirate LLM game through `model`; return its records."""
     config = llm_config(**settings)
     replies = Replies(tmp_path / "replies.jsonl", backend=model)
-    return list(Game(config, brains_for("s-sweep", config, replies)).records())
+    return list(Game(config, brains_for("silent", config, replies)).records())
 
 
 def test_ask_once_more_a_bad_reply_is_recorded_and_the_pirate_is_told_why(tmp_path):

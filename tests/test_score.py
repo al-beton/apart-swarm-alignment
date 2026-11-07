@@ -43,7 +43,7 @@ def test_config_variables_a_game_scores_with_its_config_s_numbers():
 
     def final(**numbers):
         config = parse_config({**settings, **numbers})
-        *_, last = Game(config, brains_for("s-sweep", config)).records()
+        *_, last = Game(config, brains_for("silent", config)).records()
         return last["game_over"]
 
     assert final()["in_cave"] == ["pirate-1"]

@@ -3,10 +3,11 @@
 `run` opens the live view unless told not to. At a terminal it keeps the page up
 after the game ends, until Ctrl-C; a script gets its prompt back when the game ends.
 
-Implements: runs/cost-before-run, runs/yes-before-spending, runs/spending-cap, tooling/package-and-cli, runs/one-game, runs/run-command, runs/replay-byte-identical, runs/plays-live, runs/no-cache, viewer/watch-live, viewer/render-gif, viewer/slideshow-file, treasure-island/named-runs, treasure-island/everything-cached, treasure-island/one-line-replay, figures/named-figures, agents/check-keys
+Implements: agents/refusals-noted, runs/cost-before-run, runs/yes-before-spending, runs/spending-cap, tooling/package-and-cli, runs/one-game, runs/run-command, runs/replay-byte-identical, runs/plays-live, runs/no-cache, viewer/watch-live, viewer/render-gif, viewer/slideshow-file, treasure-island/named-runs, treasure-island/everything-cached, treasure-island/one-line-replay, figures/named-figures, agents/check-keys
 """
 
 import argparse
+import json
 import sys
 import threading
 import webbrowser
@@ -51,6 +52,23 @@ def _say_what_it_can_cost(args):
         print(found.as_text(args.spend_up_to), flush=True)
 
 
+def _warn_about_refused_replies(folder):
+    """End a run with a warning if any pirate's reply wasn't a valid action."""
+    manifest = json.loads((folder / "manifest.json").read_text())
+    if refused := manifest.get("refused_replies"):
+        who = ", ".join(f"{agent} gave {count}" for agent, count in refused.items())
+        total = sum(refused.values())
+        replies = (
+            "1 reply wasn't a valid action"
+            if total == 1
+            else (f"{total} replies weren't valid actions")
+        )
+        print(
+            f"Warning: {replies} ({who}). Each turn's line in story.txt says so.",
+            file=sys.stderr,
+        )
+
+
 def _run(args):
     def play(on_start=None, pace=0):
         _say_what_it_can_cost(args)
@@ -58,7 +76,9 @@ def _run(args):
         models = saved_game.Models(
             cache=not args.no_cache, cap_usd=args.spend_up_to, agree=agree
         )
-        return saved_game.play_saved(args.config, args.seed, on_start, pace, models)
+        folder = saved_game.play_saved(args.config, args.seed, on_start, pace, models)
+        _warn_about_refused_replies(folder)
+        return folder
 
     if args.no_watch:
         return _reporting_a_bad_config(lambda: print(play()))

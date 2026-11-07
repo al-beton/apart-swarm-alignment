@@ -35,7 +35,7 @@ import assets
 from assets.cave import going_in, hat_stack
 from assets.font import draw_text, text_width, wrap
 from assets.pirates import pirate, portrait
-from assets.ui import panel, scroll_note
+from assets.ui import open_scroll, panel, scroll_note
 from treasure_island.config import parse_config
 from treasure_island.game_state import GameState
 from treasure_island.looks import sprite_values
@@ -57,7 +57,6 @@ PANEL_HEIGHT = 320
 PORTRAIT = (14, 32)
 _PANEL_LEFT = 14
 _TEXT_LEFT = 118
-LOG_LINES = 4
 THOUGHTS = 3
 LINE = 12
 _DID_LINES = 3
@@ -149,11 +148,9 @@ def _note(record):
     return " ".join(words) if words else None
 
 
-def _read(record):
-    """The lines a read returned, or None on a turn that didn't read."""
-    if not any(action["action"] == "read" for action in record["did"]):
-        return None
-    return [_shown(line) for line in record["log_shown"]]
+def _reading(record):
+    """Whether the turn read the scroll; what it read is never drawn."""
+    return any(action["action"] == "read" for action in record["did"])
 
 
 def _said(record):
@@ -222,11 +219,6 @@ def _log_so_far(records, turn):
     return lines
 
 
-def _shown(line):
-    """A line a pirate was shown, with who wrote it when the record says."""
-    return f"{line['by']}: {line['text']}" if "by" in line else line["text"]
-
-
 def _mark(records, treasure, found):
     """What the reader sees on the treasure's square: the cave once dug, else a `?`."""
     if found:
@@ -262,7 +254,7 @@ def scene(records, turn, size, treasure=None):
         "note": _note(current),
         "did": _did(current),
         "thoughts": _thoughts(records, turn),
-        "read": _read(current),
+        "reading": _reading(current),
         "treasure": found,
         "mark": _mark(records, treasure, found),
         "log_so_far": _log_so_far(records, turn),
@@ -450,6 +442,10 @@ def note_spot(shown, note_size, arrow_box):
 def _draw_note(image, shown, arrow_box):
     text = shown["note"]
     if text is None:
+        if shown["reading"]:
+            # A reader holds the scroll open, with none of its words on it.
+            held = open_scroll()
+            image.paste(held, note_spot(shown, held.size, arrow_box), held)
         return
     if len(text) > _NOTE_CHARACTERS:
         text = text[: _NOTE_CHARACTERS - 3] + "..."
@@ -482,10 +478,6 @@ def _panel_image(shown, height, look):
         lines = [line for thought in shown["thoughts"] for line in wrapped(thought)]
         # The latest thought matters most, so older lines are the ones to go.
         sections.append(("Thinking:", lines[-_THOUGHT_LINES:], _THOUGHT_LINES))
-    if shown["read"] is not None:
-        read = [line or "(blank)" for line in shown["read"][-LOG_LINES:]]
-        read = [line[:PANEL_COLUMNS] for line in read or ["(nothing new)"]]
-        sections.append(("It read:", read, LOG_LINES))
     for title, lines, most in sections:
         draw_text(image, (_PANEL_LEFT, y), title)
         y += LINE

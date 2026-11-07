@@ -15,9 +15,10 @@ says why in its manifest, and its replay stops at the same turn for that reason.
 `differences` plays the game again from that folder, in a temporary folder and
 with nothing but what's saved, and names any log that doesn't match byte for byte.
 
-Implements: agents/reasoning-looked-up, runs/yes-before-spending, runs/spending-cap, runs/stops-cleanly, agents/plays-then-replays, runs/cache-across-runs, runs/no-cache, treasure-island/named-runs, treasure-island/everything-cached, runs/one-game, runs/run-folder, runs/manifest-varies, runs/replay-byte-identical, runs/plays-live, results/examples-stay-true, agents/key-from-the-environment
+Implements: agents/reasoning-looked-up, runs/yes-before-spending, runs/spending-cap, runs/stops-cleanly, agents/plays-then-replays, runs/cache-across-runs, runs/no-cache, treasure-island/named-runs, treasure-island/everything-cached, runs/one-game, runs/run-folder, runs/manifest-varies, runs/replay-byte-identical, runs/plays-live, results/examples-stay-true, agents/key-from-the-environment, agents/refusals-noted
 """
 
+import collections
 import dataclasses
 import datetime
 import json
@@ -144,9 +145,20 @@ def write_saved(config, folder, on_start=None, pace=0, models=ASK_EVERY_MODEL):
     }
     if "stopped" in ending:
         manifest["stopped"] = ending["stopped"]
+    if refused := refused_replies(folder):
+        manifest["refused_replies"] = refused
     text = json.dumps(manifest, indent=2, sort_keys=True) + "\n"
     (folder / "manifest.json").write_text(text, encoding="utf-8")
     return folder
+
+
+def refused_replies(folder):
+    """How many replies each pirate gave that weren't valid actions, if any."""
+    counts = collections.Counter()
+    for line in (Path(folder) / "events.jsonl").read_text().splitlines():
+        record = json.loads(line)
+        counts[record["agent"]] += len(record.get("refused", []))
+    return {agent: count for agent, count in sorted(counts.items()) if count}
 
 
 def differences(folder):

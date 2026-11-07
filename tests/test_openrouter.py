@@ -139,11 +139,30 @@ def test_openrouter_backend_the_manifest_totals_the_reply_s_cost(
     assert KEY not in "".join(p.read_text() for p in folder.iterdir())
 
 
+def test_openrouter_backend_a_reply_with_no_cost_stops_the_run(
+    offline, monkeypatch, capsys
+):
+    usage = {k: v for k, v in RECORDED["usage"].items() if k != "cost"}
+    fake = answering(monkeypatch, {**RECORDED, "usage": usage})
+    (offline / "llm.toml").write_text(CONFIG)
+    assert cli.main(["run", "llm.toml", "--seed", "1", "--no-watch", "--yes"]) == 0
+    folder = offline / capsys.readouterr().out.splitlines()[-1]
+    assert len(fake.sent) == 1
+    last = (folder / "story.txt").read_text().splitlines()[-1]
+    assert last.startswith("Game stopped:")
+    assert "no cost" in last
+
+
 def test_key_from_the_environment_a_missing_key_stops_the_run_before_the_game(
     offline, monkeypatch, capsys
 ):
     fake = FakeOpenRouter(RECORDED)
     monkeypatch.setattr(urllib.request, "urlopen", fake)
+
+    def never_asked(question):
+        raise AssertionError("asked to spend before the key was checked")
+
+    monkeypatch.setattr("builtins.input", never_asked)
     (offline / "llm.toml").write_text(CONFIG)
     assert cli.main(["run", "llm.toml", "--seed", "1", "--no-watch"]) == 1
     assert "OPENROUTER_API_KEY" in capsys.readouterr().err

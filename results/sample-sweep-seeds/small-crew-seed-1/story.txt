@@ -1,9 +1,9 @@
-Turn 0: pirate-1 at (0, 0) dug at (0, 0) and found nothing. Why: I haven't dug this square yet.
-Turn 1: pirate-2 at (0, 1) dug at (0, 1) and found nothing. Why: I haven't dug this square yet.
-Turn 2: pirate-1 at (0, 0) moved east to (1, 0). Why: The next square to dig is (1, 0).
-Turn 3: pirate-2 at (0, 1) moved north to (0, 0). Why: The next square to dig is (0, 0).
-Turn 4: pirate-1 at (1, 0) dug at (1, 0) and found nothing. Why: I haven't dug this square yet.
-Turn 5: pirate-2 at (0, 0) dug at (0, 0) and found nothing. Why: I haven't dug this square yet.
-Turn 6: pirate-1 at (1, 0) moved east to (2, 0). Why: The next square to dig is (2, 0).
-Turn 7: pirate-2 at (0, 0) moved east to (1, 0). Why: The next square to dig is (1, 0).
+Turn 0: pirate-1 at (0, 0), on undug sand, with pirate-2 to the south, dug at (0, 0) and found nothing. Why: I haven't dug this square yet.
+Turn 1: pirate-2 at (0, 1), on undug sand, with pirate-1 to the north, dug at (0, 1) and found nothing. Why: I haven't dug this square yet.
+Turn 2: pirate-1 at (0, 0), on dug sand, with pirate-2 to the south, moved east to (1, 0). Why: The next square to dig is (1, 0).
+Turn 3: pirate-2 at (0, 1), on dug sand, with no pirate beside it, moved north to (0, 0). Why: The next square to dig is (0, 0).
+Turn 4: pirate-1 at (1, 0), on undug sand, with pirate-2 to the west, dug at (1, 0) and found nothing. Why: I haven't dug this square yet.
+Turn 5: pirate-2 at (0, 0), on dug sand, with pirate-1 to the east, dug at (0, 0) and found nothing. Why: I haven't dug this square yet.
+Turn 6: pirate-1 at (1, 0), on dug sand, with pirate-2 to the west, moved east to (2, 0). Why: The next square to dig is (2, 0).
+Turn 7: pirate-2 at (0, 0), on dug sand, with no pirate beside it, moved east to (1, 0). Why: The next square to dig is (1, 0).
 Game over: the turns ran out. The treasure at (0, 2) was never dug up. Score 10, with 0 moves to spare.

@@ -1,9 +1,9 @@
-Turn 0: pirate-1 at (0, 0) dug at (0, 0) and found the treasure. Why: I haven't dug this square yet.
-Turn 1: pirate-2 at (0, 1) dug at (0, 1) and found nothing. Why: I haven't dug this square yet.
-Turn 2: pirate-1 at (0, 0) dug at (0, 0) and found the treasure. Why: I found it, so I'm staying here.
-Turn 3: pirate-2 at (0, 1) tried to move north 2 times but pirate-1 was in the way, so its turn passed. Why: The next square to dig is (0, 0).
-Turn 4: pirate-1 at (0, 0) dug at (0, 0) and found the treasure. Why: I found it, so I'm staying here.
-Turn 5: pirate-2 at (0, 1) tried to move north 2 times but pirate-1 was in the way, so its turn passed. Why: The next square to dig is (0, 0).
-Turn 6: pirate-1 at (0, 0) dug at (0, 0) and found the treasure. Why: I found it, so I'm staying here.
-Turn 7: pirate-2 at (0, 1) tried to move north 2 times but pirate-1 was in the way, so its turn passed. Why: The next square to dig is (0, 0).
+Turn 0: pirate-1 at (0, 0), on undug sand, with pirate-2 to the south, dug at (0, 0) and found the treasure. Why: I haven't dug this square yet.
+Turn 1: pirate-2 at (0, 1), on undug sand, with pirate-1 to the north, dug at (0, 1) and found nothing. Why: I haven't dug this square yet.
+Turn 2: pirate-1 at (0, 0), on dug sand, with pirate-2 to the south, dug at (0, 0) and found the treasure. Why: I found it, so I'm staying here.
+Turn 3: pirate-2 at (0, 1), on dug sand, with pirate-1 to the north, tried to move north 2 times but pirate-1 was in the way, so its turn passed. Why: The next square to dig is (0, 0).
+Turn 4: pirate-1 at (0, 0), on dug sand, with pirate-2 to the south, dug at (0, 0) and found the treasure. Why: I found it, so I'm staying here.
+Turn 5: pirate-2 at (0, 1), on dug sand, with pirate-1 to the north, tried to move north 2 times but pirate-1 was in the way, so its turn passed. Why: The next square to dig is (0, 0).
+Turn 6: pirate-1 at (0, 0), on dug sand, with pirate-2 to the south, dug at (0, 0) and found the treasure. Why: I found it, so I'm staying here.
+Turn 7: pirate-2 at (0, 1), on dug sand, with pirate-1 to the north, tried to move north 2 times but pirate-1 was in the way, so its turn passed. Why: The next square to dig is (0, 0).
 Game over: the turns ran out. The treasure at (0, 0) was dug up. Score 55, with 0 moves to spare.

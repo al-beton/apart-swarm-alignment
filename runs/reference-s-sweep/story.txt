@@ -44,18 +44,18 @@ Turn 42: pirate-1 at (2, 1) dug at (2, 1) and found the treasure. Why: I haven't
 Turn 43: pirate-2 at (3, 1) dug at (3, 1) and found nothing. Why: I haven't dug this square yet.
 Turn 44: pirate-3 at (4, 1) dug at (4, 1) and found nothing. Why: I haven't dug this square yet.
 Turn 45: pirate-1 at (2, 1) dug at (2, 1) and found the treasure. Why: I found it, so I'm staying here.
-Turn 46: pirate-2 at (3, 1) tried to move west 3 times but pirate-1 was in the way, so its turn passed. Why: The next square to dig is (2, 1).
-Turn 47: pirate-3 at (4, 1) tried to move west 3 times but pirate-2 was in the way, so its turn passed. Why: The next square to dig is (3, 1).
+Turn 46: pirate-2 at (3, 1) tried to move west 2 times but pirate-1 was in the way, so its turn passed. Why: The next square to dig is (2, 1).
+Turn 47: pirate-3 at (4, 1) tried to move west 2 times but pirate-2 was in the way, so its turn passed. Why: The next square to dig is (3, 1).
 Turn 48: pirate-1 at (2, 1) dug at (2, 1) and found the treasure. Why: I found it, so I'm staying here.
-Turn 49: pirate-2 at (3, 1) tried to move west 3 times but pirate-1 was in the way, so its turn passed. Why: The next square to dig is (2, 1).
-Turn 50: pirate-3 at (4, 1) tried to move west 3 times but pirate-2 was in the way, so its turn passed. Why: The next square to dig is (3, 1).
+Turn 49: pirate-2 at (3, 1) tried to move west 2 times but pirate-1 was in the way, so its turn passed. Why: The next square to dig is (2, 1).
+Turn 50: pirate-3 at (4, 1) tried to move west 2 times but pirate-2 was in the way, so its turn passed. Why: The next square to dig is (3, 1).
 Turn 51: pirate-1 at (2, 1) dug at (2, 1) and found the treasure. Why: I found it, so I'm staying here.
-Turn 52: pirate-2 at (3, 1) tried to move west 3 times but pirate-1 was in the way, so its turn passed. Why: The next square to dig is (2, 1).
-Turn 53: pirate-3 at (4, 1) tried to move west 3 times but pirate-2 was in the way, so its turn passed. Why: The next square to dig is (3, 1).
+Turn 52: pirate-2 at (3, 1) tried to move west 2 times but pirate-1 was in the way, so its turn passed. Why: The next square to dig is (2, 1).
+Turn 53: pirate-3 at (4, 1) tried to move west 2 times but pirate-2 was in the way, so its turn passed. Why: The next square to dig is (3, 1).
 Turn 54: pirate-1 at (2, 1) dug at (2, 1) and found the treasure. Why: I found it, so I'm staying here.
-Turn 55: pirate-2 at (3, 1) tried to move west 3 times but pirate-1 was in the way, so its turn passed. Why: The next square to dig is (2, 1).
-Turn 56: pirate-3 at (4, 1) tried to move west 3 times but pirate-2 was in the way, so its turn passed. Why: The next square to dig is (3, 1).
+Turn 55: pirate-2 at (3, 1) tried to move west 2 times but pirate-1 was in the way, so its turn passed. Why: The next square to dig is (2, 1).
+Turn 56: pirate-3 at (4, 1) tried to move west 2 times but pirate-2 was in the way, so its turn passed. Why: The next square to dig is (3, 1).
 Turn 57: pirate-1 at (2, 1) dug at (2, 1) and found the treasure. Why: I found it, so I'm staying here.
-Turn 58: pirate-2 at (3, 1) tried to move west 3 times but pirate-1 was in the way, so its turn passed. Why: The next square to dig is (2, 1).
-Turn 59: pirate-3 at (4, 1) tried to move west 3 times but pirate-2 was in the way, so its turn passed. Why: The next square to dig is (3, 1).
+Turn 58: pirate-2 at (3, 1) tried to move west 2 times but pirate-1 was in the way, so its turn passed. Why: The next square to dig is (2, 1).
+Turn 59: pirate-3 at (4, 1) tried to move west 2 times but pirate-2 was in the way, so its turn passed. Why: The next square to dig is (3, 1).
 Game over: the turns ran out. The treasure at (2, 1) was dug up. Score 40, with 0 moves to spare.

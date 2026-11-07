@@ -1,6 +1,7 @@
 {
   "brain": "say-a-number",
   "crew_size": 2,
+  "failed_tries": 2,
   "grid_size": 5,
   "pirates": [
     {

@@ -79,10 +79,10 @@ Pirate 1 has found the treasure, so it stays on it.
 Turn 6: pirate-1 at (1, 0) dug at (1, 0) and found the treasure. Why: I found it, so I'm staying here.
 ```
 
-Pirate 2 tries to step east onto the treasure's square, but pirate 1 is standing there. A blocked move doesn't use the turn: pirate 2 is told who is in the way and chooses again. These scripted pirates choose the same move, so after the third try its last turn passes.
+Pirate 2 tries to step east onto the treasure's square, but pirate 1 is standing there. A failed move doesn't use the turn: pirate 2 is told who is in the way and chooses again. These scripted pirates choose the same move, so after the second try its last turn passes.
 
 ```text
-Turn 7: pirate-2 at (0, 0) tried to move east 3 times but pirate-1 was in the way, so its turn passed. Why: The next square to dig is (1, 0).
+Turn 7: pirate-2 at (0, 0) tried to move east 2 times but pirate-1 was in the way, so its turn passed. Why: The next square to dig is (1, 0).
 ```
 
 Only pirate 1 is on the treasure. Everyone on it would score 100 plus 10 for each move left; short of that the crew scores 10, plus its share on the treasure of a further 90. One of two is half of 90, so the score is 55.

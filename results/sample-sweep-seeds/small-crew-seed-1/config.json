@@ -1,6 +1,7 @@
 {
   "brain": "s-sweep",
   "crew_size": 2,
+  "failed_tries": 2,
   "grid_size": 3,
   "pirates": [
     {
@@ -10,6 +11,7 @@
         46
       ],
       "head_text": "1",
+      "model": null,
       "personality": 1
     },
     {
@@ -19,9 +21,12 @@
         230
       ],
       "head_text": "2",
+      "model": null,
       "personality": 2
     }
   ],
+  "reply_tokens": 300,
   "seed": 1,
+  "thinking": false,
   "turns_per_pirate": 4
 }

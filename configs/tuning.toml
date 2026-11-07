@@ -1,0 +1,10 @@
+# Implements: tuning/scripted-first, tuning/one-score
+# The game the tuning loop tunes: the real game's defaults, played by the
+# striping pirates, which talk. The harness plays it on seeds 0 to 19, so no
+# seed is set here. The teacher may change any number; keep the brain.
+grid_size = 10
+crew_size = 6
+turns_per_pirate = 30
+failed_tries = 2
+brain = "stripes"
+scroll = true

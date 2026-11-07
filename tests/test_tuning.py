@@ -214,7 +214,8 @@ def test_teacher_rounds_keep_only_a_round_that_raises_the_score(repo, tmp_path):
     teacher = FakeTeacher(15, 5, 18)
     history = loop(repo, teacher, tmp_path)
     assert [h["kept"] for h in history] == [True, True, False, True]
-    branches = git(repo, "branch", "--list", "tuning/*").split()
+    refs = git(repo, "for-each-ref", "--format=%(refname:short)", "refs/heads/tuning")
+    branches = sorted(refs.split())
     assert branches == [f"tuning/round-{n}" for n in range(4)]
     # Round 3 started from round 1, the best then, not from the discarded round 2.
     assert (

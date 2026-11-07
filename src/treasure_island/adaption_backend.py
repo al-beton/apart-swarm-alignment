@@ -13,11 +13,12 @@ model with no rate is refused rather than run unpriced, and a reply that gives n
 token usage stops the run, since the spending cap couldn't count it. Default, Al to confirm:
 a credit counts as a dollar, so the manifest's `cost_usd` totals credits.
 
-`backends` makes one for each run, with the key from `ADAPTION_API_KEY`, and the
+`check_key` lists the hosted models the key can use, which asks no model anything
+and spends nothing. `backends` makes one for each run, with the key from `ADAPTION_API_KEY`, and the
 key goes only to the SDK's client, so it never reaches a request, a reply or a
 run folder.
 
-Implements: agents/adaption-backend, agents/adaption-cost
+Implements: agents/adaption-backend, agents/adaption-cost, agents/check-keys
 """
 
 import json
@@ -33,6 +34,31 @@ def client(key):
     import adaption
 
     return adaption.Adaption(api_key=key)
+
+
+def check_key(key):
+    """Whether Adaption takes this key, and how many hosted models it can use."""
+    import adaption
+
+    try:
+        hosted = client(key).models.list(type="hosted")
+    except adaption.APIStatusError as refused:
+        if refused.status_code in (401, 403):
+            return (
+                False,
+                f"is set, but Adaption rejected it (HTTP {refused.status_code}).",
+            )
+        return (
+            False,
+            f"couldn't be checked: Adaption answered HTTP {refused.status_code}.",
+        )
+    except (adaption.APIError, OSError) as why:
+        return False, f"couldn't be checked: {type(why).__name__}."
+    ids = [model.id for model in hosted.data]
+    priced = sum(1 for model_id in ids if model_id in RATES)
+    return True, (
+        f"works; it can use {len(ids)} hosted models, {priced} of them priced here."
+    )
 
 
 def _reply_text(response, thinking):

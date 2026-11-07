@@ -1,15 +1,18 @@
-# Implements: agents/adaption-backend, agents/adaption-cost, agents/key-from-the-environment
+# Implements: agents/adaption-backend, agents/adaption-cost, agents/key-from-the-environment, agents/check-keys
 """The Adaption backend, tested against a reply in the SDK's own shape, offline."""
 
 import json
 from pathlib import Path
 
+import adaption
+import httpx
 import pytest
-from adaption.types import Response
+from adaption.types import ModelListResponse, Response
 
 from treasure_island import adaption_backend, cli, saved_game
 from treasure_island.adaption_backend import RATES, AdaptionBackend
 from treasure_island.backends import MissingKey, UnknownModel, backend_for, price_for
+from treasure_island.keys import check_keys
 from treasure_island.llm import TOOL_DEFINITIONS
 from treasure_island.saved_game import Models
 
@@ -191,3 +194,72 @@ def test_key_from_the_environment_an_adaption_run_without_its_key_stops_first(
 def test_key_from_the_environment_env_example_names_the_adaption_key():
     lines = (ROOT / ".env.example").read_text().splitlines()
     assert "ADAPTION_API_KEY=" in lines
+
+
+HOSTED = {
+    "object": "list",
+    "data": [
+        {"id": MODEL, "created": 0, "object": "model", "owned_by": "adaption"},
+        {"id": "some-other-model", "created": 0, "object": "model", "owned_by": "x"},
+    ],
+}
+
+
+class FakeModels:
+    def __init__(self, answer):
+        self.answer = answer
+        self.asked = []
+
+    def list(self, **arguments):
+        self.asked.append(arguments)
+        if isinstance(self.answer, Exception):
+            raise self.answer
+        return ModelListResponse.model_validate(self.answer)
+
+
+class KeyClient:
+    """A client that only lists models: a key check must never ask one anything."""
+
+    def __init__(self, answer=HOSTED):
+        self.models = FakeModels(answer)
+
+
+def refused(status):
+    request = httpx.Request("GET", "https://example.invalid/models")
+    return httpx.Response(status, request=request)
+
+
+def checked(monkeypatch, answer):
+    client = KeyClient(answer)
+    monkeypatch.setattr(adaption_backend, "client", lambda key: client)
+    return adaption_backend.check_key("test-key-not-real"), client
+
+
+def test_check_keys_an_adaption_key_that_works_says_what_it_can_use(monkeypatch):
+    (works, said), client = checked(monkeypatch, HOSTED)
+    assert works
+    assert "2 hosted models" in said and "1 of them priced" in said
+    assert client.models.asked == [{"type": "hosted"}]
+
+
+def test_check_keys_an_adaption_key_that_is_rejected_fails(monkeypatch):
+    error = adaption.AuthenticationError("no", response=refused(401), body=None)
+    (works, said), _ = checked(monkeypatch, error)
+    assert not works
+    assert "rejected" in said and "401" in said
+
+
+def test_check_keys_an_adaption_key_that_cannot_be_checked_fails(monkeypatch):
+    error = adaption.APIConnectionError(request=refused(500).request)
+    (works, said), _ = checked(monkeypatch, error)
+    assert not works
+    assert "couldn't be checked" in said
+
+
+def test_check_keys_lists_adaption_and_never_prints_its_key(monkeypatch):
+    monkeypatch.setattr(adaption_backend, "client", lambda key: KeyClient())
+    lines, failed = check_keys({"ADAPTION_API_KEY": "test-key-not-real"})
+    (line,) = [line for line in lines if line.startswith("adaption:")]
+    assert "works" in line
+    assert not failed
+    assert all("test-key-not-real" not in line for line in lines)

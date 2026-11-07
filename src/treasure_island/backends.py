@@ -8,7 +8,7 @@ its model's price adds it to `PRICES`, so a run can say what it may cost before 
 starts; OpenRouter's prices vary by model, so its replies' own costs are counted,
 and Adaption's rates are listed in adaption_backend.
 
-Implements: agents/backend-interface, agents/no-model-yet, agents/openrouter-backend, agents/adaption-backend, agents/adaption-cost, agents/key-from-the-environment, runs/cost-before-run
+Implements: agents/check-keys, agents/backend-interface, agents/no-model-yet, agents/openrouter-backend, agents/adaption-backend, agents/adaption-cost, agents/key-from-the-environment, runs/cost-before-run
 """
 
 import os
@@ -28,6 +28,9 @@ def _adaption(model_id, key):
             "be counted; add its rate to RATES in adaption_backend.py."
         )
     return adaption_backend.AdaptionBackend(model_id, adaption_backend.client(key))
+
+
+_adaption.check_key = adaption_backend.check_key  # for check-keys, like OpenRouter's
 
 
 # Model-name prefix -> (the backend, the environment variable holding its key)

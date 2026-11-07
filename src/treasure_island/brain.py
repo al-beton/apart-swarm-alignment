@@ -11,7 +11,7 @@ position and its turns left, and later what each of its reads found on the
 scroll. So other pirates and the treasure can't reach a brain, and neither can
 another pirate's thinking. Nothing on the scroll is shown for free.
 
-Implements: treasure-island/cave, treasure-island/cave-leak, treasure-island/failed-move-cost, treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/thinking, treasure-island/what-they-are-told, treasure-island/looks-are-cosmetic
+Implements: treasure-island/cave-leak, treasure-island/config-variables, treasure-island/cave, treasure-island/failed-move-cost, treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/thinking, treasure-island/what-they-are-told, treasure-island/looks-are-cosmetic
 """
 
 import dataclasses
@@ -97,9 +97,9 @@ def system_prompt(config):
         f"{config.turns_per_pirate} turns. Digging up the treasure opens a cave on "
         "its square, and only a pirate standing there is told. A pirate on the open "
         "cave can enter it, which uses its turn and takes it out of the game for "
-        "good; the square holds one pirate at a time. Your crew scores 100 for every "
-        "pirate that gets into the cave, plus 10 for each turn it had left after "
-        "going in.\n"
+        "good; the square holds one pirate at a time. Your crew scores "
+        f"{config.score_in_cave} for every pirate that gets into the cave, plus "
+        f"{config.score_per_turn_left} for each turn it had left after going in.\n"
         + (_ENTER_ONLY_ON_THE_CAVE if config.cave_leak else "")
         + "You can't see the grid. Each turn you're told your own position, "
         "whether your square has been dug by anyone, and which of the 4 squares "
@@ -139,7 +139,7 @@ class EarlierTurn:
         step = (
             " ".join(str(part) for part in self.action.values())
             if self.action
-            else "nothing, since your answers weren't tool calls"
+            else "an answer that wasn't a tool call"
         )
         thought = f" You were thinking: {self.thinking}" if self.thinking else ""
         found = f" It said: {_scroll_text(self.read_lines)}." if self.read_lines else ""

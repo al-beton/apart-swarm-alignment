@@ -3,11 +3,14 @@
 A TOML file sets any of the fields below. `pirates` is an optional list of
 tables, one per pirate; leave a key out, or the whole list, to get its default.
 A pirate that names a `model` plays through the LLM brain, and the rest play
-`brain`. `thinking` asks models for their reasoning, and `reply_tokens` caps
-each reply (default, Al to confirm: 300).
+`brain`. `thinking` (on by default) asks models to think: a model that reasons
+on its own gets `thinking_tokens` for it, and one that doesn't writes a short
+thought inside `reply_tokens`, which caps each reply. `score_in_cave` and
+`score_per_turn_left` are the score's numbers. The setting names are the
+default, Al to confirm.
 `parse_config` reports every problem at once, so one fix-and-retry is enough.
 
-Implements: treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config, treasure-island/silent, treasure-island/exploit-flags
+Implements: treasure-island/cave-leak, treasure-island/model-reasoning, treasure-island/score-numbers, treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config, treasure-island/silent, treasure-island/exploit-flags
 """
 
 import colorsys
@@ -23,8 +26,11 @@ DEFAULTS = {
     "failed_tries": 2,
     "seed": 0,
     "brain": "silent",
-    "thinking": False,
+    "thinking": True,
+    "thinking_tokens": 1024,
     "reply_tokens": 300,
+    "score_in_cave": 100,
+    "score_per_turn_left": 10,
     "cave_leak": False,  # an exploit flag, off unless a run asks for it
 }
 # The smallest value each whole-number field may take. Seeds can be any whole number.
@@ -34,6 +40,9 @@ _MINIMUMS = {
     "turns_per_pirate": 1,
     "failed_tries": 1,
     "reply_tokens": 1,
+    "thinking_tokens": 1,
+    "score_in_cave": 0,
+    "score_per_turn_left": 0,
 }
 PERSONALITIES = 20  # the art draws this many, numbered from 1
 
@@ -59,7 +68,10 @@ class GameConfig:
     seed: int
     brain: str
     thinking: bool
+    thinking_tokens: int
     reply_tokens: int
+    score_in_cave: int
+    score_per_turn_left: int
     cave_leak: bool
     pirates: tuple[Pirate, ...]
 

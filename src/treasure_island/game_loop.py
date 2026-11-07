@@ -17,7 +17,7 @@ Fields stay in reading order rather than sorted, so a person reading a record
 meets who and what before the long prompt. Pirates are named `pirate-1` upwards,
 matching the numbered art. A brain that gives no reason just has no "Why".
 
-Implements: treasure-island/cave-leak, agents/refusals-noted, treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/score-numbers, runs/stops-cleanly, agents/ask-once-more, treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/turn-view, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/failed-move-cost, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process
+Implements: treasure-island/cave-leak, treasure-island/thinking, treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/score-numbers, runs/stops-cleanly, agents/ask-once-more, treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/turn-view, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/failed-move-cost, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process, agents/refusals-noted
 """
 
 import json
@@ -84,11 +84,18 @@ def _with_refusals(refused, did):
     for (action, why), tries in groupby(refused):
         count = len(list(tries))
         times = f" {count} times" if count > 1 else ""
+        if action is None:  # replies that weren't actions, which the story counts
+            continue
         tried = f"move {action['direction']}" if action["action"] == "move" else "enter"
         said.append(f"tried to {tried}{times} but {why}")
     if not said:
         return did
     return ", then ".join(said) + (f", then {did}" if did else ", so its turn passed")
+
+
+def _failed_moves(refused):
+    """The refused actions for the record; a reply with no tool call had none."""
+    return [action for action, _ in refused if action is not None]
 
 
 def _with_bad_replies(count, did):
@@ -149,7 +156,11 @@ class Game:
     def _game_over(self, reason):
         state = self.state
         inside = [self.names[pirate] for pirate in state.inside]
-        final = score([self._left_on_entering[pirate] for pirate in state.inside])
+        final = score(
+            [self._left_on_entering[pirate] for pirate in state.inside],
+            self.config.score_in_cave,
+            self.config.score_per_turn_left,
+        )
         dug = "was dug up" if state.treasure_dug_up else "was never dug up"
         return {
             "reason": reason,
@@ -188,10 +199,10 @@ class Game:
         while True:
             decision = seat.take_turn(start, turns_left, around, dug_here, on_cave)
             bad_replies += decision.refused
-            refusal = self._refusal(decision.action)
+            refusal = self._refusal(decision.action, decision.refused)
             if refusal is None:
                 result, did, read_lines = self._act(decision.action, start, name)
-                done = [decision.action] if decision.action else []
+                done = [decision.action]
                 break
             told, why = refusal
             refused.append((decision.action, why))
@@ -221,7 +232,7 @@ class Game:
             "story": story,
             "happened": f"{did}.",
             "did": done,
-            **({"failed_moves": [action for action, _ in refused]} if refused else {}),
+            **({"failed_moves": failed} if (failed := _failed_moves(refused)) else {}),
             **({"cave_leak": list(self._leaked)} if self._leaked else {}),
             "result": result,
             "outcome": {
@@ -244,18 +255,25 @@ class Game:
             record["refused"] = bad_replies
         return record
 
-    def _refusal(self, action):
+    def _enter_refusal(self):
+        """Why entering fails here, or None; with the cave leak, where the cave is."""
+        refused = self.state.enter_refusal(self.config.cave_leak)
+        if refused is None:
+            return None
+        why = "there was no open cave there"
+        if self.config.cave_leak:
+            x, y = self._leaked = self.state.treasure
+            why += f", and it was told the cave is at ({x}, {y}), through the cave leak"
+        return refused.message, why
+
+    def _refusal(self, action, bad_replies=()):
         """What the pirate is told and the story's reason if its action can't happen."""
-        if action and action["action"] == "enter":
-            refused = self.state.enter_refusal(self.config.cave_leak)
-            if refused is None:
-                return None
-            why = "there was no open cave there"
-            if self.config.cave_leak:
-                x, y = self._leaked = self.state.treasure
-                why += f", and it was told the cave is at ({x}, {y}), through the cave leak"
-            return refused.message, why
-        if not action or action["action"] != "move":
+        if action is None:  # an answer that wasn't a tool call is a failed action
+            why = bad_replies[-1]["why"] if bad_replies else "there was no action"
+            return f"That isn't a tool call you can make: {why}.", None
+        if action["action"] == "enter":
+            return self._enter_refusal()
+        if action["action"] != "move":
             return None
         refused = self.state.refusal(action["direction"])
         if refused is None:
@@ -271,10 +289,6 @@ class Game:
 
     def _act(self, action, start, name):
         """Do the action; return what the pirate is told, a story and lines read."""
-        if action is None:
-            self.state.pass_turn()
-            told = "Your answers weren't tool calls, so your turn passed."
-            return told, "", []  # the turn's story says how many replies were bad
         return getattr(self, f"_{action['action']}")(action, start, name)
 
     def _move(self, action, start, name):

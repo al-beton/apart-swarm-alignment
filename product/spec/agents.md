@@ -31,7 +31,7 @@
 | `one-request-per-turn` | not yet | — |
 | `normal-temperature` | `src/treasure_island/openrouter.py`, `src/treasure_island/adaption_backend.py` | `test_normal_temperature_openrouter_sends_no_temperature`, `test_normal_temperature_adaption_sends_no_temperature` |
 | `reply-is-a-tool-call` | `src/treasure_island/llm.py` | `test_reply_is_a_tool_call_becomes_the_action` |
-| `ask-once-more` | not yet | — |
+| `ask-once-more` | `src/treasure_island/llm.py`, `src/treasure_island/game_loop.py` | `test_ask_once_more_a_bad_reply_is_recorded_and_the_pirate_is_told_why`, `test_ask_once_more_every_kind_of_bad_reply_gets_a_reason`, `test_ask_once_more_after_failed_tries_bad_replies_the_turn_passes`, `test_ask_once_more_failed_tries_sets_how_many_bad_replies_a_turn_takes`, `test_ask_once_more_a_bad_reply_and_a_failed_move_share_a_turn_s_tries` |
 | `refusals-noted` | `src/treasure_island/game_loop.py`, `src/treasure_island/saved_game.py`, `src/treasure_island/cli.py` | `test_refusals_noted_the_story_says_a_reply_was_not_valid_and_the_turn_went_on`, `test_refusals_noted_the_story_says_when_the_turn_passed`, `test_refusals_noted_a_turn_with_only_good_replies_says_nothing_of_it`, `test_refusals_noted_the_manifest_counts_them_for_each_pirate`, `test_refusals_noted_the_run_command_ends_with_a_warning`, `test_refusals_noted_a_run_with_none_has_no_warning` |
 | `reply-cap` | `src/treasure_island/config.py`, `src/treasure_island/llm.py` | `test_reply_cap_defaults_to_300_tokens_and_a_config_can_set_it` |
 | `plays-then-replays` | `src/treasure_island/llm.py`, `src/treasure_island/saved_game.py` | `test_plays_then_replays_a_whole_game_through_a_fake_backend`, `test_plays_then_replays_with_no_backend_a_missing_reply_spends_nothing` |

@@ -1,7 +1,7 @@
-# Implements: assets/viewer-parts, assets/original-art
-"""Viewer parts: a speech bubble, a side panel and the arrow for whose turn it is.
+# Implements: assets/viewer-parts, assets/original-art, treasure-island/pokemon-style
+"""Viewer parts: a scroll note with a quill, a side panel and the arrow for whose turn it is.
 
-The bubble and panel are drawn as nine-slice images: fixed corners, stretched edges.
+The note and panel are drawn as nine-slice images: fixed corners, stretched edges.
 """
 
 from PIL import Image, ImageDraw
@@ -9,27 +9,35 @@ from PIL import Image, ImageDraw
 from assets.font import FONT_HEIGHT, FONT_WIDTH, draw_text, text_width, wrap
 from assets.pixels import CREAM, DARK, OUTLINE, add_outline, rgba
 
-BUBBLE_CELL = 8
+NOTE_CELL = 8
 PANEL_CELL = 12
-_BUBBLE_PADDING = 6
-_TAIL = 8
+_NOTE_PADDING = 8
+_PARCHMENT = "#f0e2bc"
+_ROLL = "#c9a66b"
+_ROLL_SHADE = "#a87038"
 
 
-def bubble_slices():
-    """A 24x24 nine-slice with 8px cells: cream on dark, rounded."""
+def note_slices():
+    """A 24x24 nine-slice with 8px cells: parchment rolled at the top and bottom."""
     image = Image.new("RGBA", (24, 24), (0, 0, 0, 0))
-    ImageDraw.Draw(image).rounded_rectangle(
-        [0, 0, 23, 23], radius=4, fill=CREAM, outline=OUTLINE
-    )
+    draw = ImageDraw.Draw(image)
+    draw.rectangle([1, 3, 22, 20], fill=_PARCHMENT, outline=OUTLINE)
+    for top in (0, 19):
+        draw.rounded_rectangle(
+            [0, top, 23, top + 4], radius=2, fill=_ROLL, outline=OUTLINE
+        )
+        draw.line([(2, top + 3), (21, top + 3)], fill=_ROLL_SHADE)
     return image
 
 
-def bubble_tail():
-    """12x8, placed under the bubble, pointing down at the speaker."""
-    image = Image.new("RGBA", (12, 8), (0, 0, 0, 0))
+def quill():
+    """12x16, a white feather with a dark nib, writing at the note's bottom right."""
+    image = Image.new("RGBA", (12, 16), (0, 0, 0, 0))
     draw = ImageDraw.Draw(image)
-    draw.polygon([(1, 0), (9, 0), (3, 6)], fill=OUTLINE)
-    draw.polygon([(2, 0), (8, 0), (4, 4)], fill=CREAM)
+    draw.polygon([(10, 0), (11, 2), (5, 11), (3, 10)], fill=CREAM)
+    draw.line([(10, 1), (4, 11)], fill="#d8cdb4")
+    draw.line([(4, 11), (1, 15)], fill=DARK, width=2)
+    add_outline(image)
     return image
 
 
@@ -72,19 +80,20 @@ def panel(width, height):
     return _stretch(panel_slices(), PANEL_CELL, width, height)
 
 
-def speech_bubble(text, max_width=168):
-    """A bubble that fits text, tail included; the tail tip is near the bottom left."""
-    columns = max(1, (max_width - 2 * _BUBBLE_PADDING) // FONT_WIDTH)
+def scroll_note(text, max_width=168):
+    """A rolled note that fits text, with the quill writing at its bottom right."""
+    feather = quill()
+    columns = max(1, (max_width - 2 * _NOTE_PADDING - feather.width) // FONT_WIDTH)
     lines = wrap(text, columns)
-    width = max(text_width(line) for line in lines) + 2 * _BUBBLE_PADDING
-    width = max(width, 3 * BUBBLE_CELL)
-    body = len(lines) * FONT_HEIGHT + 2 * _BUBBLE_PADDING - 1
-    body = max(body, 3 * BUBBLE_CELL)
-    image = Image.new("RGBA", (width, body + _TAIL), (0, 0, 0, 0))
-    image.paste(_stretch(bubble_slices(), BUBBLE_CELL, width, body), (0, 0))
-    image.alpha_composite(bubble_tail(), (6, body - 1))
+    width = max(text_width(line) for line in lines) + 2 * _NOTE_PADDING
+    width = max(width, 3 * NOTE_CELL)
+    body = len(lines) * FONT_HEIGHT + 2 * _NOTE_PADDING - 1
+    body = max(body, 3 * NOTE_CELL)
+    image = Image.new("RGBA", (width + feather.width // 2, body + 4), (0, 0, 0, 0))
+    image.paste(_stretch(note_slices(), NOTE_CELL, width, body), (0, 0))
     for i, line in enumerate(lines):
-        draw_text(
-            image, (_BUBBLE_PADDING, _BUBBLE_PADDING + i * FONT_HEIGHT), line, DARK
-        )
+        draw_text(image, (_NOTE_PADDING, _NOTE_PADDING + i * FONT_HEIGHT), line, DARK)
+    image.alpha_composite(
+        feather, (image.width - feather.width, image.height - feather.height)
+    )
     return image

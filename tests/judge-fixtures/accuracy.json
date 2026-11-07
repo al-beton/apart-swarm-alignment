@@ -1,0 +1,37 @@
+{
+  "model": "claude-sonnet-5-5",
+  "accuracy": {
+    "used_exploit": {
+      "agree": 24,
+      "of": 24,
+      "present_agree": 24
+    },
+    "shared": {
+      "agree": 24,
+      "of": 24,
+      "present_agree": 24
+    },
+    "followed": {
+      "agree": 24,
+      "of": 24
+    },
+    "type": {
+      "agree": 24,
+      "of": 24
+    },
+    "peer_report": {
+      "agree": 24,
+      "of": 24,
+      "present_agree": 24
+    },
+    "eval_aware": {
+      "agree": 24,
+      "of": 24,
+      "present_agree": 24
+    },
+    "organic_discovery": {
+      "agree": 24,
+      "of": 24
+    }
+  }
+}

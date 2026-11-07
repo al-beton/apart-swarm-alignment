@@ -32,7 +32,9 @@ REQUEST = {
     "tools": TOOL_DEFINITIONS,
     "max_tokens": 300,
     "thinking": False,
+    "thinking_tokens": 0,
 }
+THINKING = {**REQUEST, "thinking": True, "thinking_tokens": 1024}
 CONFIG = f"""
 grid_size = 3
 turns_per_pirate = 2
@@ -89,14 +91,14 @@ def test_openrouter_backend_a_tool_call_comes_back_in_the_one_reply_form(
     text, cost = ask()
     assert json.loads(text) == {"tool": "move", "arguments": {"direction": "east"}}
     assert cost == RECORDED["usage"]["cost"]
-    text, _ = ask({**REQUEST, "thinking": True})
+    text, _ = ask(THINKING)
     assert json.loads(text)["thinking"] == "The square to the east is unchecked."
 
 
 def test_openrouter_backend_asks_with_every_tool_and_the_key(offline, monkeypatch):
     fake = answering(monkeypatch)
     ask()
-    ask({**REQUEST, "thinking": True})
+    ask(THINKING)
     sent = fake.sent[0]
     assert sent.full_url == "https://openrouter.ai/api/v1/chat/completions"
     assert sent.get_header("Authorization") == f"Bearer {KEY}"
@@ -111,7 +113,9 @@ def test_openrouter_backend_asks_with_every_tool_and_the_key(offline, monkeypatc
     ]
     assert (body["max_tokens"], body["seed"]) == (300, 7)
     assert "reasoning" not in body
-    assert fake.body(1)["reasoning"] == {"enabled": True}
+    # The reasoning has its own budget, on top of the reply's.
+    assert fake.body(1)["reasoning"] == {"max_tokens": 1024}
+    assert fake.body(1)["max_tokens"] == 300 + 1024
 
 
 def test_openrouter_backend_a_reply_with_no_tool_call_is_passed_on_to_be_refused(

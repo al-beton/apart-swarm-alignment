@@ -1,4 +1,4 @@
-# Implements: agents/model-per-pirate, agents/one-request-per-turn, agents/reply-is-a-tool-call, agents/ask-once-more, agents/reply-cap, agents/plays-then-replays, treasure-island/thinking, treasure-island/model-backends, runs/cache-across-runs, runs/no-cache
+# Implements: treasure-island/model-reasoning, agents/model-per-pirate, agents/one-request-per-turn, agents/reply-is-a-tool-call, agents/ask-once-more, agents/reply-cap, agents/plays-then-replays, treasure-island/thinking, treasure-island/model-backends, runs/cache-across-runs, runs/no-cache
 """An LLM pirate plays through a backend, and its game replays with no backend."""
 
 import json
@@ -6,7 +6,7 @@ import json
 import pytest
 
 from treasure_island import cli, saved_game
-from treasure_island.backends import UnknownModel
+from treasure_island.backends import BACKENDS, UnknownModel, thinking_way
 from treasure_island.brain import TOOLS, PirateSeat, system_prompt
 from treasure_island.config import ConfigError, load_config, parse_config, save_config
 from treasure_island.event_log import log_errors
@@ -98,6 +98,7 @@ def test_one_request_per_turn_holds_only_the_prompt_the_turn_and_the_tools(tmp_p
         "tools",
         "max_tokens",
         "thinking",
+        "thinking_tokens",
     }
     assert request["system"] == system_prompt(llm_config())
     (message,) = request["messages"]
@@ -125,19 +126,21 @@ def test_reply_is_a_tool_call_becomes_the_action(tmp_path):
     assert decision.refused == ()
 
 
+def first_turns(model, tmp_path, **settings):
+    """Play a one-pirate LLM game through `model`; return its records."""
+    config = llm_config(**settings)
+    replies = Replies(tmp_path / "replies.jsonl", backend=model)
+    return list(Game(config, brains_for("s-sweep", config, replies)).records())
+
+
 def test_ask_once_more_a_bad_reply_is_recorded_and_the_pirate_is_told_why(tmp_path):
     model = FakeModel("let me think", DIG)
-    decision, _ = one_turn(model, tmp_path=tmp_path)
-    assert decision.action == {"action": "dig"}
-    assert [r["reply"] for r in decision.refused] == ["let me think"]
-    first, again = model.requests
-    assert again["messages"][:2] == [
-        first["messages"][0],
-        {"role": "assistant", "content": "let me think"},
-    ]
-    told = again["messages"][2]
-    assert told["role"] == "user"
-    assert decision.refused[0]["why"] in told["content"]
+    first = first_turns(model, tmp_path)[0]
+    assert first["did"] == [{"action": "dig"}]
+    assert [r["reply"] for r in first["refused"]] == ["let me think"]
+    why = first["refused"][0]["why"]
+    assert why in model.requests[1]["messages"][0]["content"]
+    assert "didn't use your turn" in model.requests[1]["messages"][0]["content"]
 
 
 @pytest.mark.parametrize(
@@ -155,17 +158,30 @@ def test_ask_once_more_every_kind_of_bad_reply_gets_a_reason(bad, tmp_path):
     assert decision.refused[0]["why"]
 
 
-def test_ask_once_more_a_second_bad_reply_passes_the_turn(tmp_path):
+def test_ask_once_more_after_failed_tries_bad_replies_the_turn_passes(tmp_path):
     model = FakeModel("no idea")
-    config = llm_config(turns_per_pirate=2)
-    replies = Replies(tmp_path / "replies.jsonl", backend=model)
-    records = list(Game(config, brains_for("s-sweep", config, replies)).records())
-    first = records[0]
+    first = first_turns(model, tmp_path, turns_per_pirate=2)[0]
     assert first["did"] == []
     assert first["outcome"]["position"] == first["saw"]["position"]
     assert [r["reply"] for r in first["refused"]] == ["no idea", "no idea"]
     assert "passed" in first["story"]
     assert len(model.requests) == 2 * 2
+
+
+def test_ask_once_more_failed_tries_sets_how_many_bad_replies_a_turn_takes(tmp_path):
+    model = FakeModel("no idea")
+    first_turns(model, tmp_path, turns_per_pirate=2, failed_tries=3)
+    assert len(model.requests) == 2 * 3
+
+
+def test_ask_once_more_a_bad_reply_and_a_failed_move_share_a_turn_s_tries(tmp_path):
+    off_the_edge = json.dumps({"tool": "move", "arguments": {"direction": "north"}})
+    model = FakeModel("no idea", off_the_edge, DIG)
+    first = first_turns(model, tmp_path)[0]
+    assert first["did"] == []
+    assert first["failed_moves"] == [{"action": "move", "direction": "north"}]
+    assert len(first["refused"]) == 1
+    assert "passed" in first["story"]
 
 
 def test_reply_cap_defaults_to_300_tokens_and_a_config_can_set_it(tmp_path):
@@ -177,21 +193,58 @@ def test_reply_cap_defaults_to_300_tokens_and_a_config_can_set_it(tmp_path):
         parse_config({"reply_tokens": 0})
 
 
-def test_thinking_is_off_by_default_and_a_reply_s_reasoning_is_dropped(tmp_path):
+def test_thinking_is_on_by_default_and_a_config_can_turn_it_off(tmp_path):
     answer = json.dumps({"tool": "dig", "arguments": {}, "thinking": "hmm"})
+    assert llm_config().thinking is True
     model = FakeModel(answer)
-    decision, _ = one_turn(model, tmp_path=tmp_path)
-    assert llm_config().thinking is False
+    decision, _ = one_turn(model, llm_config(thinking=False), tmp_path)
     assert model.requests[0]["thinking"] is False
+    assert model.requests[0]["thinking_tokens"] == 0
     assert decision.thinking is None
 
 
-def test_thinking_when_turned_on_is_kept_for_the_record(tmp_path):
+def test_thinking_is_kept_for_the_record(tmp_path):
     answer = json.dumps({"tool": "dig", "arguments": {}, "thinking": "corner first"})
     model = FakeModel(answer)
-    decision, _ = one_turn(model, llm_config(thinking=True), tmp_path)
+    decision, _ = one_turn(model, tmp_path=tmp_path)
     assert model.requests[0]["thinking"] is True
     assert decision.thinking == "corner first"
+
+
+def test_model_reasoning_each_backend_says_which_way_its_models_think():
+    for prefix in BACKENDS:
+        assert thinking_way(f"{prefix}some-model") in ("built-in", "in-reply")
+    assert thinking_way("openrouter/some-model") == "built-in"
+    assert thinking_way("adaption/some-model") == "built-in"
+
+
+def ask_as(model_name, tmp_path, **settings):
+    """The request an LLM pirate playing `model_name` sends on its first turn."""
+    model = FakeModel()
+    config = llm_config(**settings)
+    replies = Replies(tmp_path / "replies.jsonl", backend=model)
+    PirateSeat(
+        "pirate-1", LLMPirate("pirate-1", model_name, replies, config), config
+    ).take_turn((0, 0), 3)
+    return model.requests[0]
+
+
+def test_model_reasoning_a_model_that_reasons_gets_the_thinking_budget(tmp_path):
+    assert llm_config().thinking_tokens == 1024
+    request = ask_as("openrouter/some-model", tmp_path)
+    assert request["thinking_tokens"] == 1024
+    assert "thought" not in request["messages"][0]["content"]
+    assert ask_as("openrouter/m", tmp_path, thinking_tokens=64)["thinking_tokens"] == 64
+    with pytest.raises(ConfigError, match="thinking_tokens"):
+        parse_config({"thinking_tokens": 0})
+
+
+def test_model_reasoning_a_model_without_it_writes_a_short_thought(tmp_path):
+    request = ask_as("fake/digger", tmp_path)
+    assert request["thinking_tokens"] == 0
+    assert '"thinking"' in request["messages"][0]["content"]
+    off = ask_as("fake/digger", tmp_path, thinking=False)
+    assert '"thinking"' not in off["messages"][0]["content"]
 
 
 @pytest.fixture

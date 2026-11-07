@@ -49,6 +49,7 @@ REQUEST = {
     "tools": TOOL_DEFINITIONS,
     "max_tokens": 300,
     "thinking": False,
+    "thinking_tokens": 0,
 }
 
 
@@ -105,8 +106,12 @@ def test_adaption_backend_turns_a_function_call_into_the_reply_the_brain_reads()
 
 
 def test_adaption_backend_passes_the_reasoning_on_only_when_thinking_is_on():
-    reply, _, _ = answer(request={**REQUEST, "thinking": True})
+    reply, _, sent = answer(
+        request={**REQUEST, "thinking": True, "thinking_tokens": 1024}
+    )
     assert reply["thinking"] == "Dig."
+    # The Responses API counts reasoning as output, so its budget is added on.
+    assert sent["max_output_tokens"] == 300 + 1024
 
 
 def test_adaption_backend_a_reply_with_no_tool_call_comes_back_as_its_words():

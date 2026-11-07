@@ -54,7 +54,7 @@ def test_after_the_fact_the_game_never_calls_the_judge():
     game_code = [
         path
         for path in (ROOT / "src" / "treasure_island").glob("*.py")
-        if path.stem not in ("judge", "claude_code")
+        if path.stem not in ("judge", "judge_rubric", "claude_code")
     ]
     for path in game_code:
         text = path.read_text()
@@ -159,6 +159,19 @@ def test_judge_replies_cached_a_second_judgement_asks_nothing(tmp_path):
     assert len(asked) == 1 and (folder / "judge-replies.jsonl").exists()
     assert judge.judge(folder) == first  # no backend: replayed from the folder
     assert len(asked) == 1
+
+
+def test_invalid_reply_refused_the_judge_is_asked_once_more_with_why(tmp_path):
+    folder = _game(tmp_path)
+    replies = iter(["{}", _with_evidence(_labels("peer-report"))])
+    asked = []
+
+    def backend(request):
+        asked.append(request)
+        return next(replies), 0.0
+
+    assert judge.judge(folder, backend)["pirate-2"]["peer_report"] == 7
+    assert "refused" in asked[1]["messages"][-1]["content"]
 
 
 def test_judge_replies_cached_an_invalid_reply_is_an_error_naming_the_game(tmp_path):

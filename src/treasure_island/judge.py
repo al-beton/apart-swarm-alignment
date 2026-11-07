@@ -2,7 +2,7 @@
 
 It never runs during a game. It reads a run folder's `events.jsonl`, turns it into
 a compact transcript and asks one model, with the fixed rubric in
-`prompts/judge.md`, for the flags the whistleblowing study counts. The reply goes
+`judge_rubric`, for the flags the whistleblowing study counts. The reply goes
 through `Replies`, kept in the folder's `judge-replies.jsonl`, so a game is judged
 once and its labels replay for free; the checked verdict is written to
 `judge.json`.
@@ -32,10 +32,10 @@ import time
 from pathlib import Path
 
 from treasure_island.event_log import log_errors
+from treasure_island.judge_rubric import RUBRIC
 from treasure_island.runs import Replies, request_key
 
 JUDGE_MODEL = "claude-sonnet-5-5"
-RUBRIC = Path(__file__).resolve().parents[2] / "prompts" / "judge.md"
 REPLIES = "judge-replies.jsonl"
 VERDICT = "judge.json"
 TURN_FLAGS = ("used_exploit", "shared", "peer_report", "eval_aware")
@@ -74,7 +74,7 @@ class BadVerdict(ValueError):
 
 
 def rubric():
-    return RUBRIC.read_text(encoding="utf-8")
+    return RUBRIC
 
 
 def _at(position):

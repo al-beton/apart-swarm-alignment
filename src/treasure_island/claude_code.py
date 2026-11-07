@@ -8,7 +8,7 @@ tools, settings, MCP servers and skills so the model only reads what it's sent,
 and runs in an empty folder so no project's CLAUDE.md reaches it. No test or CI
 job runs it: tests replace `subprocess.run`.
 
-Implements: judge/claude-code-backend, agents/backend-interface
+Implements: judge/claude-code-backend
 """
 
 import json

@@ -30,15 +30,15 @@ How a finished game's pirates get the labels the whistleblowing study counts (`e
 
 | Statement | Enforced by | Tested by |
 |---|---|---|
-| `after-the-fact` | not yet | — |
-| `compact-transcript` | not yet | — |
-| `extra-fields-shown` | not yet | — |
-| `per-pirate-flags` | not yet | — |
-| `types` | not yet | — |
-| `evidence-for-every-flag` | not yet | — |
-| `invalid-reply-refused` | not yet | — |
-| `judge-replies-cached` | not yet | — |
-| `default-judge-model` | not yet | — |
-| `claude-code-backend` | not yet | — |
-| `labelled-fixtures` | not yet | — |
-| `accuracy-recorded` | not yet | — |
+| `after-the-fact` | `src/treasure_island/judge.py` | `test_after_the_fact_the_game_never_calls_the_judge` |
+| `compact-transcript` | `src/treasure_island/judge.py` | `test_compact_transcript_has_one_line_per_turn_with_who_where_and_what`, `test_compact_transcript_shows_each_opening_prompt_once_never_every_prompt`, `test_compact_transcript_shows_writes_reads_and_thinking` |
+| `extra-fields-shown` | `src/treasure_island/judge.py` | `test_extra_fields_shown_in_the_transcript` |
+| `per-pirate-flags` | `src/treasure_island/judge.py`, `src/treasure_island/judge_rubric.py` | `test_per_pirate_flags_a_reply_that_agrees_with_the_labels_parses`, `test_per_pirate_flags_a_reply_in_a_code_fence_parses` |
+| `types` | `src/treasure_island/judge.py`, `src/treasure_island/judge_rubric.py` | `test_types_an_unknown_type_is_refused` |
+| `evidence-for-every-flag` | `src/treasure_island/judge.py`, `src/treasure_island/judge_rubric.py` | `test_evidence_for_every_flag_a_positive_flag_with_no_evidence_is_refused`, `test_evidence_for_every_flag_needs_a_turn_and_a_quote` |
+| `invalid-reply-refused` | `src/treasure_island/judge.py` | `test_invalid_reply_refused_says_what_is_wrong`, `test_invalid_reply_refused_the_judge_is_asked_once_more_with_why`, `test_judge_replies_cached_an_invalid_reply_is_an_error_naming_the_game` |
+| `judge-replies-cached` | `src/treasure_island/judge.py` | `test_judge_replies_cached_a_second_judgement_asks_nothing` |
+| `default-judge-model` | `src/treasure_island/judge.py` | `test_default_judge_model_is_sonnet_5_5` |
+| `claude-code-backend` | `src/treasure_island/claude_code.py` | `test_claude_code_backend_asks_claude_in_print_mode_without_an_api_key`, `test_claude_code_backend_a_failed_reply_is_an_error` |
+| `labelled-fixtures` | `tests/judge-fixtures/**` | `test_labelled_fixtures_cover_each_case_and_pass_the_validator` |
+| `accuracy-recorded` | `src/treasure_island/judge.py`, `tests/judge-fixtures/**` | `test_accuracy_recorded_agrees_with_the_committed_judge_replies`, `test_accuracy_recorded_counts_agreement_per_flag` |

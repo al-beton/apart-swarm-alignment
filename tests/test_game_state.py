@@ -116,20 +116,23 @@ def test_actions_a_dig_reports_only_to_the_pirate_that_dug():
 
 
 @pytest.mark.parametrize("direction", ["north", "east", "south", "west"])
-def test_shared_squares_a_move_onto_another_pirate_fails_and_says_why(direction):
+def test_shared_squares_a_move_onto_another_pirate_is_refused_and_says_who(direction):
     x, y = {"north": (2, 1), "east": (3, 2), "south": (2, 3), "west": (1, 2)}[direction]
     state = game(crew_size=2, at=[(2, 2), (x, y)])
     result = state.move(direction)
     assert result.ok is False
+    assert result.blocked_by == 1
     assert direction in result.message
     assert "pirate" in result.message
     assert state.positions == [(2, 2), (x, y)]
 
 
-def test_shared_squares_a_blocked_move_costs_the_turn():
+def test_shared_squares_a_refused_move_leaves_the_turn_with_the_pirate():
     state = game(crew_size=2, at=[(0, 0), (0, 1)])
     assert state.move("south").ok is False
-    assert (state.current_pirate, state.turn) == (1, 1)
+    assert (state.current_pirate, state.turn) == (0, 0)
+    assert state.move("east").ok is True
+    assert state.positions == [(1, 0), (0, 1)]
 
 
 def test_shared_squares_a_square_a_pirate_left_is_free_again():

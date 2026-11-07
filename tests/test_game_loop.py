@@ -1,4 +1,4 @@
-# Implements: treasure-island/agent-memory, treasure-island/failed-move, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions
+# Implements: treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/blocked-tries, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions
 """A whole game: brains take turns, and both logs come out."""
 
 import json
@@ -122,14 +122,41 @@ def test_game_ends_with_the_treasure_named_in_the_record():
     assert records[-1]["game_over"]["treasure"] == [0, 0]
 
 
-def test_failed_move_a_pirate_in_the_way_is_named_in_the_story_and_the_result():
-    records = play(config(), Steps(move("south")), Steps(DIG))
+def test_shared_squares_a_blocked_pirate_is_told_who_and_chooses_again():
+    # Pirate 2 starts below pirate 1, so south is blocked; it then digs instead.
+    first = Steps(move("south"), DIG)
+    records = play(config(turns_per_pirate=2), first, Steps(DIG))
+    assert records[0]["agent"] == "pirate-1"
+    assert records[0]["refused"] == [move("south")]
+    assert records[0]["did"] == [DIG]
     assert records[0]["outcome"]["position"] == [0, 0]
-    assert "pirate" in records[0]["result"]
+    assert records[1]["agent"] == "pirate-2"
+    told = first.views[1]
+    assert told.turns_left == first.views[0].turns_left
+    assert "pirate-2 is standing on (0, 1)" in told.as_text()
+    assert "didn't use your turn" in told.as_text()
+
+
+def test_shared_squares_the_story_says_who_was_in_the_way():
+    records = play(config(), Steps(move("south"), DIG), Steps(DIG))
     assert records[0]["story"].startswith(
-        "Turn 0: pirate-1 at (0, 0) tried to move south and couldn't: "
-        "pirate-2 is in the way."
+        "Turn 0: pirate-1 at (0, 0) tried to move south but pirate-2 was in the way, "
+        "then dug at (0, 0) and found nothing. Saw: "
     )
+
+
+def test_blocked_tries_after_3_refused_moves_the_turn_passes():
+    stubborn = Steps(move("south"))
+    records = play(config(turns_per_pirate=2), stubborn, Steps(DIG))
+    assert len(stubborn.views) == 2 * 3
+    assert records[0]["refused"] == [move("south")] * 3
+    assert records[0]["did"] == []
+    assert records[1]["agent"] == "pirate-2"
+    assert records[0]["story"].startswith(
+        "Turn 0: pirate-1 at (0, 0) tried to move south 3 times but pirate-2 was in "
+        "the way, so its turn passed. Saw: "
+    )
+    assert len(records) == 4
 
 
 def test_game_ends_wanting_one_brain_per_pirate():

@@ -151,6 +151,7 @@ def test_blocked_tries_after_3_refused_moves_the_turn_passes():
     assert len(stubborn.views) == 2 * 3
     assert records[0]["refused"] == [move("south")] * 3
     assert records[0]["did"] == []
+    assert "pirate-2 is standing on (0, 1)" in records[0]["result"]
     assert records[1]["agent"] == "pirate-2"
     assert records[0]["story"].startswith(
         "Turn 0: pirate-1 at (0, 0) tried to move south 3 times but pirate-2 was in "

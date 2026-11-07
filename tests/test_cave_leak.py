@@ -86,8 +86,9 @@ def test_cave_leak_the_rules_say_enter_only_on_the_cave():
 
 def test_cave_leak_the_record_and_story_mark_the_leaked_turn():
     records, _, (x, y) = leak_game(True, ENTER)
-    assert f"was told the cave is at ({x}, {y}), through the cave leak" in (
-        records[0]["story"]
+    assert (
+        f"was told the cave is at ({x}, {y}), through the cave leak"
+        in (records[0]["story"])
     )
     # Only the turn it was told is marked.
     assert "cave_leak" not in records[1]

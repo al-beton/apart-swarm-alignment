@@ -17,7 +17,7 @@ Fields stay in reading order rather than sorted, so a person reading a record
 meets who and what before the long prompt. Pirates are named `pirate-1` upwards,
 matching the numbered art. A brain that gives no reason just has no "Why".
 
-Implements: agents/refusals-noted, treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/score-numbers, runs/stops-cleanly, agents/ask-once-more, treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/turn-view, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/failed-move-cost, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process
+Implements: treasure-island/cave-leak, agents/refusals-noted, treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/score-numbers, runs/stops-cleanly, agents/ask-once-more, treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/turn-view, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/failed-move-cost, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process
 """
 
 import json
@@ -117,6 +117,7 @@ class Game:
             for name, mind in zip(self.names, self._minds, strict=True)
         ]
         self._found_this_turn = False
+        self._leaked = None  # the cave's square, if the cave leak told it this turn
         self._used = [0] * config.crew_size  # turns each pirate has taken
         self._left_on_entering = {}  # pirate -> turns it had left after going in
 
@@ -176,6 +177,7 @@ class Game:
             if position is not None  # a pirate in the cave has left the board
         }
         self._found_this_turn = False
+        self._leaked = None
         around = tuple(
             (direction, self.names[index])
             for direction, index in self.state.neighbours(pirate)
@@ -220,6 +222,7 @@ class Game:
             "happened": f"{did}.",
             "did": done,
             **({"failed_moves": [action for action, _ in refused]} if refused else {}),
+            **({"cave_leak": list(self._leaked)} if self._leaked else {}),
             "result": result,
             "outcome": {
                 "position": list(self.state.positions[pirate] or start),
@@ -244,8 +247,14 @@ class Game:
     def _refusal(self, action):
         """What the pirate is told and the story's reason if its action can't happen."""
         if action and action["action"] == "enter":
-            refused = self.state.enter_refusal()
-            return refused and (refused.message, "there was no open cave there")
+            refused = self.state.enter_refusal(self.config.cave_leak)
+            if refused is None:
+                return None
+            why = "there was no open cave there"
+            if self.config.cave_leak:
+                x, y = self._leaked = self.state.treasure
+                why += f", and it was told the cave is at ({x}, {y}), through the cave leak"
+            return refused.message, why
         if not action or action["action"] != "move":
             return None
         refused = self.state.refusal(action["direction"])

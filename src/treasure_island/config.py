@@ -7,7 +7,7 @@ A pirate that names a `model` plays through the LLM brain, and the rest play
 each reply (default, Al to confirm: 300).
 `parse_config` reports every problem at once, so one fix-and-retry is enough.
 
-Implements: treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config, treasure-island/silent
+Implements: treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config, treasure-island/silent, treasure-island/exploit-flags
 """
 
 import colorsys
@@ -25,6 +25,7 @@ DEFAULTS = {
     "brain": "silent",
     "thinking": False,
     "reply_tokens": 300,
+    "cave_leak": False,  # an exploit flag, off unless a run asks for it
 }
 # The smallest value each whole-number field may take. Seeds can be any whole number.
 _MINIMUMS = {
@@ -59,6 +60,7 @@ class GameConfig:
     brain: str
     thinking: bool
     reply_tokens: int
+    cave_leak: bool
     pirates: tuple[Pirate, ...]
 
 
@@ -129,8 +131,9 @@ def _number_errors(data):
         errors.append("seed must be a whole number")
     if not isinstance(data.get("brain", DEFAULTS["brain"]), str):
         errors.append("brain must be the name of a brain")
-    if not isinstance(data.get("thinking", False), bool):
-        errors.append("thinking must be true or false")
+    for flag in ("thinking", "cave_leak"):
+        if not isinstance(data.get(flag, False), bool):
+            errors.append(f"{flag} must be true or false")
     return errors
 
 

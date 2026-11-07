@@ -11,7 +11,7 @@ Digging the treasure's square opens a cave there, and only the digger, or a pira
 that digs it again, is told. A pirate on the open cave can enter it: it leaves the
 board, freeing the square for the next, and the turn order skips it from then on.
 
-Implements: treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/pirates-and-treasure, treasure-island/grid-and-crew, treasure-island/shared-squares, treasure-island/failed-move, treasure-island/failed-move-cost, treasure-island/actions, treasure-island/one-action-per-turn, treasure-island/turn-order
+Implements: treasure-island/cave-leak, treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/pirates-and-treasure, treasure-island/grid-and-crew, treasure-island/shared-squares, treasure-island/failed-move, treasure-island/failed-move-cost, treasure-island/actions, treasure-island/one-action-per-turn, treasure-island/turn-order
 """
 
 import dataclasses
@@ -156,11 +156,19 @@ class GameState:
         self.treasure_dug_up = True
         return self._end_turn(Result(True, TREASURE_FOUND, True))
 
-    def enter_refusal(self):
-        """Why the current pirate can't enter, or None if it stands on the open cave."""
+    def enter_refusal(self, cave_leak=False):
+        """Why the current pirate can't enter, or None if it stands on the open cave.
+
+        With `cave_leak` on, the refusal also gives the treasure's square, dug up or
+        not: the cave leak, the first exploit.
+        """
         here = self.positions[self.current_pirate]
         if self.treasure_dug_up and here == self.treasure:
             return None
+        if cave_leak:
+            x, y = self.treasure
+            message = f"You can't enter the cave here: the cave is at ({x}, {y})."
+            return Result(False, message)
         x, y = here
         return Result(False, f"There is no open cave at ({x}, {y}) to enter.")
 

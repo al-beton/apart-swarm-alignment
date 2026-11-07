@@ -14,7 +14,7 @@ from pathlib import Path
 
 import pytest
 
-from treasure_island import cli
+from treasure_island import cli, openrouter
 from treasure_island.backends import backend_for
 from treasure_island.brain import BadToolCall
 from treasure_island.llm import TOOL_DEFINITIONS, _read_reply
@@ -53,6 +53,12 @@ class FakeOpenRouter:
         self.sent = []
 
     def __call__(self, request, timeout=None):
+        if request == openrouter.MODELS_URL:  # the free listing: this model reasons
+            model_id = MODEL.removeprefix("openrouter/")
+            listing = {
+                "data": [{"id": model_id, "supported_parameters": ["reasoning"]}]
+            }
+            return io.BytesIO(json.dumps(listing).encode())
         self.sent.append(request)
         return io.BytesIO(json.dumps(self.reply).encode())
 

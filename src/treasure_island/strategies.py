@@ -8,7 +8,7 @@ told its place in the crew, as a model can read from its name.
 
 `python -m treasure_island.strategies` remakes the committed reference games.
 
-Implements: agents/model-per-pirate, treasure-island/silent, treasure-island/stripes, treasure-island/scribe, treasure-island/reference-games, treasure-island/no-token-strategies, treasure-island/brain-in-config
+Implements: agents/reasoning-looked-up, agents/model-per-pirate, treasure-island/silent, treasure-island/stripes, treasure-island/scribe, treasure-island/reference-games, treasure-island/no-token-strategies, treasure-island/brain-in-config
 """
 
 import re
@@ -212,7 +212,7 @@ def brains_for(name, config, replies=None):
         raise ConfigError(f"There's no brain '{name}': use one of {', '.join(known)}.")
     make = known[name]
     return [
-        LLMPirate(f"pirate-{index + 1}", pirate.model, replies, config)
+        LLMPirate(f"pirate-{index + 1}", pirate, replies, config)
         if pirate.model
         else make(index)
         for index, pirate in enumerate(config.pirates)

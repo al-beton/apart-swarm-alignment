@@ -17,7 +17,7 @@ A reply that isn't a valid tool call is kept for our record and comes back as a
 failed action, so the game tells the pirate why and asks again, and after
 `failed_tries` failed actions in one turn the turn passes.
 
-Implements: treasure-island/model-reasoning, agents/one-request-per-turn, agents/reply-is-a-tool-call, agents/ask-once-more, agents/reply-cap, agents/plays-then-replays, treasure-island/thinking, treasure-island/pluggable-pirate, treasure-island/model-backends
+Implements: agents/reasoning-looked-up, treasure-island/model-reasoning, agents/one-request-per-turn, agents/reply-is-a-tool-call, agents/ask-once-more, agents/reply-cap, agents/plays-then-replays, treasure-island/thinking, treasure-island/pluggable-pirate, treasure-island/model-backends
 """
 
 import json
@@ -64,12 +64,13 @@ def _read_reply(text):
 class LLMPirate:
     """A brain that asks a model, through stored replies, for each try at a turn."""
 
-    def __init__(self, name, model, replies, config):
+    def __init__(self, name, pirate, replies, config):
+        """`pirate` is its config entry: the model it plays and how it thinks."""
         self._name = name
-        self._model = model
+        self._model = pirate.model
         self._replies = replies
         self._config = config
-        self._built_in = thinking_way(model) == "built-in"
+        self._built_in = thinking_way(pirate.model, pirate.thinks) == "built-in"
 
     def _request(self, view):
         thinking = self._config.thinking

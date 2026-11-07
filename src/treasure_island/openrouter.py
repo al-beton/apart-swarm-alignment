@@ -15,7 +15,7 @@ on asks for reasoning within `thinking_tokens`, on top of the reply's cap.
 `OpenRouter.check_key` asks OpenRouter about a key, not a model, so it spends nothing.
 It never says the key's `label`, since OpenRouter's label is the key, masked.
 
-Implements: treasure-island/model-reasoning, agents/openrouter-backend, agents/check-keys, agents/normal-temperature
+Implements: agents/reasoning-looked-up, treasure-island/model-reasoning, agents/openrouter-backend, agents/check-keys, agents/normal-temperature
 """
 
 import json
@@ -26,6 +26,7 @@ from treasure_island.game_loop import GameStopped
 
 URL = "https://openrouter.ai/api/v1/chat/completions"
 KEY_URL = "https://openrouter.ai/api/v1/key"
+MODELS_URL = "https://openrouter.ai/api/v1/models"  # free, and needs no key
 TIMEOUT_SECONDS = 120
 
 
@@ -41,10 +42,34 @@ def _body(model_id, request):
         "max_tokens": request["max_tokens"] + request["thinking_tokens"],
         "seed": request["seed"],
     }
-    if request["thinking"]:
-        # The reasoning's own budget, on top of the reply's.
+    if request["thinking"] and request["thinking_tokens"]:
+        # The reasoning's own budget, on top of the reply's; a model that writes
+        # its thought in its reply has none, and is sent no reasoning setting.
         body["reasoning"] = {"max_tokens": request["thinking_tokens"]}
     return body
+
+
+def model_listing():
+    """OpenRouter's free model listing, or None if it can't be read."""
+    try:
+        with urllib.request.urlopen(MODELS_URL, timeout=TIMEOUT_SECONDS) as answer:
+            return json.load(answer)["data"]
+    except (urllib.error.URLError, OSError, ValueError, KeyError, TypeError):
+        return None
+
+
+def thinks_for(model_id, listing=None):
+    """How OpenRouter's listing says this model thinks, or None if it can't say.
+
+    "built-in" if the model supports reasoning, "in-reply" if it doesn't. Pass a
+    `listing` already read to ask about a whole crew with one request.
+    """
+    listing = model_listing() if listing is None else listing
+    for entry in listing or []:
+        if entry.get("id") == model_id:
+            reasons = "reasoning" in (entry.get("supported_parameters") or [])
+            return "built-in" if reasons else "in-reply"
+    return None
 
 
 def _reply_text(message, thinking):
@@ -58,9 +83,24 @@ def _reply_text(message, thinking):
     except json.JSONDecodeError:
         arguments = function["arguments"]  # the brain says what's wrong with it
     reply = {"tool": function.get("name"), "arguments": arguments}
-    if thinking and message.get("reasoning"):
-        reply["thinking"] = message["reasoning"]
+    if thinking:
+        thought = message.get("reasoning") or _thought_in(message.get("content"))
+        if thought:
+            reply["thinking"] = thought
     return json.dumps(reply)
+
+
+def _thought_in(content):
+    """A thought a model wrote beside its tool call, as JSON or as plain words."""
+    if not content or not content.strip():
+        return None
+    try:
+        written = json.loads(content)
+    except json.JSONDecodeError:
+        return content.strip()
+    if isinstance(written, dict):
+        return written.get("thinking")
+    return None
 
 
 class OpenRouter:

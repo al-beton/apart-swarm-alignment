@@ -57,7 +57,7 @@ def test_turn_marked_every_frame_has_exactly_one_arrow_over_the_acting_pirate():
         assert top + arrow.height <= y * viewer.TILE
 
 
-def test_turn_marked_a_turn_with_no_speech_still_marks_the_pirate():
+def test_turn_marked_a_turn_that_does_not_write_still_marks_the_pirate():
     silent = [record(0, "pirate-1", (2, 2), did=[])]
     image, on_board = board(silent, 0, 4)
     arrow, spot = viewer.turn_arrow(viewer.scene(silent, 0, 4))
@@ -65,20 +65,20 @@ def test_turn_marked_a_turn_with_no_speech_still_marks_the_pirate():
     assert yellow(on_board) == yellow(arrow)
 
 
-def test_turn_marked_the_arrow_and_the_bubble_never_overlap():
+def test_turn_marked_the_arrow_and_the_note_never_overlap():
     for square in ((0, 1), (2, 2), (3, 3), (1, 0)):
         records = [
             record(0, "pirate-1", square, did=[{"action": "write", "text": "x" * 40}])
         ]
         shown = viewer.scene(records, 0, 4)
         arrow, (ax, ay) = viewer.turn_arrow(shown)
-        bubble = viewer.speech_bubble(shown["bubble"])
-        bx, by = viewer.bubble_box(square, bubble.size, 4)
+        note = viewer.scroll_note(shown["note"])
+        bx, by = viewer.note_box(square, note.size, 4)
         apart = (
             ax + arrow.width <= bx
-            or bx + bubble.width <= ax
+            or bx + note.width <= ax
             or ay + arrow.height <= by
-            or by + bubble.height <= ay
+            or by + note.height <= ay
         )
         assert apart, square
 

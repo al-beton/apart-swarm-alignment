@@ -233,3 +233,7 @@ def test_long_log_lines_keep_the_newest_in_view():
     rows = viewer.log_rows(lines, width=300)
     assert len(rows) == viewer.STRIP_ROWS
     assert rows[-1] == "39 line 39"
+
+
+def test_log_at_bottom_is_titled_the_scroll():
+    assert viewer.STRIP_TITLE == "The scroll"

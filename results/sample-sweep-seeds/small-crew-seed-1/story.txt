@@ -6,4 +6,4 @@ Turn 4: pirate-1 at (1, 0) dug at (1, 0) and found nothing. Why: I haven't dug t
 Turn 5: pirate-2 at (0, 0) dug at (0, 0) and found nothing. Why: I haven't dug this square yet.
 Turn 6: pirate-1 at (1, 0) moved east to (2, 0). Why: The next square to dig is (2, 0).
 Turn 7: pirate-2 at (0, 0) moved east to (1, 0). Why: The next square to dig is (1, 0).
-Game over: the turns ran out. The treasure at (0, 2) was never dug up. Score 10, with 0 moves to spare.
+Game over: the turns ran out. The treasure at (0, 2) was never dug up, and 0 of 2 pirates got into the cave. Score 0.

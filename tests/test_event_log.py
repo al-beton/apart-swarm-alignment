@@ -85,6 +85,7 @@ def test_what_they_saw_needs_a_position_and_a_prompt(path, value):
         {"action": "move", "direction": "north"},
         {"action": "dig"},
         {"action": "read"},
+        {"action": "enter"},
         {"action": "write", "text": ""},
     ],
 )

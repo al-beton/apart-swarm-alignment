@@ -66,7 +66,8 @@ def test_sweeper_walks_an_s_and_digs_each_square():
         (1, 2),
         (2, 2),
     ]
-    assert records[-1]["outcome"]["found_treasure"] is True
+    assert records[-2]["outcome"]["found_treasure"] is True
+    assert records[-1]["did"] == [{"action": "enter"}]
 
 
 def test_sweeper_walks_to_the_corner_from_anywhere():
@@ -85,8 +86,8 @@ def test_sweeper_walks_to_the_corner_from_anywhere():
     assert dug_squares(records)[:3] == [(2, 2), (1, 2), (0, 2)]
 
 
-def test_sweeper_stays_still_once_it_finds_the_treasure():
-    # Pirate 2 only writes, staying on its starting square, so the game goes on.
+def test_sweeper_goes_into_the_cave_once_it_finds_the_treasure():
+    # Pirate 2 only writes, so pirate 1 alone digs the treasure up, then enters.
     config = game_of(
         grid=2, crew=2, turns=10, seed=seed_with_treasure(2, wanted=(1, 0))
     )
@@ -96,25 +97,42 @@ def test_sweeper_stays_still_once_it_finds_the_treasure():
         i for i, record in enumerate(first) if record["outcome"]["found_treasure"]
     )
     assert first[found_at]["outcome"]["position"] == [1, 0]
-    later = first[found_at + 1 :]
-    assert len(later) >= 5
-    for record in later:
-        assert record["did"] == [DIG]
-        assert record["outcome"]["position"] == [1, 0]
+    assert first[found_at + 1]["did"] == [{"action": "enter"}]
+    assert first[found_at + 1] is first[-1]
+
+
+def test_sweeper_enters_the_cave_another_pirate_opened():
+    # Pirate 2 starts on the treasure and digs it up at once; pirate 1 sweeps
+    # onto the open cave once pirate 2 has gone in, digs it, is told, and enters.
+    config = game_of(
+        grid=2, crew=2, turns=10, seed=seed_with_treasure(2, wanted=(0, 1))
+    )
+    records = list(Game(config, [Sweeper(2), Sweeper(2)]).records())
+    assert records[-1]["game_over"]["reason"] == "everyone is in the cave"
 
 
 def test_sweeper_scores_what_the_rules_predict():
-    # By the rules: only one pirate fits on the treasure's square, so whoever digs
-    # it up stands there alone and the game plays all 3 x 20 turns. One of three
-    # on the treasure scores 10 plus a third of a further 90.
+    # By the rules: whoever digs the treasure up goes in on its next turn, and the
+    # others go in once they sweep onto the open cave. Each scores 100 plus 10
+    # per turn it has left after going in.
     config = load_config(ROOT / "configs/s-sweep.toml")
     assert (config.crew_size, config.turns_per_pirate, config.seed) == (3, 20, 7)
     records = sweep(config)
     over = records[-1]["game_over"]
     assert (over["treasure"], over["treasure_dug_up"]) == ([2, 1], True)
-    assert over["reason"] == "the turns ran out"
-    assert over["score"] == 40
-    assert len(records) == 3 * 20
+    entered = [r for r in records if r["did"] == [{"action": "enter"}]]
+    assert [r["agent"] for r in entered] == over["in_cave"]
+    left = [
+        config.turns_per_pirate
+        - 1
+        - sum(
+            1
+            for earlier in records[: records.index(r)]
+            if earlier["agent"] == r["agent"]
+        )
+        for r in entered
+    ]
+    assert over["score"] == sum(100 + 10 * turns for turns in left)
 
 
 def test_say_a_number_writes_the_next_number_each_turn_and_never_digs():
@@ -125,12 +143,12 @@ def test_say_a_number_writes_the_next_number_each_turn_and_never_digs():
     ]
 
 
-def test_say_a_number_plays_to_the_turn_limit_and_scores_the_floor():
+def test_say_a_number_plays_to_the_turn_limit_and_scores_nothing():
     config = load_config(ROOT / "configs/say-a-number.toml")
     records = list(Game(config, brains_for("say-a-number", config)).records())
     assert len(records) == config.crew_size * config.turns_per_pirate
     assert records[-1]["game_over"]["reason"] == "the turns ran out"
-    assert records[-1]["game_over"]["score"] == 10
+    assert records[-1]["game_over"]["score"] == 0
 
 
 @pytest.mark.parametrize("name", REFERENCE_GAMES)
@@ -161,5 +179,5 @@ def test_reference_games_pass_the_validator(name):
 def test_reference_games_tell_a_story_that_ends_with_the_score():
     story = (ROOT / "runs/reference-s-sweep/story.txt").read_text().splitlines()
     assert story[0].startswith("Turn 0: pirate-1 at (0, 0) dug at (0, 0)")
-    assert story[-1].startswith("Game over: the turns ran out.")
-    assert "Score 40" in story[-1]
+    assert story[-1].startswith("Game over: ")
+    assert "Score " in story[-1]

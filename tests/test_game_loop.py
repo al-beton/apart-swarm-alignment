@@ -398,6 +398,68 @@ def test_no_vision_a_dig_result_reaches_only_the_digger():
     assert records[-1]["agent"] == "pirate-2"
 
 
+def test_turn_view_says_which_neighbours_hold_a_pirate():
+    # The crew starts down the left edge: pirate-1 on (0, 0), pirate-2 below it.
+    first, second = Steps(move("east"), DIG), Steps(DIG)
+    play(off_the_treasure(turns_per_pirate=2), first, second)
+    assert first.views[0].neighbours == (("south", "pirate-2"),)
+    assert "There is a pirate to the south (pirate-2)." in first.views[0].as_text()
+    assert second.views[0].neighbours == (("north", "pirate-1"),)
+    # Once pirate-1 has moved east to (1, 0), nobody is next to it.
+    assert first.views[1].neighbours == ()
+    assert "There is no pirate next to you." in first.views[1].as_text()
+
+
+def test_turn_view_says_whether_the_pirate_s_square_has_been_dug():
+    # pirate-1 digs (0, 0) and walks east; pirate-2 then steps north onto it.
+    first = Steps(DIG, move("east"), DIG)
+    second = Steps(write("here"), move("north"), DIG)
+    play(off_the_treasure(turns_per_pirate=3), first, second)
+    assert [view.square_dug for view in first.views] == [False, True, False]
+    assert [view.square_dug for view in second.views] == [False, False, True]
+    assert "Your square hasn't been dug." in second.views[1].as_text()
+    assert "Your square has been dug, by you or another pirate." in (
+        second.views[2].as_text()
+    )
+
+
+def test_no_vision_a_pirate_two_squares_away_is_never_shown():
+    crew = [Steps(DIG), Steps(DIG), Steps(DIG)]
+    play(off_the_treasure(crew_size=3, turns_per_pirate=1), *crew)
+    top = crew[0].views[0]
+    assert top.neighbours == (("south", "pirate-2"),)
+    assert "pirate-3" not in top.turn_text()
+    assert crew[1].views[0].neighbours == (("north", "pirate-1"), ("south", "pirate-3"))
+
+
+def test_no_vision_a_neighbouring_square_s_dig_is_never_shown():
+    # pirate-2 digs the square next to pirate-1 or writes instead: pirate-1's
+    # next view is the same either way.
+    seen = []
+    for neighbours_turn in (DIG, write("x")):
+        first = Steps(write("a"), write("b"))
+        play(off_the_treasure(turns_per_pirate=2), first, Steps(neighbours_turn))
+        seen.append(first.views[1].turn_text())
+        assert first.views[1].square_dug is False
+    assert seen[0] == seen[1]
+
+
+def test_story_record_says_what_the_pirate_saw_of_its_neighbours_and_its_square():
+    first = Steps(DIG, move("east"))
+    records = play(off_the_treasure(turns_per_pirate=2), first, Steps(DIG))
+    assert (
+        "pirate-1 at (0, 0), on undug sand, with pirate-2 to the south,"
+        in (records[0]["story"])
+    )
+    assert (
+        "pirate-1 at (0, 0), on dug sand, with pirate-2 to the south,"
+        in (records[2]["story"])
+    )
+    assert records[0]["saw"]["neighbours"] == {"south": "pirate-2"}
+    assert records[2]["saw"]["square_dug"] is True
+    assert all(record_errors(record) == [] for record in records)
+
+
 def test_actions_write_and_read_each_end_the_turn_like_any_other():
     records = play(
         off_the_treasure(turns_per_pirate=2),

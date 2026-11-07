@@ -7,7 +7,7 @@ when it's made, because that's in the rules a model reads as text.
 
 `python -m treasure_island.strategies` remakes the committed reference games.
 
-Implements: agents/model-per-pirate, treasure-island/silent, treasure-island/say-a-number, treasure-island/reference-games, treasure-island/no-token-strategies, treasure-island/brain-in-config
+Implements: agents/model-per-pirate, treasure-island/silent, treasure-island/say-a-number, treasure-island/scribe, treasure-island/reference-games, treasure-island/no-token-strategies, treasure-island/brain-in-config
 """
 
 from pathlib import Path
@@ -90,6 +90,27 @@ class Silent:
         return Decision(tool_call("move", {"direction": around}), why)
 
 
+class Scribe(Silent):
+    """Searches like the silent pirate, but spends the turn after each dig writing
+    what it found, and writes where the cave is before it goes in. It never reads.
+    """
+
+    def decide(self, view):
+        last = view.earlier_turns[-1].action if view.earlier_turns else {}
+        x, y = view.position
+        if view.on_cave:
+            # Walked onto or just opened, it says where the cave is, then goes in.
+            if last.get("action") != "write":
+                note = f"Treasure at ({x}, {y})"
+                why = "I'm on the open cave, so I tell the crew where it is."
+                return Decision(tool_call("write", {"text": note}), why)
+            return super().decide(view)
+        if last.get("action") == "dig":
+            note = f"Dug ({x}, {y}): nothing"
+            return Decision(tool_call("write", {"text": note}), "I write what I found.")
+        return super().decide(view)
+
+
 class SayANumber:
     """Writes the next number to the log each turn, and never digs."""
 
@@ -103,6 +124,7 @@ def brains_for(name, config, replies=None):
     known = {
         "silent": lambda: Silent(config.grid_size),
         "say-a-number": SayANumber,
+        "scribe": lambda: Scribe(config.grid_size),
     }
     if name not in known:
         raise ConfigError(f"There's no brain '{name}': use one of {', '.join(known)}.")
@@ -115,7 +137,7 @@ def brains_for(name, config, replies=None):
     ]
 
 
-REFERENCE_GAMES = ("silent", "say-a-number")
+REFERENCE_GAMES = ("silent", "say-a-number", "scribe")
 
 
 def write_reference(name, folder, root=Path()):

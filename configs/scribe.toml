@@ -1,0 +1,7 @@
+# Implements: treasure-island/brain-in-config, treasure-island/scribe, agents/free-runs-in-ci
+# The scribe's reference game: three pirates search a 5 by 5 grid and write what each dig found.
+grid_size = 5
+crew_size = 3
+turns_per_pirate = 20
+seed = 7
+brain = "scribe"

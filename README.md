@@ -102,7 +102,8 @@ Silent pirates write no notes, so this game's scroll is empty, and they search b
 | Scripted pirates play the game live in your browser, with no model and no tokens: silent pirates that each search alone and go into the cave, saved as a named run with its story, both logs and its config | `uv run treasure-island run configs/silent.toml --seed 7` |
 | A game replays offline, byte for byte, with no keys and no network (read its `story.txt`) | `uv run treasure-island replay runs/silent-seed-7` |
 | A pirate that says a number each turn, so the log has chatter | `uv run treasure-island run configs/say-a-number.toml --seed 1` |
-| Open a finished game: `examples/` holds three, each with its story and GIF, and any of them replays | `uv run treasure-island replay examples/silent` |
+| Scribe pirates search like silent ones but write what every dig found, and where the cave is before going in, so every game shows writing (see `examples/scribe/game.gif`) | `uv run treasure-island run configs/scribe.toml --seed 7` |
+| Open a finished game: `examples/` holds four, each with its story and GIF, and any of them replays | `uv run treasure-island replay examples/silent` |
 | Check a finding: `results/` keeps each one with the games behind it, its question and what it cost | `uv run treasure-island replay results/sample-sweep-seeds/small-crew-seed-1` |
 | Remake the examples, after a change that's meant to show in them | `make examples` |
 | Remake the scripted pirates' reference games | `make reference-games` |

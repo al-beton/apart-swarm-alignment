@@ -1,5 +1,5 @@
-# Implements: tooling/one-command-each, tooling/locked-dependencies, ci/ci-minutes, ci/ci-runs-everything, assets/remade-by-one-command, assets/catwalk, treasure-island/reference-games, results/examples-folder, figures/named-figures, figures/figures-published
-.PHONY: install lint test spec-check assets catwalk reference-games examples figure figures
+# Implements: tooling/one-command-each, tooling/locked-dependencies, ci/ci-minutes, ci/ci-runs-everything, assets/remade-by-one-command, assets/catwalk, treasure-island/reference-games, results/examples-folder, figures/named-figures, figures/figures-published, ci/examples-remade-in-ci
+.PHONY: install lint test spec-check assets catwalk reference-games examples examples-check figure figures
 install:
 	uv sync --frozen
 lint:
@@ -17,6 +17,9 @@ reference-games:  # replay the scripted pirates' committed games into runs/
 	uv run python -m treasure_island.strategies
 examples:  # play the example games again, GIFs included, into examples/
 	uv run python -m treasure_island.examples
+examples-check:  # remake the examples; fail if anything but the manifests' times changed
+	$(MAKE) examples
+	python3 .github/scripts/examples_unchanged.py
 figure:  # one named figure from a committed run: make figure NAME=s-sweep-game
 	uv run treasure-island figure $(NAME)
 figures:  # every figure, into figures/

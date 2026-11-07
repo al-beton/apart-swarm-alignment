@@ -15,7 +15,7 @@ says why in its manifest, and its replay stops at the same turn for that reason.
 `differences` plays the game again from that folder, in a temporary folder and
 with nothing but what's saved, and names any log that doesn't match byte for byte.
 
-Implements: runs/yes-before-spending, runs/spending-cap, runs/stops-cleanly, agents/plays-then-replays, runs/cache-across-runs, runs/no-cache, treasure-island/named-runs, treasure-island/everything-cached, runs/one-game, runs/run-folder, runs/manifest-varies, runs/replay-byte-identical, runs/plays-live, results/examples-stay-true
+Implements: runs/yes-before-spending, runs/spending-cap, runs/stops-cleanly, agents/plays-then-replays, runs/cache-across-runs, runs/no-cache, treasure-island/named-runs, treasure-island/everything-cached, runs/one-game, runs/run-folder, runs/manifest-varies, runs/replay-byte-identical, runs/plays-live, results/examples-stay-true, agents/key-from-the-environment
 """
 
 import dataclasses
@@ -45,15 +45,17 @@ def _write_json(path, value):
     )
 
 
-def _every_model():
-    """A backend that hands each request to its own model's backend."""
-    backends = {}
+def _every_model(config):
+    """A backend that hands each request to its own model's backend.
+
+    Every pirate's backend is made now, so an unknown model or a missing key is
+    refused before the game starts.
+    """
+    models = {pirate.model for pirate in config.pirates if pirate.model}
+    backends = {model: backend_for(model) for model in sorted(models)}
 
     def ask(request):
-        model = request["model"]
-        if model not in backends:
-            backends[model] = backend_for(model)
-        return backends[model](request)
+        return backends[request["model"]](request)
 
     return ask
 
@@ -85,6 +87,8 @@ def play_saved(config_path, seed, on_start=None, pace=0, models=ASK_EVERY_MODEL)
     """
     config = config_with_seed(config_path, seed)
     brains_for(config.brain, config)  # a bad brain makes no folder
+    if models.backend is None:  # nor does a model with no backend or no key
+        models = dataclasses.replace(models, backend=_every_model(config))
     folder = new_folder(f"{Path(config_path).stem}-seed-{seed}")
     return write_saved(config, folder, on_start, pace, models)
 
@@ -101,7 +105,7 @@ def write_saved(config, folder, on_start=None, pace=0, models=ASK_EVERY_MODEL):
     """Play `config` (see `config_with_seed`) into `folder`, which must exist."""
     folder = Path(folder)
     (folder / "replies.jsonl").touch()
-    guard = Guard(models.backend or _every_model(), models.cap_usd, models.agree)
+    guard = Guard(models.backend or _every_model(config), models.cap_usd, models.agree)
     replies = Replies(
         folder / "replies.jsonl",
         guard,

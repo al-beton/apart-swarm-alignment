@@ -71,10 +71,18 @@ def story_lines(folder):
 
 def test_cost_before_run_counts_every_call_a_crew_can_make(toml):
     found = estimate(load_config(toml))
-    assert found.calls == TURNS * 2  # each turn, and once more after a bad reply
+    # Each try at a turn, and once more after a bad reply; 2 tries by default.
+    assert found.calls == TURNS * 2 * 2
     assert found.cached == 0
     assert found.tokens >= found.calls * load_config(toml).reply_tokens
     assert found.cost_usd is None
+
+
+def test_cost_before_run_counts_every_failed_move_a_turn_allows(toml):
+    config = load_config(toml)
+    more = dataclasses.replace(config, failed_tries=5)
+    assert estimate(more).calls == TURNS * 5 * 2
+    assert estimate(more).tokens > estimate(config).tokens
 
 
 def test_cost_before_run_prices_a_model_whose_price_is_known(toml, monkeypatch):
@@ -97,7 +105,7 @@ def test_cost_before_run_is_printed_before_the_first_turn(toml, monkeypatch, cap
     monkeypatch.setattr(saved_game, "backend_for", lambda model: FakeModel())
     cli.main(["run", str(toml), "--seed", "0", "--no-watch"])
     out = capsys.readouterr().out
-    assert f"{TURNS * 2} model calls" in out
+    assert f"{TURNS * 2 * 2} model calls" in out
     assert "tokens" in out
     assert "no price" in out
 

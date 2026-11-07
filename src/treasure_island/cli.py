@@ -3,7 +3,7 @@
 `run` opens the live view unless told not to. At a terminal it keeps the page up
 after the game ends, until Ctrl-C; a script gets its prompt back when the game ends.
 
-Implements: runs/cost-before-run, runs/yes-before-spending, runs/spending-cap, tooling/package-and-cli, runs/one-game, runs/run-command, runs/replay-byte-identical, runs/plays-live, runs/no-cache, viewer/watch-live, viewer/render-gif, viewer/slideshow-file, treasure-island/named-runs, treasure-island/everything-cached, treasure-island/one-line-replay, figures/named-figures
+Implements: runs/cost-before-run, runs/yes-before-spending, runs/spending-cap, tooling/package-and-cli, runs/one-game, runs/run-command, runs/replay-byte-identical, runs/plays-live, runs/no-cache, viewer/watch-live, viewer/render-gif, viewer/slideshow-file, treasure-island/named-runs, treasure-island/everything-cached, treasure-island/one-line-replay, figures/named-figures, agents/check-keys
 """
 
 import argparse
@@ -11,7 +11,7 @@ import sys
 import threading
 import webbrowser
 
-from treasure_island import figures, runs, saved_game, spending, viewer
+from treasure_island import figures, keys, runs, saved_game, spending, viewer
 from treasure_island.config import ConfigError
 
 
@@ -124,6 +124,12 @@ def _slideshow(args):
     return 0
 
 
+def _check_keys(args):
+    lines, failed = keys.check_keys()
+    print("\n".join(lines))
+    return 1 if failed else 0
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(
         prog="treasure-island",
@@ -189,6 +195,11 @@ def main(argv=None):
     slideshow.add_argument("folder", help="a run folder, such as runs/<name>")
     slideshow.add_argument("--out", help="where to write it; default runs/<name>.html")
     slideshow.set_defaults(handler=_slideshow)
+    check = commands.add_parser(
+        "check-keys",
+        help="say whether each model backend's key works, spending nothing",
+    )
+    check.set_defaults(handler=_check_keys)
     args = parser.parse_args(argv)
     if args.command is None:
         parser.print_help()

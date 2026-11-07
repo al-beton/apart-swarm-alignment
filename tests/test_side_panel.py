@@ -4,7 +4,7 @@
 from PIL import Image, ImageChops
 
 from assets.pirates import portrait
-from assets.ui import scroll_note
+from assets.ui import open_scroll, scroll_note
 from treasure_island import viewer
 from treasure_island.brain import Decision
 from treasure_island.config import parse_config
@@ -186,17 +186,38 @@ def test_readable_at_once_a_scroll_with_no_room_above_goes_below_the_pirate():
     assert top == 3 * viewer.TILE - viewer.ARROW_ROOM - 30  # above the turn arrow
 
 
-def test_side_panel_shows_what_a_read_returned_and_only_on_a_read():
-    line = {"line": 1, "text": "dig east", "by": "pirate-2"}
-    read = {**record(0, did=[{"action": "read"}]), "log_shown": [line]}
-    assert shown([read])["read"] == ["pirate-2: dig east"]
-    nothing_new = record(0, did=[{"action": "read"}])
-    assert shown([nothing_new])["read"] == []
-    assert shown([record(0)])["read"] is None
-    # The panel has a section for the read only on the turn that reads.
-    with_read = panel_of(viewer.frame([read], 0, 4))
-    dig = panel_of(viewer.frame([record(0)], 0, 4))
-    assert ImageChops.difference(with_read, dig).getbbox()
+def test_side_panel_says_how_many_lines_a_read_got_and_never_their_words():
+    def read_of(text):
+        line = {"line": 1, "text": text, "by": "pirate-2"}
+        happened = "read the scroll and got 1 new line, line 1."
+        made = record(0, did=[{"action": "read"}], happened=happened)
+        return {**made, "log_shown": [line]}
+
+    assert shown([read_of("dig east")])["did"] == (
+        "read the scroll and got 1 new line, line 1."
+    )
+    # Two reads of the same number of lines draw the same frame, whatever they say.
+    one = viewer.frame([read_of("dig east")], 0, 4)
+    other = viewer.frame([read_of("the cave is at (3, 1)")], 0, 4)
+    assert one.tobytes() == other.tobytes()
+
+
+def test_frame_shows_the_swarm_a_reader_holds_an_open_scroll_clear_of_the_crew():
+    crew = {"pirate-1": [0, 0], "pirate-2": [0, 1]}
+    for reader, other in (("pirate-1", "pirate-2"), ("pirate-2", "pirate-1")):
+        made = record(0, agent=reader, did=[{"action": "read"}], at=crew[reader])
+        records = [{**made, "crew": crew}]
+        seen = viewer.scene(records, 0, 4)
+        assert seen["reading"] is True
+        arrow, spot = viewer.turn_arrow(seen)
+        arrow_box = (*spot, spot[0] + arrow.width, spot[1] + arrow.height)
+        held = open_scroll()
+        x, y = viewer.note_spot(seen, held.size, arrow_box)
+        assert drawn_at(viewer.frame(records, 0, 4), held, (x, y))
+        ox, oy = (value * viewer.TILE for value in crew[other])
+        box = (x, y, x + held.width, y + held.height)
+        assert not viewer._overlap(box, (ox, oy, ox + viewer.TILE, oy + viewer.TILE))
+    assert shown([record(0)])["reading"] is False
 
 
 def test_readable_at_once_a_real_game_tells_its_ending_in_the_frame():

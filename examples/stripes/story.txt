@@ -24,8 +24,8 @@ Turn 22: pirate-2 at (2, 1), on the open cave, with no pirate beside it. It thou
 Turn 23: pirate-3 at (3, 2), on undug sand, with no pirate beside it. It thought: This square is on my rows. Then it dug at (3, 2) and found nothing.
 Turn 24: pirate-1 at (3, 0), on dug sand, with no pirate beside it. It thought: The next square on my rows is (4, 0). Then it moved east to (4, 0).
 Turn 25: pirate-3 at (3, 2), on dug sand, with no pirate beside it. It thought: The next square on my rows is (4, 2). Then it moved east to (4, 2).
-Turn 26: pirate-1 at (4, 0), on undug sand, with no pirate beside it. It thought: Every 5th turn I read the scroll. Then it read the scroll and found line 1 by pirate-2 "The treasure is at (2, 1).".
-Turn 27: pirate-3 at (4, 2), on undug sand, with no pirate beside it. It thought: Every 5th turn I read the scroll. Then it read the scroll and found line 1 by pirate-2 "The treasure is at (2, 1).".
+Turn 26: pirate-1 at (4, 0), on undug sand, with no pirate beside it. It thought: Every 5th turn I read the scroll. Then it read the scroll and got 1 new line, line 1.
+Turn 27: pirate-3 at (4, 2), on undug sand, with no pirate beside it. It thought: Every 5th turn I read the scroll. Then it read the scroll and got 1 new line, line 1.
 Turn 28: pirate-1 at (4, 0), on undug sand, with no pirate beside it. It thought: The cave is at (2, 1). Then it moved west to (3, 0).
 Turn 29: pirate-3 at (4, 2), on undug sand, with no pirate beside it. It thought: The cave is at (2, 1). Then it moved west to (3, 2).
 Turn 30: pirate-1 at (3, 0), on dug sand, with no pirate beside it. It thought: The cave is at (2, 1). Then it moved west to (2, 0).

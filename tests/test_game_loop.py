@@ -515,11 +515,16 @@ def test_agent_memory_keeps_the_lines_a_read_found_as_fields():
     assert "note" in reader.views[2].as_text()
 
 
-def test_story_record_a_read_quotes_each_line_it_found_and_who_wrote_it():
-    brains = [Steps(write("one"), write("two")), Steps(READ)]
-    records = play(off_the_treasure(turns_per_pirate=2), *brains)
-    assert 'read the scroll and found line 1 by pirate-1 "one".' in records[1]["story"]
-    assert 'read the scroll and found line 2 by pirate-1 "two".' in records[3]["story"]
+def test_story_record_a_read_names_its_new_lines_without_quoting_them():
+    brains = [Steps(write("one"), write("two"), write("three")), Steps(DIG, READ, READ)]
+    records = play(off_the_treasure(turns_per_pirate=3), *brains)
+    assert "read the scroll and got 2 new lines, lines 1 and 2." in records[3]["story"]
+    assert "read the scroll and got 1 new line, line 3." in records[5]["story"]
+    for words in ('"one"', '"two"', '"three"'):
+        assert words not in records[3]["story"] + records[5]["story"]
+    brains = [Steps(write("a"), write("b"), write("c")), Steps(DIG, DIG, READ)]
+    records = play(off_the_treasure(turns_per_pirate=3), *brains)
+    assert "got 3 new lines, lines 1 to 3." in records[5]["story"]
 
 
 def test_story_record_a_read_of_an_empty_scroll_says_so():
@@ -531,7 +536,8 @@ def test_story_record_keeps_what_a_read_found_on_one_line(tmp_path):
     brains = [Steps(write("two\nlines")), Steps(READ)]
     write_game(off_the_treasure(turns_per_pirate=1), brains, tmp_path)
     lines = (tmp_path / "story.txt").read_text().splitlines()
-    assert 'found line 1 by pirate-1 "two lines".' in lines[1]
+    assert "read the scroll and got 1 new line, line 1." in lines[1]
+    assert "two" not in lines[1]
     assert len(lines) == 2 + 1
 
 
@@ -556,7 +562,10 @@ def test_story_record_a_committed_game_can_be_followed_from_its_story_alone(fold
         assert int(match[1]) == number
         assert record["crew"][match[2]] == [int(match[3]), int(match[4])]
         if record["did"] == [READ]:
-            assert "read the scroll and found" in line
+            got = record["log_shown"]
+            said = "found nothing new" if not got else f"got {len(got)} new line"
+            assert f"read the scroll and {said}" in line
+            assert all(f'"{shown["text"]}"' not in line for shown in got)
 
 
 def test_story_record_a_note_cannot_change_what_the_panel_says_happened():

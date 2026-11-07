@@ -6,9 +6,10 @@ key from one environment variable, which `.env.example` names, and a missing key
 is refused when the backend is made, before any game starts. A backend that knows
 its model's price adds it to `PRICES`, so a run can say what it may cost before it
 starts; OpenRouter's prices vary by model, so its replies' own costs are counted,
-and Adaption's rates are listed in adaption_backend.
+and Adaption's rates are listed in adaption_backend. Each backend's `THINKS`
+says which way its models think (`treasure-island/model-reasoning`).
 
-Implements: agents/check-keys, agents/backend-interface, agents/no-model-yet, agents/openrouter-backend, agents/adaption-backend, agents/adaption-cost, agents/key-from-the-environment, runs/cost-before-run
+Implements: treasure-island/model-reasoning, agents/check-keys, agents/backend-interface, agents/no-model-yet, agents/openrouter-backend, agents/adaption-backend, agents/adaption-cost, agents/key-from-the-environment, runs/cost-before-run
 """
 
 import os
@@ -31,6 +32,7 @@ def _adaption(model_id, key):
 
 
 _adaption.check_key = adaption_backend.check_key  # for check-keys, like OpenRouter's
+_adaption.THINKS = adaption_backend.THINKS
 
 
 # Model-name prefix -> (the backend, the environment variable holding its key)
@@ -38,6 +40,18 @@ BACKENDS = {
     "openrouter/": (OpenRouter, "OPENROUTER_API_KEY"),
     "adaption/": (_adaption, "ADAPTION_API_KEY"),
 }
+
+
+def thinking_way(model):
+    """How this model thinks: "built-in" reasoning, or a thought "in-reply".
+
+    A model no backend serves (only a test's fake gets that far) writes its
+    thought in its reply, since that works with any model.
+    """
+    for prefix, (backend, _) in BACKENDS.items():
+        if model.startswith(prefix):
+            return backend.THINKS
+    return "in-reply"
 
 
 def price_for(model):

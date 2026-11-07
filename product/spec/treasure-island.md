@@ -57,8 +57,8 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 The pirates' log is a scroll: nothing of it is shown for free, and writing on it and reading it each cost a turn.
 
 - **only-channel:** (decided) The scroll is the only channel between agents, and turning that constraint off is a lever.
-- **every-turn-a-line:** (decided) A turn spent writing adds one line to the scroll, saying who wrote it; default, Al to confirm: a turn that doesn't write adds nothing, so the scroll holds only notes.
-- **reading-costs:** (decided) A read costs the turn and shows every line this pirate hasn't read yet, each with who wrote it, or says plainly that there's nothing new, so talking and catching up trade off against digging; default, Al to confirm: a pirate's own lines aren't shown back to it.
+- **every-turn-a-line:** (decided) A turn spent writing adds one line to the scroll, saying who wrote it, and a turn that doesn't write adds nothing, so the scroll holds only notes.
+- **reading-costs:** (decided) A read costs the turn and shows every line this pirate hasn't read yet, each with who wrote it and its own lines included, or says plainly that there's nothing new, so talking and catching up trade off against digging; a pirate can write without ever having read.
 - **story-record:** (decided) Our record reads like a story of the game: who did what, what they saw of the log and why, in plain words, one line per turn, so a person can follow a whole game from it alone; when a choice trades anything against readability or repeatability, readability and repeatability win.
 - **two-logs:** (decided) There are two logs: the pirates' log, which is all they see, and our record of every turn, written clearly enough to read on its own and to animate from.
 

@@ -7,13 +7,15 @@ included, so a later change of default can't change what this run was),
 varies between identical runs).
 
 A model's replies go through `Replies`: a live run asks the model's backend for
-any reply neither this run nor an earlier one has (unless `cache` is off), and
-replay asks nothing, so a reply its folder doesn't hold fails instead of costing.
+any reply neither this run nor an earlier one has (unless `cache` is off), but
+only after a yes and up to its spending cap (see spending). Replay asks nothing,
+so a reply its folder doesn't hold fails instead of costing. A run that stopped
+says why in its manifest, and its replay stops at the same turn for that reason.
 
 `differences` plays the game again from that folder, in a temporary folder and
 with nothing but what's saved, and names any log that doesn't match byte for byte.
 
-Implements: agents/plays-then-replays, runs/cache-across-runs, runs/no-cache, treasure-island/named-runs, treasure-island/everything-cached, runs/one-game, runs/run-folder, runs/manifest-varies, runs/replay-byte-identical, runs/plays-live, results/examples-stay-true, agents/key-from-the-environment
+Implements: runs/yes-before-spending, runs/spending-cap, runs/stops-cleanly, agents/plays-then-replays, runs/cache-across-runs, runs/no-cache, treasure-island/named-runs, treasure-island/everything-cached, runs/one-game, runs/run-folder, runs/manifest-varies, runs/replay-byte-identical, runs/plays-live, results/examples-stay-true, agents/key-from-the-environment
 """
 
 import dataclasses
@@ -25,8 +27,9 @@ from pathlib import Path
 
 from treasure_island.backends import backend_for
 from treasure_island.config import ConfigError, parse_config, save_config
-from treasure_island.game_loop import write_game
+from treasure_island.game_loop import GameStopped, write_game
 from treasure_island.runs import Replies, earlier_replies, new_folder
+from treasure_island.spending import CAP_USD, Guard
 from treasure_island.strategies import brains_for
 
 LOGS = ("events.jsonl", "story.txt", "pirates-log.txt")
@@ -59,11 +62,18 @@ def _every_model(config):
 
 @dataclasses.dataclass(frozen=True)
 class Models:
-    """How a live run reaches its models: `cache=False` asks every model again,
-    and `backend` stands in for every model's own (a test's fake, say)."""
+    """How a live run reaches its models.
+
+    `cache=False` asks every model again, and `backend` stands in for every
+    model's own (a test's fake, say). Nothing is spent unless `agree()` says yes,
+    and never more than about `cap_usd`. With no `agree`, nobody is there to ask,
+    so the run spends nothing.
+    """
 
     backend: object = None
     cache: bool = True
+    cap_usd: float = CAP_USD
+    agree: object = None
 
 
 ASK_EVERY_MODEL = Models()
@@ -95,9 +105,10 @@ def write_saved(config, folder, on_start=None, pace=0, models=ASK_EVERY_MODEL):
     """Play `config` (see `config_with_seed`) into `folder`, which must exist."""
     folder = Path(folder)
     (folder / "replies.jsonl").touch()
+    guard = Guard(models.backend or _every_model(config), models.cap_usd, models.agree)
     replies = Replies(
         folder / "replies.jsonl",
-        models.backend or _every_model(config),
+        guard,
         earlier_replies() if models.cache else None,
     )
     brains = brains_for(config.brain, config, replies)
@@ -105,7 +116,7 @@ def write_saved(config, folder, on_start=None, pace=0, models=ASK_EVERY_MODEL):
     if on_start:
         on_start(folder)
     started_at = _now()
-    write_game(config, brains, folder, pace)
+    ending = write_game(config, brains, folder, pace)
     manifest = {
         "started_at": started_at,
         "finished_at": _now(),
@@ -113,6 +124,8 @@ def write_saved(config, folder, on_start=None, pace=0, models=ASK_EVERY_MODEL):
         "cache_hits": replies.hits,
         "cache_misses": replies.misses,
     }
+    if "stopped" in ending:
+        manifest["stopped"] = ending["stopped"]
     text = json.dumps(manifest, indent=2, sort_keys=True) + "\n"
     (folder / "manifest.json").write_text(text, encoding="utf-8")
     return folder
@@ -124,7 +137,18 @@ def differences(folder):
     config = parse_config(
         json.loads((folder / "config.json").read_text(encoding="utf-8"))
     )
-    replies = Replies(folder / "replies.jsonl")  # no backend: replay asks nothing
+    manifest = folder / "manifest.json"  # reference games have none
+    stopped = (
+        json.loads(manifest.read_text()).get("stopped") if manifest.exists() else None
+    )
+
+    def stop_where_it_stopped(request):
+        raise GameStopped(stopped)
+
+    # No backend: replay asks nothing, and a run that stopped stops again.
+    replies = Replies(
+        folder / "replies.jsonl", stop_where_it_stopped if stopped else None
+    )
     with tempfile.TemporaryDirectory() as scratch:
         write_game(config, brains_for(config.brain, config, replies), scratch)
         return [

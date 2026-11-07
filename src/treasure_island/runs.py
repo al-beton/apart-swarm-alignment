@@ -86,13 +86,17 @@ def _started_at(replies_path):
     return json.loads(manifest.read_text())["started_at"] if manifest.exists() else ""
 
 
-def earlier_replies():
-    """Every reply earlier runs got, by key, the last run to start winning."""
+def earlier_rows():
+    """Every stored reply earlier runs got, with its request, oldest run first."""
     paths = sorted(
         RUNS.glob("*/replies.jsonl"), key=lambda p: (_started_at(p), p.parent.name)
     )
-    rows = (json.loads(line) for p in paths for line in p.read_text().splitlines())
-    return {row["key"]: row["reply"] for row in rows}
+    return [json.loads(line) for p in paths for line in p.read_text().splitlines()]
+
+
+def earlier_replies():
+    """Every reply earlier runs got, by key, the last run to start winning."""
+    return {row["key"]: row["reply"] for row in earlier_rows()}
 
 
 def new_folder(name):

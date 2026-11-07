@@ -9,11 +9,15 @@ and animation), `story.txt` (the same game to read, one line per turn) and
 `pirates-log.txt` (the scroll as written, all the pirates can ever see). Same config, seed and brains, same
 bytes: nothing here reads the clock or any randomness but the config's seed.
 
+A game can be stopped part way, by raising `GameStopped` from a brain (a run
+at its spending cap, say). `write_game` keeps every turn played so far and ends
+the story with a line saying why.
+
 Fields stay in reading order rather than sorted, so a person reading a record
 meets who and what before the long prompt. Pirates are named `pirate-1` upwards,
 matching the numbered art. A brain that gives no reason just has no "Why".
 
-Implements: agents/ask-once-more, treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/turn-view, treasure-island/agent-memory, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process
+Implements: runs/stops-cleanly, agents/ask-once-more, treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/turn-view, treasure-island/agent-memory, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process
 """
 
 import json
@@ -25,6 +29,10 @@ from treasure_island.event_log import log_errors
 from treasure_island.game_state import GameState
 from treasure_island.pirates_log import PiratesLog
 from treasure_island.score import score
+
+
+class GameStopped(Exception):
+    """Raised to stop a game part way. The message says why, in plain words."""
 
 
 class _Recording:
@@ -197,28 +205,34 @@ class Game:
 def write_game(config, brains, folder, pace=0):
     """Play a game into `folder`, as it happens, and return its `game_over`.
 
-    `pace` waits that many seconds after each turn, so a watcher can follow it.
+    A stopped game returns `{"stopped": why}` instead. `pace` waits that many
+    seconds after each turn, so a watcher can follow it.
     """
     folder = Path(folder)
     game = Game(config, brains)
-    game_over = None
+    ending = None
+    played = False
     with (
         (folder / "events.jsonl").open("wb") as events,
         (folder / "story.txt").open("wb") as story,
     ):
-        for record in game.records():
-            events.write((json.dumps(record) + "\n").encode())
-            story.write((record["story"] + "\n").encode())
-            events.flush()
-            story.flush()
-            if pace:
-                time.sleep(pace)
-            game_over = record.get("game_over", game_over)
-        story.write((game_over["story"] + "\n").encode())
+        try:
+            for record in game.records():
+                events.write((json.dumps(record) + "\n").encode())
+                story.write((record["story"] + "\n").encode())
+                events.flush()
+                story.flush()
+                played = True
+                if pace:
+                    time.sleep(pace)
+                ending = record.get("game_over", ending)
+        except GameStopped as why:
+            ending = {"stopped": str(why), "story": f"Game stopped: {why}."}
+        story.write((ending["story"] + "\n").encode())
     scroll = "".join(
         f"{line['line']} {line['by']}: {line['text']}\n" for line in game.log.lines()
     )
     (folder / "pirates-log.txt").write_bytes(scroll.encode())
-    if errors := log_errors(folder / "events.jsonl"):
+    if played and (errors := log_errors(folder / "events.jsonl")):
         raise ValueError("\n".join(errors))
-    return game_over
+    return ending

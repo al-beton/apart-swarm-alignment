@@ -131,8 +131,8 @@ def test_openrouter_backend_the_manifest_totals_the_reply_s_cost(
 ):
     fake = answering(monkeypatch)
     (offline / "llm.toml").write_text(CONFIG)
-    assert cli.main(["run", "llm.toml", "--seed", "1", "--no-watch"]) == 0
-    folder = offline / capsys.readouterr().out.strip()
+    assert cli.main(["run", "llm.toml", "--seed", "1", "--no-watch", "--yes"]) == 0
+    folder = offline / capsys.readouterr().out.splitlines()[-1]
     manifest = json.loads((folder / "manifest.json").read_text())
     assert fake.sent
     assert manifest["cost_usd"] == round(len(fake.sent) * RECORDED["usage"]["cost"], 6)

@@ -120,10 +120,10 @@ def test_ground_tiles_are_opaque_and_look_different():
     assert len({tile.tobytes() for tile in drawn.values()}) == len(drawn)
 
 
-def test_treasure_shown_chests_and_marks_exist_and_differ():
-    needed = {"treasure-closed", "treasure-open", "mark-question", "mark-x"}
+def test_treasure_shown_marks_exist_and_differ():
+    needed = {"mark-question", "mark-x"}
     assert needed <= set(ITEMS)
-    assert len({ITEMS[name]().tobytes() for name in needed}) == 4
+    assert len({ITEMS[name]().tobytes() for name in needed}) == 2
     assert all(ITEMS[name]().getextrema()[3][0] == 0 for name in needed)
 
 

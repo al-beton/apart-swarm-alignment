@@ -10,7 +10,7 @@
 - **four-directions:** Pirates face four directions, each with a standing frame and two walking frames.
 - **actions-shown:** Pirates also have digging and cheering poses.
 - **ground-tiles:** The ground tiles are sand and grass, dug sand that still looks walkable, water that doesn't, and sinking sand.
-- **treasure-shown:** The treasure has a closed chest, an open chest, and the question mark and X that mark its square.
+- **treasure-shown:** The treasure's square has a question mark and an X to mark it for the reader.
 - **treasure-cave:** Once the treasure is dug up its square is a cave the pirates go into, with gold glinting in its mouth over two frames, and room beside the door for a stack of hats.
 - **hat-stack:** Each pirate that goes into the cave leaves a small copy of its hat by the door, in its colour with its label, stacked in the order they went in with the first at the bottom; a crew of six fits on the square with every label showing, and a bigger crew squeezes up to stay on it.
 - **going-in:** A pirate going into the cave is drawn from behind, sinking into its mouth over four steps, so a single frame still reads as going in.
@@ -33,7 +33,7 @@
 | `four-directions` | `assets/pirates.py` | `test_four_directions_each_walk_with_three_frames` |
 | `actions-shown` | `assets/pirates.py` | `test_actions_shown_digging_and_cheering_differ_from_standing` |
 | `ground-tiles` | `assets/tiles.py` | `test_ground_tiles_are_opaque_and_look_different` |
-| `treasure-shown` | `assets/treasure.py` | `test_treasure_shown_chests_and_marks_exist_and_differ` |
+| `treasure-shown` | `assets/treasure.py` | `test_treasure_shown_marks_exist_and_differ` |
 | `treasure-cave` | `assets/cave.py`, `assets/generate.py` | `test_treasure_cave_is_a_square_that_glints_and_leaves_room_for_the_hats` |
 | `hat-stack` | `assets/cave.py` | `test_hat_stack_is_empty_with_nobody_inside`, `test_hat_stack_puts_the_first_in_at_the_bottom`, `test_hat_stack_shows_every_label_for_a_crew_of_six`, `test_hat_stack_keeps_a_big_crew_on_the_square`, `test_hat_stack_hats_are_small_and_carry_the_label` |
 | `going-in` | `assets/cave.py` | `test_going_in_sinks_into_the_mouth_step_by_step` |

@@ -15,7 +15,7 @@ says why in its manifest, and its replay stops at the same turn for that reason.
 `differences` plays the game again from that folder, in a temporary folder and
 with nothing but what's saved, and names any log that doesn't match byte for byte.
 
-Implements: runs/yes-before-spending, runs/spending-cap, runs/stops-cleanly, agents/plays-then-replays, runs/cache-across-runs, runs/no-cache, treasure-island/named-runs, treasure-island/everything-cached, runs/one-game, runs/run-folder, runs/manifest-varies, runs/replay-byte-identical, runs/plays-live, results/examples-stay-true, agents/key-from-the-environment
+Implements: agents/reasoning-looked-up, runs/yes-before-spending, runs/spending-cap, runs/stops-cleanly, agents/plays-then-replays, runs/cache-across-runs, runs/no-cache, treasure-island/named-runs, treasure-island/everything-cached, runs/one-game, runs/run-folder, runs/manifest-varies, runs/replay-byte-identical, runs/plays-live, results/examples-stay-true, agents/key-from-the-environment
 """
 
 import dataclasses
@@ -25,7 +25,7 @@ import tempfile
 import tomllib
 from pathlib import Path
 
-from treasure_island.backends import backend_for
+from treasure_island.backends import backend_for, looked_up_thinking
 from treasure_island.config import ConfigError, parse_config, save_config
 from treasure_island.game_loop import GameStopped, write_game
 from treasure_island.runs import Replies, earlier_replies, new_folder
@@ -89,8 +89,26 @@ def play_saved(config_path, seed, on_start=None, pace=0, models=ASK_EVERY_MODEL)
     brains_for(config.brain, config)  # a bad brain makes no folder
     if models.backend is None:  # nor does a model with no backend or no key
         models = dataclasses.replace(models, backend=_every_model(config))
+        config = _with_thinking_looked_up(config)
     folder = new_folder(f"{Path(config_path).stem}-seed-{seed}")
     return write_saved(config, folder, on_start, pace, models)
+
+
+def _with_thinking_looked_up(config):
+    """The config with each model pirate's way of thinking settled, so it's saved.
+
+    Asked of the provider once, at the start of a live run; a replay reads it from
+    the saved config and never asks.
+    """
+    if not config.thinking:
+        return config
+    pirates = tuple(
+        dataclasses.replace(pirate, thinks=looked_up_thinking(pirate.model))
+        if pirate.model and not pirate.thinks
+        else pirate
+        for pirate in config.pirates
+    )
+    return dataclasses.replace(config, pirates=pirates)
 
 
 def config_with_seed(config_path, seed):

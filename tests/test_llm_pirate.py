@@ -1,6 +1,7 @@
 # Implements: treasure-island/model-reasoning, agents/model-per-pirate, agents/one-request-per-turn, agents/reply-is-a-tool-call, agents/ask-once-more, agents/reply-cap, agents/plays-then-replays, treasure-island/thinking, treasure-island/model-backends, runs/cache-across-runs, runs/no-cache
 """An LLM pirate plays through a backend, and its game replays with no backend."""
 
+import dataclasses
 import json
 
 import pytest
@@ -61,7 +62,7 @@ def one_turn(model, config=None, tmp_path=None, name="pirate-1"):
     """Ask an LLM pirate for one decision through `model`; return it and the view."""
     config = config or llm_config()
     replies = Replies(tmp_path / "replies.jsonl", backend=model)
-    pirate = LLMPirate(name, "fake/digger", replies, config)
+    pirate = LLMPirate(name, config.pirates[0], replies, config)
     seat = PirateSeat(name, pirate, config)
     return seat.take_turn((0, 0), 3), pirate
 
@@ -224,7 +225,14 @@ def ask_as(model_name, tmp_path, **settings):
     config = llm_config(**settings)
     replies = Replies(tmp_path / "replies.jsonl", backend=model)
     PirateSeat(
-        "pirate-1", LLMPirate("pirate-1", model_name, replies, config), config
+        "pirate-1",
+        LLMPirate(
+            "pirate-1",
+            dataclasses.replace(config.pirates[0], model=model_name),
+            replies,
+            config,
+        ),
+        config,
     ).take_turn((0, 0), 3)
     return model.requests[0]
 

@@ -10,7 +10,7 @@ thought inside `reply_tokens`, which caps each reply. `score_in_cave` and
 default, Al to confirm.
 `parse_config` reports every problem at once, so one fix-and-retry is enough.
 
-Implements: treasure-island/model-reasoning, treasure-island/score-numbers, treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config, treasure-island/silent
+Implements: agents/reasoning-looked-up, treasure-island/model-reasoning, treasure-island/score-numbers, treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config, treasure-island/silent
 """
 
 import colorsys
@@ -56,6 +56,7 @@ class Pirate:
     head_text: str
     colour: tuple[int, int, int]
     model: str | None = None
+    thinks: str | None = None  # "built-in" or "in-reply"; None leaves it to the model
 
 
 @dataclasses.dataclass(frozen=True)
@@ -99,8 +100,10 @@ def _pirate_errors(where, entry):
     errors = [
         f"{where}.{key} is not a pirate setting"
         for key in entry
-        if key not in ("personality", "head_text", "colour", "model")
+        if key not in ("personality", "head_text", "colour", "model", "thinks")
     ]
+    if entry.get("thinks") not in (None, "built-in", "in-reply"):
+        errors.append(f'{where}.thinks must be "built-in" or "in-reply"')
     if entry.get("model") is not None and not isinstance(entry["model"], str):
         errors.append(f"{where}.model must be the name of a model")
     personality = entry.get("personality", 1)
@@ -181,6 +184,7 @@ def _pirate(index, crew_size, entry):
         head_text=entry.get("head_text", str(index + 1)),
         colour=tuple(colour) if colour else _default_colour(index, crew_size),
         model=entry.get("model"),
+        thinks=entry.get("thinks"),
     )
 
 

@@ -9,12 +9,12 @@ starts; OpenRouter's prices vary by model, so its replies' own costs are counted
 and Adaption's rates are listed in adaption_backend. Each backend's `THINKS`
 says which way its models think (`treasure-island/model-reasoning`).
 
-Implements: treasure-island/model-reasoning, agents/check-keys, agents/backend-interface, agents/no-model-yet, agents/openrouter-backend, agents/adaption-backend, agents/adaption-cost, agents/key-from-the-environment, runs/cost-before-run
+Implements: agents/reasoning-looked-up, treasure-island/model-reasoning, agents/check-keys, agents/backend-interface, agents/no-model-yet, agents/openrouter-backend, agents/adaption-backend, agents/adaption-cost, agents/key-from-the-environment, runs/cost-before-run
 """
 
 import os
 
-from treasure_island import adaption_backend
+from treasure_island import adaption_backend, openrouter
 from treasure_island.config import ConfigError
 from treasure_island.openrouter import OpenRouter
 
@@ -42,16 +42,27 @@ BACKENDS = {
 }
 
 
-def thinking_way(model):
+def thinking_way(model, thinks=None):
     """How this model thinks: "built-in" reasoning, or a thought "in-reply".
 
-    A model no backend serves (only a test's fake gets that far) writes its
-    thought in its reply, since that works with any model.
+    A pirate's own `thinks` wins. A model no backend serves (only a test's fake
+    gets that far) writes its thought in its reply, since that works with any model.
     """
+    if thinks:
+        return thinks
     for prefix, (backend, _) in BACKENDS.items():
         if model.startswith(prefix):
             return backend.THINKS
     return "in-reply"
+
+
+def looked_up_thinking(model):
+    """How this model thinks, asking its provider where the backend can tell."""
+    if model.startswith("openrouter/"):
+        found = openrouter.thinks_for(model.removeprefix("openrouter/"))
+        if found:
+            return found
+    return thinking_way(model)
 
 
 def price_for(model):

@@ -15,7 +15,7 @@ on asks for reasoning within `thinking_tokens`, on top of the reply's cap.
 `OpenRouter.check_key` asks OpenRouter about a key, not a model, so it spends nothing.
 It never says the key's `label`, since OpenRouter's label is the key, masked.
 
-Implements: treasure-island/model-reasoning, agents/openrouter-backend, agents/check-keys
+Implements: agents/reasoning-looked-up, treasure-island/model-reasoning, agents/openrouter-backend, agents/check-keys
 """
 
 import json
@@ -26,6 +26,7 @@ from treasure_island.game_loop import GameStopped
 
 URL = "https://openrouter.ai/api/v1/chat/completions"
 KEY_URL = "https://openrouter.ai/api/v1/key"
+MODELS_URL = "https://openrouter.ai/api/v1/models"  # free, and needs no key
 TIMEOUT_SECONDS = 120
 
 
@@ -41,10 +42,26 @@ def _body(model_id, request):
         "max_tokens": request["max_tokens"] + request["thinking_tokens"],
         "seed": request["seed"],
     }
-    if request["thinking"]:
-        # The reasoning's own budget, on top of the reply's.
+    if request["thinking"] and request["thinking_tokens"]:
+        # The reasoning's own budget, on top of the reply's; a model that writes
+        # its thought in its reply has none, and is sent no reasoning setting.
         body["reasoning"] = {"max_tokens": request["thinking_tokens"]}
     return body
+
+
+def thinks_for(model_id):
+    """ "built-in" if OpenRouter's listing says this model reasons, "in-reply" if
+    it says it doesn't, or None if the listing can't be read or doesn't list it."""
+    try:
+        with urllib.request.urlopen(MODELS_URL, timeout=TIMEOUT_SECONDS) as answer:
+            listing = json.load(answer)["data"]
+    except (urllib.error.URLError, OSError, ValueError, KeyError, TypeError):
+        return None
+    for entry in listing:
+        if entry.get("id") == model_id:
+            reasons = "reasoning" in (entry.get("supported_parameters") or [])
+            return "built-in" if reasons else "in-reply"
+    return None
 
 
 def _reply_text(message, thinking):

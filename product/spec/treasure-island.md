@@ -41,7 +41,7 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 - **reference-games:** (decided) Each scripted pirate has a committed reference game that one command remakes and a test compares byte for byte, so any change to how a game plays shows up at once.
 - **silent:** (decided) The silent pirate, the default brain, digs its square if it isn't dug and otherwise walks to the nearest square it hasn't seen dug, by grid distance with ties to the topmost and then the leftmost (default, Al to confirm), never trying a move onto a square it's told holds a pirate; it never writes or reads, and enters the cave on its next turn once it stands on it, so it is the baseline a crew that talks should beat.
 - **stripes:** (decided) Pirate n of a crew of k digs rows n, n+k, n+2k and so on, writes "I am blocked" when the next square on its way holds a pirate, and on digging up the treasure writes where it is and enters; it reads every 5th turn and heads for the cave once it has read where it is, so a scripted crew can win.
-- **scribe:** (decided) The scribe moves and digs like the silent pirate and spends the turn after each dig writing what it found; it never reads, and writes where the cave is before it enters, so every game shows writing.
+- **scribe:** (decided) The scribe moves and digs like the silent pirate and spends the turn after each dig writing what it found, such as "Dug (3, 4): nothing" or "Treasure at (3, 4)" (wording default, Al to confirm); it never reads (default, Al to confirm), and writes where the cave is before it enters, so every game shows writing.
 
 ## The turn
 

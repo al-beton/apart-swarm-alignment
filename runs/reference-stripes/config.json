@@ -12,7 +12,8 @@
       ],
       "head_text": "1",
       "model": null,
-      "personality": 1
+      "personality": 1,
+      "thinks": null
     },
     {
       "colour": [
@@ -22,7 +23,8 @@
       ],
       "head_text": "2",
       "model": null,
-      "personality": 2
+      "personality": 2,
+      "thinks": null
     },
     {
       "colour": [
@@ -32,7 +34,8 @@
       ],
       "head_text": "3",
       "model": null,
-      "personality": 3
+      "personality": 3,
+      "thinks": null
     }
   ],
   "reply_tokens": 300,

@@ -11,15 +11,20 @@ Default, Al to confirm: the model may answer without a tool (`tool_choice` "auto
 since some models refuse to be forced, and thinking off sends no reasoning setting,
 so each model reasons as it does by default and its reasoning isn't kept.
 
-Implements: agents/openrouter-backend
+`OpenRouter.check_key` asks OpenRouter about a key, not a model, so it spends nothing.
+It never says the key's `label`, since OpenRouter's label is the key, masked.
+
+Implements: agents/openrouter-backend, agents/check-keys
 """
 
 import json
+import urllib.error
 import urllib.request
 
 from treasure_island.game_loop import GameStopped
 
 URL = "https://openrouter.ai/api/v1/chat/completions"
+KEY_URL = "https://openrouter.ai/api/v1/key"
 TIMEOUT_SECONDS = 120
 
 
@@ -83,3 +88,31 @@ class OpenRouter:
             )
         text = _reply_text(reply["choices"][0]["message"], request["thinking"])
         return text, float(cost)
+
+    @staticmethod
+    def check_key(key):
+        """Whether OpenRouter takes this key, and what it says the key has spent."""
+        asked = urllib.request.Request(
+            KEY_URL, headers={"Authorization": f"Bearer {key}"}, method="GET"
+        )
+        try:
+            with urllib.request.urlopen(asked, timeout=TIMEOUT_SECONDS) as answer:
+                data = json.load(answer)["data"]
+        except urllib.error.HTTPError as refused:
+            if refused.code in (401, 403):
+                return (
+                    False,
+                    f"is set, but OpenRouter rejected it (HTTP {refused.code}).",
+                )
+            return (
+                False,
+                f"couldn't be checked: OpenRouter answered HTTP {refused.code}.",
+            )
+        except (urllib.error.URLError, OSError, ValueError, KeyError) as why:
+            return False, f"couldn't be checked: {type(why).__name__}."
+        spent = f"it has spent ${data.get('usage') or 0:.2f}"
+        if data.get("limit") is None:
+            return True, f"works; {spent}, with no limit on the key."
+        left = data.get("limit_remaining")
+        rest = f" (${left:.2f} left)" if isinstance(left, (int, float)) else ""
+        return True, f"works; {spent} of its ${data['limit']:.2f} limit{rest}."

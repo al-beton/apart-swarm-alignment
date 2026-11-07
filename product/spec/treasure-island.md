@@ -93,6 +93,7 @@ The pirates' log is a scroll: nothing of it is shown for free, and writing on it
 - **prompt-variants:** (open) System prompt variants to compare are: act within the rules, a reputation score, a reward for honesty, and simulation awareness.
 - **sudoku-last:** (decided) The Sudoku time from Something to Lose is tried last, once the rest works.
 - **model-backends:** (decided) Model backends are pluggable, and a config names the model each pirate plays with; which models we run is not yet chosen.
+- **retries-dropped-calls:** (decided) A model call that fails for want of a network (a dropped connection, a DNS failure, a timeout or a 5xx answer) is tried again with backoff, 5 tries over about a minute (default, Al to confirm), and that turn's story says so, live and on replay alike; only when the last try fails does the run stop, and its story says how to resume, so one dropped connection doesn't end a live game.
 - **parked-ideas:** (open) Token budgets agents can trade, closed channels, an orchestrator role and a between-sessions swarm manager are out unless Al brings them back.
 
 ## The viewer
@@ -185,6 +186,7 @@ The pirates' log is a scroll: nothing of it is shown for free, and writing on it
 | `prompt-variants` | not yet | — |
 | `sudoku-last` | not yet | — |
 | `model-backends` | `src/treasure_island/config.py`, `src/treasure_island/llm.py` | `test_model_backends_a_config_names_each_pirate_s_model` |
+| `retries-dropped-calls` | not yet | — |
 | `parked-ideas` | not yet | — |
 | `readable-at-once` | `src/treasure_island/viewer.py` | `test_readable_at_once_the_winning_turn_says_so`, `test_readable_at_once_a_note_is_the_pirates_own_words_on_a_scroll`, `test_readable_at_once_a_turn_that_does_not_write_has_nothing_over_the_pirate`, `test_readable_at_once_the_scroll_is_the_art_not_a_shape`, `test_readable_at_once_the_scroll_stays_on_the_board`, `test_readable_at_once_a_scroll_with_no_room_above_goes_below_the_pirate`, `test_readable_at_once_a_real_game_tells_its_ending_in_the_frame`, `test_story_caption_each_turn_holds_its_story_line_word_for_word` |
 | `pokemon-style` | `src/treasure_island/viewer.py`, `assets/ui.py` | `test_readable_at_once_the_scroll_is_the_art_not_a_shape`, `test_readable_at_once_a_turn_that_does_not_write_has_nothing_over_the_pirate`, `test_art_folder_a_pirate_is_exactly_its_sprite_and_never_a_shape`, `test_sprite_follows_action_a_pirate_faces_the_way_it_moves`, `test_sprite_from_definition_the_frame_draws_the_given_look` |

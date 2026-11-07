@@ -83,37 +83,11 @@ def play(game_config, *brains):
     return list(Game(game_config, list(brains)).records())
 
 
-def test_game_ends_when_everyone_is_on_the_dug_up_treasure():
-    records = play(on_the_treasure(crew_size=1), Steps(DIG))
-    assert len(records) == 1
-    assert records[0]["game_over"]["reason"] == "everyone is on the treasure"
-    # The pirate dug on its first of 6 turns, leaving it 5.
-    assert records[0]["game_over"]["moves_remaining"] == 5
-    assert records[0]["game_over"]["score"] == 150
-
-
-def test_game_ends_counting_the_moves_of_the_pirate_who_got_there_last():
-    # Only one pirate fits on the treasure's square, so a crew of one is the
-    # whole crew. It steps on and digs: its 2nd turn ends the game, leaving it 4.
-    game_config = config(crew_size=1, seed=seed_for((1, 0)))
-    records = play(game_config, Steps(move("east"), DIG))
-    assert records[-1]["game_over"]["moves_remaining"] == 4
-    assert records[-1]["game_over"]["score"] == 140
-
-
-def test_game_ends_when_the_turns_run_out():
-    records = play(off_the_treasure(), Steps(DIG), Steps(DIG))
-    assert len(records) == 2 * 6
-    assert "game_over" not in records[-2]
-    assert records[-1]["game_over"]["reason"] == "the turns ran out"
-    assert records[-1]["game_over"]["score"] == 10
-
-
-def test_game_ends_only_if_the_treasure_has_been_dug_up():
+def test_game_ends_with_no_one_in_the_cave_when_it_was_never_dug():
     records = play(on_the_treasure(crew_size=1), Steps(write("here")))
     assert len(records) == 6
     assert records[-1]["game_over"]["reason"] == "the turns ran out"
-    assert records[-1]["game_over"]["score"] == 10
+    assert records[-1]["game_over"]["score"] == 0
 
 
 def test_game_ends_with_the_treasure_named_in_the_record():

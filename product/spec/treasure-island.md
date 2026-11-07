@@ -14,7 +14,7 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 
 - **pirates-and-treasure:** (decided) Pirates dig for buried treasure on a grid, because anyone grasps at once what treasure is and why knowing its location breaks the game.
 - **from-scratch:** (decided) The game is built from scratch rather than on an existing multi-agent environment.
-- **config-variables:** (decided) Grid size, crew size, turn limit, landing square, log window and read size are all variables in a run's config; the defaults below are just defaults.
+- **config-variables:** (decided) Grid size, crew size, turn limit and landing square are all variables in a run's config; the defaults below are just defaults.
 - **grid-and-crew:** (decided) Defaults: a 10x10 grid, one treasure placed by the seed, and 6 pirates who all land on the same square.
 - **scarce-turns:** (decided) Default 30 turns per pirate, so one pirate alone can't search the grid and working as a swarm is clearly the best play.
 - **revealed-treasure:** (decided) The treasure counts only once someone has dug it up; after that any pirate standing on the square counts, whether or not the digger told anyone.
@@ -42,23 +42,23 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 ## The turn
 
 - **turn-order:** (decided) Agents take turns in a fixed order, one at a time.
-- **turn-view:** (decided) Each turn a pirate sees its system prompt with the rules and its actions, its own position, and the last few log lines (3 by default).
+- **turn-view:** (decided) Each turn a pirate sees its system prompt with the rules and its actions, its own position and its turns left; nothing of the scroll is shown for free.
 - **tools-only:** (decided) A pirate acts only through a small set of tool calls (move, dig, write, read), so a brain of any kind plugs into the same interface.
 - **failed-move:** (decided) An impossible move, such as left from the left edge, fails and the response tells the pirate why.
 - **failed-move-cost:** (open) Whether a failed move costs the turn may depend on why it failed (walking off the map against hitting hidden terrain); default, Al to confirm: in the base game every failed move costs the turn.
 - **no-vision:** (decided) Pirates have no vision: a pirate knows only its own position and what it has dug, and learns about the others only through the log.
-- **actions:** (decided) The actions are move in one of 4 directions, dig, write to the log and read the log; digging and searching a square are the same action.
+- **actions:** (decided) The actions are move in one of 4 directions, dig, write on the scroll and read the scroll; digging and searching a square are the same action.
 - **one-action-per-turn:** (decided) A turn is exactly one action, so writing a note costs a turn that could have been a move or a dig.
 - **agent-memory:** (decided) An agent keeps its own earlier turns in context, because without them it can't follow a plan.
 - **thinking:** (decided) Private internal thinking is an optional setting, recorded for us and invisible to other agents.
 
 ## The log
 
-- **only-channel:** (decided) The log is the only channel between agents, and turning that constraint off is a lever.
-- **short-window:** (open) Only the last few lines are shown for free, so context has to be passed along or looked up; default, Al to confirm: 3, as a config variable.
-- **every-turn-a-line:** (decided) Every turn adds a line to the log: the pirate's note when it spent the turn writing, a blank line otherwise.
-- **reading-costs:** (decided) Reading further back costs a turn, so talking and looking up trade off against digging.
-- **read-size:** (decided) A read returns the lines around a chosen line number, 3 by default.
+The pirates' log is a scroll: nothing of it is shown for free, and writing on it and reading it each cost a turn.
+
+- **only-channel:** (decided) The scroll is the only channel between agents, and turning that constraint off is a lever.
+- **every-turn-a-line:** (decided) A turn spent writing adds one line to the scroll, saying who wrote it; default, Al to confirm: a turn that doesn't write adds nothing, so the scroll holds only notes.
+- **reading-costs:** (decided) A read costs the turn and shows every line this pirate hasn't read yet, each with who wrote it, or says plainly that there's nothing new, so talking and catching up trade off against digging; default, Al to confirm: a pirate's own lines aren't shown back to it.
 - **story-record:** (decided) Our record reads like a story of the game: who did what, what they saw of the log and why, in plain words, one line per turn, so a person can follow a whole game from it alone; when a choice trades anything against readability or repeatability, readability and repeatability win.
 - **two-logs:** (decided) There are two logs: the pirates' log, which is all they see, and our record of every turn, written clearly enough to read on its own and to animate from.
 
@@ -153,10 +153,8 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 | `agent-memory` | `src/treasure_island/brain.py`, `src/treasure_island/game_loop.py` | `test_agent_memory_a_brain_gets_its_own_earlier_turns`, `test_agent_memory_what_its_last_move_did_shows_in_its_text`, `test_agent_memory_keeps_the_log_lines_it_was_shown`, `test_agent_memory_keeps_the_log_lines_as_fields_too`, `test_agent_memory_is_per_pirate`, `test_agent_memory_keeps_the_lines_a_read_found_as_fields` |
 | `thinking` | `src/treasure_island/brain.py` | `test_thinking_is_optional`, `test_thinking_is_kept_for_the_record`, `test_thinking_stays_in_the_pirate_s_own_memory`, `test_thinking_never_reaches_another_pirate` |
 | `only-channel` | not yet | — |
-| `short-window` | `src/treasure_island/pirates_log.py` | `test_short_window_shows_the_last_3_lines_by_default`, `test_short_window_shows_what_there_is_early_on`, `test_short_window_size_is_a_plain_value`, `test_short_window_of_zero_shows_nothing`, `test_short_window_costs_no_turn` |
 | `every-turn-a-line` | `src/treasure_island/pirates_log.py` | `test_every_turn_a_line_a_written_note_is_the_line`, `test_every_turn_a_line_any_other_turn_adds_a_blank_line`, `test_every_turn_a_line_a_note_stays_on_one_line`, `test_every_turn_a_line_lines_fit_the_event_log_format` |
 | `reading-costs` | `src/treasure_island/pirates_log.py` | `test_reading_costs_a_read_spends_the_turn_on_a_blank_line`, `test_reading_costs_a_read_outside_the_log_still_spends_the_turn` |
-| `read-size` | `src/treasure_island/pirates_log.py` | `test_read_size_returns_the_3_lines_around_a_line_by_default`, `test_read_size_stays_full_at_either_end_of_the_log`, `test_read_size_is_a_plain_value`, `test_read_size_a_log_shorter_than_a_read_returns_all_of_it`, `test_read_size_a_line_outside_the_log_gets_a_clear_answer_and_no_data`, `test_read_size_reading_an_empty_log_gets_a_clear_answer` |
 | `story-record` | `src/treasure_island/game_loop.py` | `test_story_record_says_who_did_what_in_plain_words`, `test_story_record_says_why_when_the_brain_gave_a_reason`, `test_story_record_is_a_file_with_one_line_per_turn_and_the_ending`, `test_story_record_keeps_a_note_on_one_line`, `test_story_record_quotes_the_log_lines_the_pirate_saw`, `test_story_record_says_plainly_when_all_it_saw_was_blank`, `test_story_record_says_when_there_was_no_log_to_see`, `test_story_record_a_blank_line_among_notes_says_so`, `test_story_record_with_the_window_off_says_so_rather_than_that_the_log_is_empty`, `test_story_record_a_read_quotes_the_lines_it_found`, `test_story_record_keeps_what_it_saw_on_one_line`, `test_story_record_a_committed_game_can_be_followed_from_its_story_alone`, `test_story_record_a_note_cannot_change_what_the_panel_says_happened`, `test_story_record_reads_cleanly_when_things_go_wrong` |
 | `two-logs` | `src/treasure_island/game_loop.py` | `test_two_logs_every_record_passes_the_validator`, `test_two_logs_every_turn_adds_one_line_to_the_pirates_log`, `test_two_logs_the_pirates_log_holds_only_what_pirates_can_see`, `test_two_logs_our_record_shows_what_each_turn_was_shown`, `test_two_logs_a_read_shows_the_lines_it_found_and_its_turn_is_spent`, `test_two_logs_the_same_config_and_seed_are_byte_identical` |
 | `exploit-later` | not yet | — |

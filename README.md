@@ -37,52 +37,52 @@ uv run treasure-island show examples/small-crew
 
 Its `story.txt` is the whole game, and each line says who acted, what they did, what any read of the scroll found and why.
 
-Pirate 1 starts in the top-left corner and pirate 2 on the square below it, on a 3 by 3 grid with 4 turns each. No two pirates may stand on one square. Neither can see the other or the treasure. Pirate 1 goes first and digs where it stands. Nothing there.
+Pirate 1 starts in the top-left corner and pirate 2 on the square below it, on a 3 by 3 grid with 4 turns each. No two pirates may stand on one square. Neither can see the grid or the treasure: each is told only which of the 4 squares next to it hold a pirate and whether its own square has been dug. Pirate 1 goes first and digs where it stands. Nothing there.
 
 ```text
-Turn 0: pirate-1 at (0, 0) dug at (0, 0) and found nothing. Why: I haven't dug this square yet.
+Turn 0: pirate-1 at (0, 0), on undug sand, with pirate-2 to the south, dug at (0, 0) and found nothing. Why: I haven't dug this square yet.
 ```
 
 Pirate 2 digs its own square. Pirate 1 wrote nothing on the scroll, and nothing on it would be shown for free anyway: a pirate has to spend a turn reading it.
 
 ```text
-Turn 1: pirate-2 at (0, 1) dug at (0, 1) and found nothing. Why: I haven't dug this square yet.
+Turn 1: pirate-2 at (0, 1), on undug sand, with pirate-1 to the north, dug at (0, 1) and found nothing. Why: I haven't dug this square yet.
 ```
 
 Pirate 1 follows its S across the grid, one square east.
 
 ```text
-Turn 2: pirate-1 at (0, 0) moved east to (1, 0). Why: The next square to dig is (1, 0).
+Turn 2: pirate-1 at (0, 0), on dug sand, with pirate-2 to the south, moved east to (1, 0). Why: The next square to dig is (1, 0).
 ```
 
 Pirate 2 heads for the S's first square, the corner pirate 1 just left.
 
 ```text
-Turn 3: pirate-2 at (0, 1) moved north to (0, 0). Why: The next square to dig is (0, 0).
+Turn 3: pirate-2 at (0, 1), on dug sand, with no pirate beside it, moved north to (0, 0). Why: The next square to dig is (0, 0).
 ```
 
 Pirate 1 digs the new square and finds the treasure on its third turn. Digging it up opens a cave on that square, and only pirate 1, standing there, is told.
 
 ```text
-Turn 4: pirate-1 at (1, 0) dug at (1, 0) and found the treasure, which opened the cave. Why: I haven't dug this square yet.
+Turn 4: pirate-1 at (1, 0), on undug sand, with pirate-2 to the west, dug at (1, 0) and found the treasure, which opened the cave. Why: I haven't dug this square yet.
 ```
 
-Pirate 2 digs the corner, because it can't know pirate 1 already did.
+Pirate 2 digs the corner anyway. It is told the square has been dug, but this scripted S-sweep digs every square on its path, whatever it's told.
 
 ```text
-Turn 5: pirate-2 at (0, 0) dug at (0, 0) and found nothing. Why: I haven't dug this square yet.
+Turn 5: pirate-2 at (0, 0), on dug sand, with pirate-1 to the east, dug at (0, 0) and found nothing. Why: I haven't dug this square yet.
 ```
 
 Pirate 1 goes into the cave on its last turn. That takes it out of the game for good and frees the square. It writes nothing on the scroll, so pirate 2 still doesn't know.
 
 ```text
-Turn 6: pirate-1 at (1, 0) went into the cave at (1, 0). Why: This is the cave, so I'm going in.
+Turn 6: pirate-1 at (1, 0), on dug sand, with pirate-2 to the west, went into the cave at (1, 0). Why: This is the cave, so I'm going in.
 ```
 
 Pirate 2 steps east onto the cave's square with its last turn, too late to go in.
 
 ```text
-Turn 7: pirate-2 at (0, 0) moved east to (1, 0). Why: The next square to dig is (1, 0).
+Turn 7: pirate-2 at (0, 0), on dug sand, with no pirate beside it, moved east to (1, 0). Why: The next square to dig is (1, 0).
 ```
 
 Each pirate in the cave scores 100 plus 10 for every turn it had left after going in, and one that never gets in scores nothing. Pirate 1 went in with no turns left, so the crew scores 100.

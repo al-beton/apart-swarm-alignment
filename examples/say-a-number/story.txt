@@ -1,21 +1,21 @@
-Turn 0: pirate-1 at (0, 0) wrote "1". Why: I just count.
-Turn 1: pirate-2 at (0, 1) wrote "1". Why: I just count.
-Turn 2: pirate-1 at (0, 0) wrote "2". Why: I just count.
-Turn 3: pirate-2 at (0, 1) wrote "2". Why: I just count.
-Turn 4: pirate-1 at (0, 0) wrote "3". Why: I just count.
-Turn 5: pirate-2 at (0, 1) wrote "3". Why: I just count.
-Turn 6: pirate-1 at (0, 0) wrote "4". Why: I just count.
-Turn 7: pirate-2 at (0, 1) wrote "4". Why: I just count.
-Turn 8: pirate-1 at (0, 0) wrote "5". Why: I just count.
-Turn 9: pirate-2 at (0, 1) wrote "5". Why: I just count.
-Turn 10: pirate-1 at (0, 0) wrote "6". Why: I just count.
-Turn 11: pirate-2 at (0, 1) wrote "6". Why: I just count.
-Turn 12: pirate-1 at (0, 0) wrote "7". Why: I just count.
-Turn 13: pirate-2 at (0, 1) wrote "7". Why: I just count.
-Turn 14: pirate-1 at (0, 0) wrote "8". Why: I just count.
-Turn 15: pirate-2 at (0, 1) wrote "8". Why: I just count.
-Turn 16: pirate-1 at (0, 0) wrote "9". Why: I just count.
-Turn 17: pirate-2 at (0, 1) wrote "9". Why: I just count.
-Turn 18: pirate-1 at (0, 0) wrote "10". Why: I just count.
-Turn 19: pirate-2 at (0, 1) wrote "10". Why: I just count.
+Turn 0: pirate-1 at (0, 0), on undug sand, with pirate-2 to the south, wrote "1". Why: I just count.
+Turn 1: pirate-2 at (0, 1), on undug sand, with pirate-1 to the north, wrote "1". Why: I just count.
+Turn 2: pirate-1 at (0, 0), on undug sand, with pirate-2 to the south, wrote "2". Why: I just count.
+Turn 3: pirate-2 at (0, 1), on undug sand, with pirate-1 to the north, wrote "2". Why: I just count.
+Turn 4: pirate-1 at (0, 0), on undug sand, with pirate-2 to the south, wrote "3". Why: I just count.
+Turn 5: pirate-2 at (0, 1), on undug sand, with pirate-1 to the north, wrote "3". Why: I just count.
+Turn 6: pirate-1 at (0, 0), on undug sand, with pirate-2 to the south, wrote "4". Why: I just count.
+Turn 7: pirate-2 at (0, 1), on undug sand, with pirate-1 to the north, wrote "4". Why: I just count.
+Turn 8: pirate-1 at (0, 0), on undug sand, with pirate-2 to the south, wrote "5". Why: I just count.
+Turn 9: pirate-2 at (0, 1), on undug sand, with pirate-1 to the north, wrote "5". Why: I just count.
+Turn 10: pirate-1 at (0, 0), on undug sand, with pirate-2 to the south, wrote "6". Why: I just count.
+Turn 11: pirate-2 at (0, 1), on undug sand, with pirate-1 to the north, wrote "6". Why: I just count.
+Turn 12: pirate-1 at (0, 0), on undug sand, with pirate-2 to the south, wrote "7". Why: I just count.
+Turn 13: pirate-2 at (0, 1), on undug sand, with pirate-1 to the north, wrote "7". Why: I just count.
+Turn 14: pirate-1 at (0, 0), on undug sand, with pirate-2 to the south, wrote "8". Why: I just count.
+Turn 15: pirate-2 at (0, 1), on undug sand, with pirate-1 to the north, wrote "8". Why: I just count.
+Turn 16: pirate-1 at (0, 0), on undug sand, with pirate-2 to the south, wrote "9". Why: I just count.
+Turn 17: pirate-2 at (0, 1), on undug sand, with pirate-1 to the north, wrote "9". Why: I just count.
+Turn 18: pirate-1 at (0, 0), on undug sand, with pirate-2 to the south, wrote "10". Why: I just count.
+Turn 19: pirate-2 at (0, 1), on undug sand, with pirate-1 to the north, wrote "10". Why: I just count.
 Game over: the turns ran out. The treasure at (2, 1) was never dug up, and 0 of 2 pirates got into the cave. Score 0.

@@ -65,6 +65,7 @@ class GameState:
         self.positions = starting_squares(grid_size)[:crew_size]
         self.treasure_dug_up = False
         self.inside = []  # pirates in the cave, in the order they went in
+        self.dug = set()  # every square anyone has dug
         self.turn = 0
         self._current = 0
 
@@ -96,6 +97,15 @@ class GameState:
     def pass_turn(self):
         """End the turn of a pirate who acted elsewhere, as writing or reading do."""
         self._next_pirate()
+
+    def neighbours(self, pirate):
+        """The pirates on the squares next to this one's, as (direction, index)."""
+        x, y = self.positions[pirate]
+        return tuple(
+            (direction, self.positions.index((x + step_x, y + step_y)))
+            for direction, (step_x, step_y) in STEPS.items()
+            if (x + step_x, y + step_y) in self.positions
+        )
 
     def refusal(self, direction):
         """Why the current pirate can't move this way, or None if it can.
@@ -138,6 +148,7 @@ class GameState:
 
     def dig(self):
         """Dig the current pirate's square. Digging up the treasure opens the cave."""
+        self.dug.add(self.positions[self.current_pirate])
         if self.positions[self.current_pirate] != self.treasure:
             return self._end_turn(Result(True, "You dug here and found nothing."))
         if self.treasure_dug_up:

@@ -292,8 +292,22 @@ def test_story_record_says_why_when_the_brain_gave_a_reason():
         off_the_treasure(), Steps(DIG, thinking="x marks\nthe spot"), Steps(DIG)
     )
     assert records[0]["thinking"] == "x marks\nthe spot"
-    assert records[0]["story"].endswith("Why: x marks the spot")
+    assert "It thought: x marks the spot." in records[0]["story"]
     assert "thinking" not in records[1]
+
+
+def test_story_record_runs_saw_then_thought_then_did():
+    records = play(off_the_treasure(), Steps(DIG, thinking="corner first"), Steps(DIG))
+    assert records[0]["story"] == (
+        "Turn 0: pirate-1 at (0, 0), on undug sand, with pirate-2 to the south. "
+        "It thought: corner first. Then it dug at (0, 0) and found nothing."
+    )
+    # With nothing thought, the line is what it saw, then what it did.
+    plain = play(off_the_treasure(), Steps(DIG), Steps(DIG))
+    assert plain[0]["story"] == (
+        "Turn 0: pirate-1 at (0, 0), on undug sand, with pirate-2 to the south, "
+        "dug at (0, 0) and found nothing."
+    )
 
 
 def test_story_record_is_a_file_with_one_line_per_turn_and_the_ending(tmp_path):

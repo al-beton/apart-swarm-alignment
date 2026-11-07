@@ -35,6 +35,7 @@ import assets
 from assets.cave import going_in, hat_stack
 from assets.font import draw_text, text_width, wrap
 from assets.pirates import pirate, portrait
+from assets.pixels import DARK
 from assets.ui import open_scroll, panel, scroll_note
 from treasure_island.config import parse_config
 from treasure_island.game_state import GameState
@@ -61,6 +62,8 @@ THOUGHTS = 3
 LINE = 12
 _DID_LINES = 3
 _THOUGHT_LINES = 6
+ACTION_INK = DARK  # what a pirate did is the strongest text in the panel
+THOUGHT_INK = "#78727a"  # its thinking, softer (the art's muted grey; Al to confirm)
 _NOTE_CHARACTERS = 90
 STRIP_TITLE = "The scroll"
 STRIP_ROWS = 5
@@ -473,16 +476,18 @@ def _panel_image(shown, height, look):
     draw_text(image, (_TEXT_LEFT, PORTRAIT[1] + 8), shown["acting"])
     draw_text(image, (_TEXT_LEFT, PORTRAIT[1] + 8 + LINE), "is acting")
     y = PORTRAIT[1] + head.height + 8
-    sections = [("It did:", wrapped(shown["did"]), _DID_LINES)]
+    sections = []
     if shown["thoughts"]:
         lines = [line for thought in shown["thoughts"] for line in wrapped(thought)]
         # The latest thought matters most, so older lines are the ones to go.
-        sections.append(("Thinking:", lines[-_THOUGHT_LINES:], _THOUGHT_LINES))
-    for title, lines, most in sections:
-        draw_text(image, (_PANEL_LEFT, y), title)
+        thinking = ("Thinking:", lines[-_THOUGHT_LINES:], _THOUGHT_LINES, THOUGHT_INK)
+        sections.append(thinking)
+    sections.append(("It did:", wrapped(shown["did"]), _DID_LINES, ACTION_INK))
+    for title, lines, most, ink in sections:
+        draw_text(image, (_PANEL_LEFT, y), title, ink)
         y += LINE
         for line in _fitted(lines, most):
-            draw_text(image, (_PANEL_LEFT, y), line)
+            draw_text(image, (_PANEL_LEFT, y), line, ink)
             y += LINE
         y += LINE // 2
     return image

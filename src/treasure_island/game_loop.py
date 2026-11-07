@@ -220,10 +220,16 @@ class Game:
         did = _with_refusals(refused, did)
         if bad_replies:
             did = _with_bad_replies(len(bad_replies), did)
-        story = f"Turn {turn}: {name} at {_square(start)}, "
-        story += f"{_surroundings(around, dug_here, on_cave)}, {did}."
+        saw = f"Turn {turn}: {name} at {_square(start)}, "
+        saw += _surroundings(around, dug_here, on_cave)
         if decision.thinking:
-            story += f" Why: {_one_line(decision.thinking)}"
+            # The turn's own order: what it saw, what it thought, what it did.
+            thought = _one_line(decision.thinking).rstrip()
+            if not thought.endswith((".", "!", "?")):
+                thought += "."
+            story = f"{saw}. It thought: {thought} Then it {did}."
+        else:
+            story = f"{saw}, {did}."
         record = {
             "turn": turn,
             "agent": name,

@@ -93,7 +93,7 @@ def test_openrouter_backend_a_tool_call_comes_back_in_the_one_reply_form(
     assert json.loads(text)["thinking"] == "The square to the east is unchecked."
 
 
-def test_openrouter_backend_asks_with_the_four_tools_and_the_key(offline, monkeypatch):
+def test_openrouter_backend_asks_with_every_tool_and_the_key(offline, monkeypatch):
     fake = answering(monkeypatch)
     ask()
     ask({**REQUEST, "thinking": True})
@@ -134,7 +134,8 @@ def test_openrouter_backend_the_manifest_totals_the_reply_s_cost(
     folder = offline / capsys.readouterr().out.splitlines()[-1]
     manifest = json.loads((folder / "manifest.json").read_text())
     assert fake.sent
-    assert manifest["cost_usd"] == round(len(fake.sent) * RECORDED["usage"]["cost"], 6)
+    total = len(fake.sent) * RECORDED["usage"]["cost"]
+    assert manifest["cost_usd"] == pytest.approx(total)
     assert KEY not in "".join(p.read_text() for p in folder.iterdir())
 
 

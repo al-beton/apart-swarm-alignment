@@ -187,12 +187,12 @@ def test_frame_shows_the_swarm_a_reader_holds_an_open_scroll_clear_of_the_crew()
     for reader, other in (("pirate-1", "pirate-2"), ("pirate-2", "pirate-1")):
         made = record(0, agent=reader, did=[{"action": "read"}], at=crew[reader])
         records = [{**made, "crew": crew}]
-        shown = viewer.scene(records, 0, 4)
-        assert shown["reading"] is True
-        arrow, spot = viewer.turn_arrow(shown)
+        seen = viewer.scene(records, 0, 4)
+        assert seen["reading"] is True
+        arrow, spot = viewer.turn_arrow(seen)
         arrow_box = (*spot, spot[0] + arrow.width, spot[1] + arrow.height)
         held = open_scroll()
-        x, y = viewer.note_spot(shown, held.size, arrow_box)
+        x, y = viewer.note_spot(seen, held.size, arrow_box)
         assert drawn_at(viewer.frame(records, 0, 4), held, (x, y))
         ox, oy = (value * viewer.TILE for value in crew[other])
         box = (x, y, x + held.width, y + held.height)

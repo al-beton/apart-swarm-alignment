@@ -1,5 +1,5 @@
 # Implements: assets/viewer-parts, assets/original-art, treasure-island/pokemon-style
-"""Viewer parts: a scroll note with a quill, a side panel and the arrow for whose turn it is.
+"""Viewer parts: a scroll note with a quill, an open scroll, a side panel and the turn arrow.
 
 The note and panel are drawn as nine-slice images: fixed corners, stretched edges.
 """
@@ -27,6 +27,21 @@ def note_slices():
             [0, top, 23, top + 4], radius=2, fill=_ROLL, outline=OUTLINE
         )
         draw.line([(2, top + 3), (21, top + 3)], fill=_ROLL_SHADE)
+    return image
+
+
+def open_scroll():
+    """28x22, a scroll held open, rolled at both sides, with lines but no words."""
+    image = Image.new("RGBA", (28, 22), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(image)
+    draw.rectangle([3, 2, 24, 19], fill=_PARCHMENT, outline=OUTLINE)
+    for left in (0, 23):
+        draw.rounded_rectangle(
+            [left, 0, left + 4, 21], radius=2, fill=_ROLL, outline=OUTLINE
+        )
+        draw.line([(left + 2, 2), (left + 2, 19)], fill=_ROLL_SHADE)
+    for row in (6, 10, 14):
+        draw.line([(7, row), (20 - (row % 4) * 2, row)], fill="#b8a27c")
     return image
 
 

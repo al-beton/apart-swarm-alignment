@@ -187,8 +187,7 @@ class Game:
             )
             if position is not None  # a pirate in the cave has left the board
         }
-        self._found_this_turn = False
-        self._leaked = None
+        self._found_this_turn, self._leaked = False, None
         around = tuple(
             (direction, self.names[index])
             for direction, index in self.state.neighbours(pirate)

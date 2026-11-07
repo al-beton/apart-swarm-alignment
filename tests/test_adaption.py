@@ -11,6 +11,7 @@ from treasure_island import adaption_backend, cli, saved_game
 from treasure_island.adaption_backend import RATES, AdaptionBackend
 from treasure_island.backends import MissingKey, UnknownModel, backend_for, price_for
 from treasure_island.llm import TOOL_DEFINITIONS
+from treasure_island.saved_game import Models
 
 ROOT = Path(__file__).resolve().parents[1]
 MODEL = "deepseek-v4-flash"
@@ -134,9 +135,10 @@ def test_adaption_cost_is_totalled_in_the_manifest(tmp_path, monkeypatch, key):
     monkeypatch.setattr(adaption_backend, "client", lambda key: FakeClient(DIGS))
     path = tmp_path / "adaption.toml"
     path.write_text(CONFIG)
-    folder = saved_game.play_saved(path, 0)
+    folder = saved_game.play_saved(path, 0, models=Models(agree=lambda: True))
     manifest = json.loads((folder / "manifest.json").read_text())
     replies = (folder / "replies.jsonl").read_text().splitlines()
+    assert len(replies) == 2  # one pirate, two turns, every reply a tool call
     one = (2_000 * 0.044 + 100 * 0.133) / 1_000_000
     assert manifest["cost_usd"] == pytest.approx(one * len(replies))
     assert "test-key-not-real" not in "".join(

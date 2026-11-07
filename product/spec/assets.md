@@ -14,7 +14,7 @@
 - **treasure-cave:** Once the treasure is dug up its square is a cave the pirates go into, with gold glinting in its mouth over two frames, and room beside the door for a stack of hats.
 - **hat-stack:** Each pirate that goes into the cave leaves a small copy of its hat by the door, in its colour with its label, stacked in the order they went in with the first at the bottom; a crew of six fits on the square with every label showing, and a bigger crew squeezes up to stay on it.
 - **going-in:** A pirate going into the cave is drawn from behind, sinking into its mouth over four steps, so a single frame still reads as going in.
-- **viewer-parts:** The viewer has a scroll note with a quill for a pirate writing, a side panel, an arrow for whose turn it is, a portrait and a pixel font.
+- **viewer-parts:** The viewer has a scroll note with a quill for a pirate writing, an open scroll for a pirate reading, a side panel, an arrow for whose turn it is, a portrait and a pixel font.
 - **sheet-shows-everything:** `assets/sheet.png` shows all the art on one page, at game size and in play.
 - **catwalk:** `make catwalk` writes `assets/catwalk.gif`, in which every pirate walks in all four directions across a sample of the walkable ground, in under 2 MB, so the style and the movement can be judged at a glance.
 - **sheet-on-every-pr:** Every pull request shows one comment with a sheet of all the art and the catwalk beside it, both from its latest commit, so nobody has to run anything to see them.

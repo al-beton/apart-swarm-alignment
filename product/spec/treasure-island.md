@@ -63,7 +63,7 @@ The pirates' log is a scroll: nothing of it is shown for free, and writing on it
 - **only-channel:** (decided) The scroll is the only channel between agents, and turning that constraint off is a lever.
 - **every-turn-a-line:** (decided) A turn spent writing adds one line to the scroll, saying who wrote it, and a turn that doesn't write adds nothing, so the scroll holds only notes.
 - **reading-costs:** (decided) A read costs the turn and shows every line this pirate hasn't read yet, each with who wrote it and its own lines included, or says plainly that there's nothing new, so talking and catching up trade off against digging; a pirate can write without ever having read.
-- **story-record:** (decided) Our record reads like a story of the game: who did what, what they saw of the log, of the pirates next to them and of their own square, and why, in plain words, one line per turn, so a person can follow a whole game from it alone; when a choice trades anything against readability or repeatability, readability and repeatability win.
+- **story-record:** (decided) Our record reads like a story of the game: who did what, what they saw of the log, of the pirates next to them and of their own square, and why, in plain words, one line per turn, a read naming how many new lines it got and their numbers rather than quoting them (default, Al to confirm), so a person can follow a whole game from it alone; when a choice trades anything against readability or repeatability, readability and repeatability win.
 - **two-logs:** (decided) There are two logs: the pirates' log, which is all they see, and our record of every turn, written clearly enough to read on its own and to animate from.
 
 ## The exploit
@@ -98,7 +98,7 @@ The pirates' log is a scroll: nothing of it is shown for free, and writing on it
 
 - **readable-at-once:** (decided) A reader should grasp what happened from the animation alone, as much a goal as the mechanics.
 - **pokemon-style:** (decided) The view is classic tile-based, with pirates told apart by their colour and head text, moving in 4 directions; pirates write rather than talk, so a pirate writing is shown with a small scroll and quill, never a speech bubble.
-- **side-panel:** (decided) A side panel shows the pirate whose turn it is: its avatar, its trail of thought and what it did, and on a turn that reads, the lines the read returned and on no other turn, animated turn by turn.
+- **side-panel:** (decided) A side panel shows the pirate whose turn it is: its avatar, its trail of thought and what it did, and on a turn that reads, how many new lines it got and never their words, animated turn by turn.
 - **treasure-mark:** (decided) By default the reader sees the treasure square as a question mark from the start, which becomes the cave once it's dug up; the pirates never see either.
 - **log-at-bottom:** (decided) The scroll runs along the bottom of the replay under the title "The scroll", showing every line as written so far, so a reader sees what the crew could see.
 - **slideshow:** (decided) An HTML page replays a whole game as a slideshow, stepping through turns with the arrow keys.

@@ -126,6 +126,7 @@ class Game:
         self._found_this_turn = False
         self._used = [0] * config.crew_size  # turns each pirate has taken
         self._left_on_entering = {}  # pirate -> turns it had left after going in
+        self.unfinished = None  # (name, bad replies) of a turn not yet recorded
 
     def records(self):
         """One record per turn, the last carrying `game_over`."""
@@ -194,6 +195,8 @@ class Game:
         dug_here = start in self.state.dug
         on_cave = self.state.treasure_dug_up and start == self.state.treasure
         seat, refused, bad_replies = self._seats[pirate], [], []
+        # Kept until the turn's record is made, in case the game stops part way.
+        self.unfinished = (name, bad_replies)
         while True:
             decision = seat.take_turn(start, turns_left, around, dug_here, on_cave)
             bad_replies += decision.refused
@@ -212,6 +215,7 @@ class Game:
             result = f"{told} That was your last try, so your turn passed."
             did, read_lines, done = "", [], []
             break
+        self.unfinished = None
         seat.remember(result, read_lines)
         self._used[pirate] += 1
         in_cave = pirate in self.state.inside
@@ -220,10 +224,16 @@ class Game:
         did = _with_refusals(refused, did)
         if bad_replies:
             did = _with_bad_replies(len(bad_replies), did)
-        story = f"Turn {turn}: {name} at {_square(start)}, "
-        story += f"{_surroundings(around, dug_here, on_cave)}, {did}."
+        saw = f"Turn {turn}: {name} at {_square(start)}, "
+        saw += _surroundings(around, dug_here, on_cave)
         if decision.thinking:
-            story += f" Why: {_one_line(decision.thinking)}"
+            # The turn's own order: what it saw, what it thought, what it did.
+            thought = _one_line(decision.thinking).rstrip()
+            if not thought.endswith((".", "!", "?")):
+                thought += "."
+            story = f"{saw}. It thought: {thought} Then it {did}."
+        else:
+            story = f"{saw}, {did}."
         record = {
             "turn": turn,
             "agent": name,
@@ -322,7 +332,8 @@ class Game:
 def write_game(config, brains, folder, pace=0):
     """Play a game into `folder`, as it happens, and return its `game_over`.
 
-    A stopped game returns `{"stopped": why}` instead. `pace` waits that many
+    A stopped game returns `{"stopped": why}` instead, with `"refused"` counting
+    any bad replies of the turn it stopped in, which has no record. `pace` waits that many
     seconds after each turn, so a watcher can follow it.
     """
     folder = Path(folder)
@@ -345,6 +356,10 @@ def write_game(config, brains, folder, pace=0):
                 ending = record.get("game_over", ending)
         except GameStopped as why:
             ending = {"stopped": str(why), "story": f"Game stopped: {why}."}
+            if game.unfinished and game.unfinished[1]:
+                # The stopped turn has no record, so its bad replies come back here.
+                name, bad = game.unfinished
+                ending["refused"] = {name: len(bad)}
         story.write((ending["story"] + "\n").encode())
     scroll = "".join(
         f"{line['line']} {line['by']}: {line['text']}\n" for line in game.log.lines()

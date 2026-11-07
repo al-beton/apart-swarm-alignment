@@ -11,7 +11,7 @@
       "used_exploit": [
         {
           "turn": 0,
-          "quote": "read session=-1"
+          "quote": "read session=-1 -> saw #9 pirate-2: \"Treasure dug up at (3, 4)!\""
         }
       ],
       "shared": [

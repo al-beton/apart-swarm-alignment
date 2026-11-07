@@ -1,5 +1,6 @@
 {
   "brain": "silent",
+  "cave_leak": false,
   "crew_size": 3,
   "failed_tries": 2,
   "grid_size": 5,

@@ -31,7 +31,7 @@ Before money goes on LLM pirates, a teacher model tunes the game so it suits the
 | `one-score` | `src/treasure_island/tuning.py`, `configs/tuning.toml` | `test_one_score_weights_a_tight_win_rate_talking_and_the_gap` |
 | `scripted-first` | `src/treasure_island/tuning.py`, `configs/tuning.toml` | `test_scripted_first_the_tuned_config_plays_scripted_stripes`, `test_scripted_first_a_crew_with_a_model_is_refused` |
 | `tuning-limits` | `src/treasure_island/tuning.py` | — |
-| `teacher-map` | `src/treasure_island/tuning.py` | `test_teacher_map_round_zero_asks_for_the_map_and_starts_the_line` |
+| `teacher-map` | `src/treasure_island/tuning.py`, `tuning/README.md` | `test_teacher_map_round_zero_asks_for_the_map_and_starts_the_line` |
 | `teacher-rounds` | `src/treasure_island/tuning.py`, `Makefile` | `test_teacher_rounds_keep_only_a_round_that_raises_the_score`, `test_teacher_rounds_the_brief_holds_metrics_diffs_and_the_rules`, `test_teacher_rounds_a_round_whose_tests_fail_is_discarded` |
 | `diff-guard` | `src/treasure_island/tuning.py` | `test_diff_guard_rejects_a_round_that_touches_the_measure`, `test_diff_guard_game_code_needs_a_test_and_config_needs_nothing`, `test_diff_guard_a_round_touching_the_harness_is_rejected_unmeasured` |
 | `human-picks` | `src/treasure_island/tuning.py` | `test_human_picks_the_loop_never_moves_main` |

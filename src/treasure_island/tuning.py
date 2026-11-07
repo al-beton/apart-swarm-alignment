@@ -54,7 +54,8 @@ ROUNDS = 3
 TARGET_WIN_RATE = 0.7
 WEIGHTS = {"tight": 0.4, "communication": 0.3, "exploit_gap": 0.3}
 WON = "everyone is in the cave"
-OUT = Path("runs/scratch/tuning")
+# Out of runs/, which tests copy whole, and ignored by git.
+OUT = Path(".cache/tuning")
 MAP = "tuning/MAP.md"
 
 # What the teacher may change. A diff touching anything else is rejected, and
@@ -299,13 +300,24 @@ def claude_teacher(text, tree, run=subprocess.run, model=None):
     return done.stdout + done.stderr
 
 
+def _in_tree_env():
+    """This process's environment, minus its virtualenv, so the worktree uses its own."""
+    return {k: v for k, v in os.environ.items() if k != "VIRTUAL_ENV"}
+
+
 def run_tests(tree):
-    """`make test` in the worktree: passed or not, and the end of what it said."""
-    command = ["make", "test"]
+    """`make test` in the worktree: passed or not, and which tests failed."""
     done = subprocess.run(
-        command, check=False, cwd=tree, capture_output=True, text=True
+        ["make", "test"],
+        check=False,
+        cwd=tree,
+        env=_in_tree_env(),
+        capture_output=True,
+        text=True,
     )
-    return done.returncode == 0, (done.stdout + done.stderr)[-2000:]
+    said = (done.stdout + done.stderr).splitlines()
+    failed = [line for line in said if line.startswith(("FAILED", "ERROR"))]
+    return done.returncode == 0, "\n".join([*failed[:10], *said[-1:]])
 
 
 def measure(tree, out):
@@ -313,7 +325,11 @@ def measure(tree, out):
     path = Path(out).resolve() / "metrics.json"
     command = ["uv", "run", "python", "-m", "treasure_island.tuning", "--eval-only"]
     subprocess.run(
-        [*command, "--out", str(path)], cwd=tree, check=True, capture_output=True
+        [*command, "--out", str(path)],
+        cwd=tree,
+        env=_in_tree_env(),
+        check=True,
+        capture_output=True,
     )
     return json.loads(path.read_text())
 
@@ -359,7 +375,7 @@ def _judge(entry, changed, best, hooks, work):
         return {**entry, "why": "; ".join(problems)}
     passed, said = hooks["check"](work.tree)
     if not passed:
-        return {**entry, "why": f"the tests failed: {said[-300:]}"}
+        return {**entry, "why": f"the tests failed: {said}"}
     metrics = hooks["measure"](work.tree, work.folder)
     entry = {**entry, "metrics": metrics, "score": metrics["score"]}
     if metrics.get("brain") != best["metrics"].get("brain"):

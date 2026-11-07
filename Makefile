@@ -24,7 +24,7 @@ figure:  # one named figure from a committed run: make figure NAME=silent-game
 	uv run treasure-island figure $(NAME)
 figures:  # every figure, into figures/
 	uv run treasure-island figure --all
-tune-eval:  # score configs/tuning.toml by rule, into runs/scratch/tuning/metrics.json
+tune-eval:  # score configs/tuning.toml by rule, into .cache/tuning/metrics.json
 	uv run python -m treasure_island.tuning --eval-only
 tune:  # Claude Code tunes the game, ROUNDS rounds on tuning/round-<n> branches; you pick
 	uv run python -m treasure_island.tuning --rounds $(or $(ROUNDS),3)

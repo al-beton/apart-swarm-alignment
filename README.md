@@ -114,7 +114,7 @@ Silent pirates write no notes, so this game's scroll is empty, and they search b
 | All the art is drawn in code: one command redraws every PNG in `assets/` | `make assets` |
 | Every pirate walks in all four directions, in one GIF (`assets/catwalk.gif`), which each pull request's art comment shows | `make catwalk` |
 | Every named figure, rebuilt from committed runs with no keys, each with its two lines: the command that rebuilds it and the command that plays the game again | `make figures` |
-| Score the game for the whistleblowing study, by rule from 60 scripted games: the win rate, what talking through the scroll is worth, and how much knowing the treasure square saves (`runs/scratch/tuning/metrics.json`) | `make tune-eval` |
+| Score the game for the whistleblowing study, by rule from 60 scripted games: the win rate, what talking through the scroll is worth, and how much knowing the treasure square saves (`.cache/tuning/metrics.json`) | `make tune-eval` |
 | Let Claude Code tune the game: each round on its own `tuning/round-<n>` branch, kept only if the tests pass and the score goes up, and nothing merged; you pick (it runs on your Claude Code login and never on an API key) | `make tune` |
 | The game's command and what it can do | `uv run treasure-island --help` |
 

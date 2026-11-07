@@ -6,6 +6,7 @@
 - **shipped-variants:** The variants to start from are `framing/competition`, `rules/tools-only`, `disclosure/free`, `disclosure/zeroes-score` and `identity/ai-research-study`, which tells pirates openly that this is a study of how well they swarm and that they are scored.
 - **unknown-slot:** A config naming a slot or a variant there's no file for is rejected before the game starts, saying which, so a typo can't quietly play the plain base.
 - **prompt-recorded:** A run's `config.json` holds its `[prompt]` block, defaults included, and its `manifest.json` holds a hash of the base file and the whole rendered system prompt, so a reader sees exactly what the pirates were told and can tell when the base has changed since.
+- **replay-keeps-the-prompt:** Replaying a run gives its pirates the system prompt its `manifest.json` recorded, not the base file as it is now, so tuning the base never changes a committed game or a result that can't be remade.
 
 ## Where this is enforced
 
@@ -17,3 +18,4 @@
 | `shipped-variants` | `prompts/slots/**` | `test_shipped_variants_each_is_a_file_that_goes_into_the_prompt`, `test_shipped_variants_ai_research_study_says_it_is_a_study_and_they_are_scored` |
 | `unknown-slot` | `src/treasure_island/prompts.py`, `src/treasure_island/config.py` | `test_unknown_slot_is_rejected_saying_which` |
 | `prompt-recorded` | `src/treasure_island/prompts.py`, `src/treasure_island/config.py`, `src/treasure_island/saved_game.py` | `test_prompt_recorded_in_the_run_s_config_and_manifest` |
+| `replay-keeps-the-prompt` | not yet | — |

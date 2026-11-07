@@ -106,6 +106,8 @@ def test_cost_before_run_is_printed_before_the_first_turn(toml, monkeypatch, cap
     cli.main(["run", str(toml), "--seed", "0", "--no-watch"])
     out = capsys.readouterr().out
     assert f"{TURNS * 2 * 2} model calls" in out
+    assert "Earlier runs hold 0 replies" in out
+    assert "{" not in out and "}" not in out
     assert "tokens" in out
     assert "no price" in out
 

@@ -15,7 +15,7 @@ from treasure_island.game_loop import Game, write_game
 from treasure_island.pirates_log import PiratesLog
 
 ROOT = Path(__file__).resolve().parents[1]
-SAVED = ROOT / "runs/s-sweep-seed-7"
+SAVED = ROOT / "runs/silent-seed-7"
 CREW = {"pirate-1": [0, 0]}
 
 

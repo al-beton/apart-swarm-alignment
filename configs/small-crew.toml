@@ -4,4 +4,4 @@ grid_size = 3
 crew_size = 2
 turns_per_pirate = 4
 seed = 7
-brain = "s-sweep"
+brain = "silent"

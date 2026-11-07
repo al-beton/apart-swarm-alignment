@@ -7,8 +7,8 @@ from pathlib import Path
 import pytest
 
 from treasure_island import cli
-from treasure_island.config import load_config, parse_config
 from treasure_island.brain import EarlierTurn, TurnView
+from treasure_island.config import load_config, parse_config
 from treasure_island.event_log import log_errors
 from treasure_island.game_loop import Game
 from treasure_island.game_state import GameState
@@ -40,7 +40,9 @@ def seed_with_treasure(grid, wanted=None, avoid=None):
 
 
 def silent_game(config):
-    return list(Game(config, [Silent(config.grid_size) for _ in config.pirates]).records())
+    return list(
+        Game(config, [Silent(config.grid_size) for _ in config.pirates]).records()
+    )
 
 
 def view(position, square_dug=True, earlier=(), neighbours=(), on_cave=False):

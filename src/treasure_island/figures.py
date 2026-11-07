@@ -25,7 +25,7 @@ class Figure:
 
 
 FIGURES = {
-    "s-sweep-game": Figure("runs/s-sweep-seed-7", "configs/s-sweep.toml", 7),
+    "silent-game": Figure("runs/silent-seed-7", "configs/silent.toml", 7),
     "say-a-number-game": Figure(
         "examples/say-a-number", "configs/say-a-number.toml", 7
     ),

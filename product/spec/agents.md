@@ -29,5 +29,5 @@
 | `ask-once-more` | not yet | — |
 | `reply-cap` | `src/treasure_island/config.py`, `src/treasure_island/llm.py` | `test_reply_cap_defaults_to_300_tokens_and_a_config_can_set_it` |
 | `plays-then-replays` | `src/treasure_island/llm.py`, `src/treasure_island/saved_game.py` | `test_plays_then_replays_a_whole_game_through_a_fake_backend`, `test_plays_then_replays_with_no_backend_a_missing_reply_spends_nothing` |
-| `free-runs-in-ci` | `configs/s-sweep.toml`, `configs/say-a-number.toml`, `.github/workflows/blocking-checks.yml` | `test_free_runs_in_ci_each_scripted_brain_plays_a_full_game` |
-| `committed-runs` | `runs/s-sweep-seed-7/**`, `runs/reference-s-sweep/**`, `runs/reference-say-a-number/**` | `test_committed_runs_pass_the_validator_and_replay_byte_identical` |
+| `free-runs-in-ci` | `configs/silent.toml`, `configs/say-a-number.toml`, `.github/workflows/blocking-checks.yml` | `test_free_runs_in_ci_each_scripted_brain_plays_a_full_game` |
+| `committed-runs` | `runs/silent-seed-7/**`, `runs/reference-silent/**`, `runs/reference-say-a-number/**` | `test_committed_runs_pass_the_validator_and_replay_byte_identical` |

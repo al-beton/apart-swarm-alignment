@@ -117,6 +117,7 @@ Each pull request also gets a comment showing every example game's GIF at its la
 | `make lint` | runs the ruff lint and format checks |
 | `make test` | runs every test, in parallel |
 | `make spec-check` | checks that the spec, the code and the tests point at each other |
+| `make examples-check` | remakes the examples and fails if anything in `examples/` changed but the times in their manifests, as CI does |
 
 ## How we work
 

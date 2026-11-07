@@ -1,4 +1,4 @@
-# Implements: assets/sheet-on-every-pr, ci/ci-minutes, ci/one-gate, ci/ci-runs-everything, ci/no-model-calls, tooling/how-we-work, specs-and-docs/folder-guides, agent-setup/reuse-old-work, treasure-island/gif-per-change, results/examples-on-every-pr, results/result-on-its-pr
+# Implements: assets/sheet-on-every-pr, ci/examples-remade-in-ci, ci/ci-minutes, ci/one-gate, ci/ci-runs-everything, ci/no-model-calls, tooling/how-we-work, specs-and-docs/folder-guides, agent-setup/reuse-old-work, treasure-island/gif-per-change, results/examples-on-every-pr, results/result-on-its-pr
 """The gate, and the few files a newcomer starts from, are what the spec says."""
 
 import re
@@ -72,6 +72,16 @@ def test_ci_minutes_newer_runs_cancel_older_ones_and_drafts_wait():
     )
     assert "|| github.run_id" in group
     assert "draft" in flow["jobs"]["blocking-checks"]["if"]
+
+
+def test_examples_remade_in_ci_the_gate_runs_the_check():
+    gate = runs()
+    assert "make examples-check" in gate
+    assert gate.index("make install") < gate.index("make examples-check")
+    makefile = (ROOT / "Makefile").read_text()
+    target = makefile.split("\nexamples-check:", 1)[1].split("\n\n", 1)[0]
+    assert "examples" in target
+    assert "examples_unchanged.py" in target
 
 
 def test_no_model_calls_no_secret_but_the_github_token():

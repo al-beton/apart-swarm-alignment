@@ -1,4 +1,4 @@
-# Implements: treasure-island/sweeper, treasure-island/say-a-number, treasure-island/reference-games, treasure-island/no-token-strategies
+# Implements: treasure-island/silent, treasure-island/say-a-number, treasure-island/reference-games, treasure-island/no-token-strategies
 """The scripted pirates, playing the real game through the real interface."""
 
 import socket
@@ -8,13 +8,14 @@ import pytest
 
 from treasure_island import cli
 from treasure_island.config import load_config, parse_config
+from treasure_island.brain import EarlierTurn, TurnView
 from treasure_island.event_log import log_errors
 from treasure_island.game_loop import Game
 from treasure_island.game_state import GameState
 from treasure_island.strategies import (
     REFERENCE_GAMES,
     SayANumber,
-    Sweeper,
+    Silent,
     brains_for,
     write_reference,
 )
@@ -38,101 +39,80 @@ def seed_with_treasure(grid, wanted=None, avoid=None):
     raise AssertionError("no such seed")
 
 
-def sweep(config, start=None):
-    """A sweeping crew's game, its only pirate moved to `start` if given."""
-    brains = [Sweeper(config.grid_size) for _ in range(config.crew_size)]
-    game = Game(config, brains)
-    if start:
-        game.state.positions = [start]
-    return list(game.records())
+def silent_game(config):
+    return list(Game(config, [Silent(config.grid_size) for _ in config.pirates]).records())
 
 
-def dug_squares(records):
-    return [tuple(r["saw"]["position"]) for r in records if r["did"] == [DIG]]
-
-
-def test_sweeper_walks_an_s_and_digs_each_square():
-    # The treasure is in the S's last square, so nothing stops the sweep early.
-    config = game_of(grid=3, turns=30, seed=seed_with_treasure(3, wanted=(2, 2)))
-    records = sweep(config)
-    assert dug_squares(records) == [
-        (0, 0),
-        (1, 0),
-        (2, 0),
-        (2, 1),
-        (1, 1),
-        (0, 1),
-        (0, 2),
-        (1, 2),
-        (2, 2),
-    ]
-    assert records[-2]["outcome"]["found_treasure"] is True
-    assert records[-1]["did"] == [{"action": "enter"}]
-
-
-def test_sweeper_walks_to_the_corner_from_anywhere():
-    # It digs what it walks over, so it reaches the corner after 3 squares west.
-    seed = seed_with_treasure(4, avoid={(2, 2), (1, 2), (0, 2), (0, 1), (0, 0)})
-    records = sweep(game_of(seed=seed, turns=10), start=(2, 2))
-    assert [record["did"][0].get("direction") for record in records[:7]] == [
-        None,
-        "west",
-        None,
-        "west",
-        None,
-        "north",
-        None,
-    ]
-    assert dug_squares(records)[:3] == [(2, 2), (1, 2), (0, 2)]
-
-
-def test_sweeper_goes_into_the_cave_once_it_finds_the_treasure():
-    # Pirate 2 only writes, so pirate 1 alone digs the treasure up, then enters.
-    config = game_of(
-        grid=2, crew=2, turns=10, seed=seed_with_treasure(2, wanted=(1, 0))
+def view(position, square_dug=True, earlier=(), neighbours=(), on_cave=False):
+    return TurnView(
+        "pirate-1", "", position, 10, tuple(earlier), neighbours, square_dug, on_cave
     )
-    records = list(Game(config, [Sweeper(2), SayANumber()]).records())
-    first = [record for record in records if record["agent"] == "pirate-1"]
-    found_at = next(
-        i for i, record in enumerate(first) if record["outcome"]["found_treasure"]
-    )
-    assert first[found_at]["outcome"]["position"] == [1, 0]
-    assert first[found_at + 1]["did"] == [{"action": "enter"}]
-    assert first[found_at + 1] is first[-1]
 
 
-def test_sweeper_enters_the_cave_another_pirate_opened():
-    # Pirate 2 starts on the treasure and digs it up at once; pirate 1 sweeps
-    # onto the open cave once pirate 2 has gone in, digs it, is told, and enters.
-    config = game_of(
-        grid=2, crew=2, turns=10, seed=seed_with_treasure(2, wanted=(0, 1))
-    )
-    records = list(Game(config, [Sweeper(2), Sweeper(2)]).records())
+def stood(position, dug=True):
+    """An earlier turn spent standing on `position`, which was dug or got dug."""
+    action = {"action": "dig"} if not dug else {"action": "move", "direction": "east"}
+    return EarlierTurn(position, action, "", square_dug=dug)
+
+
+def test_silent_is_the_default_brain():
+    assert parse_config({}).brain == "silent"
+    assert all(isinstance(brain, Silent) for brain in brains_for("silent", game_of()))
+
+
+def test_silent_digs_its_square_when_it_is_not_dug():
+    assert Silent(4).decide(view((2, 2), square_dug=False)).action == DIG
+
+
+def test_silent_walks_to_the_nearest_square_it_has_not_seen_dug():
+    # From the corner, (1, 0) and (0, 1) are both one step away: the topmost wins.
+    move = Silent(4).decide(view((0, 0))).action
+    assert move == {"action": "move", "direction": "east"}
+
+
+def test_silent_remembers_every_square_it_has_seen_dug():
+    # It has stood on (1, 0) and dug it, so (0, 1) is now the nearest.
+    earlier = [stood((0, 0), dug=False), stood((1, 0), dug=False)]
+    move = Silent(4).decide(view((0, 0), earlier=earlier)).action
+    assert move == {"action": "move", "direction": "south"}
+
+
+def test_silent_steps_round_a_pirate_and_never_tries_a_blocked_move():
+    told = (("east", "pirate-2"),)
+    move = Silent(4).decide(view((0, 0), neighbours=told)).action
+    assert move == {"action": "move", "direction": "south"}
+    # Boxed in on every side it can go, it digs where it is rather than bump.
+    boxed = (("east", "pirate-2"), ("south", "pirate-3"))
+    assert Silent(4).decide(view((0, 0), neighbours=boxed)).action == DIG
+
+
+def test_silent_a_full_crew_on_a_small_grid_never_gets_stuck():
+    # Eight pirates on nine squares: only one square is ever free.
+    config = game_of(grid=3, crew=8, turns=30, seed=4)
+    records = silent_game(config)
+    assert not any("failed_moves" in record for record in records)
+    assert records[-1]["game_over"]["treasure_dug_up"] is True
+    assert records[-1]["game_over"]["in_cave"]
+
+
+def test_silent_enters_the_cave_on_its_next_turn_once_it_stands_on_it():
+    assert Silent(4).decide(view((1, 1), on_cave=True)).action == {"action": "enter"}
+    config = game_of(grid=3, crew=1, turns=20, seed=seed_with_treasure(3, (1, 1)))
+    records = silent_game(config)
+    found = next(i for i, r in enumerate(records) if r["outcome"]["found_treasure"])
+    assert records[found + 1]["did"] == [{"action": "enter"}]
     assert records[-1]["game_over"]["reason"] == "everyone is in the cave"
 
 
-def test_sweeper_scores_what_the_rules_predict():
-    # By the rules: whoever digs the treasure up goes in on its next turn, and the
-    # others go in once they sweep onto the open cave. Each scores 100 plus 10
-    # per turn it has left after going in.
-    config = load_config(ROOT / "configs/s-sweep.toml")
-    assert (config.crew_size, config.turns_per_pirate, config.seed) == (3, 20, 7)
-    records = sweep(config)
-    over = records[-1]["game_over"]
-    assert (over["treasure"], over["treasure_dug_up"]) == ([2, 1], True)
-    entered = [r for r in records if r["did"] == [{"action": "enter"}]]
-    assert [r["agent"] for r in entered] == over["in_cave"]
-    left = [
-        config.turns_per_pirate
-        - 1
-        - sum(
-            1
-            for earlier in records[: records.index(r)]
-            if earlier["agent"] == r["agent"]
-        )
-        for r in entered
-    ]
-    assert over["score"] == sum(100 + 10 * turns for turns in left)
+def test_silent_never_writes_or_reads():
+    records = silent_game(load_config(ROOT / "configs/silent.toml"))
+    actions = {action["action"] for record in records for action in record["did"]}
+    assert actions <= {"move", "dig", "enter"}
+
+
+def test_silent_the_same_seed_gives_the_same_game():
+    config = load_config(ROOT / "configs/silent.toml")
+    assert silent_game(config) == silent_game(config)
 
 
 def test_say_a_number_writes_the_next_number_each_turn_and_never_digs():
@@ -177,7 +157,7 @@ def test_reference_games_pass_the_validator(name):
 
 
 def test_reference_games_tell_a_story_that_ends_with_the_score():
-    story = (ROOT / "runs/reference-s-sweep/story.txt").read_text().splitlines()
+    story = (ROOT / "runs/reference-silent/story.txt").read_text().splitlines()
     assert story[0].startswith(
         "Turn 0: pirate-1 at (0, 0), on undug sand, with pirate-2 to the south, "
         "dug at (0, 0)"

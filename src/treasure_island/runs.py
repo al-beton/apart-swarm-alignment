@@ -16,7 +16,7 @@ started last wins, by the time committed in its manifest: file times don't survi
 clone, so they'd play a different game on another machine. Replay never borrows: it
 only reads the folder it's checking.
 
-Implements: runs/run-command, runs/replies-keyed, runs/no-silent-model-calls, runs/paced-from-cache, runs/cache-across-runs, runs/same-answer-wins, runs/no-cache, agents/backend-interface, treasure-island/everything-cached
+Implements: treasure-island/retries-dropped-calls, runs/run-command, runs/replies-keyed, runs/no-silent-model-calls, runs/paced-from-cache, runs/cache-across-runs, runs/same-answer-wins, runs/no-cache, agents/backend-interface, treasure-island/everything-cached
 """
 
 import hashlib
@@ -53,13 +53,16 @@ class Replies:
         self.earlier = earlier or {}
         self.hits = self.misses = 0
         self.cost_usd = 0.0
-        self._stored = {}
+        self.last_retries = 0  # how often the last reply's call was tried again
+        self._stored, self._retries = {}, {}
         if self.path.exists():
-            rows = map(json.loads, self.path.read_text().splitlines())
-            self._stored = {row["key"]: row["reply"] for row in rows}
+            for row in map(json.loads, self.path.read_text().splitlines()):
+                self._stored[row["key"]] = row["reply"]
+                self._retries[row["key"]] = row.get("retries", 0)
 
     def ask(self, request):
         key = request_key(request)
+        self.last_retries = self._retries.get(key, 0)
         if key in self._stored:
             self.hits += 1
             return self._stored[key]
@@ -71,12 +74,17 @@ class Replies:
         self.misses += 1
         text, cost = self.backend(request)
         self.cost_usd += cost
-        return self._keep(key, request, text)
+        self.last_retries = getattr(self.backend, "last_retries", 0)
+        return self._keep(key, request, text, self.last_retries)
 
-    def _keep(self, key, request, text):
+    def _keep(self, key, request, text, retries=0):
         self._stored[key] = text
+        self._retries[key] = retries
+        row = {"key": key, "request": request, "reply": text}
+        if retries:  # the call dropped and was tried again, which the story says
+            row["retries"] = retries
         with self.path.open("ab") as file:
-            file.write(_line({"key": key, "request": request, "reply": text}))
+            file.write(_line(row))
         return text
 
 

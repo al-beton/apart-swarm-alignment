@@ -17,7 +17,7 @@ A reply that isn't a valid tool call is kept for our record and comes back as a
 failed action, so the game tells the pirate why and asks again, and after
 `failed_tries` failed actions in one turn the turn passes.
 
-Implements: agents/reasoning-looked-up, treasure-island/model-reasoning, agents/one-request-per-turn, agents/reply-is-a-tool-call, agents/ask-once-more, agents/reply-cap, agents/plays-then-replays, treasure-island/thinking, treasure-island/pluggable-pirate, treasure-island/model-backends
+Implements: treasure-island/retries-dropped-calls, agents/reasoning-looked-up, treasure-island/model-reasoning, agents/one-request-per-turn, agents/reply-is-a-tool-call, agents/ask-once-more, agents/reply-cap, agents/plays-then-replays, treasure-island/thinking, treasure-island/pluggable-pirate, treasure-island/model-backends
 """
 
 import json
@@ -93,10 +93,12 @@ class LLMPirate:
 
     def decide(self, view):
         text = self._replies.ask(self._request(view))
+        retried = self._replies.last_retries
         try:
             action, thinking = _read_reply(text)
         except BadToolCall as why:
             # A failed action: the game tells the pirate why and asks again.
-            return Decision(None, None, ({"reply": text, "why": str(why)},))
+            bad = ({"reply": text, "why": str(why)},)
+            return Decision(None, None, bad, retried)
         kept = thinking if self._config.thinking and thinking else None
-        return Decision(action, kept)
+        return Decision(action, kept, (), retried)

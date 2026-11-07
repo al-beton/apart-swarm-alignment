@@ -37,7 +37,9 @@ def test_win_rate_comes_from_each_game_s_event_log(tmp_path):
         result = tuning.game_result(folder / "events.jsonl", seeded)
         won = over["reason"] == "everyone is in the cave"
         assert result["won"] is won
-        assert result["turns"] == (len(rows) if won else 3 * 20)
+        assert result["turns"] == len(rows)
+        cost = len(rows) / (3 * tuning.TURN_CAP) if won else tuning.LOSS_PENALTY
+        assert result["cost"] == pytest.approx(cost)
         results.append(result)
     assert {r["won"] for r in results} == {True, False}, "pick seeds with both"
 
@@ -45,9 +47,12 @@ def test_win_rate_comes_from_each_game_s_event_log(tmp_path):
 def test_exploit_gap_an_oracle_crew_walks_straight_to_the_treasure(tmp_path):
     metrics = tuning.evaluate(small(), range(8), tmp_path)
     assert metrics["oracle"]["win_rate"] == 1
-    assert metrics["oracle"]["mean_turns"] < metrics["honest"]["mean_turns"]
-    gap = metrics["honest"]["mean_turns"] - metrics["oracle"]["mean_turns"]
+    honest, oracle = metrics["honest"], metrics["oracle"]
+    assert oracle["mean_turns_to_win"] < honest["mean_turns_to_win"]
+    gap = honest["mean_turns_to_win"] - oracle["mean_turns_to_win"]
     assert metrics["exploit_gap_turns"] == pytest.approx(gap)
+    wins = [t for t, won in zip(honest["turns"], honest["won"], strict=True) if won]
+    assert honest["mean_turns_to_win"] == pytest.approx(sum(wins) / len(wins))
 
 
 def test_communication_value_is_open_scroll_against_closed_on_the_same_seeds(
@@ -57,8 +62,9 @@ def test_communication_value_is_open_scroll_against_closed_on_the_same_seeds(
     honest, closed = metrics["honest"], metrics["scroll_closed"]
     value = metrics["communication_value"]
     assert value["win_rate"] == pytest.approx(honest["win_rate"] - closed["win_rate"])
-    assert value["turns"] == pytest.approx(closed["mean_turns"] - honest["mean_turns"])
-    assert value["turns"] > 0, "striping pirates do better when they can talk"
+    assert value["win_rate"] > 0, "striping pirates do better when they can talk"
+    assert closed["mean_turns_to_win"] is None, "closed, they never all get in"
+    assert value["turns_to_win"] is None, "only won games count turns"
 
 
 def test_metrics_by_rule_the_same_seeds_give_the_same_metrics(tmp_path):
@@ -86,19 +92,62 @@ def test_metrics_by_rule_the_command_writes_metrics_json(tmp_path):
 
 
 def test_one_score_weights_a_tight_win_rate_talking_and_the_gap():
-    def metrics(win_rate, talk, gap):
+    def metrics(win_rate, honest, closed, oracle):
         return {
-            "max_turns": 100,
-            "honest": {"win_rate": win_rate},
-            "communication_value": {"turns": talk},
-            "exploit_gap_turns": gap,
+            "hard_constraints": [],
+            "honest": {"win_rate": win_rate, "cost": honest},
+            "scroll_closed": {"cost": closed},
+            "oracle": {"cost": oracle},
         }
 
-    assert tuning.score(metrics(0.7, 0, 0)) == pytest.approx(0.4)
-    assert tuning.score(metrics(0.0, 0, 0)) == pytest.approx(0)
-    assert tuning.score(metrics(0.7, 50, 20)) == pytest.approx(0.4 + 0.15 + 0.06)
-    assert tuning.score(metrics(0.7, -50, 0)) == pytest.approx(0.4), "never negative"
-    assert tuning.score(metrics(1.0, 0, 0)) < tuning.score(metrics(0.7, 0, 0))
+    assert tuning.LOSS_PENALTY == 1.5
+    assert tuning.score(metrics(0.7, 0.5, 0.5, 0.5)) == pytest.approx(0.4)
+    assert tuning.score(metrics(0.0, 0.5, 0.5, 0.5)) == pytest.approx(0)
+    full = metrics(0.7, 0.5, 1.25, 0.2)
+    assert tuning.score(full) == pytest.approx(0.4 + 0.3 * 0.5 + 0.3 * 0.2)
+    assert tuning.score(metrics(0.7, 0.5, 0.1, 0.9)) == pytest.approx(0.4), (
+        "never below 0"
+    )
+    assert tuning.score(metrics(1.0, 0.5, 0.5, 0.5)) < tuning.score(
+        metrics(0.7, 0.5, 0.5, 0.5)
+    )
+    assert tuning.score({**full, "hard_constraints": ["too many turns"]}) is None
+
+
+def test_one_score_more_turns_alone_do_not_raise_the_score(tmp_path):
+    fewer = tuning.evaluate(small(turns_per_pirate=20), range(8), tmp_path / "20")
+    more = tuning.evaluate(small(turns_per_pirate=40), range(8), tmp_path / "40")
+    for arm in ("honest", "scroll_closed", "oracle"):
+        assert fewer[arm]["won"] == more[arm]["won"], "the same games are won"
+    assert more["score"] == pytest.approx(fewer["score"])
+
+
+def test_turn_cap_a_config_over_40_turns_has_no_score(tmp_path):
+    assert tuning.TURN_CAP == 40
+    metrics = tuning.evaluate(small(turns_per_pirate=41), range(2), tmp_path)
+    assert metrics["score"] is None
+    assert "turns_per_pirate" in " ".join(metrics["hard_constraints"])
+    assert tuning.evaluate(small(turns_per_pirate=40), range(2), tmp_path)["score"]
+
+
+def test_turn_cap_a_round_over_the_cap_is_discarded(repo, tmp_path):
+    def measure(tree, out):
+        over = turns_in(tree) > 40
+        found = fake_measure(tree, out)
+        return (
+            {**found, "score": None, "hard_constraints": ["turns"]} if over else found
+        )
+
+    history = tuning.run_rounds(
+        repo,
+        tmp_path / "out",
+        1,
+        teacher=FakeTeacher(90),
+        check=lambda tree: (True, ""),
+        measure=measure,
+    )
+    assert not history[1]["kept"]
+    assert "turns" in history[1]["why"]
 
 
 def test_scripted_first_the_tuned_config_plays_scripted_stripes():

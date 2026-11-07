@@ -9,7 +9,7 @@ import pytest
 import yaml
 from PIL import Image
 
-from treasure_island import cli, figures
+from treasure_island import cli, figures, viewer
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -31,8 +31,9 @@ def test_named_figures_build_offline_from_committed_runs(offline, tmp_path, caps
     assert cli.main(["figure", "silent-game", "--out", str(tmp_path)]) == 0
     gif = tmp_path / "silent-game.gif"
     assert str(gif) in capsys.readouterr().out
-    turns = len((ROOT / "runs/silent-seed-7/events.jsonl").read_text().splitlines())
-    assert Image.open(gif).n_frames == turns
+    records = viewer.records_in(ROOT / "runs/silent-seed-7")
+    frames = sum(len(viewer.walk_steps(records, turn)) for turn in range(len(records)))
+    assert Image.open(gif).n_frames == frames
 
 
 def test_named_figures_every_figure_builds_and_an_unknown_name_fails(

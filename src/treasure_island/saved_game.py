@@ -103,9 +103,11 @@ def _with_thinking_looked_up(config):
     """
     if not config.thinking:
         return config
+    unsettled = {p.model for p in config.pirates if p.model and not p.thinks}
+    ways = looked_up_thinking(sorted(unsettled))
     pirates = tuple(
-        dataclasses.replace(pirate, thinks=looked_up_thinking(pirate.model))
-        if pirate.model and not pirate.thinks
+        dataclasses.replace(pirate, thinks=ways[pirate.model])
+        if pirate.model in unsettled and not pirate.thinks
         else pirate
         for pirate in config.pirates
     )

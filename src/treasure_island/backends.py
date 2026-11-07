@@ -56,13 +56,17 @@ def thinking_way(model, thinks=None):
     return "in-reply"
 
 
-def looked_up_thinking(model):
-    """How this model thinks, asking its provider where the backend can tell."""
-    if model.startswith("openrouter/"):
-        found = openrouter.thinks_for(model.removeprefix("openrouter/"))
-        if found:
-            return found
-    return thinking_way(model)
+def looked_up_thinking(models):
+    """How each of these models thinks, asking OpenRouter's listing once at most."""
+    asks_openrouter = any(model.startswith("openrouter/") for model in models)
+    listing = openrouter.model_listing() if asks_openrouter else None
+    ways = {}
+    for model in models:
+        found = None
+        if model.startswith("openrouter/") and listing is not None:
+            found = openrouter.thinks_for(model.removeprefix("openrouter/"), listing)
+        ways[model] = found or thinking_way(model)
+    return ways
 
 
 def price_for(model):

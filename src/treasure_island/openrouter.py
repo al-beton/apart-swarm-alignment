@@ -49,15 +49,23 @@ def _body(model_id, request):
     return body
 
 
-def thinks_for(model_id):
-    """ "built-in" if OpenRouter's listing says this model reasons, "in-reply" if
-    it says it doesn't, or None if the listing can't be read or doesn't list it."""
+def model_listing():
+    """OpenRouter's free model listing, or None if it can't be read."""
     try:
         with urllib.request.urlopen(MODELS_URL, timeout=TIMEOUT_SECONDS) as answer:
-            listing = json.load(answer)["data"]
+            return json.load(answer)["data"]
     except (urllib.error.URLError, OSError, ValueError, KeyError, TypeError):
         return None
-    for entry in listing:
+
+
+def thinks_for(model_id, listing=None):
+    """How OpenRouter's listing says this model thinks, or None if it can't say.
+
+    "built-in" if the model supports reasoning, "in-reply" if it doesn't. Pass a
+    `listing` already read to ask about a whole crew with one request.
+    """
+    listing = model_listing() if listing is None else listing
+    for entry in listing or []:
         if entry.get("id") == model_id:
             reasons = "reasoning" in (entry.get("supported_parameters") or [])
             return "built-in" if reasons else "in-reply"
@@ -75,9 +83,24 @@ def _reply_text(message, thinking):
     except json.JSONDecodeError:
         arguments = function["arguments"]  # the brain says what's wrong with it
     reply = {"tool": function.get("name"), "arguments": arguments}
-    if thinking and message.get("reasoning"):
-        reply["thinking"] = message["reasoning"]
+    if thinking:
+        thought = message.get("reasoning") or _thought_in(message.get("content"))
+        if thought:
+            reply["thinking"] = thought
     return json.dumps(reply)
+
+
+def _thought_in(content):
+    """A thought a model wrote beside its tool call, as JSON or as plain words."""
+    if not content or not content.strip():
+        return None
+    try:
+        written = json.loads(content)
+    except json.JSONDecodeError:
+        return content.strip()
+    if isinstance(written, dict):
+        return written.get("thinking")
+    return None
 
 
 class OpenRouter:

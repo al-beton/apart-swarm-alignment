@@ -62,12 +62,12 @@ def fake(monkeypatch, tmp_path):
     return answer
 
 
-def toml(tmp_path, model, thinks=None):
+def toml(tmp_path, model, thinks=None, crew=1):
     extra = f'thinks = "{thinks}"\n' if thinks else ""
+    pirate = f'[[pirates]]\nmodel = "openrouter/{model}"\n{extra}\n'
     path = tmp_path / "game.toml"
     path.write_text(
-        f'grid_size = 2\nturns_per_pirate = 1\nbrain = "silent"\n\n'
-        f'[[pirates]]\nmodel = "openrouter/{model}"\n{extra}'
+        'grid_size = 2\nturns_per_pirate = 1\nbrain = "silent"\n\n' + pirate * crew
     )
     return path
 
@@ -87,7 +87,8 @@ def test_reasoning_looked_up_a_model_the_listing_cannot_speak_for_keeps_the_defa
     assert openrouter.thinks_for("someone/unlisted") is None
     fake.listing = OSError("no network")
     assert openrouter.thinks_for(PLAIN) is None
-    assert backends.looked_up_thinking(f"openrouter/{PLAIN}") == "built-in"
+    model = f"openrouter/{PLAIN}"
+    assert backends.looked_up_thinking([model]) == {model: "built-in"}
 
 
 def test_reasoning_looked_up_a_plain_model_writes_its_thought_in_its_reply(
@@ -134,3 +135,14 @@ def test_reasoning_looked_up_thinks_must_be_one_of_the_two_ways():
     )
     with pytest.raises(ConfigError, match="thinks"):
         parse_config({"pirates": [{"thinks": "sometimes"}]})
+
+
+def test_reasoning_looked_up_a_plain_model_s_thought_reaches_the_record(fake, tmp_path):
+    folder = play(toml(tmp_path, PLAIN))
+    (first, *_) = (folder / "events.jsonl").read_text().splitlines()
+    assert json.loads(first)["thinking"] == "dig here"
+
+
+def test_reasoning_looked_up_once_for_the_whole_crew(fake, tmp_path):
+    play(toml(tmp_path, PLAIN, crew=3))
+    assert fake.listed == 1

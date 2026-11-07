@@ -3,7 +3,7 @@
 `run` opens the live view unless told not to. At a terminal it keeps the page up
 after the game ends, until Ctrl-C; a script gets its prompt back when the game ends.
 
-Implements: tooling/package-and-cli, runs/one-game, runs/run-command, runs/replay-byte-identical, runs/plays-live, runs/no-cache, viewer/watch-live, viewer/render-gif, viewer/slideshow-file, treasure-island/named-runs, treasure-island/everything-cached, treasure-island/one-line-replay, figures/named-figures
+Implements: runs/cost-before-run, runs/yes-before-spending, runs/spending-cap, tooling/package-and-cli, runs/one-game, runs/run-command, runs/replay-byte-identical, runs/plays-live, runs/no-cache, viewer/watch-live, viewer/render-gif, viewer/slideshow-file, treasure-island/named-runs, treasure-island/everything-cached, treasure-island/one-line-replay, figures/named-figures
 """
 
 import argparse
@@ -11,7 +11,7 @@ import sys
 import threading
 import webbrowser
 
-from treasure_island import figures, runs, saved_game, viewer
+from treasure_island import figures, runs, saved_game, spending, viewer
 from treasure_island.config import ConfigError
 
 
@@ -32,9 +32,32 @@ def _reporting_a_bad_config(play):
     return 0
 
 
+def _ask_to_spend(cap_usd):
+    """Ask the person at the keyboard; anything but a yes, or nobody there, is no."""
+
+    def agree():
+        question = f"Spend up to ${cap_usd:.2f} on model calls? Type yes to go on: "
+        try:
+            return input(question).strip().lower() in ("y", "yes")
+        except EOFError:
+            return False
+
+    return agree
+
+
+def _say_what_it_can_cost(args):
+    found = spending.estimate(saved_game.config_with_seed(args.config, args.seed))
+    if found.calls:
+        print(found.as_text(args.spend_up_to), flush=True)
+
+
 def _run(args):
     def play(on_start=None, pace=0):
-        models = saved_game.Models(cache=not args.no_cache)
+        _say_what_it_can_cost(args)
+        agree = (lambda: True) if args.yes else _ask_to_spend(args.spend_up_to)
+        models = saved_game.Models(
+            cache=not args.no_cache, cap_usd=args.spend_up_to, agree=agree
+        )
         return saved_game.play_saved(args.config, args.seed, on_start, pace, models)
 
     if args.no_watch:
@@ -119,6 +142,18 @@ def main(argv=None):
         "--no-cache",
         action="store_true",
         help="ask every model again; scripted brains ask nothing, so they play the same game",
+    )
+    run.add_argument(
+        "--yes",
+        action="store_true",
+        help="spend on model calls without asking first; CI never passes this",
+    )
+    run.add_argument(
+        "--spend-up-to",
+        type=float,
+        default=spending.CAP_USD,
+        metavar="AMOUNT",
+        help="stop the run once it has spent this many dollars (default 1)",
     )
     run.set_defaults(handler=_run)
     replay = commands.add_parser(

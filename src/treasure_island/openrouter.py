@@ -15,7 +15,7 @@ on asks for reasoning within `thinking_tokens`, on top of the reply's cap.
 `OpenRouter.check_key` asks OpenRouter about a key, not a model, so it spends nothing.
 It never says the key's `label`, since OpenRouter's label is the key, masked.
 
-Implements: treasure-island/model-reasoning, agents/openrouter-backend, agents/check-keys
+Implements: treasure-island/model-reasoning, agents/openrouter-backend, agents/check-keys, agents/normal-temperature
 """
 
 import json

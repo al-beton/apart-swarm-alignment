@@ -1,4 +1,4 @@
-# Implements: agents/openrouter-backend, agents/key-from-the-environment
+# Implements: agents/openrouter-backend, agents/key-from-the-environment, agents/normal-temperature
 """The OpenRouter backend answers from a recorded reply, with no network and no key.
 
 `openrouter-reply.json` follows the reply OpenRouter's API reference documents for
@@ -177,3 +177,9 @@ def test_key_from_the_environment_a_missing_key_stops_the_run_before_the_game(
 def test_key_from_the_environment_env_example_names_the_key_with_no_value():
     lines = (HERE.parent / ".env.example").read_text().splitlines()
     assert "OPENROUTER_API_KEY=" in lines
+
+
+def test_normal_temperature_openrouter_sends_no_temperature(offline, monkeypatch):
+    fake = answering(monkeypatch)
+    ask()
+    assert "temperature" not in fake.body()

@@ -6,7 +6,7 @@
 - **one-request-per-turn:** Each LLM turn is one request holding only the system prompt, the turn's text and the pirate's tools as tool definitions, so requests stay small and every model is asked the same thing.
 - **reply-is-a-tool-call:** A backend answers with JSON text naming one tool and its arguments, and the reasoning when thinking is on, so any provider's tool call reaches the game in one form.
 - **ask-once-more:** A reply that isn't a valid tool call is recorded and counts as a failed action: the pirate is told why and asked again, and after `failed_tries` refusals in one turn (default 2) its turn passes with no action.
-- **reply-cap:** Each reply, its thought and its tool call together, is capped at a small output size, `reply_tokens` in the config (default 300); a model's own built-in reasoning is not part of it.
+- **reply-cap:** Each reply, its thought and its tool call together, is capped at a small output size, `reply_tokens` in the config (default 300); a model's own built-in reasoning has its own budget (`model-reasoning`).
 - **plays-then-replays:** A whole game plays through a fake backend, then replays byte-identical from the replies its folder stored, with no backend at all, so an LLM game costs money once and is free to check ever after.
 - **free-runs-in-ci:** A full game with each scripted brain completes in CI without an API call or a key, so the whole path from config to logs is proved at no cost.
 - **committed-runs:** A game of each scripted brain is committed under `runs/`, passes the event-log validator and replays byte-identical, so the visuals have evidence to build from without rerunning anything.

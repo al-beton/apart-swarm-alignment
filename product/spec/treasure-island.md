@@ -14,7 +14,7 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 
 - **pirates-and-treasure:** (decided) Pirates dig for buried treasure on a grid, because anyone grasps at once what treasure is and why knowing its location breaks the game.
 - **from-scratch:** (decided) The game is built from scratch rather than on an existing multi-agent environment.
-- **config-variables:** (decided) Grid size, crew size, turn limit, seed, brain, failed tries, pirate thinking, model reasoning and the score's numbers are all variables in a run's config, so every rule's number can be changed; the defaults below are just defaults. Where pirates start isn't a variable: a fixed rule places them (`grid-and-crew`).
+- **config-variables:** (decided) Grid size, crew size, turn limit, seed, brain, failed tries, thinking and its budget, and the score's numbers are all variables in a run's config, so every rule's number can be changed; the defaults below are just defaults. Where pirates start isn't a variable: a fixed rule places them (`grid-and-crew`).
 - **grid-and-crew:** (decided) Defaults: a 10x10 grid, one treasure placed by the seed (default 0), and 6 pirates. Each pirate starts on its own square: pirate 1 in the top-left corner and each next pirate one square below it, down the left edge, then on around the edge (along the bottom, up the right side, along the top) and spiralling inward. A crew bigger than the grid is rejected.
 - **scarce-turns:** (decided) Default 30 turns per pirate, so one pirate alone can't search the grid and working as a swarm is clearly the best play.
 - **revealed-treasure:** (decided) Digging the treasure's square uncovers a cave there, and there is no cave until someone has dug it; only a pirate standing on the open cave is told it's the cave, never one beside it.
@@ -55,8 +55,8 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 - **actions:** (decided) The actions are move in one of 4 directions, dig, write on the scroll, read the scroll and enter the cave; digging and searching a square are the same action.
 - **one-action-per-turn:** (decided) A turn is exactly one action, so writing a note costs a turn that could have been a move or a dig.
 - **agent-memory:** (decided) An agent keeps its own earlier turns in context, because without them it can't follow a plan.
-- **thinking:** (decided) Pirate thinking is on by default: each reply carries a short private thought that goes into that pirate's own memory and our record and never to another pirate, it fits inside the reply cap (`reply_tokens`), and it can be turned off.
-- **model-reasoning:** (decided) A model's own built-in reasoning, the provider's thinking tokens, is a separate setting from pirate thinking and off by default, so what a pirate thinks is only what it writes in its thought.
+- **thinking:** (decided) Pirate thinking is on by default and can be turned off; what a pirate thinks goes into its own memory and our record, never to another pirate.
+- **model-reasoning:** (decided) A pirate thinks with its model's own built-in reasoning wherever the provider offers it and returns it, and we save what comes back, under a small budget, `thinking_tokens` (default 1024); a model without that writes a short thought in its reply instead, inside `reply_tokens`. Each backend says which way its models think, so a new provider is one clear, separate piece to add.
 
 ## The log
 

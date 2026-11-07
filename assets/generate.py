@@ -188,7 +188,7 @@ def contact_sheet():
     sheet.alpha_composite(_on_sand(_poses(), 16), (24, 186))
     _heading(sheet, 250, "Ground", "enlarged 2x")
     _labelled_row(sheet, 278, [(name, make()) for name, make in TILES.items()])
-    _heading(sheet, 398, "Treasure", "enlarged 2x, on no background")
+    _heading(sheet, 398, "Marks", "enlarged 2x, on no background")
     _labelled_row(sheet, 426, [(name, make()) for name, make in ITEMS.items()])
     _heading(
         sheet, 546, "Treasure cave", "hats stack by the door, first in at the bottom"

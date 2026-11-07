@@ -7,9 +7,10 @@ it's made, because that's in the rules a model reads as text.
 
 `python -m treasure_island.strategies` remakes the committed reference games.
 
-Implements: agents/model-per-pirate, treasure-island/sweeper, treasure-island/say-a-number, treasure-island/reference-games, treasure-island/no-token-strategies, treasure-island/brain-in-config
+Implements: agents/model-per-pirate, treasure-island/sweeper, treasure-island/stripes, treasure-island/reference-games, treasure-island/no-token-strategies, treasure-island/brain-in-config
 """
 
+import re
 from pathlib import Path
 
 from treasure_island.brain import Decision, tool_call
@@ -54,19 +55,94 @@ class Sweeper:
         return Decision(tool_call("move", {"direction": direction}), why)
 
 
-class SayANumber:
-    """Writes the next number to the log each turn, and never digs."""
+_NOTE = re.compile(r"The treasure is at \((\d+), (\d+)\)\.")
+READS_EVERY = 5  # a striping pirate reads on its 5th, 10th, ... turn
+
+
+def _note(square):
+    return f"The treasure is at ({square[0]}, {square[1]})."
+
+
+class Stripes:
+    """Digs its own rows, says when it's blocked, and tells the crew where the cave is.
+
+    Pirate n of a crew of k takes rows n, n+k, n+2k, ... (counting from 0), along
+    the first one and back along the next. Default, Al to confirm: once its rows
+    are done it reads every turn, waiting to hear where the cave is.
+    """
+
+    def __init__(self, grid_size, crew_size, index):
+        rows = range(index, grid_size, crew_size)
+        self._route = [
+            (x if n % 2 == 0 else grid_size - 1 - x, y)
+            for n, y in enumerate(rows)
+            for x in range(grid_size)
+        ]
 
     def decide(self, view):
-        number = len(view.earlier_turns) + 1
-        return Decision(tool_call("write", {"text": str(number)}), "I just count.")
+        earlier = view.earlier_turns
+        if about_the_cave := _for_the_cave(view, earlier):
+            return about_the_cave
+        if (len(earlier) + 1) % READS_EVERY == 0:
+            return Decision(tool_call("read", {}), "Every 5th turn I read the scroll.")
+        dug = {t.position for t in earlier if t.square_dug or _did(t, "dig")}
+        if view.square_dug:
+            dug.add(view.position)
+        if view.position in self._route and view.position not in dug:
+            return Decision(tool_call("dig", {}), "This square is on my rows.")
+        target = next((square for square in self._route if square not in dug), None)
+        if target is None:
+            return Decision(
+                tool_call("read", {}), "My rows are done, so I wait for news."
+            )
+        return _step(view, target, f"The next square on my rows is {target}.")
+
+
+def _for_the_cave(view, earlier):
+    """What to do about the cave: tell the crew, go in, or head there; else None."""
+    opened = next((t.position for t in earlier if t.result == TREASURE_FOUND), None)
+    if opened and not any(t.action == _write(_note(opened)) for t in earlier):
+        return Decision(_write(_note(opened)), "I found it, so the crew should know.")
+    cave = opened or _cave_known(earlier)
+    if cave == view.position:
+        return Decision(tool_call("enter", {}), "This is the cave, so I'm going in.")
+    if cave:
+        return _step(view, cave, f"The cave is at ({cave[0]}, {cave[1]}).")
+    return None
+
+
+def _write(text):
+    return tool_call("write", {"text": text})
+
+
+def _did(turn, action):
+    return bool(turn.action) and turn.action["action"] == action
+
+
+def _cave_known(earlier):
+    """Where the cave is, if a dig or the scroll has said."""
+    for turn in reversed(earlier):
+        if turn.result == CAVE_HERE:
+            return turn.position
+        for line in turn.read_lines:
+            if found := _NOTE.search(line["text"]):
+                return int(found[1]), int(found[2])
+    return None
+
+
+def _step(view, target, why):
+    """A move towards `target`, or a note that a pirate is in the way."""
+    direction = _step_towards(view.position, target)
+    if direction in dict(view.neighbours):
+        return Decision(_write("I am blocked"), f"A pirate is in my way {direction}.")
+    return Decision(tool_call("move", {"direction": direction}), why)
 
 
 def brains_for(name, config, replies=None):
     """One fresh brain per pirate: its model's, through `replies`, else `name`'s."""
     known = {
-        "s-sweep": lambda: Sweeper(config.grid_size),
-        "say-a-number": SayANumber,
+        "s-sweep": lambda index: Sweeper(config.grid_size),
+        "stripes": lambda index: Stripes(config.grid_size, config.crew_size, index),
     }
     if name not in known:
         raise ConfigError(f"There's no brain '{name}': use one of {', '.join(known)}.")
@@ -74,12 +150,12 @@ def brains_for(name, config, replies=None):
     return [
         LLMPirate(f"pirate-{index + 1}", pirate.model, replies, config)
         if pirate.model
-        else make()
+        else make(index)
         for index, pirate in enumerate(config.pirates)
     ]
 
 
-REFERENCE_GAMES = ("s-sweep", "say-a-number")
+REFERENCE_GAMES = ("s-sweep", "stripes")
 
 
 def write_reference(name, folder, root=Path()):

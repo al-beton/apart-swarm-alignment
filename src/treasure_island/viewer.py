@@ -722,9 +722,13 @@ img { image-rendering: pixelated; margin-top: 1em; }
 <script>
 let turns = 0, shown = -1, live = true, walk = 0;
 const frame = document.getElementById("frame"), status = document.getElementById("status");
-function draw(turn, step) {
+// Load and decode a frame off-screen, then show it only if no newer step took over.
+async function draw(turn, step, mine) {
   const at = step ? "?step=" + step + "&t=" : "?t=";
-  frame.src = "/frame/" + turn + ".png" + at + Date.now();
+  const image = new Image();
+  image.src = "/frame/" + turn + ".png" + at + Date.now();
+  try { await image.decode(); } catch (failed) {}  // a broken frame still moves on
+  if (mine === walk) frame.src = image.src;
 }
 async function show(turn) {
   const forward = turn === shown + 1, mine = ++walk;
@@ -733,10 +737,10 @@ async function show(turn) {
   // Stepping forward onto a move plays its walk; jumping anywhere else doesn't.
   const steps = forward ? (await (await fetch("/steps/" + turn)).json()).steps : 1;
   for (let step = 1; step < steps && mine === walk; step++) {
-    draw(turn, step);
+    await draw(turn, step, mine);  // the hold starts once the frame is showing
     await new Promise((done) => setTimeout(done, @WALK_MS@));
   }
-  if (mine === walk) draw(turn, 0);
+  if (mine === walk) await draw(turn, 0, mine);
 }
 async function poll() {
   const reply = await fetch("/turns");

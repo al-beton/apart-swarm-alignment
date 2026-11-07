@@ -363,6 +363,32 @@ def test_watch_live_the_page_follows_the_log_as_it_is_written(folder, server):
     assert b"/steps/" in page
 
 
+def _script(page):
+    return page.split("<script>")[1].split("</script>")[0]
+
+
+def test_watch_live_each_walking_frame_shows_before_the_next_is_asked_for():
+    script = _script(viewer.PAGE)
+    draw = script[script.index("function draw") : script.index("async function show")]
+    # A frame is loaded and decoded off-screen, and shown only if still wanted.
+    assert draw.index("decode()") < draw.index("frame.src =")
+    assert "mine === walk" in draw
+    show = script[
+        script.index("async function show") : script.index("async function poll")
+    ]
+    # Each step's hold starts only once its frame is on the page.
+    assert show.index("await draw(turn, step, mine)") < show.index("setTimeout")
+
+
+def test_watch_live_stepping_away_mid_walk_stops_it():
+    script = _script(viewer.PAGE)
+    show = script[
+        script.index("async function show") : script.index("async function poll")
+    ]
+    assert "step < steps && mine === walk" in show
+    assert "mine = ++walk" in show
+
+
 def test_watch_live_the_command_names_its_address(folder, capsys, monkeypatch):
     started = {}
 

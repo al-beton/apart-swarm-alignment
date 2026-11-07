@@ -39,7 +39,7 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 - **pluggable-pirate:** (decided) A pirate's brain is pluggable: an LLM, or a scripted strategy that needs no tokens.
 - **say-a-number:** (decided) A second scripted pirate writes the next number to the log each turn and never digs, so a game has chatter to show and plays to its turn limit.
 - **reference-games:** (decided) Each scripted pirate has a committed reference game that one command remakes and a test compares byte for byte, so any change to how a game plays shows up at once.
-- **sweeper:** (decided) The first scripted pirate sweeps the grid in an S shape, digging each square, and stays still once it finds the treasure.
+- **sweeper:** (decided) The first scripted pirate sweeps the grid in an S shape, digging each square, and goes into the cave on its next turn once it digs up the treasure or digs the open cave.
 - **silent:** (decided) The silent pirate, the default brain, digs its square if it isn't dug and otherwise walks to the nearest square it hasn't seen dug; it never writes or reads, and enters the cave on its next turn once it stands on it, so it is the baseline a crew that talks should beat.
 - **stripes:** (decided) Pirate n of a crew of k digs rows n, n+k, n+2k and so on, writes "I am blocked" when the next square on its way holds a pirate, and on digging up the treasure writes where it is and enters; it reads every 5th turn and heads for the cave once it has read where it is, so a scripted crew can win.
 - **scribe:** (decided) The scribe moves and digs like the silent pirate and spends the turn after each dig writing what it found; it never reads, and writes where the cave is before it enters, so every game shows writing.
@@ -147,9 +147,9 @@ The pirates' log is a scroll: nothing of it is shown for free, and writing on it
 | `graphics-elsewhere` | `src/treasure_island/config.py` | `test_graphics_elsewhere_the_game_itself_draws_nothing`, `test_graphics_elsewhere_the_config_says_what_each_pirate_is` |
 | `looks-are-cosmetic` | `src/treasure_island/brain.py` | `test_looks_are_cosmetic_the_same_seed_gives_identical_logs`, `test_looks_are_cosmetic_a_turn_view_is_the_same_whatever_the_looks`, `test_looks_are_cosmetic_head_text_never_appears_in_a_view_or_a_log`, `test_no_vision_a_pirate_s_looks_never_reach_its_view` |
 | `pluggable-pirate` | `src/treasure_island/brain.py` | `test_pluggable_pirate_any_brain_takes_a_turn_through_one_interface`, `test_pluggable_pirate_a_view_as_text_says_everything_a_model_needs` |
-| `say-a-number` | `src/treasure_island/strategies.py`, `configs/say-a-number.toml` | `test_say_a_number_writes_the_next_number_each_turn_and_never_digs`, `test_say_a_number_plays_to_the_turn_limit_and_scores_the_floor` |
+| `say-a-number` | `src/treasure_island/strategies.py`, `configs/say-a-number.toml` | `test_say_a_number_writes_the_next_number_each_turn_and_never_digs`, `test_say_a_number_plays_to_the_turn_limit_and_scores_nothing` |
 | `reference-games` | `src/treasure_island/strategies.py`, `Makefile`, `runs/reference-s-sweep/**`, `runs/reference-say-a-number/**` | `test_reference_games_match_what_one_command_remakes`, `test_reference_games_replay_like_any_other_run`, `test_reference_games_pass_the_validator`, `test_reference_games_tell_a_story_that_ends_with_the_score` |
-| `sweeper` | `src/treasure_island/strategies.py`, `configs/s-sweep.toml` | `test_sweeper_walks_an_s_and_digs_each_square`, `test_sweeper_walks_to_the_corner_from_anywhere`, `test_sweeper_stays_still_once_it_finds_the_treasure`, `test_sweeper_scores_what_the_rules_predict` |
+| `sweeper` | `src/treasure_island/strategies.py`, `configs/s-sweep.toml` | `test_sweeper_walks_an_s_and_digs_each_square`, `test_sweeper_walks_to_the_corner_from_anywhere`, `test_sweeper_goes_into_the_cave_once_it_finds_the_treasure`, `test_sweeper_enters_the_cave_another_pirate_opened`, `test_sweeper_scores_what_the_rules_predict` |
 | `silent` | not yet | — |
 | `stripes` | not yet | — |
 | `scribe` | not yet | — |

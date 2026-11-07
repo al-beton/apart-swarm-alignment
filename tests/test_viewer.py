@@ -89,13 +89,12 @@ def test_one_renderer_the_gif_holds_exactly_the_frames_the_page_serves(
         assert ImageStat.Stat(diff.convert("L")).mean[0] < 2
 
 
-def test_frame_shows_the_swarm_every_pirate_whose_turn_the_bubble_and_the_log():
+def test_frame_shows_the_swarm_every_pirate_whose_turn_and_what_it_wrote():
     scene = viewer.scene(RECORDS, 1, size=3)
     assert scene["size"] == 3
     assert scene["positions"] == {"pirate-a": [1, 0], "pirate-b": [2, 2]}
     assert scene["acting"] == "pirate-b"
-    assert scene["bubble"] == "nothing here"
-    assert scene["log"] == ["pirate-a: east"]
+    assert scene["note"] == "nothing here"
     assert scene["treasure"] is None
     assert viewer.scene(RECORDS, 2, size=3)["treasure"] == [1, 0]
 
@@ -104,7 +103,7 @@ def test_crew_positions_a_frame_shows_a_pirate_before_its_first_turn():
     first = {**RECORDS[0], "crew": {"pirate-a": [0, 0], "pirate-b": [2, 2]}}
     scene = viewer.scene([first], 0, size=3)
     assert scene["positions"] == {"pirate-a": [1, 0], "pirate-b": [2, 2]}
-    assert scene["bubble"] == "move east"
+    assert scene["note"] is None
 
 
 def crew_of(count, size):

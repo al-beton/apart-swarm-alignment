@@ -7,13 +7,21 @@ learned. Pirates are numbered from 0. North is towards y = 0, as in the event
 log. Each pirate starts on its own square (`starting_squares`), and no two ever
 share one. The treasure may be under a pirate's starting square.
 
-Implements: treasure-island/pirates-and-treasure, treasure-island/grid-and-crew, treasure-island/shared-squares, treasure-island/failed-move, treasure-island/failed-move-cost, treasure-island/actions, treasure-island/one-action-per-turn, treasure-island/turn-order
+Digging the treasure's square opens a cave there, and only the digger, or a pirate
+that digs it again, is told. A pirate on the open cave can enter it: it leaves the
+board, freeing the square for the next, and the turn order skips it from then on.
+
+Implements: treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/pirates-and-treasure, treasure-island/grid-and-crew, treasure-island/shared-squares, treasure-island/failed-move, treasure-island/failed-move-cost, treasure-island/actions, treasure-island/one-action-per-turn, treasure-island/turn-order
 """
 
 import dataclasses
 import random
 
-TREASURE_FOUND = "You dug here and found the treasure!"
+TREASURE_FOUND = (
+    "You dug here and found the treasure! It opens a cave on this square: "
+    "enter it to go in."
+)
+CAVE_HERE = "You dug here: this is the open cave. Enter it to go in."
 STEPS = {"north": (0, -1), "east": (1, 0), "south": (0, 1), "west": (-1, 0)}
 
 
@@ -56,22 +64,38 @@ class GameState:
         self.treasure = (rng.randrange(grid_size), rng.randrange(grid_size))
         self.positions = starting_squares(grid_size)[:crew_size]
         self.treasure_dug_up = False
+        self.inside = []  # pirates in the cave, in the order they went in
         self.turn = 0
+        self._current = 0
 
     @property
     def current_pirate(self):
-        return self.turn % len(self.positions)
+        return self._current
+
+    @property
+    def everyone_inside(self):
+        return len(self.inside) == len(self.positions)
+
+    def _next_pirate(self):
+        """The turn moves on to the next pirate still outside the cave."""
+        self.turn += 1
+        crew = len(self.positions)
+        for step in range(1, crew + 1):
+            pirate = (self._current + step) % crew
+            if pirate not in self.inside:
+                self._current = pirate
+                return
 
     def _on_grid(self, x, y):
         return 0 <= x < self.grid_size and 0 <= y < self.grid_size
 
     def _end_turn(self, result):
-        self.turn += 1
+        self._next_pirate()
         return result
 
     def pass_turn(self):
         """End the turn of a pirate who acted elsewhere, as writing or reading do."""
-        self.turn += 1
+        self._next_pirate()
 
     def refusal(self, direction):
         """Why the current pirate can't move this way, or None if it can.
@@ -113,8 +137,30 @@ class GameState:
         return self._end_turn(Result(True, message))
 
     def dig(self):
-        """Dig the current pirate's square. Once dug up, the treasure stays dug up."""
+        """Dig the current pirate's square. Digging up the treasure opens the cave."""
         if self.positions[self.current_pirate] != self.treasure:
             return self._end_turn(Result(True, "You dug here and found nothing."))
+        if self.treasure_dug_up:
+            return self._end_turn(Result(True, CAVE_HERE))
         self.treasure_dug_up = True
         return self._end_turn(Result(True, TREASURE_FOUND, True))
+
+    def enter_refusal(self):
+        """Why the current pirate can't enter, or None if it stands on the open cave."""
+        here = self.positions[self.current_pirate]
+        if self.treasure_dug_up and here == self.treasure:
+            return None
+        x, y = here
+        return Result(False, f"There is no open cave at ({x}, {y}) to enter.")
+
+    def enter(self):
+        """Take the current pirate into the open cave, and off the board for good."""
+        if refused := self.enter_refusal():
+            return refused
+        pirate = self.current_pirate
+        self.inside.append(pirate)
+        self.positions[pirate] = None
+        message = (
+            "You went into the cave. You're out of the game, and your crew scores you."
+        )
+        return self._end_turn(Result(True, message))

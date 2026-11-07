@@ -3,7 +3,7 @@
 
 import pytest
 
-from treasure_island.game_state import GameState
+from treasure_island.game_state import CAVE_HERE, GameState
 
 
 def game(grid_size=5, crew_size=1, seed=0, at=None):
@@ -95,7 +95,8 @@ def test_actions_a_dug_up_treasure_stays_dug_up():
     state.dig()
     state.move("east")
     assert state.treasure_dug_up is True
-    assert state.dig().found_treasure is True
+    again = state.dig()  # digging the open cave says so, and finds nothing new
+    assert (again.found_treasure, again.message) == (False, CAVE_HERE)
     assert state.treasure_dug_up is True
 
 

@@ -15,7 +15,7 @@ from pathlib import Path
 from treasure_island.brain import Decision, tool_call
 from treasure_island.config import ConfigError, load_config, save_config
 from treasure_island.game_loop import write_game
-from treasure_island.game_state import TREASURE_FOUND
+from treasure_island.game_state import CAVE_HERE, TREASURE_FOUND
 from treasure_island.llm import LLMPirate
 
 
@@ -33,15 +33,17 @@ def _step_towards(here, there):
 
 
 class Sweeper:
-    """Digs each square along an S, and stays on the treasure once it finds it."""
+    """Digs each square along an S, and goes into the cave once it finds it."""
 
     def __init__(self, grid_size):
         self._squares = _s_shape(grid_size)
 
     def decide(self, view):
         earlier = view.earlier_turns
-        if any(turn.result == TREASURE_FOUND for turn in earlier):
-            return Decision(tool_call("dig", {}), "I found it, so I'm staying here.")
+        if earlier and earlier[-1].result in (TREASURE_FOUND, CAVE_HERE):
+            return Decision(
+                tool_call("enter", {}), "This is the cave, so I'm going in."
+            )
         dug = {turn.position for turn in earlier if turn.action["action"] == "dig"}
         if view.position not in dug:
             return Decision(tool_call("dig", {}), "I haven't dug this square yet.")

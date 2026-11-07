@@ -42,6 +42,7 @@ _ACTIONS = {
     "dig": lambda action: True,
     "read": lambda action: True,
     "write": lambda action: _is_text(action.get("text")),
+    "enter": lambda action: True,
 }
 
 

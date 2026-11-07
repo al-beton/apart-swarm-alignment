@@ -66,7 +66,8 @@ def test_sweeper_walks_an_s_and_digs_each_square():
         (1, 2),
         (2, 2),
     ]
-    assert records[-1]["outcome"]["found_treasure"] is True
+    assert records[-2]["outcome"]["found_treasure"] is True
+    assert records[-1]["did"] == [{"action": "enter"}]
 
 
 def test_sweeper_walks_to_the_corner_from_anywhere():

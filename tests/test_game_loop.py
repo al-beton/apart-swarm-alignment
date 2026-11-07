@@ -299,7 +299,7 @@ def test_story_record_is_a_file_with_one_line_per_turn_and_the_ending(tmp_path):
     assert len(lines) == 12 + 1
     assert lines[0].startswith("Turn 0: pirate-1")
     assert lines[-1] == over["story"]
-    assert "Score 10" in lines[-1]
+    assert "Score 0" in lines[-1]
 
 
 def test_story_record_reads_cleanly_when_things_go_wrong():
@@ -337,8 +337,9 @@ def test_no_token_strategies_a_whole_game_needs_no_network(tmp_path, monkeypatch
         raise AssertionError("a game opened a socket")
 
     monkeypatch.setattr(socket, "socket", no_network)
-    over = write_game(on_the_treasure(crew_size=1), [Steps(DIG)], tmp_path)
-    assert over["score"] == 150
+    pirate = [Steps(DIG, {"action": "enter"})]
+    over = write_game(on_the_treasure(crew_size=1), pirate, tmp_path)
+    assert over["score"] == 140  # in on its 2nd of 6 turns, with 4 to spare
     first = json.loads((tmp_path / "events.jsonl").read_text().splitlines()[0])
     assert record_errors(first) == []
 

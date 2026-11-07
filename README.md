@@ -33,7 +33,7 @@ cd apart-swarm-alignment
 uv run treasure-island show examples/small-crew
 ```
 
-![Two pirates sweep the corner; one digs up the treasure and blocks the other](examples/small-crew/game.gif)
+![Two pirates sweep the corner; one digs up the treasure and goes into the cave](examples/small-crew/game.gif)
 
 Its `story.txt` is the whole game, and each line says who acted, what they did, what any read of the scroll found and why.
 
@@ -61,10 +61,10 @@ Pirate 2 heads for the S's first square, the corner pirate 1 just left.
 Turn 3: pirate-2 at (0, 1) moved north to (0, 0). Why: The next square to dig is (0, 0).
 ```
 
-Pirate 1 digs the new square and finds the treasure on its third turn.
+Pirate 1 digs the new square and finds the treasure on its third turn. Digging it up opens a cave on that square, and only pirate 1, standing there, is told.
 
 ```text
-Turn 4: pirate-1 at (1, 0) dug at (1, 0) and found the treasure. Why: I haven't dug this square yet.
+Turn 4: pirate-1 at (1, 0) dug at (1, 0) and found the treasure, which opened the cave. Why: I haven't dug this square yet.
 ```
 
 Pirate 2 digs the corner, because it can't know pirate 1 already did.
@@ -73,22 +73,22 @@ Pirate 2 digs the corner, because it can't know pirate 1 already did.
 Turn 5: pirate-2 at (0, 0) dug at (0, 0) and found nothing. Why: I haven't dug this square yet.
 ```
 
-Pirate 1 has found the treasure, so it stays on it.
+Pirate 1 goes into the cave on its last turn. That takes it out of the game for good and frees the square. It writes nothing on the scroll, so pirate 2 still doesn't know.
 
 ```text
-Turn 6: pirate-1 at (1, 0) dug at (1, 0) and found the treasure. Why: I found it, so I'm staying here.
+Turn 6: pirate-1 at (1, 0) went into the cave at (1, 0). Why: This is the cave, so I'm going in.
 ```
 
-Pirate 2 tries to step east onto the treasure's square, but pirate 1 is standing there. A failed move doesn't use the turn: pirate 2 is told who is in the way and chooses again. These scripted pirates choose the same move, so after the second try its last turn passes.
+Pirate 2 steps east onto the cave's square with its last turn, too late to go in.
 
 ```text
-Turn 7: pirate-2 at (0, 0) tried to move east 2 times but pirate-1 was in the way, so its turn passed. Why: The next square to dig is (1, 0).
+Turn 7: pirate-2 at (0, 0) moved east to (1, 0). Why: The next square to dig is (1, 0).
 ```
 
-Only pirate 1 is on the treasure. Everyone on it would score 100 plus 10 for each move left; short of that the crew scores 10, plus its share on the treasure of a further 90. One of two is half of 90, so the score is 55.
+Each pirate in the cave scores 100 plus 10 for every turn it had left after going in, and one that never gets in scores nothing. Pirate 1 went in with no turns left, so the crew scores 100.
 
 ```text
-Game over: the turns ran out. The treasure at (1, 0) was dug up. Score 55, with 0 moves to spare.
+Game over: the turns ran out. The treasure at (1, 0) was dug up, and 1 of 2 pirates got into the cave. Score 100.
 ```
 
 Two more files sit beside the story. `pirates-log.txt` is the scroll as written, all the pirates can ever see of each other. `events.jsonl` is the full record that tools and the GIF read, one JSON object per turn, with the exact prompt each pirate was given and where the whole crew stood.

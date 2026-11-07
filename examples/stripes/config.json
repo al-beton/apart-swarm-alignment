@@ -1,6 +1,6 @@
 {
-  "brain": "say-a-number",
-  "crew_size": 2,
+  "brain": "stripes",
+  "crew_size": 3,
   "failed_tries": 2,
   "grid_size": 5,
   "pirates": [
@@ -18,15 +18,25 @@
       "colour": [
         46,
         230,
-        230
+        46
       ],
       "head_text": "2",
       "model": null,
       "personality": 2
+    },
+    {
+      "colour": [
+        46,
+        46,
+        230
+      ],
+      "head_text": "3",
+      "model": null,
+      "personality": 3
     }
   ],
   "reply_tokens": 300,
   "seed": 7,
   "thinking": false,
-  "turns_per_pirate": 10
+  "turns_per_pirate": 20
 }

@@ -73,7 +73,7 @@ def test_named_runs_the_committed_game_replays_byte_identical(capsys):
 def test_named_runs_save_every_lever_even_the_defaults(tmp_path, monkeypatch, capsys):
     monkeypatch.chdir(tmp_path)
     path = tmp_path / "plain.toml"
-    path.write_text('brain = "say-a-number"\nturns_per_pirate = 2\n')
+    path.write_text('brain = "stripes"\nturns_per_pirate = 2\n')
     folder = played(path, capsys, seed=1)
     saved = json.loads((folder / "config.json").read_text())
     assert saved["grid_size"] == 10
@@ -132,8 +132,8 @@ def test_everything_cached_replay_leaves_the_folder_untouched(config, capsys):
 
 
 def test_brain_in_config_picks_what_plays():
-    config = load_config(ROOT / "configs/say-a-number.toml")
-    assert config.brain == "say-a-number"
+    config = load_config(ROOT / "configs/stripes.toml")
+    assert config.brain == "stripes"
     assert len(brains_for(config.brain, config)) == config.crew_size
 
 

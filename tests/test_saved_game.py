@@ -78,7 +78,7 @@ def test_named_runs_save_every_lever_even_the_defaults(tmp_path, monkeypatch, ca
     saved = json.loads((folder / "config.json").read_text())
     assert saved["grid_size"] == 10
     assert saved["crew_size"] == 6
-    assert saved["log_window"] == 3
+    assert saved["turns_per_pirate"] == 2
     assert len(saved["pirates"]) == 6
     assert saved["pirates"][0]["personality"] == 1
     assert cli.main(["replay", str(folder)]) == 0

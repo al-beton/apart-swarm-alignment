@@ -1,4 +1,4 @@
-# Implements: treasure-island/agent-memory, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions
+# Implements: treasure-island/turn-view, treasure-island/reading-costs, treasure-island/every-turn-a-line, treasure-island/agent-memory, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions
 """A whole game: brains take turns, and both logs come out."""
 
 import json
@@ -40,8 +40,7 @@ def write(text):
     return {"action": "write", "text": text}
 
 
-def read(line):
-    return {"action": "read", "line": line}
+READ = {"action": "read"}
 
 
 def config(**settings):
@@ -131,45 +130,78 @@ def test_two_logs_every_record_passes_the_validator(tmp_path):
     assert log_errors(tmp_path / "events.jsonl") == []
 
 
-def test_two_logs_every_turn_adds_one_line_to_the_pirates_log(tmp_path):
+def test_two_logs_only_a_note_adds_a_line_to_the_pirates_log(tmp_path):
     brains = [Steps(DIG), Steps(write("row 2 is empty"))]
     write_game(off_the_treasure(turns_per_pirate=2), brains, tmp_path)
     lines = (tmp_path / "pirates-log.txt").read_text().splitlines()
-    assert lines == ["1:", "2: row 2 is empty", "3:", "4: row 2 is empty"]
+    assert lines == ["1 pirate-2: row 2 is empty", "2 pirate-2: row 2 is empty"]
 
 
 def test_two_logs_the_pirates_log_holds_only_what_pirates_can_see(tmp_path):
-    brains = [Steps(move("south"), DIG), Steps(read(1), move("east"), DIG)]
-    write_game(on_the_treasure(), brains, tmp_path)
-    text = (tmp_path / "pirates-log.txt").read_text()
-    assert [line.split(":", 1)[1] for line in text.splitlines()] == [""] * len(
-        text.splitlines()
-    )
+    brains = [Steps(write("here"), DIG, thinking="SECRET"), Steps(READ, DIG)]
+    write_game(off_the_treasure(turns_per_pirate=2), brains, tmp_path)
+    assert (tmp_path / "pirates-log.txt").read_text() == "1 pirate-1: here\n"
+
+
+def test_two_logs_a_scroll_nobody_wrote_on_is_an_empty_file(tmp_path):
+    write_game(off_the_treasure(turns_per_pirate=1), [Steps(DIG), Steps(READ)], tmp_path)
+    assert (tmp_path / "pirates-log.txt").read_text() == ""
 
 
 def test_two_logs_our_record_shows_what_each_turn_was_shown():
-    records = play(off_the_treasure(), Steps(write("first")), Steps(read(1), DIG))
+    records = play(off_the_treasure(), Steps(write("first")), Steps(READ, DIG))
     assert records[0]["log_shown"] == []
-    assert records[1]["log_shown"][0] == {"line": 1, "text": "first"}
-    assert records[1]["saw"]["prompt"].count("first") >= 1
+    assert records[1]["log_shown"] == [{"line": 1, "text": "first", "by": "pirate-1"}]
+    assert records[2]["log_shown"] == []
+    assert "first" not in records[1]["saw"]["prompt"]
+    assert "first" in records[3]["saw"]["prompt"]
 
 
 def test_two_logs_a_read_shows_the_lines_it_found_and_its_turn_is_spent():
-    game_config = off_the_treasure(log_window=1, read_size=1)
-    brains = [Steps(write("one"), DIG), Steps(DIG, read(1), DIG)]
-    records = play(game_config, *brains)
+    brains = [Steps(write("one"), DIG), Steps(DIG, READ, DIG)]
+    records = play(off_the_treasure(), *brains)
     read_turn = records[3]
-    assert read_turn["did"] == [read(1)]
-    assert {"line": 1, "text": "one"} in read_turn["log_shown"]
+    assert read_turn["did"] == [READ]
+    assert read_turn["log_shown"] == [{"line": 1, "text": "one", "by": "pirate-1"}]
     assert read_turn["outcome"]["position"] == read_turn["saw"]["position"]
-    assert read_turn["result"].startswith("You read the log")
+    assert read_turn["result"].startswith("You read the scroll")
+
+
+def test_turn_view_a_pirate_that_never_reads_never_sees_a_note():
+    listener = Steps(DIG)
+    play(off_the_treasure(), Steps(write("dig at (4, 4)")), listener)
+    assert all("dig at (4, 4)" not in view.as_text() for view in listener.views)
+
+
+def test_reading_costs_a_read_tells_the_pirate_every_new_line_and_who_wrote_it():
+    reader = Steps(DIG, READ, READ, DIG)
+    play(off_the_treasure(turns_per_pirate=4), Steps(write("one")), reader)
+    first, second = reader.views[3].earlier_turns[1:3]
+    assert first.read_lines == [
+        {"line": 1, "text": "one", "by": "pirate-1"},
+        {"line": 2, "text": "one", "by": "pirate-1"},
+    ]
+    assert second.read_lines == [{"line": 3, "text": "one", "by": "pirate-1"}]
+    assert "pirate-1" in reader.views[3].as_text()
+
+
+def test_reading_costs_a_read_with_nothing_new_tells_the_pirate_so():
+    records = play(off_the_treasure(turns_per_pirate=1), Steps(READ), Steps(DIG))
+    assert "nothing" in records[0]["result"].lower()
+    assert records[0]["log_shown"] == []
+
+
+def test_every_turn_a_line_a_turn_that_does_not_write_adds_nothing(tmp_path):
+    brains = [Steps(DIG, move("south")), Steps(READ, DIG)]
+    write_game(off_the_treasure(turns_per_pirate=2), brains, tmp_path)
+    assert (tmp_path / "pirates-log.txt").read_text() == ""
 
 
 def test_two_logs_the_same_config_and_seed_are_byte_identical(tmp_path):
     def brains():
         return [
             Steps(move("east"), write("héllo there"), DIG),
-            Steps(read(1), DIG, thinking="try the corner"),
+            Steps(READ, DIG, thinking="try the corner"),
         ]
 
     for name in ("a", "b"):
@@ -183,7 +215,7 @@ def test_two_logs_the_same_config_and_seed_are_byte_identical(tmp_path):
 
 def test_story_record_says_who_did_what_in_plain_words():
     brains = [
-        Steps(move("west"), move("east"), DIG, write("over here"), read(1)),
+        Steps(move("west"), move("east"), DIG, write("over here"), READ),
         Steps(DIG),
     ]
     game_config = config(turns_per_pirate=5, landing_square=[0, 0], seed=3)
@@ -193,7 +225,7 @@ def test_story_record_says_who_did_what_in_plain_words():
     assert stories[2].startswith("Turn 2: pirate-1 at (0, 0) moved east to (1, 0)")
     assert "dug at (1, 0)" in stories[4]
     assert 'wrote "over here"' in stories[6]
-    assert "read the log around line 1" in stories[8]
+    assert "read the scroll" in stories[8]
 
 
 def test_story_record_says_why_when_the_brain_gave_a_reason():
@@ -215,18 +247,14 @@ def test_story_record_is_a_file_with_one_line_per_turn_and_the_ending(tmp_path):
 
 
 def test_story_record_reads_cleanly_when_things_go_wrong():
-    brains = [Steps(move("west"), read(99)), Steps(DIG)]
+    brains = [Steps(move("west"), READ), Steps(DIG)]
     stories = [
         record["story"]
         for record in play(config(turns_per_pirate=3, landing_square=[0, 0]), *brains)
     ]
-    assert stories[0] == (
-        "Turn 0: pirate-1 at (0, 0) tried to move west and couldn't. "
-        "Saw: nothing, the log is empty."
-    )
+    assert stories[0] == "Turn 0: pirate-1 at (0, 0) tried to move west and couldn't."
     assert stories[2] == (
-        "Turn 2: pirate-1 at (0, 0) read the log around line 99 and found nothing there. "
-        "Saw: only blank lines (lines 1 to 2)."
+        "Turn 2: pirate-1 at (0, 0) read the scroll and found nothing new."
     )
 
 
@@ -246,13 +274,6 @@ def test_toggles_the_crew_size_changes_through_the_config_alone():
         "pirate-2",
         "pirate-3",
     ]
-
-
-@pytest.mark.parametrize("window", [0, 1, 4])
-def test_toggles_the_log_length_changes_through_the_config_alone(window):
-    game_config = off_the_treasure(log_window=window, turns_per_pirate=5)
-    records = play(game_config, Steps(write("note")), Steps(write("note")))
-    assert len(records[-1]["log_shown"]) == window
 
 
 def test_no_token_strategies_a_whole_game_needs_no_network(tmp_path, monkeypatch):
@@ -298,7 +319,7 @@ def test_no_vision_a_dig_result_reaches_only_the_digger():
 def test_actions_write_and_read_each_end_the_turn_like_any_other():
     records = play(
         off_the_treasure(turns_per_pirate=2),
-        Steps(write("note"), read(1)),
+        Steps(write("note"), READ),
         Steps(DIG, move("south")),
     )
     assert [record["agent"] for record in records] == [
@@ -344,66 +365,37 @@ def test_crew_positions_the_first_frame_of_a_real_game_shows_the_whole_crew():
 
 
 def test_agent_memory_keeps_the_lines_a_read_found_as_fields():
-    reader = Steps(read(1), DIG)
-    game_config = off_the_treasure(log_window=0, turns_per_pirate=2)
-    play(game_config, reader, Steps(write("note")))
+    reader = Steps(READ, DIG)
+    play(off_the_treasure(turns_per_pirate=2), reader, Steps(write("note")))
     # Pirate 1 reads first, before any note, so it finds nothing.
-    assert reader.views[1].earlier_turns[0].log_lines == []
+    assert reader.views[1].earlier_turns[0].read_lines == []
 
-    reader = Steps(DIG, read(2))
+    reader = Steps(DIG, READ)
     writer = Steps(write("note"), DIG)
-    play(off_the_treasure(log_window=0, turns_per_pirate=3), reader, writer)
-    remembered = reader.views[2].earlier_turns[1].log_lines
-    assert {"line": 2, "text": "note"} in remembered
-    assert "2: note" in reader.views[2].as_text()
+    play(off_the_treasure(turns_per_pirate=3), reader, writer)
+    remembered = reader.views[2].earlier_turns[1].read_lines
+    assert remembered == [{"line": 1, "text": "note", "by": "pirate-2"}]
+    assert "note" in reader.views[2].as_text()
 
 
-def test_story_record_quotes_the_log_lines_the_pirate_saw():
-    brains = [Steps(write("one"), write("two")), Steps(write("next"))]
+def test_story_record_a_read_quotes_each_line_it_found_and_who_wrote_it():
+    brains = [Steps(write("one"), write("two")), Steps(READ)]
     records = play(off_the_treasure(turns_per_pirate=2), *brains)
-    assert 'Saw: line 1 "one".' in records[1]["story"]
-    assert 'Saw: line 1 "one", line 2 "next".' in records[2]["story"]
+    assert 'read the scroll and found line 1 by pirate-1 "one".' in records[1]["story"]
+    assert 'read the scroll and found line 2 by pirate-1 "two".' in records[3]["story"]
 
 
-def test_story_record_says_plainly_when_all_it_saw_was_blank():
-    records = play(off_the_treasure(turns_per_pirate=2), Steps(DIG), Steps(DIG))
-    assert "Saw: only blank lines (line 1)." in records[1]["story"]
-    assert "Saw: only blank lines (lines 1 to 2)." in records[2]["story"]
+def test_story_record_a_read_of_an_empty_scroll_says_so():
+    records = play(off_the_treasure(turns_per_pirate=1), Steps(READ), Steps(DIG))
+    assert "read the scroll and found nothing new." in records[0]["story"]
 
 
-def test_story_record_says_when_there_was_no_log_to_see():
-    records = play(off_the_treasure(turns_per_pirate=1), Steps(DIG), Steps(DIG))
-    assert "Saw: nothing, the log is empty." in records[0]["story"]
-
-
-def test_story_record_with_the_window_off_says_so_rather_than_that_the_log_is_empty():
-    game_config = off_the_treasure(log_window=0, turns_per_pirate=1)
-    records = play(game_config, Steps(write("note")), Steps(read(1)))
-    assert "Saw: nothing, the log is empty." in records[0]["story"]
-    second = records[1]["story"]
-    assert "Saw: no lines, the free window is off." in second
-    assert 'found line 1 "note"' in second
-
-
-def test_story_record_a_blank_line_among_notes_says_so():
-    brains = [Steps(write("note"), DIG), Steps(DIG)]
-    records = play(off_the_treasure(turns_per_pirate=2), *brains)
-    assert 'Saw: line 1 "note", line 2 blank.' in records[2]["story"]
-
-
-def test_story_record_a_read_quotes_the_lines_it_found():
-    game_config = off_the_treasure(log_window=1, read_size=2, turns_per_pirate=2)
-    records = play(game_config, Steps(write("first"), DIG), Steps(DIG, read(1)))
-    story = records[3]["story"]
-    assert 'read the log around line 1 and found line 1 "first", line 2 blank.' in story
-
-
-def test_story_record_keeps_what_it_saw_on_one_line(tmp_path):
-    brains = [Steps(write("two\nlines")), Steps(DIG)]
-    write_game(off_the_treasure(turns_per_pirate=2), brains, tmp_path)
+def test_story_record_keeps_what_a_read_found_on_one_line(tmp_path):
+    brains = [Steps(write("two\nlines")), Steps(READ)]
+    write_game(off_the_treasure(turns_per_pirate=1), brains, tmp_path)
     lines = (tmp_path / "story.txt").read_text().splitlines()
-    assert 'Saw: line 1 "two lines".' in lines[1]
-    assert len(lines) == 4 + 1
+    assert 'found line 1 by pirate-1 "two lines".' in lines[1]
+    assert len(lines) == 2 + 1
 
 
 @pytest.mark.parametrize(
@@ -426,7 +418,8 @@ def test_story_record_a_committed_game_can_be_followed_from_its_story_alone(fold
         match = re.match(r"Turn (\d+): (\S+) at \((\d+), (\d+)\) ", line)
         assert int(match[1]) == number
         assert record["crew"][match[2]] == [int(match[3]), int(match[4])]
-        assert " Saw: " in line
+        if record["did"] == [READ]:
+            assert "read the scroll and found" in line
 
 
 def test_story_record_a_note_cannot_change_what_the_panel_says_happened():

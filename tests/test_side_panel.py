@@ -57,6 +57,26 @@ def test_side_panel_says_what_the_pirate_did_in_plain_words():
     assert shown([made])["did"] == "dug at (0, 0) and found nothing."
 
 
+def test_side_panel_shows_the_thinking_above_what_it_did_in_a_softer_grey():
+    made = record(0, thinking="corner first", happened="dug at (0, 0).")
+    panel = panel_of(viewer.frame([made], 0, 4)).convert("RGB")
+
+    def rows_in(colour):
+        ink = viewer.rgb(colour)
+        return {
+            y
+            for y in range(panel.height)
+            for x in range(panel.width)
+            if panel.getpixel((x, y)) == ink
+        }
+
+    thought, strong = rows_in(viewer.THOUGHT_INK), rows_in(viewer.ACTION_INK)
+    assert thought
+    # The action is the strongest text, and the last thing in the panel.
+    assert max(thought) < max(strong)
+    assert viewer.THOUGHT_INK != viewer.ACTION_INK
+
+
 def test_side_panel_falls_back_on_the_action_for_a_record_that_does_not_say():
     assert shown([record(0)])["did"] == "dig"
 

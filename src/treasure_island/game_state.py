@@ -14,7 +14,7 @@ import dataclasses
 import random
 
 TREASURE_FOUND = "You dug here and found the treasure!"
-_STEPS = {"north": (0, -1), "east": (1, 0), "south": (0, 1), "west": (-1, 0)}
+STEPS = {"north": (0, -1), "east": (1, 0), "south": (0, 1), "west": (-1, 0)}
 
 
 @dataclasses.dataclass(frozen=True)
@@ -76,14 +76,15 @@ class GameState:
     def move(self, direction):
         """Move the current pirate one square, onto a free square on the grid.
 
-        A move that can't happen costs the turn.
+        A move off the grid costs the turn. A move onto another pirate is refused
+        and costs nothing, so the pirate can choose again.
         """
-        if direction not in _STEPS:
-            known = ", ".join(_STEPS)
+        if direction not in STEPS:
+            known = ", ".join(STEPS)
             message = f"There is no direction '{direction}': use one of {known}."
             return self._end_turn(Result(False, message))
         x, y = self.positions[self.current_pirate]
-        step_x, step_y = _STEPS[direction]
+        step_x, step_y = STEPS[direction]
         target = (x + step_x, y + step_y)
         if not self._on_grid(*target):
             message = f"You can't move {direction}: ({x}, {y}) is at the grid's edge."
@@ -93,8 +94,8 @@ class GameState:
                 f"You can't move {direction}: another pirate is standing on "
                 f"({target[0]}, {target[1]})."
             )
-            blocker = self.positions.index(target)
-            return self._end_turn(Result(False, message, blocked_by=blocker))
+            # Refused rather than failed: the turn stays with this pirate.
+            return Result(False, message, blocked_by=self.positions.index(target))
         self.positions[self.current_pirate] = target
         message = f"You moved {direction} to ({target[0]}, {target[1]})."
         return self._end_turn(Result(True, message))

@@ -13,18 +13,21 @@ Fields stay in reading order rather than sorted, so a person reading a record
 meets who and what before the long prompt. Pirates are named `pirate-1` upwards,
 matching the numbered art. A brain that gives no reason just has no "Why".
 
-Implements: treasure-island/agent-memory, treasure-island/failed-move, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process
+Implements: treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/blocked-tries, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process
 """
 
 import json
 import time
+from itertools import groupby
 from pathlib import Path
 
 from treasure_island.brain import PirateSeat
 from treasure_island.event_log import log_errors
-from treasure_island.game_state import GameState
+from treasure_island.game_state import STEPS, GameState
 from treasure_island.pirates_log import PiratesLog
 from treasure_island.score import score
+
+BLOCKED_TRIES = 3  # treasure-island/blocked-tries, default, Al to confirm
 
 
 class _Recording:
@@ -59,6 +62,20 @@ def _lines_said(lines):
 
 def _square(position):
     return f"({position[0]}, {position[1]})"
+
+
+def _with_refusals(refused, did):
+    """What a turn did, after any moves refused because a pirate was in the way."""
+    said = []
+    for (action, blocker), tries in groupby(refused):
+        count = len(list(tries))
+        times = f" {count} times" if count > 1 else ""
+        said.append(
+            f"tried to move {action['direction']}{times} but {blocker} was in the way"
+        )
+    if not said:
+        return did
+    return ", then ".join(said) + (f", then {did}" if did else ", so its turn passed")
 
 
 class Game:
@@ -132,9 +149,35 @@ class Game:
             )
         }
         self._found_this_turn = False
-        decision = self._seats[pirate].take_turn(start, turns_left, window)
-        result, did, read_lines = self._act(decision.action, start)
-        self._seats[pirate].remember(result, read_lines)
+        seat, refused = self._seats[pirate], []
+        while True:
+            decision = seat.take_turn(start, turns_left, window)
+            blocker = self._in_the_way(decision.action)
+            if blocker is None:
+                result, did, read_lines = self._act(decision.action, start)
+                done = [decision.action]
+                break
+            refused.append((decision.action, blocker))
+            direction = decision.action["direction"]
+            if len(refused) < BLOCKED_TRIES:
+                seat.remember(
+                    f"You can't move {direction}: {blocker} is standing on "
+                    f"{_square(self._next_square(direction))}. "
+                    "That didn't use your turn: choose again."
+                )
+                continue
+            # A brain that keeps choosing a blocked move loses the turn instead.
+            self.state.pass_turn()
+            self.log.pass_turn()
+            result = (
+                f"You can't move {direction}: {blocker} is standing on "
+                f"{_square(self._next_square(direction))}. "
+                "That was your last try, so your turn passed."
+            )
+            did, read_lines, done = "", [], []
+            break
+        seat.remember(result, read_lines)
+        did = _with_refusals(refused, did)
         shown = window + [line for line in read_lines if line not in window]
         if window:
             saw = _lines_said(window)
@@ -152,7 +195,8 @@ class Game:
             "agent": name,
             "story": story,
             "happened": f"{did}.",
-            "did": [decision.action],
+            "did": done,
+            **({"refused": [action for action, _ in refused]} if refused else {}),
             "result": result,
             "outcome": {
                 "position": list(self.state.positions[pirate]),
@@ -166,6 +210,20 @@ class Game:
             record["thinking"] = decision.thinking
         return record, turns_left - 1
 
+    def _next_square(self, direction):
+        x, y = self.state.positions[self.state.current_pirate]
+        step_x, step_y = STEPS[direction]
+        return x + step_x, y + step_y
+
+    def _in_the_way(self, action):
+        """The name of the pirate a move would walk into, or None."""
+        if action["action"] != "move" or action["direction"] not in STEPS:
+            return None
+        target = self._next_square(action["direction"])
+        if target not in self.state.positions:
+            return None
+        return self.names[self.state.positions.index(target)]
+
     def _act(self, action, start):
         """Do the action; return what the pirate is told, a story and lines read."""
         return getattr(self, f"_{action['action']}")(action, start)
@@ -174,10 +232,6 @@ class Game:
         direction = action["direction"]
         result = self.state.move(direction)
         self.log.pass_turn()
-        if result.blocked_by is not None:
-            blocker = self.names[result.blocked_by]
-            did = f"tried to move {direction} and couldn't: {blocker} is in the way"
-            return result.message, did, []
         if not result.ok:
             return result.message, f"tried to move {direction} and couldn't", []
         end = self.state.positions[self.state.current_pirate - 1]

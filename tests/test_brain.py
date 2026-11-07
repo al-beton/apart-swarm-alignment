@@ -221,6 +221,20 @@ def test_agent_memory_a_brain_gets_its_own_earlier_turns():
     assert earlier[0].result == "You dug here and found nothing."
 
 
+def test_agent_memory_keeps_what_it_saw_of_its_square_and_neighbours():
+    scripted, reader = Scripted(), ReadsTextLikeAModel()
+    for brain in (scripted, reader):
+        a_seat = seat(brain)
+        a_seat.take_turn((2, 3), 12, (("south", "pirate-b"),), True)
+        a_seat.remember("You moved east to (3, 3).")
+        a_seat.take_turn((3, 3), 11)
+    (earlier,) = scripted.views[1].earlier_turns
+    assert earlier.neighbours == (("south", "pirate-b"),)
+    assert earlier.square_dug is True
+    said = "At (2, 3), on a dug square, with pirate-b to the south."
+    assert said in reader.texts[1]
+
+
 def test_agent_memory_what_its_last_move_did_shows_in_its_text():
     brain = ReadsTextLikeAModel()
     a_seat = seat(brain)

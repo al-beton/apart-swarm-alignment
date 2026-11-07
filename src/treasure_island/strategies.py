@@ -7,7 +7,7 @@ it's made, because that's in the rules a model reads as text.
 
 `python -m treasure_island.strategies` remakes the committed reference games.
 
-Implements: treasure-island/sweeper, treasure-island/say-a-number, treasure-island/reference-games, treasure-island/no-token-strategies, treasure-island/brain-in-config
+Implements: agents/model-per-pirate, treasure-island/sweeper, treasure-island/say-a-number, treasure-island/reference-games, treasure-island/no-token-strategies, treasure-island/brain-in-config
 """
 
 from pathlib import Path
@@ -16,6 +16,7 @@ from treasure_island.brain import Decision, tool_call
 from treasure_island.config import ConfigError, load_config, save_config
 from treasure_island.game_loop import write_game
 from treasure_island.game_state import TREASURE_FOUND
+from treasure_island.llm import LLMPirate
 
 
 def _s_shape(size):
@@ -59,8 +60,8 @@ class SayANumber:
         return Decision(tool_call("write", {"text": str(number)}), "I just count.")
 
 
-def brains_for(name, config):
-    """One fresh brain per pirate, all playing the same strategy."""
+def brains_for(name, config, replies=None):
+    """One fresh brain per pirate: its model's, through `replies`, else `name`'s."""
     known = {
         "s-sweep": lambda: Sweeper(config.grid_size),
         "say-a-number": SayANumber,
@@ -68,7 +69,12 @@ def brains_for(name, config):
     if name not in known:
         raise ConfigError(f"There's no brain '{name}': use one of {', '.join(known)}.")
     make = known[name]
-    return [make() for _ in range(config.crew_size)]
+    return [
+        LLMPirate(f"pirate-{index + 1}", pirate.model, replies, config)
+        if pirate.model
+        else make()
+        for index, pirate in enumerate(config.pirates)
+    ]
 
 
 REFERENCE_GAMES = ("s-sweep", "say-a-number")

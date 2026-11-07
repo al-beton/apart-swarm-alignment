@@ -50,7 +50,7 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 - **actions:** (decided) The actions are move in one of 4 directions, dig, write on the scroll and read the scroll; digging and searching a square are the same action.
 - **one-action-per-turn:** (decided) A turn is exactly one action, so writing a note costs a turn that could have been a move or a dig.
 - **agent-memory:** (decided) An agent keeps its own earlier turns in context, because without them it can't follow a plan.
-- **thinking:** (decided) Private internal thinking is an optional setting, recorded for us and invisible to other agents.
+- **thinking:** (decided) Private internal thinking is an optional setting, off by default, recorded for us and invisible to other agents.
 
 ## The log
 
@@ -87,7 +87,7 @@ The pirates' log is a scroll: nothing of it is shown for free, and writing on it
 - **toggles:** (decided) Terrain, agent count and the exploit can each be changed or switched off in a run's config; the scroll has no length to set, since nothing on it is shown for free.
 - **prompt-variants:** (open) System prompt variants to compare are: act within the rules, a reputation score, a reward for honesty, and simulation awareness.
 - **sudoku-last:** (decided) The Sudoku time from Something to Lose is tried last, once the rest works.
-- **model-backends:** (decided) Model backends are pluggable; which models we run is not yet chosen, and no LLM pirate is wired in until the deterministic stack works.
+- **model-backends:** (decided) Model backends are pluggable, and a config names the model each pirate plays with; which models we run is not yet chosen.
 - **parked-ideas:** (open) Token budgets agents can trade, closed channels, an orchestrator role and a between-sessions swarm manager are out unless Al brings them back.
 
 ## The viewer
@@ -151,7 +151,7 @@ The pirates' log is a scroll: nothing of it is shown for free, and writing on it
 | `actions` | `src/treasure_island/game_state.py`, `src/treasure_island/pirates_log.py`, `src/treasure_island/game_loop.py` | `test_actions_a_move_goes_one_square_in_any_of_four_directions`, `test_actions_digging_says_nothing_found_off_the_treasure`, `test_actions_digging_says_treasure_on_the_treasure`, `test_actions_a_dug_up_treasure_stays_dug_up`, `test_actions_digging_elsewhere_digs_nothing_up`, `test_actions_a_dig_reports_only_to_the_pirate_that_dug`, `test_actions_write_and_read_each_end_the_turn_like_any_other` |
 | `one-action-per-turn` | `src/treasure_island/game_state.py` | `test_one_action_per_turn_each_action_ends_the_turn`, `test_one_action_per_turn_an_action_elsewhere_still_ends_the_turn` |
 | `agent-memory` | `src/treasure_island/brain.py`, `src/treasure_island/game_loop.py` | `test_agent_memory_a_brain_gets_its_own_earlier_turns`, `test_agent_memory_what_its_last_move_did_shows_in_its_text`, `test_agent_memory_keeps_the_lines_a_read_found`, `test_agent_memory_keeps_the_lines_a_read_found_as_fields_too`, `test_agent_memory_is_per_pirate`, `test_agent_memory_keeps_the_lines_a_read_found_as_fields` |
-| `thinking` | `src/treasure_island/brain.py` | `test_thinking_is_optional`, `test_thinking_is_kept_for_the_record`, `test_thinking_stays_in_the_pirate_s_own_memory`, `test_thinking_never_reaches_another_pirate` |
+| `thinking` | `src/treasure_island/brain.py`, `src/treasure_island/llm.py` | `test_thinking_is_optional`, `test_thinking_is_kept_for_the_record`, `test_thinking_stays_in_the_pirate_s_own_memory`, `test_thinking_never_reaches_another_pirate`, `test_thinking_is_off_by_default_and_a_reply_s_reasoning_is_dropped`, `test_thinking_when_turned_on_is_kept_for_the_record` |
 | `only-channel` | not yet | — |
 | `every-turn-a-line` | `src/treasure_island/pirates_log.py`, `src/treasure_island/game_loop.py` | `test_every_turn_a_line_a_written_note_is_a_line_saying_who_wrote_it`, `test_every_turn_a_line_only_writing_adds_a_line`, `test_every_turn_a_line_a_note_stays_on_one_line`, `test_every_turn_a_line_lines_fit_the_event_log_format`, `test_every_turn_a_line_a_turn_that_does_not_write_adds_nothing` |
 | `reading-costs` | `src/treasure_island/pirates_log.py`, `src/treasure_island/game_loop.py` | `test_reading_costs_a_read_shows_every_line_not_yet_read`, `test_reading_costs_a_second_read_shows_only_what_is_new`, `test_reading_costs_each_pirate_keeps_its_own_place`, `test_reading_costs_a_read_includes_the_pirate_s_own_lines`, `test_reading_costs_a_pirate_can_write_without_ever_having_read`, `test_reading_costs_a_read_with_nothing_new_says_so_plainly`, `test_reading_costs_a_read_tells_the_pirate_every_new_line_and_who_wrote_it`, `test_reading_costs_a_read_with_nothing_new_tells_the_pirate_so` |
@@ -174,7 +174,7 @@ The pirates' log is a scroll: nothing of it is shown for free, and writing on it
 | `toggles` | `src/treasure_island/game_loop.py` | `test_toggles_the_crew_size_changes_through_the_config_alone` |
 | `prompt-variants` | not yet | — |
 | `sudoku-last` | not yet | — |
-| `model-backends` | not yet | — |
+| `model-backends` | `src/treasure_island/config.py`, `src/treasure_island/llm.py` | `test_model_backends_a_config_names_each_pirate_s_model` |
 | `parked-ideas` | not yet | — |
 | `readable-at-once` | `src/treasure_island/viewer.py` | `test_readable_at_once_the_winning_turn_says_so`, `test_readable_at_once_a_note_is_the_pirates_own_words_in_a_bubble`, `test_readable_at_once_the_bubble_is_the_art_not_a_shape`, `test_readable_at_once_the_bubble_stays_on_the_board`, `test_readable_at_once_a_bubble_with_no_room_above_goes_below_the_crowd`, `test_readable_at_once_a_real_game_tells_its_ending_in_the_frame`, `test_story_caption_each_turn_holds_its_story_line_word_for_word` |
 | `pokemon-style` | `src/treasure_island/viewer.py` | `test_art_folder_a_pirate_is_exactly_its_sprite_and_never_a_shape`, `test_sprite_follows_action_a_pirate_faces_the_way_it_moves`, `test_sprite_from_definition_the_frame_draws_the_given_look` |

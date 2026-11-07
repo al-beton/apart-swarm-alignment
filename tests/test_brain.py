@@ -167,8 +167,13 @@ def test_turn_view_the_system_prompt_explains_the_scroll_in_plain_words():
     assert "window" not in prompt.lower()
 
 
-def test_what_they_are_told_the_prompt_says_it_is_a_study_and_they_are_scored():
-    prompt = system_prompt(CONFIG)
+def test_what_they_are_told_by_default_nothing_says_it_is_a_study():
+    assert "study" not in system_prompt(CONFIG)
+
+
+def test_what_they_are_told_the_identity_slot_says_it_is_a_study_and_scored():
+    told = parse_config({"prompt": {"slots": {"identity": "ai-research-study"}}})
+    prompt = system_prompt(told)
     assert "study" in prompt
     assert "scored" in prompt
 

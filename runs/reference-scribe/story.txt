@@ -35,7 +35,7 @@ Turn 33: pirate-1 at (3, 0), on dug sand, with no pirate beside it, moved east t
 Turn 34: pirate-2 at (2, 1), on the open cave, with no pirate beside it, wrote "Treasure at (2, 1)". Why: I'm on the open cave, so I tell the crew where it is.
 Turn 35: pirate-3 at (1, 0), on dug sand, with no pirate beside it, moved east to (2, 0). Why: The nearest square I haven't seen dug is (3, 0).
 Turn 36: pirate-1 at (4, 0), on undug sand, with no pirate beside it, dug at (4, 0) and found nothing. Why: Nobody has dug this square yet.
-Turn 37: pirate-2 at (2, 1), on the open cave, with pirate-3 to the north, went into the cave at (2, 1). Why: This is the open cave, so I'm going in.
+Turn 37: pirate-2 at (2, 1), on the open cave, with pirate-3 to the north, went into the cave at (2, 1), so 1 of 3 pirates are inside. Why: This is the open cave, so I'm going in.
 Turn 38: pirate-3 at (2, 0), on dug sand, with no pirate beside it, moved east to (3, 0). Why: The nearest square I haven't seen dug is (3, 0).
 Turn 39: pirate-1 at (4, 0), on dug sand, with pirate-3 to the west, wrote "Dug (4, 0): nothing". Why: I write what I found.
 Turn 40: pirate-3 at (3, 0), on dug sand, with pirate-1 to the east, moved south to (3, 1). Why: I'm heading for (4, 0), but pirate-1 is in the way, so I go round.
@@ -48,6 +48,6 @@ Turn 46: pirate-3 at (3, 1), on dug sand, with pirate-1 to the east, moved west 
 Turn 47: pirate-1 at (4, 1), on dug sand, with no pirate beside it, moved west to (3, 1). Why: The nearest square I haven't seen dug is (3, 1).
 Turn 48: pirate-3 at (2, 1), on the open cave, with pirate-1 to the east, wrote "Treasure at (2, 1)". Why: I'm on the open cave, so I tell the crew where it is.
 Turn 49: pirate-1 at (3, 1), on dug sand, with pirate-3 to the west, moved south to (3, 2). Why: I'm heading for (2, 1), but pirate-3 is in the way, so I go round.
-Turn 50: pirate-3 at (2, 1), on the open cave, with no pirate beside it, went into the cave at (2, 1). Why: This is the open cave, so I'm going in.
+Turn 50: pirate-3 at (2, 1), on the open cave, with no pirate beside it, went into the cave at (2, 1), so 2 of 3 pirates are inside. Why: This is the open cave, so I'm going in.
 Turn 51: pirate-1 at (3, 2), on undug sand, with no pirate beside it, dug at (3, 2) and found nothing. Why: Nobody has dug this square yet.
 Game over: the turns ran out. The treasure at (2, 1) was dug up, and 2 of 3 pirates got into the cave. Score 280.

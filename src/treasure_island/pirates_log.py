@@ -1,13 +1,12 @@
-"""The pirates' log: the short shared record that is all they can see of each other.
+"""The pirates' log is a scroll: nothing on it is shown for free.
 
-Lines count up from 1 and look like the event log's `log_shown` entries. Every
-turn adds exactly one line, because each of the three calls that spend a turn
-adds one: `write` adds the note, and `read` and `pass_turn` add a blank line.
-So a read costs the turn it took, and pushes older lines out of the free
-`window`, which costs nothing to look at. A line number outside this log gets a
-message and no lines.
+Writing adds one line, numbered from 1, saying who wrote it. Reading shows a
+pirate every line it hasn't read yet, its own included, and moves its place to
+the end, so a pirate can write without ever having read. Both cost the turn; any other turn
+leaves the scroll as it was, so it holds only notes. Each line looks like the
+event log's `log_shown` entries, with `by` naming the writer.
 
-Implements: treasure-island/short-window, treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/read-size, treasure-island/actions
+Implements: treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/actions
 """
 
 import dataclasses
@@ -15,60 +14,38 @@ import dataclasses
 
 @dataclasses.dataclass(frozen=True)
 class ReadAnswer:
-    """The lines a read found, or a message saying why it found none."""
+    """The lines a read found, or a message saying there was nothing new."""
 
     lines: list
     message: str = ""
 
 
 def one_line(note):
-    """A note as the log holds it: one line, however it was written."""
+    """A note as the scroll holds it: one line, however it was written."""
     return " ".join(note.splitlines())
 
 
 class PiratesLog:
-    def __init__(self, window=3, read_size=3):
-        self._window = window
-        self._read_size = read_size
-        self._texts = []
-
-    def _lines(self, first, last):
-        """Lines `first` to `last` inclusive, by line number."""
-        return [
-            {"line": number, "text": self._texts[number - 1]}
-            for number in range(first, last + 1)
-        ]
+    def __init__(self):
+        self._lines = []
+        self._read_up_to = {}
 
     def lines(self):
-        """Every line so far, for our own records. Pirates only see `window` and `read`."""
-        return self._lines(1, len(self._texts))
+        """Every line so far, for our own records. Pirates only see what they read."""
+        return list(self._lines)
 
-    def window(self):
-        """The last few lines, free to every pirate at the start of its turn."""
-        total = len(self._texts)
-        return self._lines(max(1, total - self._window + 1), total)
+    def write(self, by, note):
+        """Spend the turn adding a note. A note always stays on one line."""
+        number = len(self._lines) + 1
+        self._lines.append({"line": number, "text": one_line(note), "by": by})
 
-    def write(self, note):
-        """Spend the turn on a note. A note always stays on one line."""
-        self._texts.append(one_line(note))
-
-    def pass_turn(self):
-        """A turn spent on anything but the log adds a blank line."""
-        self._texts.append("")
-
-    def read(self, line):
-        """Spend the turn reading the lines around `line`."""
-        answer = self._look_up(line)
-        self.pass_turn()
-        return answer
-
-    def _look_up(self, line):
-        total = len(self._texts)
-        if not 1 <= line <= total:
-            return ReadAnswer(
-                [], f"Line {line} is not in this log, so nothing to read."
-            )
-        # Keep a full read at either end of the log, where it can't be centred.
-        first = min(line - (self._read_size - 1) // 2, total - self._read_size + 1)
-        first = max(1, first)
-        return ReadAnswer(self._lines(first, min(total, first + self._read_size - 1)))
+    def read(self, reader):
+        """Spend the turn reading every line `reader` hasn't read yet."""
+        start = self._read_up_to.get(reader, 0)
+        self._read_up_to[reader] = len(self._lines)
+        new = self._lines[start:]
+        if new:
+            return ReadAnswer(new)
+        if not self._lines:
+            return ReadAnswer([], "The scroll is empty, so there was nothing to read.")
+        return ReadAnswer([], "Nothing new on the scroll since you last read it.")

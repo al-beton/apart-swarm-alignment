@@ -1,134 +1,106 @@
-# Implements: treasure-island/short-window, treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/read-size
-"""The pirates' log: a short free window, and reading back costs a turn."""
-
-import pytest
+# Implements: treasure-island/every-turn-a-line, treasure-island/reading-costs
+"""The pirates' log is a scroll: writing adds a line, and a read shows what's new."""
 
 from treasure_island.event_log import record_errors
 from treasure_island.pirates_log import PiratesLog
-
-
-def log_with(count, **sizes):
-    log = PiratesLog(**sizes)
-    for number in range(1, count + 1):
-        log.write(f"note {number}")
-    return log
 
 
 def numbers(lines):
     return [line["line"] for line in lines]
 
 
-def test_every_turn_a_line_a_written_note_is_the_line():
-    log = PiratesLog()
-    log.write("digging at (2, 3)")
-    assert log.window() == [{"line": 1, "text": "digging at (2, 3)"}]
-
-
-def test_every_turn_a_line_any_other_turn_adds_a_blank_line():
-    log = PiratesLog()
-    log.pass_turn()
-    assert log.window() == [{"line": 1, "text": ""}]
-
-
-def test_every_turn_a_line_a_note_stays_on_one_line():
-    log = PiratesLog()
-    log.write("first\nsecond")
-    log.write("third")
-    assert log.window() == [
-        {"line": 1, "text": "first second"},
-        {"line": 2, "text": "third"},
+def test_every_turn_a_line_a_written_note_is_a_line_saying_who_wrote_it():
+    scroll = PiratesLog()
+    scroll.write("pirate-1", "digging at (2, 3)")
+    assert scroll.lines() == [
+        {"line": 1, "text": "digging at (2, 3)", "by": "pirate-1"}
     ]
 
 
+def test_every_turn_a_line_only_writing_adds_a_line():
+    scroll = PiratesLog()
+    scroll.write("pirate-1", "one")
+    scroll.read("pirate-2")
+    scroll.write("pirate-2", "two")
+    assert numbers(scroll.lines()) == [1, 2]
+    assert [line["text"] for line in scroll.lines()] == ["one", "two"]
+
+
+def test_every_turn_a_line_a_note_stays_on_one_line():
+    scroll = PiratesLog()
+    scroll.write("pirate-1", "first\nsecond")
+    assert scroll.lines()[0]["text"] == "first second"
+
+
 def test_every_turn_a_line_lines_fit_the_event_log_format():
-    log = log_with(4)
+    scroll = PiratesLog()
+    scroll.write("pirate-1", "a note")
     record = {
         "turn": 0,
-        "agent": "pirate-a",
+        "agent": "pirate-2",
         "saw": {"position": [0, 0], "prompt": ""},
-        "did": [],
-        "log_shown": [*log.window(), *log.read(1).lines],
+        "did": [{"action": "read"}],
+        "log_shown": scroll.read("pirate-2").lines,
         "outcome": {"position": [0, 0], "found_treasure": False},
     }
     assert record_errors(record) == []
 
 
-def test_short_window_shows_the_last_3_lines_by_default():
-    assert numbers(log_with(5).window()) == [3, 4, 5]
-
-
-def test_short_window_shows_what_there_is_early_on():
-    assert log_with(0).window() == []
-    assert numbers(log_with(2).window()) == [1, 2]
-
-
-def test_short_window_size_is_a_plain_value():
-    assert numbers(log_with(6, window=4).window()) == [3, 4, 5, 6]
-
-
-def test_short_window_of_zero_shows_nothing():
-    assert log_with(5, window=0).window() == []
-
-
-def test_short_window_costs_no_turn():
-    log = log_with(5)
-    log.window()
-    assert numbers(log.window()) == [3, 4, 5]
-
-
-def test_reading_costs_a_read_spends_the_turn_on_a_blank_line():
-    log = log_with(5)
-    log.read(1)
-    assert log.window() == [
-        {"line": 4, "text": "note 4"},
-        {"line": 5, "text": "note 5"},
-        {"line": 6, "text": ""},
-    ]
-
-
-def test_reading_costs_a_read_outside_the_log_still_spends_the_turn():
-    log = log_with(5)
-    log.read(99)
-    assert numbers(log.window()) == [4, 5, 6]
-
-
-def test_read_size_returns_the_3_lines_around_a_line_by_default():
-    answer = log_with(9).read(5)
-    assert answer.lines == [
-        {"line": 4, "text": "note 4"},
-        {"line": 5, "text": "note 5"},
-        {"line": 6, "text": "note 6"},
-    ]
+def test_reading_costs_a_read_shows_every_line_not_yet_read():
+    scroll = PiratesLog()
+    for number in range(1, 5):
+        scroll.write("pirate-1", f"note {number}")
+    answer = scroll.read("pirate-2")
+    assert numbers(answer.lines) == [1, 2, 3, 4]
+    assert answer.lines[0] == {"line": 1, "text": "note 1", "by": "pirate-1"}
     assert answer.message == ""
 
 
-@pytest.mark.parametrize(
-    "line, expected",
-    [(1, [1, 2, 3]), (2, [1, 2, 3]), (8, [7, 8, 9]), (9, [7, 8, 9])],
-)
-def test_read_size_stays_full_at_either_end_of_the_log(line, expected):
-    assert numbers(log_with(9).read(line).lines) == expected
+def test_reading_costs_a_second_read_shows_only_what_is_new():
+    scroll = PiratesLog()
+    scroll.write("pirate-1", "old")
+    scroll.read("pirate-2")
+    scroll.write("pirate-3", "new")
+    assert scroll.read("pirate-2").lines == [
+        {"line": 2, "text": "new", "by": "pirate-3"}
+    ]
 
 
-def test_read_size_is_a_plain_value():
-    assert numbers(log_with(9, read_size=5).read(5).lines) == [3, 4, 5, 6, 7]
-    assert numbers(log_with(9, read_size=1).read(5).lines) == [5]
-    assert numbers(log_with(9, read_size=2).read(5).lines) == [5, 6]
+def test_reading_costs_each_pirate_keeps_its_own_place():
+    scroll = PiratesLog()
+    scroll.write("pirate-1", "old")
+    scroll.read("pirate-2")
+    scroll.write("pirate-1", "new")
+    assert numbers(scroll.read("pirate-3").lines) == [1, 2]
+    assert numbers(scroll.read("pirate-2").lines) == [2]
 
 
-def test_read_size_a_log_shorter_than_a_read_returns_all_of_it():
-    assert numbers(log_with(2).read(1).lines) == [1, 2]
+def test_reading_costs_a_read_includes_the_pirate_s_own_lines():
+    scroll = PiratesLog()
+    scroll.write("pirate-1", "mine")
+    scroll.write("pirate-2", "theirs")
+    scroll.write("pirate-1", "mine again")
+    assert [line["text"] for line in scroll.read("pirate-1").lines] == [
+        "mine",
+        "theirs",
+        "mine again",
+    ]
 
 
-@pytest.mark.parametrize("line", [-1, 0, 6, 1100])
-def test_read_size_a_line_outside_the_log_gets_a_clear_answer_and_no_data(line):
-    answer = log_with(5).read(line)
-    assert answer.lines == []
-    assert str(line) in answer.message
-    assert "note" not in answer.message
+def test_reading_costs_a_pirate_can_write_without_ever_having_read():
+    scroll = PiratesLog()
+    scroll.write("pirate-1", "first")
+    scroll.write("pirate-1", "second")
+    assert [line["by"] for line in scroll.lines()] == ["pirate-1", "pirate-1"]
 
 
-def test_read_size_reading_an_empty_log_gets_a_clear_answer():
-    answer = PiratesLog().read(1)
-    assert answer.lines == []
-    assert answer.message
+def test_reading_costs_a_read_with_nothing_new_says_so_plainly():
+    scroll = PiratesLog()
+    empty = scroll.read("pirate-1")
+    assert empty.lines == []
+    assert "nothing" in empty.message.lower()
+    scroll.write("pirate-2", "hello")
+    scroll.read("pirate-1")
+    again = scroll.read("pirate-1")
+    assert again.lines == []
+    assert "nothing new" in again.message.lower()

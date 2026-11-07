@@ -6,7 +6,6 @@
     0,
     0
   ],
-  "log_window": 3,
   "pirates": [
     {
       "colour": [
@@ -27,7 +26,6 @@
       "personality": 2
     }
   ],
-  "read_size": 3,
   "seed": 1,
   "turns_per_pirate": 20
 }

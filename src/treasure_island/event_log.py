@@ -40,7 +40,7 @@ def _is_log_line(value):
 _ACTIONS = {
     "move": lambda action: action.get("direction") in DIRECTIONS,
     "dig": lambda action: True,
-    "read": lambda action: _is_int(action.get("line")),
+    "read": lambda action: True,
     "write": lambda action: _is_text(action.get("text")),
 }
 

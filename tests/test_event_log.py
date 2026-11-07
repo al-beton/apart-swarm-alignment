@@ -84,7 +84,7 @@ def test_what_they_saw_needs_a_position_and_a_prompt(path, value):
     [
         {"action": "move", "direction": "north"},
         {"action": "dig"},
-        {"action": "read", "line": -3},
+        {"action": "read"},
         {"action": "write", "text": ""},
     ],
 )
@@ -102,7 +102,6 @@ def test_what_they_did_accepts_a_turn_with_no_action():
         {"action": "move"},
         {"action": "move", "direction": "up"},
         {"action": "move", "direction": ["north"]},
-        {"action": "read", "line": "3"},
         {"action": "write"},
         {"action": "teleport"},
         {"direction": "north"},
@@ -128,6 +127,11 @@ def test_what_they_did_must_be_a_list():
 )
 def test_what_the_log_showed_needs_numbered_lines(shown):
     assert record_errors(changed(["log_shown"], shown))
+
+
+def test_what_the_log_showed_may_say_who_wrote_each_line():
+    shown = [{"line": 3, "text": "nothing here", "by": "pirate-b"}]
+    assert record_errors(changed(["log_shown"], shown)) == []
 
 
 def test_what_the_log_showed_can_reach_an_earlier_session():

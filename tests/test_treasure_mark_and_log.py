@@ -172,21 +172,25 @@ def test_log_at_bottom_shows_exactly_the_log_the_crew_had():
     file = (SAVED / "pirates-log.txt").read_text().splitlines()
     records = records_of(SAVED)
     lines = viewer.scene(records, len(records) - 1, 5)["log_so_far"]
-    assert [f"{n}: {text}".rstrip() for n, text in lines] == file
+    assert [f"{n} {text}" for n, text in lines] == file
 
 
 def test_log_at_bottom_holds_only_the_lines_written_so_far():
     written = [{"action": "write", "text": "ahoy"}]
     records = [record(0, written), record(1), record(2, written)]
-    assert viewer.scene(records, 1, 3)["log_so_far"] == [(1, "ahoy"), (2, "")]
+    assert viewer.scene(records, 1, 3)["log_so_far"] == [(1, "pirate-1: ahoy")]
+    assert viewer.scene(records, 2, 3)["log_so_far"] == [
+        (1, "pirate-1: ahoy"),
+        (2, "pirate-1: ahoy"),
+    ]
 
 
 def test_log_at_bottom_a_note_on_two_lines_reads_as_it_did_in_the_log():
     written = [{"action": "write", "text": "first\nsecond"}]
     log = PiratesLog()
-    log.write(written[0]["text"])
+    log.write("pirate-1", written[0]["text"])
     assert viewer.scene([record(0, written)], 0, 3)["log_so_far"] == [
-        (1, log.lines()[0]["text"])
+        (1, f"pirate-1: {log.lines()[0]['text']}")
     ]
 
 
@@ -213,14 +217,14 @@ def test_long_log_lines_wrap_and_lose_no_word():
     words = [f"word{n}" for n in range(15)]
     rows = viewer.log_rows([(1, " ".join(words))], width=300)
     assert len(rows) > 1
-    assert " ".join(rows).split() == ["1:", *words]
+    assert " ".join(rows).split() == ["1", *words]
     assert all(viewer.text_width(row) <= 300 for row in rows)
 
 
 def test_long_log_lines_a_word_too_long_for_a_row_is_split_not_cut():
     long = "x" * 200
     rows = viewer.log_rows([(1, long)], width=300)
-    assert "".join(rows).removeprefix("1:") == long
+    assert "".join(rows).removeprefix("1") == long
     assert all(viewer.text_width(row) <= 300 for row in rows)
 
 
@@ -228,4 +232,4 @@ def test_long_log_lines_keep_the_newest_in_view():
     lines = [(n, f"line {n}") for n in range(1, 40)]
     rows = viewer.log_rows(lines, width=300)
     assert len(rows) == viewer.STRIP_ROWS
-    assert rows[-1] == "39: line 39"
+    assert rows[-1] == "39 line 39"

@@ -20,8 +20,6 @@ def test_config_variables_a_file_sets_every_lever(tmp_path):
         crew_size = 2
         turns_per_pirate = 12
         landing_square = [3, 4]
-        log_window = 5
-        read_size = 2
         seed = 7
         """,
     )
@@ -30,20 +28,19 @@ def test_config_variables_a_file_sets_every_lever(tmp_path):
     assert config.crew_size == 2
     assert config.turns_per_pirate == 12
     assert config.landing_square == (3, 4)
-    assert config.log_window == 5
-    assert config.read_size == 2
     assert config.seed == 7
 
 
 def test_config_variables_the_defaults_are_only_defaults():
-    config = parse_config({})
-    assert config.log_window == 3
-    assert config.read_size == 3
-    assert parse_config({"log_window": 9}).log_window == 9
+    assert parse_config({}).turns_per_pirate == 30
+    assert parse_config({"turns_per_pirate": 9}).turns_per_pirate == 9
 
 
-def test_config_variables_the_log_window_can_be_switched_off():
-    assert parse_config({"log_window": 0}).log_window == 0
+def test_config_variables_the_old_scroll_levers_are_gone():
+    for gone in ("log_window", "read_size"):
+        assert not hasattr(parse_config({}), gone)
+        with pytest.raises(ConfigError, match=gone):
+            parse_config({gone: 3})
 
 
 def test_config_variables_a_seed_plays_the_same_config_again():
@@ -125,8 +122,6 @@ def test_pirate_definition_a_partly_defined_pirate_keeps_the_other_defaults():
         ({"grid_size": True}, "grid_size"),
         ({"crew_size": 0}, "crew_size"),
         ({"turns_per_pirate": -1}, "turns_per_pirate"),
-        ({"log_window": -1}, "log_window"),
-        ({"read_size": 0}, "read_size"),
         ({"seed": "one"}, "seed"),
         ({"landing_square": [1]}, "landing_square"),
         ({"landing_square": 3}, "landing_square"),
@@ -151,9 +146,9 @@ def test_config_variables_a_bad_config_is_rejected_with_a_clear_message(bad, nam
 
 def test_config_variables_every_problem_is_named_at_once():
     with pytest.raises(ConfigError) as caught:
-        parse_config({"grid_size": 0, "read_size": 0})
+        parse_config({"grid_size": 0, "crew_size": 0})
     assert "grid_size" in str(caught.value)
-    assert "read_size" in str(caught.value)
+    assert "crew_size" in str(caught.value)
 
 
 def test_config_variables_a_file_that_is_not_toml_is_rejected(tmp_path):

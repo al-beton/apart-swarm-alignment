@@ -49,8 +49,8 @@ def seat(brain=None, name="pirate-a"):
     return PirateSeat(name, brain or Scripted(), CONFIG)
 
 
-def take_turn(a_seat, position=(2, 3), turns_left=12, log_lines=()):
-    return a_seat.take_turn(position, turns_left, list(log_lines))
+def take_turn(a_seat, position=(2, 3), turns_left=12):
+    return a_seat.take_turn(position, turns_left)
 
 
 def test_tools_only_there_are_exactly_four_tools():
@@ -63,7 +63,7 @@ def test_tools_only_there_are_exactly_four_tools():
         ("move", {"direction": "north"}, {"action": "move", "direction": "north"}),
         ("dig", {}, {"action": "dig"}),
         ("write", {"text": "here"}, {"action": "write", "text": "here"}),
-        ("read", {"line": 4}, {"action": "read", "line": 4}),
+        ("read", {}, {"action": "read"}),
     ],
 )
 def test_tools_only_a_tool_call_becomes_an_event_log_action(name, arguments, action):
@@ -85,7 +85,7 @@ def test_tools_only_a_tool_call_becomes_an_event_log_action(name, arguments, act
         ("teleport", {}),
         ("move", {}),
         ("move", {"direction": "up"}),
-        ("read", {"line": "4"}),
+        ("read", {"line": 4}),
         ("write", {}),
         ("dig", {"where": "here"}),
         ("move", {"direction": "north", "speed": 2}),
@@ -113,37 +113,43 @@ def test_pluggable_pirate_any_brain_takes_a_turn_through_one_interface():
 
 def test_pluggable_pirate_a_view_as_text_says_everything_a_model_needs():
     brain = ReadsTextLikeAModel()
-    take_turn(seat(brain), log_lines=[{"line": 7, "text": "row 2 is empty"}])
+    take_turn(seat(brain))
     text = brain.texts[0]
-    for expected in ("pirate-a", "(2, 3)", "12", "7: row 2 is empty", "move", "dig"):
+    for expected in ("pirate-a", "(2, 3)", "12", "move", "dig", "write", "read"):
         assert expected in text
 
 
-def test_turn_view_holds_the_rules_position_turns_left_and_log_lines():
+def test_turn_view_holds_the_rules_position_and_turns_left():
     brain = Scripted()
-    log = PiratesLog()
-    for number in range(5):
-        log.write(f"note {number}")
-    take_turn(seat(brain), log_lines=log.window())
+    take_turn(seat(brain))
     view = brain.views[0]
     assert view.system_prompt == system_prompt(CONFIG)
     assert view.position == (2, 3)
     assert view.turns_left == 12
-    assert [line["text"] for line in view.log_lines] == ["note 2", "note 3", "note 4"]
+
+
+def test_turn_view_shows_no_scroll_lines_for_free():
+    brain = ReadsTextLikeAModel()
+    take_turn(seat(brain))
+    assert "line 1" not in brain.texts[0].lower()
+    assert not any("log" in field.name for field in dataclasses.fields(TurnView))
 
 
 def test_turn_view_system_prompt_gives_the_rules_and_every_action():
     prompt = system_prompt(CONFIG)
-    for expected in ("9 by 9", "4 pirates", "one action", "treasure", "log"):
+    for expected in ("9 by 9", "4 pirates", "one action", "treasure", "scroll"):
         assert expected in prompt
     for tool in TOOLS:
         assert tool["name"] in prompt
 
 
-def test_turn_view_a_blank_log_line_reads_as_blank():
-    brain = ReadsTextLikeAModel()
-    take_turn(seat(brain), log_lines=[{"line": 3, "text": ""}])
-    assert "3: (blank)" in brain.texts[0]
+def test_turn_view_the_system_prompt_explains_the_scroll_in_plain_words():
+    prompt = system_prompt(CONFIG)
+    assert "scroll" in prompt
+    assert "nothing on it is shown to you for free" in prompt.lower()
+    assert "everything new" in prompt.lower()
+    assert "your own lines included" in prompt.lower()
+    assert "window" not in prompt.lower()
 
 
 def test_what_they_are_told_the_prompt_says_it_is_a_study_and_they_are_scored():
@@ -158,7 +164,6 @@ def test_no_vision_a_view_only_has_room_for_the_pirate_s_own_knowledge():
         "system_prompt",
         "position",
         "turns_left",
-        "log_lines",
         "earlier_turns",
     }
 
@@ -208,28 +213,26 @@ def test_agent_memory_what_its_last_move_did_shows_in_its_text():
     assert "You moved east to (3, 3)." in brain.texts[1]
 
 
-def test_agent_memory_keeps_the_log_lines_it_was_shown():
-    # Six pirates and a window of 3: a note is gone from the window by a
-    # pirate's next turn, but it has seen it, so it must not forget it.
-    fact = {"line": 7, "text": "treasure at (4, 4)"}
+def test_agent_memory_keeps_the_lines_a_read_found():
+    # A read shows each line once, so the pirate must not forget what it found.
+    fact = {"line": 7, "text": "treasure at (4, 4)", "by": "pirate-c"}
     brain = ReadsTextLikeAModel()
     a_seat = seat(brain)
-    take_turn(a_seat, log_lines=[fact])
-    a_seat.remember("You moved east to (3, 3).")
-    take_turn(a_seat, position=(3, 3), log_lines=[{"line": 13, "text": ""}])
-    earlier, latest = brain.texts[1].split("The log's latest lines:")
-    assert "7: treasure at (4, 4)" in earlier
-    assert "treasure" not in latest
+    take_turn(a_seat)
+    a_seat.remember("You read the scroll.", [fact])
+    take_turn(a_seat, position=(3, 3))
+    assert "pirate-c" in brain.texts[1]
+    assert "treasure at (4, 4)" in brain.texts[1]
 
 
-def test_agent_memory_keeps_the_log_lines_as_fields_too():
-    fact = {"line": 7, "text": "treasure at (4, 4)"}
+def test_agent_memory_keeps_the_lines_a_read_found_as_fields_too():
+    fact = {"line": 7, "text": "treasure at (4, 4)", "by": "pirate-c"}
     brain = Scripted()
     a_seat = seat(brain)
-    take_turn(a_seat, log_lines=[fact])
-    a_seat.remember("Nothing here.")
     take_turn(a_seat)
-    assert brain.views[1].earlier_turns[0].log_lines == [fact]
+    a_seat.remember("You read the scroll.", [fact])
+    take_turn(a_seat)
+    assert brain.views[1].earlier_turns[0].read_lines == [fact]
 
 
 def test_agent_memory_is_per_pirate():
@@ -262,11 +265,13 @@ def test_thinking_stays_in_the_pirate_s_own_memory():
 def test_thinking_never_reaches_another_pirate():
     thinker = Scripted({"action": "write", "text": "hello"}, thinking="SECRET PLAN")
     listener = ReadsTextLikeAModel()
-    log = PiratesLog()
+    scroll = PiratesLog()
     thinker_seat, listener_seat = seat(thinker), seat(listener, "pirate-b")
     decision = take_turn(thinker_seat)
-    log.write(decision.action["text"])
+    scroll.write("pirate-a", decision.action["text"])
     thinker_seat.remember("You wrote a note.")
-    take_turn(listener_seat, log_lines=log.window())
-    assert "hello" in listener.texts[0]
-    assert "SECRET PLAN" not in listener.texts[0]
+    take_turn(listener_seat)
+    listener_seat.remember("You read the scroll.", scroll.read("pirate-b").lines)
+    take_turn(listener_seat)
+    assert "hello" in listener.texts[1]
+    assert all("SECRET PLAN" not in text for text in listener.texts)

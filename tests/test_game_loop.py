@@ -144,7 +144,9 @@ def test_two_logs_the_pirates_log_holds_only_what_pirates_can_see(tmp_path):
 
 
 def test_two_logs_a_scroll_nobody_wrote_on_is_an_empty_file(tmp_path):
-    write_game(off_the_treasure(turns_per_pirate=1), [Steps(DIG), Steps(READ)], tmp_path)
+    write_game(
+        off_the_treasure(turns_per_pirate=1), [Steps(DIG), Steps(READ)], tmp_path
+    )
     assert (tmp_path / "pirates-log.txt").read_text() == ""
 
 

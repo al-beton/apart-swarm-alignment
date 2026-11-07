@@ -1,19 +1,19 @@
 """A whole game: brains take turns, and both logs come out.
 
 `Game(config, brains).records()` yields one event-log record per turn. Only what
-a pirate may know goes to its seat: its own position, its turns left and the log
-lines it may see. Everything else stays in the record, which is ours.
+a pirate may know goes to its seat: its own position, its turns left and what
+its reads found on the scroll. Everything else stays in the record, which is ours.
 
 `write_game` puts a game in a folder: `events.jsonl` (our full record, for tools
 and animation), `story.txt` (the same game to read, one line per turn) and
-`pirates-log.txt` (all the pirates can see). Same config, seed and brains, same
+`pirates-log.txt` (the scroll as written, all the pirates can ever see). Same config, seed and brains, same
 bytes: nothing here reads the clock or any randomness but the config's seed.
 
 Fields stay in reading order rather than sorted, so a person reading a record
 meets who and what before the long prompt. Pirates are named `pirate-1` upwards,
 matching the numbered art. A brain that gives no reason just has no "Why".
 
-Implements: treasure-island/agent-memory, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process
+Implements: treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/turn-view, treasure-island/agent-memory, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process
 """
 
 import json
@@ -44,15 +44,9 @@ def _one_line(text):
 
 
 def _lines_said(lines):
-    """Log lines in plain words, with their numbers, on one line."""
-    if all(not line["text"].strip() for line in lines):
-        first, last = lines[0]["line"], lines[-1]["line"]
-        where = f"line {first}" if first == last else f"lines {first} to {last}"
-        return f"only blank lines ({where})"
+    """Scroll lines in plain words, with their numbers and writers, on one line."""
     return ", ".join(
-        f'line {line["line"]} "{_one_line(line["text"])}"'
-        if line["text"].strip()
-        else f"line {line['line']} blank"
+        f'line {line["line"]} by {line["by"]} "{_one_line(line["text"])}"'
         for line in lines
     )
 
@@ -71,7 +65,7 @@ class Game:
         self.state = GameState(
             config.grid_size, config.crew_size, config.landing_square, config.seed
         )
-        self.log = PiratesLog(config.log_window, config.read_size)
+        self.log = PiratesLog()
         self.names = [f"pirate-{number + 1}" for number in range(config.crew_size)]
         self._minds = [_Recording(brain) for brain in brains]
         self._seats = [
@@ -125,8 +119,6 @@ class Game:
         name = self.names[pirate]
         start = self.state.positions[pirate]
         turns_left = self.config.turns_per_pirate - turn // self.config.crew_size
-        window = self.log.window()
-        log_had = bool(self.log.lines())
         crew = {
             crew_name: list(position)
             for crew_name, position in zip(
@@ -134,19 +126,10 @@ class Game:
             )
         }
         self._found_this_turn = False
-        decision = self._seats[pirate].take_turn(start, turns_left, window)
-        result, did, read_lines = self._act(decision.action, start)
+        decision = self._seats[pirate].take_turn(start, turns_left)
+        result, did, read_lines = self._act(decision.action, start, name)
         self._seats[pirate].remember(result, read_lines)
-        shown = window + [line for line in read_lines if line not in window]
-        if window:
-            saw = _lines_said(window)
-        else:
-            saw = (
-                "no lines, the free window is off"
-                if log_had
-                else "nothing, the log is empty"
-            )
-        story = f"Turn {turn}: {name} at {_square(start)} {did}. Saw: {saw}."
+        story = f"Turn {turn}: {name} at {_square(start)} {did}."
         if decision.thinking:
             story += f" Why: {_one_line(decision.thinking)}"
         record = {
@@ -160,7 +143,7 @@ class Game:
                 "position": list(self.state.positions[pirate]),
                 "found_treasure": self._found_this_turn,
             },
-            "log_shown": shown,
+            "log_shown": read_lines,
             "crew": crew,
             "saw": {"position": list(start), "prompt": self._minds[pirate].prompt},
         }
@@ -168,47 +151,39 @@ class Game:
             record["thinking"] = decision.thinking
         return record, turns_left - 1
 
-    def _act(self, action, start):
+    def _act(self, action, start, name):
         """Do the action; return what the pirate is told, a story and lines read."""
-        return getattr(self, f"_{action['action']}")(action, start)
+        return getattr(self, f"_{action['action']}")(action, start, name)
 
-    def _move(self, action, start):
+    def _move(self, action, start, name):
         direction = action["direction"]
         result = self.state.move(direction)
-        self.log.pass_turn()
         if not result.ok:
             return result.message, f"tried to move {direction} and couldn't", []
         end = self.state.positions[self.state.current_pirate - 1]
         return result.message, f"moved {direction} to {_square(end)}", []
 
-    def _dig(self, action, start):
+    def _dig(self, action, start, name):
         result = self.state.dig()
-        self.log.pass_turn()
         if result.found_treasure:
             self._found_this_turn = True
             return result.message, f"dug at {_square(start)} and found the treasure", []
         return result.message, f"dug at {_square(start)} and found nothing", []
 
-    def _write(self, action, start):
-        self.log.write(action["text"])
+    def _write(self, action, start, name):
+        self.log.write(name, action["text"])
         self.state.pass_turn()
         note = _one_line(action["text"])
-        return f'You wrote to the log: "{note}".', f'wrote "{note}"', []
+        return f'You wrote on the scroll: "{note}".', f'wrote "{note}"', []
 
-    def _read(self, action, start):
-        line = action["line"]
-        answer = self.log.read(line)
+    def _read(self, action, start, name):
+        answer = self.log.read(name)
         self.state.pass_turn()
         if not answer.lines:
-            return (
-                answer.message,
-                f"read the log around line {line} and found nothing there",
-                [],
-            )
-        told = f"You read the log around line {line}."
+            return answer.message, "read the scroll and found nothing new", []
         return (
-            told,
-            f"read the log around line {line} and found {_lines_said(answer.lines)}",
+            "You read the scroll.",
+            f"read the scroll and found {_lines_said(answer.lines)}",
             answer.lines,
         )
 
@@ -234,8 +209,10 @@ def write_game(config, brains, folder, pace=0):
                 time.sleep(pace)
             game_over = record.get("game_over", game_over)
         story.write((game_over["story"] + "\n").encode())
-    lines = [f"{line['line']}: {line['text']}".rstrip() for line in game.log.lines()]
-    (folder / "pirates-log.txt").write_bytes(("\n".join(lines) + "\n").encode())
+    scroll = "".join(
+        f"{line['line']} {line['by']}: {line['text']}\n" for line in game.log.lines()
+    )
+    (folder / "pirates-log.txt").write_bytes(scroll.encode())
     if errors := log_errors(folder / "events.jsonl"):
         raise ValueError("\n".join(errors))
     return game_over

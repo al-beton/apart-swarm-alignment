@@ -6,8 +6,9 @@ with one of four tool calls, in the same form the event log records.
 
 The game gives each pirate a `PirateSeat`, which builds the view and keeps that
 pirate's own memory. A seat is only ever handed what the pirate may know: its
-position, its turns left and the log lines it may see. So other pirates and the
-treasure can't reach a brain, and neither can another pirate's thinking.
+position and its turns left, and later what each of its reads found on the
+scroll. So other pirates and the treasure can't reach a brain, and neither can
+another pirate's thinking. Nothing on the scroll is shown for free.
 
 Implements: treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/thinking, treasure-island/what-they-are-told, treasure-island/looks-are-cosmetic
 """
@@ -31,13 +32,13 @@ TOOLS = (
     },
     {
         "name": "write",
-        "description": "Add a note to the log, the only way to reach the other pirates.",
+        "description": "Write a note on the scroll, the only way to reach the other pirates.",
         "parameters": {"text": "your note, on one line"},
     },
     {
         "name": "read",
-        "description": "Read the lines around a line number further back in the log.",
-        "parameters": {"line": "a line number"},
+        "description": "Read every line on the scroll you haven't read yet.",
+        "parameters": {},
     },
 )
 _PARAMETERS = {tool["name"]: set(tool["parameters"]) for tool in TOOLS}
@@ -79,34 +80,36 @@ def system_prompt(config):
         f"{config.turns_per_pirate} turns. Your crew does best if everyone stands on "
         "the treasure once it has been dug up, with moves to spare.\n"
         "You can't see the grid or the other pirates. You know only your own "
-        "position and what you have dug. The log is the only way to reach the others: "
-        f"each turn you are shown its last {config.log_window} lines, and reading "
-        f"further back shows {config.read_size} lines and uses your turn. "
-        "Every turn adds a line to the log, blank unless that turn wrote a note.\n"
+        "position and what you have dug. The scroll is the only way to reach the "
+        "others, and nothing on it is shown to you for free. Writing adds one line "
+        "with your name on it. Reading shows you everything new that the others "
+        "have written since you last read, each line with who wrote it. "
+        "Writing and reading each use your turn.\n"
         f"Each turn is exactly one action:\n{tools}"
     )
 
 
-def _log_text(lines):
-    return [f"{line['line']}: {line['text'] or '(blank)'}" for line in lines]
+def _scroll_text(lines):
+    return " | ".join(
+        f"line {line['line']} by {line['by']}: {line['text']}" for line in lines
+    )
 
 
 @dataclasses.dataclass(frozen=True)
 class EarlierTurn:
-    """One of a pirate's own earlier turns, including the log lines it saw then."""
+    """One of a pirate's own earlier turns, including the lines a read found."""
 
     position: tuple
-    log_lines: list
     action: dict
     result: str
     thinking: str | None = None
+    read_lines: list = dataclasses.field(default_factory=list)
 
     def as_text(self):
         step = " ".join(str(part) for part in self.action.values())
         thought = f" You were thinking: {self.thinking}" if self.thinking else ""
-        saw = " | ".join(_log_text(self.log_lines))
-        shown = f" The log showed {saw}." if saw else ""
-        return f"- At {self.position}.{shown} You did: {step}. {self.result}{thought}"
+        found = f" It said: {_scroll_text(self.read_lines)}." if self.read_lines else ""
+        return f"- At {self.position}. You did: {step}. {self.result}{found}{thought}"
 
 
 @dataclasses.dataclass(frozen=True)
@@ -117,12 +120,10 @@ class TurnView:
     system_prompt: str
     position: tuple
     turns_left: int
-    log_lines: list
     earlier_turns: tuple
 
     def as_text(self):
         """The whole view as plain words, which is what an LLM reads."""
-        log = _log_text(self.log_lines)
         earlier = [turn.as_text() for turn in self.earlier_turns]
         now = f"You are {self.name}, at {self.position}, "
         now += f"with {self.turns_left} turns left."
@@ -130,7 +131,6 @@ class TurnView:
             [
                 self.system_prompt,
                 "Your earlier turns:\n" + ("\n".join(earlier) or "None yet."),
-                "The log's latest lines:\n" + ("\n".join(log) or "The log is empty."),
                 now,
             ]
         )
@@ -158,27 +158,19 @@ class PirateSeat:
         self._earlier = ()
         self._pending = None
 
-    def take_turn(self, position, turns_left, log_lines):
+    def take_turn(self, position, turns_left):
         """Ask the brain for this turn's decision, checking it's a real tool call."""
-        view = TurnView(
-            self._name,
-            self._prompt,
-            position,
-            turns_left,
-            log_lines,
-            self._earlier,
-        )
+        view = TurnView(self._name, self._prompt, position, turns_left, self._earlier)
         decision = self._brain.decide(view)
         if not is_action(decision.action):
             raise BadToolCall(f"{json.dumps(decision.action)} is not a tool call")
-        self._pending = (position, log_lines, decision)
+        self._pending = (position, decision)
         return decision
 
     def remember(self, result, read_lines=()):
         """Tell the pirate what its last action did, and any lines its read found."""
-        position, log_lines, decision = self._pending
-        seen = log_lines + [line for line in read_lines if line not in log_lines]
+        position, decision = self._pending
         earlier = EarlierTurn(
-            position, seen, decision.action, result, decision.thinking
+            position, decision.action, result, decision.thinking, list(read_lines)
         )
         self._earlier = (*self._earlier, earlier)

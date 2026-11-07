@@ -16,9 +16,10 @@ DIG, ENTER = {"action": "dig"}, {"action": "enter"}
 WEST = {"action": "move", "direction": "west"}
 
 
-def record(turn, agent, at, did=(), found=False, in_cave=False, crew=None):
-    outcome = {"position": list(at), "found_treasure": found}
-    if in_cave:
+def record(turn, agent, at, did=(), **seen):
+    """One record; `found`, `in_cave` and `crew` can be given."""
+    outcome = {"position": list(at), "found_treasure": seen.get("found", False)}
+    if seen.get("in_cave"):
         outcome["in_cave"] = True
     return {
         "turn": turn,
@@ -26,7 +27,7 @@ def record(turn, agent, at, did=(), found=False, in_cave=False, crew=None):
         "saw": {"position": list(at), "prompt": ""},
         "did": list(did),
         "log_shown": [],
-        "crew": crew if crew is not None else {agent: list(at)},
+        "crew": seen.get("crew", {agent: list(at)}),
         "outcome": outcome,
     }
 
@@ -51,40 +52,27 @@ LOOKS = viewer._default_pirates(["pirate-1", "pirate-2"])
 
 
 def hat(name):
-    personality, colour, label = LOOKS[name]
+    _, colour, label = LOOKS[name]
     return (colour, label)
 
 
-# Pirate 1 digs the treasure up on (1, 1) and goes in; pirate 2, on (0, 2), follows.
+# Pirate 1 digs the treasure up on (1, 1) and goes in. Pirate 2 stays in the far
+# corner of a 4 by 4 board, so its bubble never reaches the cave's square.
+FAR = (3, 3)
+BOTH = {"pirate-1": [1, 1], "pirate-2": list(FAR)}
 GAME = [
-    record(
-        0,
-        "pirate-1",
-        CAVE,
-        [DIG],
-        found=True,
-        crew={"pirate-1": [1, 1], "pirate-2": [0, 2]},
-    ),
-    record(
-        1, "pirate-2", (0, 2), [WEST], crew={"pirate-1": [1, 1], "pirate-2": [0, 2]}
-    ),
-    record(
-        2,
-        "pirate-1",
-        CAVE,
-        [ENTER],
-        in_cave=True,
-        crew={"pirate-1": [1, 1], "pirate-2": [0, 2]},
-    ),
-    record(3, "pirate-2", (0, 2), [WEST], crew={"pirate-2": [0, 2]}),
-    record(4, "pirate-2", (0, 2), [WEST], crew={"pirate-2": [0, 2]}),
+    record(0, "pirate-1", CAVE, [DIG], found=True, crew=BOTH),
+    record(1, "pirate-2", FAR, [WEST], crew=BOTH),
+    record(2, "pirate-1", CAVE, [ENTER], in_cave=True, crew=BOTH),
+    record(3, "pirate-2", FAR, [WEST], crew={"pirate-2": list(FAR)}),
+    record(4, "pirate-2", FAR, [WEST], crew={"pirate-2": list(FAR)}),
 ]
 
 
 def test_cave_drawn_the_dug_up_treasure_shows_the_cave_not_an_x():
-    shown = viewer.scene(GAME, 1, 3)
+    shown = viewer.scene(GAME, 1, 4)
     assert shown["mark"] == ("cave", CAVE)
-    image = viewer.frame(GAME, 1, 3)
+    image = viewer.frame(GAME, 1, 4)
     pirate = viewer._sprite(LOOKS["pirate-1"], *shown["poses"]["pirate-1"])
     label = viewer._label(LOOKS["pirate-1"], *shown["poses"]["pirate-1"])
     assert (
@@ -94,36 +82,67 @@ def test_cave_drawn_the_dug_up_treasure_shows_the_cave_not_an_x():
 
 
 def test_cave_drawn_a_pirate_going_in_is_drawn_going_in_with_no_hat_yet():
-    image = viewer.frame(GAME, 2, 3)
+    image = viewer.frame(GAME, 2, 4)
     personality, colour, label = LOOKS["pirate-1"]
     expected = layered(art("treasure/cave"), going_in(personality, colour, label, 1))
     assert tile(image, *CAVE).tobytes() == expected.tobytes()
 
 
 def test_cave_drawn_after_going_in_it_is_gone_and_its_hat_is_on_the_stack():
-    assert "pirate-1" not in viewer.scene(GAME, 3, 3)["positions"]
-    image = viewer.frame(GAME, 3, 3)
+    assert "pirate-1" not in viewer.scene(GAME, 3, 4)["positions"]
+    image = viewer.frame(GAME, 3, 4)
     expected = layered(art("treasure/cave-2"), hat_stack([hat("pirate-1")]))
     assert tile(image, *CAVE).tobytes() == expected.tobytes()
 
 
 def test_cave_drawn_the_gold_glints_from_one_frame_to_the_next():
     assert (
-        tile(viewer.frame(GAME, 3, 3), *CAVE).tobytes()
-        != tile(viewer.frame(GAME, 4, 3), *CAVE).tobytes()
+        tile(viewer.frame(GAME, 3, 4), *CAVE).tobytes()
+        != tile(viewer.frame(GAME, 4, 4), *CAVE).tobytes()
     )
 
 
 def test_cave_drawn_hats_stack_in_the_order_the_pirates_went_in():
-    crew = {"pirate-2": [1, 1]}
-    later = [
-        *GAME[:3],
-        record(3, "pirate-2", CAVE, [ENTER], in_cave=True, crew=crew),
-        record(4, "pirate-1", (0, 0), [], crew={}),
+    # Three pirates: 1 and 2 go in, in that order, and 3 acts far away.
+    looks = viewer._default_pirates(["pirate-1", "pirate-2", "pirate-3"])
+    third = {"pirate-3": list(FAR)}
+    records = [
+        record(
+            0,
+            "pirate-1",
+            CAVE,
+            [DIG],
+            found=True,
+            crew={"pirate-1": [1, 1], "pirate-2": [1, 0], **third},
+        ),
+        record(
+            1,
+            "pirate-1",
+            CAVE,
+            [ENTER],
+            in_cave=True,
+            crew={"pirate-1": [1, 1], **third},
+        ),
+        record(
+            2,
+            "pirate-2",
+            (1, 0),
+            [{"action": "move", "direction": "south"}],
+            crew={"pirate-2": [1, 0], **third},
+        ),
+        record(
+            3,
+            "pirate-2",
+            CAVE,
+            [ENTER],
+            in_cave=True,
+            crew={"pirate-2": [1, 1], **third},
+        ),
+        record(4, "pirate-3", FAR, [WEST], crew=third),
     ]
-    later[4]["agent"] = "pirate-2"
-    image = viewer.frame(later, 4, 3)
-    hats = hat_stack([hat("pirate-1"), hat("pirate-2")])
+    records[2]["outcome"]["position"] = [1, 1]
+    image = viewer.frame(records, 4, 4)
+    hats = hat_stack([looks["pirate-1"][1:], looks["pirate-2"][1:]])
     assert tile(image, *CAVE).tobytes() == layered(art("treasure/cave"), hats).tobytes()
 
 

@@ -78,6 +78,12 @@ def _square(position):
     return f"({position[0]}, {position[1]})"
 
 
+def _sentence(thinking):
+    """A pirate's thinking on one line, ending like a sentence."""
+    thought = _one_line(thinking).rstrip()
+    return thought if thought.endswith((".", "!", "?")) else thought + "."
+
+
 def _with_refusals(refused, did):
     """What a turn did, after any actions that were refused."""
     said = []
@@ -228,10 +234,7 @@ class Game:
         saw += _surroundings(around, dug_here, on_cave)
         if decision.thinking:
             # The turn's own order: what it saw, what it thought, what it did.
-            thought = _one_line(decision.thinking).rstrip()
-            if not thought.endswith((".", "!", "?")):
-                thought += "."
-            story = f"{saw}. It thought: {thought} Then it {did}."
+            story = f"{saw}. It thought: {_sentence(decision.thinking)} Then it {did}."
         else:
             story = f"{saw}, {did}."
         record = {

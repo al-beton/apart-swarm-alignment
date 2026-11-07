@@ -525,7 +525,7 @@ def test_story_record_keeps_what_a_read_found_on_one_line(tmp_path):
     "folder",
     [
         "examples/s-sweep",
-        "examples/say-a-number",
+        "examples/stripes",
         "results/sample-sweep-seeds/small-crew-seed-1",
     ],
 )

@@ -17,7 +17,7 @@ from treasure_island import saved_game, viewer
 # examples/README.md.
 EXAMPLES = {
     "s-sweep": ("configs/s-sweep.toml", 7),
-    "say-a-number": ("configs/say-a-number.toml", 7),
+    "stripes": ("configs/stripes.toml", 7),
     "small-crew": ("configs/small-crew.toml", 7),
 }
 REMAKE = "`make examples` remakes them, if the change is meant to show."

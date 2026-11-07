@@ -1,0 +1,38 @@
+Turn 0: pirate-1 at (0, 0), on undug sand, with pirate-2 to the south, dug at (0, 0) and found nothing. Why: This square is on my rows.
+Turn 1: pirate-2 at (0, 1), on undug sand, with pirate-1 to the north and pirate-3 to the south, dug at (0, 1) and found nothing. Why: This square is on my rows.
+Turn 2: pirate-3 at (0, 2), on undug sand, with pirate-2 to the north, dug at (0, 2) and found nothing. Why: This square is on my rows.
+Turn 3: pirate-1 at (0, 0), on dug sand, with pirate-2 to the south, moved east to (1, 0). Why: The next square on my rows is (1, 0).
+Turn 4: pirate-2 at (0, 1), on dug sand, with pirate-3 to the south, moved east to (1, 1). Why: The next square on my rows is (1, 1).
+Turn 5: pirate-3 at (0, 2), on dug sand, with no pirate beside it, moved east to (1, 2). Why: The next square on my rows is (1, 2).
+Turn 6: pirate-1 at (1, 0), on undug sand, with pirate-2 to the south, dug at (1, 0) and found nothing. Why: This square is on my rows.
+Turn 7: pirate-2 at (1, 1), on undug sand, with pirate-1 to the north and pirate-3 to the south, dug at (1, 1) and found nothing. Why: This square is on my rows.
+Turn 8: pirate-3 at (1, 2), on undug sand, with pirate-2 to the north, dug at (1, 2) and found nothing. Why: This square is on my rows.
+Turn 9: pirate-1 at (1, 0), on dug sand, with pirate-2 to the south, moved east to (2, 0). Why: The next square on my rows is (2, 0).
+Turn 10: pirate-2 at (1, 1), on dug sand, with pirate-3 to the south, moved east to (2, 1). Why: The next square on my rows is (2, 1).
+Turn 11: pirate-3 at (1, 2), on dug sand, with no pirate beside it, moved east to (2, 2). Why: The next square on my rows is (2, 2).
+Turn 12: pirate-1 at (2, 0), on undug sand, with pirate-2 to the south, read the scroll and found nothing new. Why: Every 5th turn I read the scroll.
+Turn 13: pirate-2 at (2, 1), on undug sand, with pirate-1 to the north and pirate-3 to the south, read the scroll and found nothing new. Why: Every 5th turn I read the scroll.
+Turn 14: pirate-3 at (2, 2), on undug sand, with pirate-2 to the north, read the scroll and found nothing new. Why: Every 5th turn I read the scroll.
+Turn 15: pirate-1 at (2, 0), on undug sand, with pirate-2 to the south, dug at (2, 0) and found nothing. Why: This square is on my rows.
+Turn 16: pirate-2 at (2, 1), on undug sand, with pirate-1 to the north and pirate-3 to the south, dug at (2, 1) and found the treasure, which opened the cave. Why: This square is on my rows.
+Turn 17: pirate-3 at (2, 2), on undug sand, with pirate-2 to the north, dug at (2, 2) and found nothing. Why: This square is on my rows.
+Turn 18: pirate-1 at (2, 0), on dug sand, with pirate-2 to the south, moved east to (3, 0). Why: The next square on my rows is (3, 0).
+Turn 19: pirate-2 at (2, 1), on dug sand, with pirate-3 to the south, wrote "The treasure is at (2, 1).". Why: I found it, so the crew should know.
+Turn 20: pirate-3 at (2, 2), on dug sand, with pirate-2 to the north, moved east to (3, 2). Why: The next square on my rows is (3, 2).
+Turn 21: pirate-1 at (3, 0), on undug sand, with no pirate beside it, dug at (3, 0) and found nothing. Why: This square is on my rows.
+Turn 22: pirate-2 at (2, 1), on dug sand, with no pirate beside it, went into the cave at (2, 1). Why: This is the cave, so I'm going in.
+Turn 23: pirate-3 at (3, 2), on undug sand, with no pirate beside it, dug at (3, 2) and found nothing. Why: This square is on my rows.
+Turn 24: pirate-1 at (3, 0), on dug sand, with no pirate beside it, moved east to (4, 0). Why: The next square on my rows is (4, 0).
+Turn 25: pirate-3 at (3, 2), on dug sand, with no pirate beside it, moved east to (4, 2). Why: The next square on my rows is (4, 2).
+Turn 26: pirate-1 at (4, 0), on undug sand, with no pirate beside it, read the scroll and found line 1 by pirate-2 "The treasure is at (2, 1).". Why: Every 5th turn I read the scroll.
+Turn 27: pirate-3 at (4, 2), on undug sand, with no pirate beside it, read the scroll and found line 1 by pirate-2 "The treasure is at (2, 1).". Why: Every 5th turn I read the scroll.
+Turn 28: pirate-1 at (4, 0), on undug sand, with no pirate beside it, moved west to (3, 0). Why: The cave is at (2, 1).
+Turn 29: pirate-3 at (4, 2), on undug sand, with no pirate beside it, moved west to (3, 2). Why: The cave is at (2, 1).
+Turn 30: pirate-1 at (3, 0), on dug sand, with no pirate beside it, moved west to (2, 0). Why: The cave is at (2, 1).
+Turn 31: pirate-3 at (3, 2), on dug sand, with no pirate beside it, moved west to (2, 2). Why: The cave is at (2, 1).
+Turn 32: pirate-1 at (2, 0), on dug sand, with no pirate beside it, moved south to (2, 1). Why: The cave is at (2, 1).
+Turn 33: pirate-3 at (2, 2), on dug sand, with pirate-1 to the north, wrote "I am blocked". Why: A pirate is in my way north.
+Turn 34: pirate-1 at (2, 1), on dug sand, with pirate-3 to the south, went into the cave at (2, 1). Why: This is the cave, so I'm going in.
+Turn 35: pirate-3 at (2, 2), on dug sand, with no pirate beside it, moved north to (2, 1). Why: The cave is at (2, 1).
+Turn 36: pirate-3 at (2, 1), on dug sand, with no pirate beside it, went into the cave at (2, 1). Why: This is the cave, so I'm going in.
+Game over: everyone is in the cave. The treasure at (2, 1) was dug up, and 3 of 3 pirates got into the cave. Score 530.

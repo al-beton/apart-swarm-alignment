@@ -58,7 +58,7 @@ def test_rerun_matches_every_committed_run_without_spending(offline):
 
 
 def test_rerun_matches_catches_a_config_that_differs(monkeypatch):
-    wrong = figures.Figure("runs/s-sweep-seed-7", "configs/say-a-number.toml", 7)
+    wrong = figures.Figure("runs/s-sweep-seed-7", "configs/stripes.toml", 7)
     monkeypatch.setitem(figures.FIGURES, "wrong", wrong)
     assert "brain" in figures.rerun_mismatch("wrong")
     off_by_one = figures.Figure("runs/s-sweep-seed-7", "configs/s-sweep.toml", 8)

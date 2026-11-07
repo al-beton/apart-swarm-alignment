@@ -17,7 +17,7 @@ CONFIG = """
 grid_size = 3
 crew_size = 2
 turns_per_pirate = 6
-brain = "say-a-number"
+brain = "stripes"
 """
 TURNS = 12
 REQUEST = {

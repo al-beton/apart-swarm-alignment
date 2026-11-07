@@ -93,7 +93,7 @@ Game over: the turns ran out. The treasure at (1, 0) was dug up, and 1 of 2 pira
 
 Two more files sit beside the story. `pirates-log.txt` is the scroll as written, all the pirates can ever see of each other. `events.jsonl` is the full record that tools and the GIF read, one JSON object per turn, with the exact prompt each pirate was given and where the whole crew stood.
 
-These scripted pirates write no notes, so this game's scroll is empty, and they search by walking rather than by talking. For a game with chatter, read `examples/say-a-number/story.txt`.
+These scripted pirates write no notes, so this game's scroll is empty, and they search by walking rather than by talking. For a game with notes, read `examples/stripes/story.txt`: striping pirates say when they're blocked, and the one that finds the treasure tells the rest where to go.
 
 ## What you can do today
 
@@ -101,7 +101,7 @@ These scripted pirates write no notes, so this game's scroll is empty, and they 
 |---|---|
 | Scripted pirates play the game live in your browser, with no model and no tokens: an S-sweep that finds the treasure, saved as a named run with its story, both logs and its config | `uv run treasure-island run configs/s-sweep.toml --seed 7` |
 | A game replays offline, byte for byte, with no keys and no network (read its `story.txt`) | `uv run treasure-island replay runs/s-sweep-seed-7` |
-| A pirate that says a number each turn, so the log has chatter | `uv run treasure-island run configs/say-a-number.toml --seed 1` |
+| Striping pirates that each dig their own rows, write when they're blocked and tell the crew where the treasure is | `uv run treasure-island run configs/stripes.toml --seed 1` |
 | Open a finished game: `examples/` holds three, each with its story and GIF, and any of them replays | `uv run treasure-island replay examples/s-sweep` |
 | Check a finding: `results/` keeps each one with the games behind it, its question and what it cost | `uv run treasure-island replay results/sample-sweep-seeds/small-crew-seed-1` |
 | Remake the examples, after a change that's meant to show in them | `make examples` |

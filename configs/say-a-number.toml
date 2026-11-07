@@ -1,7 +1,0 @@
-# Implements: treasure-island/brain-in-config, treasure-island/say-a-number, agents/free-runs-in-ci
-# The say-a-number pirate's reference game: nobody digs, so it plays to the limit.
-grid_size = 5
-crew_size = 2
-turns_per_pirate = 10
-seed = 7
-brain = "say-a-number"

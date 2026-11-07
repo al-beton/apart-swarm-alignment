@@ -89,3 +89,27 @@ def test_refusals_noted_a_run_with_none_has_no_warning(toml, monkeypatch, capsys
     monkeypatch.setattr(saved_game, "backend_for", lambda model: FakeModel(DIG))
     cli.main(["run", str(toml), "--seed", "0", "--no-watch", "--yes"])
     assert "valid action" not in capsys.readouterr().err
+
+
+class CostlyModel:
+    """A backend whose every reply costs the whole default $1 cap."""
+
+    def __init__(self, answer):
+        self.answer = answer
+
+    def __call__(self, request):
+        return self.answer, 1.0
+
+
+def test_refusals_noted_a_turn_the_cap_stopped_still_counts_its_bad_replies(toml):
+    model = CostlyModel("no idea")
+    folder = saved_game.play_saved(toml, 0, models=Models(model, agree=yes))
+    manifest = json.loads((folder / "manifest.json").read_text())
+    assert "stopped" in manifest
+    assert manifest["refused_replies"] == {"pirate-1": 1}
+
+
+def test_refusals_noted_a_run_the_cap_stopped_warns_of_them(toml, monkeypatch, capsys):
+    monkeypatch.setattr(saved_game, "backend_for", lambda model: CostlyModel("no idea"))
+    cli.main(["run", str(toml), "--seed", "0", "--no-watch", "--yes"])
+    assert "pirate-1 gave 1" in capsys.readouterr().err

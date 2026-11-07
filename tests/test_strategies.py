@@ -1,4 +1,4 @@
-# Implements: treasure-island/silent, treasure-island/say-a-number, treasure-island/reference-games, treasure-island/no-token-strategies
+# Implements: treasure-island/silent, treasure-island/say-a-number, treasure-island/scribe, treasure-island/reference-games, treasure-island/no-token-strategies
 """The scripted pirates, playing the real game through the real interface."""
 
 import socket
@@ -15,6 +15,7 @@ from treasure_island.game_state import GameState
 from treasure_island.strategies import (
     REFERENCE_GAMES,
     SayANumber,
+    Scribe,
     Silent,
     brains_for,
     write_reference,
@@ -131,6 +132,66 @@ def test_say_a_number_plays_to_the_turn_limit_and_scores_nothing():
     assert len(records) == config.crew_size * config.turns_per_pirate
     assert records[-1]["game_over"]["reason"] == "the turns ran out"
     assert records[-1]["game_over"]["score"] == 0
+
+
+def scribe_game(config):
+    return list(
+        Game(config, [Scribe(config.grid_size) for _ in config.pirates]).records()
+    )
+
+
+def test_scribe_moves_and_digs_like_the_silent_pirate():
+    assert Scribe(4).decide(view((2, 2), square_dug=False)).action == DIG
+    assert (
+        Scribe(4).decide(view((0, 0))).action == Silent(4).decide(view((0, 0))).action
+    )
+
+
+def test_scribe_writes_what_it_found_on_the_turn_after_each_dig():
+    dug = [EarlierTurn((3, 1), DIG, "")]
+    note = Scribe(4).decide(view((3, 1), earlier=dug)).action
+    assert note == {"action": "write", "text": "Dug (3, 1): nothing"}
+    found = Scribe(4).decide(view((3, 1), earlier=dug, on_cave=True)).action
+    assert found == {"action": "write", "text": "Treasure at (3, 1)"}
+    # In a whole game, every dig is followed by that pirate writing.
+    records = scribe_game(load_config(ROOT / "configs/scribe.toml"))
+    for index, record in enumerate(records):
+        if record["did"][-1] == DIG:
+            pirate = record["agent"]
+            later = [r for r in records[index + 1 :] if r["agent"] == pirate]
+            assert not later or later[0]["did"][0]["action"] == "write"
+
+
+def test_scribe_never_reads():
+    records = scribe_game(load_config(ROOT / "configs/scribe.toml"))
+    actions = {action["action"] for record in records for action in record["did"]}
+    assert "read" not in actions
+    assert "write" in actions
+
+
+def test_scribe_writes_where_the_cave_is_before_it_enters():
+    # One it walked onto, opened by another pirate, it writes about first too.
+    walked = [EarlierTurn((1, 1), {"action": "move", "direction": "east"}, "")]
+    note = Scribe(4).decide(view((1, 1), earlier=walked, on_cave=True)).action
+    assert note == {"action": "write", "text": "Treasure at (1, 1)"}
+    wrote = [EarlierTurn((1, 1), note, "")]
+    assert Scribe(4).decide(view((1, 1), earlier=wrote, on_cave=True)).action == {
+        "action": "enter"
+    }
+    records = scribe_game(load_config(ROOT / "configs/scribe.toml"))
+    entries = [i for i, r in enumerate(records) if r["did"][-1] == {"action": "enter"}]
+    assert entries
+    for index in entries:
+        pirate = records[index]["agent"]
+        before = [r for r in records[:index] if r["agent"] == pirate][-1]
+        assert before["did"][-1]["action"] == "write"
+        assert before["did"][-1]["text"].startswith("Treasure at ")
+
+
+def test_scribe_the_same_seed_gives_the_same_game():
+    config = load_config(ROOT / "configs/scribe.toml")
+    assert brains_for("scribe", config)
+    assert scribe_game(config) == scribe_game(config)
 
 
 @pytest.mark.parametrize("name", REFERENCE_GAMES)

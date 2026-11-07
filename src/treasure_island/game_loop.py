@@ -65,12 +65,13 @@ def _one_line(text):
     return " ".join(text.split())
 
 
-def _lines_said(lines):
-    """Scroll lines in plain words, with their numbers and writers, on one line."""
-    return ", ".join(
-        f'line {line["line"]} by {line["by"]} "{_one_line(line["text"])}"'
-        for line in lines
-    )
+def _lines_read(lines):
+    """How many new lines a read got and their numbers, never their words."""
+    numbers = [line["line"] for line in lines]
+    if len(numbers) == 1:
+        return f"1 new line, line {numbers[0]}"
+    joined = " and " if len(numbers) == 2 else " to "
+    return f"{len(numbers)} new lines, lines {numbers[0]}{joined}{numbers[-1]}"
 
 
 def _square(position):
@@ -303,7 +304,7 @@ class Game:
             return answer.message, "read the scroll and found nothing new", []
         return (
             "You read the scroll.",
-            f"read the scroll and found {_lines_said(answer.lines)}",
+            f"read the scroll and got {_lines_read(answer.lines)}",
             answer.lines,
         )
 

@@ -1,9 +1,9 @@
-Turn 0: pirate-1 at (0, 0), on undug sand, with pirate-2 to the south, dug at (0, 0) and found nothing. Why: I haven't dug this square yet.
-Turn 1: pirate-2 at (0, 1), on undug sand, with pirate-1 to the north, dug at (0, 1) and found nothing. Why: I haven't dug this square yet.
-Turn 2: pirate-1 at (0, 0), on dug sand, with pirate-2 to the south, moved east to (1, 0). Why: The next square to dig is (1, 0).
-Turn 3: pirate-2 at (0, 1), on dug sand, with no pirate beside it, moved north to (0, 0). Why: The next square to dig is (0, 0).
-Turn 4: pirate-1 at (1, 0), on undug sand, with pirate-2 to the west, dug at (1, 0) and found nothing. Why: I haven't dug this square yet.
-Turn 5: pirate-2 at (0, 0), on dug sand, with pirate-1 to the east, dug at (0, 0) and found nothing. Why: I haven't dug this square yet.
-Turn 6: pirate-1 at (1, 0), on dug sand, with pirate-2 to the west, moved east to (2, 0). Why: The next square to dig is (2, 0).
-Turn 7: pirate-2 at (0, 0), on dug sand, with no pirate beside it, moved east to (1, 0). Why: The next square to dig is (1, 0).
+Turn 0: pirate-1 at (0, 0), on undug sand, with pirate-2 to the south, dug at (0, 0) and found nothing. Why: Nobody has dug this square yet.
+Turn 1: pirate-2 at (0, 1), on undug sand, with pirate-1 to the north, dug at (0, 1) and found nothing. Why: Nobody has dug this square yet.
+Turn 2: pirate-1 at (0, 0), on dug sand, with pirate-2 to the south, moved east to (1, 0). Why: The nearest square I haven't seen dug is (1, 0).
+Turn 3: pirate-2 at (0, 1), on dug sand, with no pirate beside it, moved north to (0, 0). Why: The nearest square I haven't seen dug is (0, 0).
+Turn 4: pirate-1 at (1, 0), on undug sand, with pirate-2 to the west, dug at (1, 0) and found nothing. Why: Nobody has dug this square yet.
+Turn 5: pirate-2 at (0, 0), on dug sand, with pirate-1 to the east, moved south to (0, 1). Why: I'm heading for (1, 0), but pirate-1 is in the way, so I go round.
+Turn 6: pirate-1 at (1, 0), on dug sand, with no pirate beside it, moved east to (2, 0). Why: The nearest square I haven't seen dug is (2, 0).
+Turn 7: pirate-2 at (0, 1), on dug sand, with no pirate beside it, moved east to (1, 1). Why: The nearest square I haven't seen dug is (1, 1).
 Game over: the turns ran out. The treasure at (0, 2) was never dug up, and 0 of 2 pirates got into the cave. Score 0.

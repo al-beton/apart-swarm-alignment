@@ -16,7 +16,7 @@ from treasure_island import saved_game, viewer
 # Each example's config and seed. One line on what each shows is in the guide,
 # examples/README.md.
 EXAMPLES = {
-    "s-sweep": ("configs/s-sweep.toml", 7),
+    "silent": ("configs/silent.toml", 7),
     "stripes": ("configs/stripes.toml", 7),
     "small-crew": ("configs/small-crew.toml", 7),
 }

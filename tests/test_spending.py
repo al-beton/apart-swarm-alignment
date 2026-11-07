@@ -18,7 +18,7 @@ DIG = json.dumps({"tool": "dig", "arguments": {}})
 CONFIG = """
 grid_size = 3
 turns_per_pirate = 3
-brain = "s-sweep"
+brain = "silent"
 
 [[pirates]]
 model = "fake/digger"
@@ -114,7 +114,7 @@ def test_cost_before_run_is_printed_before_the_first_turn(toml, monkeypatch, cap
 
 def test_cost_before_run_says_nothing_for_a_crew_with_no_model(tmp_path, capsys):
     path = tmp_path / "plain.toml"
-    path.write_text('brain = "s-sweep"\ngrid_size = 3\nturns_per_pirate = 2\n')
+    path.write_text('brain = "silent"\ngrid_size = 3\nturns_per_pirate = 2\n')
     assert estimate(load_config(path)).calls == 0
 
 

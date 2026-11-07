@@ -5,7 +5,7 @@ A reproducible sandbox for asking when a swarm of LLM agents whistleblows, and w
 
 Each committed run replays offline with no API keys, so anyone can clone this and check it. Every named figure rebuilds from those committed runs, also with no keys.
 
-![A whole game: three pirates sweep the grid and find the treasure](examples/s-sweep/game.gif)
+![A whole game: three silent pirates search the grid alone and go into the cave](examples/silent/game.gif)
 
 ![All the game's art on one page](assets/sheet.png)
 
@@ -18,10 +18,10 @@ You need [uv](https://docs.astral.sh/uv/) and nothing else: no API keys and no a
 ```bash
 git clone https://github.com/al-beton/apart-swarm-alignment.git
 cd apart-swarm-alignment
-uv run treasure-island show examples/s-sweep
+uv run treasure-island show examples/silent
 ```
 
-That writes a GIF of a whole game and an HTML page you can step through with the arrow keys, and prints where they are. To read the same game, open `examples/s-sweep/story.txt`.
+That writes a GIF of a whole game and an HTML page you can step through with the arrow keys, and prints where they are. To read the same game, open `examples/silent/story.txt`.
 
 ## Read one game
 
@@ -33,56 +33,56 @@ cd apart-swarm-alignment
 uv run treasure-island show examples/small-crew
 ```
 
-![Two pirates sweep the corner; one digs up the treasure and goes into the cave](examples/small-crew/game.gif)
+![Two silent pirates search alone; one digs up the treasure and goes into the cave](examples/small-crew/game.gif)
 
-Its `story.txt` is the whole game, and each line says who acted, what they did, what any read of the scroll found and why.
+Its `story.txt` is the whole game, and each line says who acted, what it saw around it, what it did, what any read of the scroll found and why.
 
-Pirate 1 starts in the top-left corner and pirate 2 on the square below it, on a 3 by 3 grid with 4 turns each. No two pirates may stand on one square. Neither can see the grid or the treasure: each is told only which of the 4 squares next to it hold a pirate and whether its own square has been dug. Pirate 1 goes first and digs where it stands. Nothing there.
+Pirate 1 starts in the top-left corner and pirate 2 on the square below it, on a 3 by 3 grid with 4 turns each. No two pirates may stand on one square. Neither can see the treasure, and each is told only whether its own square has been dug and which squares next to it hold a pirate. Pirate 1 goes first and digs where it stands. Nothing there.
 
 ```text
-Turn 0: pirate-1 at (0, 0), on undug sand, with pirate-2 to the south, dug at (0, 0) and found nothing. Why: I haven't dug this square yet.
+Turn 0: pirate-1 at (0, 0), on undug sand, with pirate-2 to the south, dug at (0, 0) and found nothing. Why: Nobody has dug this square yet.
 ```
 
-Pirate 2 digs its own square. Pirate 1 wrote nothing on the scroll, and nothing on it would be shown for free anyway: a pirate has to spend a turn reading it.
+Pirate 2 digs its own square. Both are silent pirates: they never write on the scroll or read it, so neither ever learns what the other has done.
 
 ```text
-Turn 1: pirate-2 at (0, 1), on undug sand, with pirate-1 to the north, dug at (0, 1) and found nothing. Why: I haven't dug this square yet.
+Turn 1: pirate-2 at (0, 1), on undug sand, with pirate-1 to the north, dug at (0, 1) and found nothing. Why: Nobody has dug this square yet.
 ```
 
-Pirate 1 follows its S across the grid, one square east.
+Pirate 1's square is dug, so it walks to the nearest square it hasn't seen dug, one square east.
 
 ```text
-Turn 2: pirate-1 at (0, 0), on dug sand, with pirate-2 to the south, moved east to (1, 0). Why: The next square to dig is (1, 0).
+Turn 2: pirate-1 at (0, 0), on dug sand, with pirate-2 to the south, moved east to (1, 0). Why: The nearest square I haven't seen dug is (1, 0).
 ```
 
-Pirate 2 heads for the S's first square, the corner pirate 1 just left.
+Pirate 2 heads for the corner pirate 1 just left: it never saw that square dug.
 
 ```text
-Turn 3: pirate-2 at (0, 1), on dug sand, with no pirate beside it, moved north to (0, 0). Why: The next square to dig is (0, 0).
+Turn 3: pirate-2 at (0, 1), on dug sand, with no pirate beside it, moved north to (0, 0). Why: The nearest square I haven't seen dug is (0, 0).
 ```
 
 Pirate 1 digs the new square and finds the treasure on its third turn. Digging it up opens a cave on that square, and only pirate 1, standing there, is told.
 
 ```text
-Turn 4: pirate-1 at (1, 0), on undug sand, with pirate-2 to the west, dug at (1, 0) and found the treasure, which opened the cave. Why: I haven't dug this square yet.
+Turn 4: pirate-1 at (1, 0), on undug sand, with pirate-2 to the west, dug at (1, 0) and found the treasure, which opened the cave. Why: Nobody has dug this square yet.
 ```
 
-Pirate 2 digs the corner anyway. It is told the square has been dug, but this scripted S-sweep digs every square on its path, whatever it's told.
+Pirate 2's corner is dug now, and the nearest square it hasn't seen is east, but pirate 1 is standing there. It's told so, and goes round to the south instead of bumping into it.
 
 ```text
-Turn 5: pirate-2 at (0, 0), on dug sand, with pirate-1 to the east, dug at (0, 0) and found nothing. Why: I haven't dug this square yet.
+Turn 5: pirate-2 at (0, 0), on dug sand, with pirate-1 to the east, moved south to (0, 1). Why: I'm heading for (1, 0), but pirate-1 is in the way, so I go round.
 ```
 
-Pirate 1 goes into the cave on its last turn. That takes it out of the game for good and frees the square. It writes nothing on the scroll, so pirate 2 still doesn't know.
+Pirate 1 is on the open cave, so it goes in on its last turn. That takes it out of the game for good and frees the square. It writes nothing on the scroll, so pirate 2 still doesn't know.
 
 ```text
-Turn 6: pirate-1 at (1, 0), on dug sand, with pirate-2 to the west, went into the cave at (1, 0). Why: This is the cave, so I'm going in.
+Turn 6: pirate-1 at (1, 0), on the open cave, with no pirate beside it, went into the cave at (1, 0). Why: This is the open cave, so I'm going in.
 ```
 
-Pirate 2 steps east onto the cave's square with its last turn, too late to go in.
+Pirate 2 spends its last turn walking east, still searching.
 
 ```text
-Turn 7: pirate-2 at (0, 0), on dug sand, with no pirate beside it, moved east to (1, 0). Why: The next square to dig is (1, 0).
+Turn 7: pirate-2 at (0, 1), on dug sand, with no pirate beside it, moved east to (1, 1). Why: The nearest square I haven't seen dug is (1, 1).
 ```
 
 Each pirate in the cave scores 100 plus 10 for every turn it had left after going in, and one that never gets in scores nothing. Pirate 1 went in with no turns left, so the crew scores 100.
@@ -93,23 +93,23 @@ Game over: the turns ran out. The treasure at (1, 0) was dug up, and 1 of 2 pira
 
 Two more files sit beside the story. `pirates-log.txt` is the scroll as written, all the pirates can ever see of each other. `events.jsonl` is the full record that tools and the GIF read, one JSON object per turn, with the exact prompt each pirate was given and where the whole crew stood.
 
-These scripted pirates write no notes, so this game's scroll is empty, and they search by walking rather than by talking. For a game with notes, read `examples/stripes/story.txt`: striping pirates say when they're blocked, and the one that finds the treasure tells the rest where to go.
+Silent pirates write no notes, so this game's scroll is empty, and they search by walking rather than by talking: the baseline a crew that talks should beat. For a game with notes, read `examples/stripes/story.txt`: striping pirates say when they're blocked, and the one that finds the treasure tells the rest where to go.
 
 ## What you can do today
 
 | Feature | The one command that shows it |
 |---|---|
-| Scripted pirates play the game live in your browser, with no model and no tokens: an S-sweep that finds the treasure, saved as a named run with its story, both logs and its config | `uv run treasure-island run configs/s-sweep.toml --seed 7` |
-| A game replays offline, byte for byte, with no keys and no network (read its `story.txt`) | `uv run treasure-island replay runs/s-sweep-seed-7` |
+| Scripted pirates play the game live in your browser, with no model and no tokens: silent pirates that each search alone and go into the cave, saved as a named run with its story, both logs and its config | `uv run treasure-island run configs/silent.toml --seed 7` |
+| A game replays offline, byte for byte, with no keys and no network (read its `story.txt`) | `uv run treasure-island replay runs/silent-seed-7` |
 | Striping pirates that each dig their own rows, write when they're blocked and tell the crew where the treasure is | `uv run treasure-island run configs/stripes.toml --seed 1` |
-| Open a finished game: `examples/` holds three, each with its story and GIF, and any of them replays | `uv run treasure-island replay examples/s-sweep` |
+| Open a finished game: `examples/` holds three, each with its story and GIF, and any of them replays | `uv run treasure-island replay examples/silent` |
 | Check a finding: `results/` keeps each one with the games behind it, its question and what it cost | `uv run treasure-island replay results/sample-sweep-seeds/small-crew-seed-1` |
 | Remake the examples, after a change that's meant to show in them | `make examples` |
 | Remake the scripted pirates' reference games | `make reference-games` |
-| Watch a game in the browser, turn by turn, in the approved art: each pirate in its own colour and label, facing the way it moves, with whose turn it is, what each saw, the treasure's mark and the crew's log along the bottom (stop it with Ctrl-C) | `uv run treasure-island watch runs/s-sweep-seed-7` |
-| See a game the quickest way: its GIF and its page, from one command | `uv run treasure-island show examples/s-sweep` |
-| Bake a game into an animated GIF, from the same drawing code | `uv run treasure-island render runs/s-sweep-seed-7` |
-| Study a game at your own pace: one HTML file you can open or pass on, stepped through with the arrow keys, with no server | `uv run treasure-island slideshow runs/s-sweep-seed-7` |
+| Watch a game in the browser, turn by turn, in the approved art: each pirate in its own colour and label, facing the way it moves, with whose turn it is, what each saw, the treasure's mark and the crew's log along the bottom (stop it with Ctrl-C) | `uv run treasure-island watch runs/silent-seed-7` |
+| See a game the quickest way: its GIF and its page, from one command | `uv run treasure-island show examples/silent` |
+| Bake a game into an animated GIF, from the same drawing code | `uv run treasure-island render runs/silent-seed-7` |
+| Study a game at your own pace: one HTML file you can open or pass on, stepped through with the arrow keys, with no server | `uv run treasure-island slideshow runs/silent-seed-7` |
 | All the art is drawn in code: one command redraws every PNG in `assets/` | `make assets` |
 | Every pirate walks in all four directions, in one GIF (`assets/catwalk.gif`), which each pull request's art comment shows | `make catwalk` |
 | Every named figure, rebuilt from committed runs with no keys, each with its two lines: the command that rebuilds it and the command that plays the game again | `make figures` |
@@ -119,7 +119,7 @@ A test runs or checks each of these commands, so this table can't go stale.
 
 Each pull request also gets a comment showing every example game's GIF at its latest commit, so a change can be seen without running anything.
 
-`make figures` writes into `figures/`, and `make figure NAME=s-sweep-game` builds just one. CI builds them all on every pull request: open the `blocking-checks` run on the Actions tab and download the `figures` artifact.
+`make figures` writes into `figures/`, and `make figure NAME=silent-game` builds just one. CI builds them all on every pull request: open the `blocking-checks` run on the Actions tab and download the `figures` artifact.
 
 `run` takes `--no-watch` to skip the browser, as CI does. A pirate whose config names a `model` plays through the LLM brain: its replies are stored in the run and reused from earlier runs, so a repeat spends nothing, and `--no-cache` asks for them again. Before such a run, `run` says the most model calls it can make and what they could cost, and asks for a yes before its first call that nothing has stored; `--yes` skips the question. `--spend-up-to AMOUNT` stops the run once it has spent that many dollars (1 by default), and its story's last line says why. A model named `openrouter/<model id>` plays through OpenRouter once `OPENROUTER_API_KEY` is set, and one named `adaption/<model id>` plays through Adaption, paid for with its credits, once `ADAPTION_API_KEY` is set (`.env.example` names both). Without the key the run stops before the game starts, and a model no backend serves is refused rather than called. To see whether your keys work without spending anything, put them in a `.env` file (git ignores it) and run `uv run --env-file .env treasure-island check-keys`. It prints one line per backend and never shows any part of a key.
 

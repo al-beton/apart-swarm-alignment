@@ -153,6 +153,7 @@ class TurnView:
     earlier_turns: tuple
     neighbours: tuple = ()  # (direction, name) of each pirate on a square next to it
     square_dug: bool = False  # whether anyone has dug the pirate's own square
+    on_cave: bool = False  # whether it stands on the open cave
 
     def as_text(self):
         """The whole view as plain words."""
@@ -175,6 +176,8 @@ class TurnView:
             if self.square_dug
             else " Your square hasn't been dug."
         )
+        if self.on_cave:
+            now += " You're standing on the open cave: enter it to go in."
         return (
             "Your earlier turns:\n"
             + ("\n".join(earlier) or "None yet.")
@@ -209,7 +212,9 @@ class PirateSeat:
         self._earlier = ()
         self._pending = None
 
-    def take_turn(self, position, turns_left, neighbours=(), square_dug=False):
+    def take_turn(
+        self, position, turns_left, neighbours=(), square_dug=False, on_cave=False
+    ):
         """Ask the brain for this turn's decision, checking it's a real tool call."""
         view = TurnView(
             self._name,
@@ -219,6 +224,7 @@ class PirateSeat:
             self._earlier,
             neighbours,
             square_dug,
+            on_cave,
         )
         decision = self._brain.decide(view)
         if decision.action is not None and not is_action(decision.action):

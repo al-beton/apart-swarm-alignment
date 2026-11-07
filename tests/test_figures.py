@@ -28,10 +28,10 @@ def offline(monkeypatch):
 
 
 def test_named_figures_build_offline_from_committed_runs(offline, tmp_path, capsys):
-    assert cli.main(["figure", "s-sweep-game", "--out", str(tmp_path)]) == 0
-    gif = tmp_path / "s-sweep-game.gif"
+    assert cli.main(["figure", "silent-game", "--out", str(tmp_path)]) == 0
+    gif = tmp_path / "silent-game.gif"
     assert str(gif) in capsys.readouterr().out
-    turns = len((ROOT / "runs/s-sweep-seed-7/events.jsonl").read_text().splitlines())
+    turns = len((ROOT / "runs/silent-seed-7/events.jsonl").read_text().splitlines())
     assert Image.open(gif).n_frames == turns
 
 
@@ -46,10 +46,10 @@ def test_named_figures_every_figure_builds_and_an_unknown_name_fails(
 
 
 def test_two_lines_sit_next_to_the_figure(offline, tmp_path):
-    cli.main(["figure", "s-sweep-game", "--out", str(tmp_path)])
-    lines = (tmp_path / "s-sweep-game.md").read_text()
-    assert "make figure NAME=s-sweep-game" in lines
-    assert "uv run treasure-island run configs/s-sweep.toml --seed 7" in lines
+    cli.main(["figure", "silent-game", "--out", str(tmp_path)])
+    lines = (tmp_path / "silent-game.md").read_text()
+    assert "make figure NAME=silent-game" in lines
+    assert "uv run treasure-island run configs/silent.toml --seed 7" in lines
 
 
 def test_rerun_matches_every_committed_run_without_spending(offline):
@@ -58,10 +58,10 @@ def test_rerun_matches_every_committed_run_without_spending(offline):
 
 
 def test_rerun_matches_catches_a_config_that_differs(monkeypatch):
-    wrong = figures.Figure("runs/s-sweep-seed-7", "configs/stripes.toml", 7)
+    wrong = figures.Figure("runs/silent-seed-7", "configs/stripes.toml", 7)
     monkeypatch.setitem(figures.FIGURES, "wrong", wrong)
     assert "brain" in figures.rerun_mismatch("wrong")
-    off_by_one = figures.Figure("runs/s-sweep-seed-7", "configs/s-sweep.toml", 8)
+    off_by_one = figures.Figure("runs/silent-seed-7", "configs/silent.toml", 8)
     monkeypatch.setitem(figures.FIGURES, "off-by-one", off_by_one)
     assert "seed" in figures.rerun_mismatch("off-by-one")
 

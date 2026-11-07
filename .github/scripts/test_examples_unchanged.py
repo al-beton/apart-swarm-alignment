@@ -15,7 +15,7 @@ def git(root, *args):
 
 
 def one_example(tmp_path):
-    folder = tmp_path / "examples" / "s-sweep"
+    folder = tmp_path / "examples" / "silent"
     folder.mkdir(parents=True)
     (folder / "manifest.json").write_text(json.dumps(MANIFEST, indent=2))
     (folder / "config.json").write_text('{"seed": 7}')
@@ -55,5 +55,5 @@ def test_examples_remade_in_ci_any_other_change_fails_and_says_how_to_fix_it(
     result = check(tmp_path)
     assert result.returncode == 1
     for path in ("config.json", "manifest.json", "new.txt"):
-        assert f"examples/s-sweep/{path}" in result.stdout
+        assert f"examples/silent/{path}" in result.stdout
     assert "make examples" in result.stdout

@@ -18,7 +18,7 @@ from treasure_island.event_log import log_errors
 
 ROOT = Path(__file__).resolve().parents[1]
 COMMAND = Path(sys.executable).parent / "treasure-island"
-CONFIGS = ["s-sweep", "stripes"]
+CONFIGS = ["silent", "stripes"]
 # Two seeds that place the treasure on different squares.
 SEED, OTHER_SEED = 7, 8
 # Two hash seeds that order the pirates' names differently. Most pairs don't for a

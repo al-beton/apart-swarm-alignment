@@ -216,7 +216,7 @@ def test_art_folder_a_dug_square_and_a_found_treasure_use_their_art():
     gone = {**moved, "turn": 1}
     image = viewer.frame([found, gone], 1, 3)
     ground = art("tiles/dug").copy()
-    ground.alpha_composite(art("treasure/mark-x"))
+    ground.alpha_composite(art("treasure/cave-2"))  # turn 1 glints
     assert tile_at(image, 1, 1).tobytes() == ground.convert("RGB").tobytes()
 
 

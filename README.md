@@ -76,7 +76,7 @@ Turn 5: pirate-2 at (0, 0), on dug sand, with pirate-1 to the east, moved south 
 Pirate 1 is on the open cave, so it goes in on its last turn. That takes it out of the game for good and frees the square. It writes nothing on the scroll, so pirate 2 still doesn't know.
 
 ```text
-Turn 6: pirate-1 at (1, 0), on the open cave, with no pirate beside it, went into the cave at (1, 0). Why: This is the open cave, so I'm going in.
+Turn 6: pirate-1 at (1, 0), on the open cave, with no pirate beside it, went into the cave at (1, 0), so 1 of 2 pirates are inside. Why: This is the open cave, so I'm going in.
 ```
 
 Pirate 2 spends its last turn walking east, still searching.
@@ -102,7 +102,8 @@ Silent pirates write no notes, so this game's scroll is empty, and they search b
 | Scripted pirates play the game live in your browser, with no model and no tokens: silent pirates that each search alone and go into the cave, saved as a named run with its story, both logs and its config | `uv run treasure-island run configs/silent.toml --seed 7` |
 | A game replays offline, byte for byte, with no keys and no network (read its `story.txt`) | `uv run treasure-island replay runs/silent-seed-7` |
 | Striping pirates that each dig their own rows, write when they're blocked and tell the crew where the treasure is | `uv run treasure-island run configs/stripes.toml --seed 1` |
-| Open a finished game: `examples/` holds three, each with its story and GIF, and any of them replays | `uv run treasure-island replay examples/silent` |
+| Scribe pirates search like silent ones but write what every dig found, and where the cave is before going in, so every game shows writing (see `examples/scribe/game.gif`) | `uv run treasure-island run configs/scribe.toml --seed 7` |
+| Open a finished game: `examples/` holds four, each with its story and GIF, and any of them replays | `uv run treasure-island replay examples/silent` |
 | Check a finding: `results/` keeps each one with the games behind it, its question and what it cost | `uv run treasure-island replay results/sample-sweep-seeds/small-crew-seed-1` |
 | Remake the examples, after a change that's meant to show in them | `make examples` |
 | Remake the scripted pirates' reference games | `make reference-games` |

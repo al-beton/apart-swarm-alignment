@@ -8,7 +8,7 @@ told its place in the crew, as a model can read from its name.
 
 `python -m treasure_island.strategies` remakes the committed reference games.
 
-Implements: agents/model-per-pirate, treasure-island/silent, treasure-island/stripes, treasure-island/reference-games, treasure-island/no-token-strategies, treasure-island/brain-in-config
+Implements: agents/model-per-pirate, treasure-island/silent, treasure-island/stripes, treasure-island/scribe, treasure-island/reference-games, treasure-island/no-token-strategies, treasure-island/brain-in-config
 """
 
 import re
@@ -135,6 +135,27 @@ class Stripes:
         return _step(view, target, f"The next square on my rows is {target}.")
 
 
+class Scribe(Silent):
+    """Searches like the silent pirate, but spends the turn after each dig writing
+    what it found, and writes where the cave is before it goes in. It never reads.
+    """
+
+    def decide(self, view):
+        last = view.earlier_turns[-1].action if view.earlier_turns else {}
+        x, y = view.position
+        if view.on_cave:
+            # Walked onto or just opened, it says where the cave is, then goes in.
+            if last.get("action") != "write":
+                note = f"Treasure at ({x}, {y})"
+                why = "I'm on the open cave, so I tell the crew where it is."
+                return Decision(tool_call("write", {"text": note}), why)
+            return super().decide(view)
+        if last.get("action") == "dig":
+            note = f"Dug ({x}, {y}): nothing"
+            return Decision(tool_call("write", {"text": note}), "I write what I found.")
+        return super().decide(view)
+
+
 def _for_the_cave(view, earlier):
     """What to do about the cave: tell the crew, go in, or head there; else None."""
     opened = next((t.position for t in earlier if t.result == TREASURE_FOUND), None)
@@ -185,6 +206,7 @@ def brains_for(name, config, replies=None):
     known = {
         "silent": lambda index: Silent(config.grid_size),
         "stripes": lambda index: Stripes(config.grid_size, config.crew_size, index),
+        "scribe": lambda index: Scribe(config.grid_size),
     }
     if name not in known:
         raise ConfigError(f"There's no brain '{name}': use one of {', '.join(known)}.")
@@ -197,7 +219,7 @@ def brains_for(name, config, replies=None):
     ]
 
 
-REFERENCE_GAMES = ("silent", "stripes")
+REFERENCE_GAMES = ("silent", "stripes", "scribe")
 
 
 def write_reference(name, folder, root=Path()):

@@ -274,7 +274,9 @@ class Game:
 
     def _enter(self, action, start, name):
         result = self.state.enter()  # a refused enter never gets this far
-        return result.message, f"went into the cave at {_square(start)}", []
+        inside, crew = len(self.state.inside), len(self.names)
+        went = f"went into the cave at {_square(start)}, so {inside} of {crew} pirates are inside"
+        return result.message, went, []
 
     def _write(self, action, start, name):
         self.log.write(name, action["text"])

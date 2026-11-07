@@ -33,7 +33,7 @@
 | `four-directions` | `assets/pirates.py` | `test_four_directions_each_walk_with_three_frames` |
 | `actions-shown` | `assets/pirates.py` | `test_actions_shown_digging_and_cheering_differ_from_standing` |
 | `ground-tiles` | `assets/tiles.py` | `test_ground_tiles_are_opaque_and_look_different` |
-| `treasure-shown` | `assets/treasure.py` | `test_treasure_shown_marks_exist_and_differ` |
+| `treasure-shown` | `assets/treasure.py` | `test_treasure_shown_a_question_mark_marks_it_until_it_is_dug_up` |
 | `treasure-cave` | `assets/cave.py`, `assets/generate.py` | `test_treasure_cave_is_a_square_that_glints_and_leaves_room_for_the_hats` |
 | `hat-stack` | `assets/cave.py` | `test_hat_stack_is_empty_with_nobody_inside`, `test_hat_stack_puts_the_first_in_at_the_bottom`, `test_hat_stack_shows_every_label_for_a_crew_of_six`, `test_hat_stack_keeps_a_big_crew_on_the_square`, `test_hat_stack_hats_are_small_and_carry_the_label` |
 | `going-in` | `assets/cave.py` | `test_going_in_sinks_into_the_mouth_step_by_step` |

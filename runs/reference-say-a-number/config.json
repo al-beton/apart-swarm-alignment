@@ -2,10 +2,6 @@
   "brain": "say-a-number",
   "crew_size": 2,
   "grid_size": 5,
-  "landing_square": [
-    0,
-    0
-  ],
   "log_window": 3,
   "pirates": [
     {

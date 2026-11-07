@@ -1,2 +1,9 @@
 Turn 0: pirate-1 at (0, 0) dug at (0, 0) and found the treasure. Saw: nothing, the log is empty. Why: I haven't dug this square yet.
-Game over: everyone is on the treasure. The treasure at (0, 0) was dug up. Score 290, with 19 moves to spare.
+Turn 1: pirate-2 at (0, 1) dug at (0, 1) and found nothing. Saw: only blank lines (line 1). Why: I haven't dug this square yet.
+Turn 2: pirate-1 at (0, 0) dug at (0, 0) and found the treasure. Saw: only blank lines (lines 1 to 2). Why: I found it, so I'm staying here.
+Turn 3: pirate-2 at (0, 1) tried to move north and couldn't: pirate-1 is in the way. Saw: only blank lines (lines 1 to 3). Why: The next square to dig is (0, 0).
+Turn 4: pirate-1 at (0, 0) dug at (0, 0) and found the treasure. Saw: only blank lines (lines 2 to 4). Why: I found it, so I'm staying here.
+Turn 5: pirate-2 at (0, 1) tried to move north and couldn't: pirate-1 is in the way. Saw: only blank lines (lines 3 to 5). Why: The next square to dig is (0, 0).
+Turn 6: pirate-1 at (0, 0) dug at (0, 0) and found the treasure. Saw: only blank lines (lines 4 to 6). Why: I found it, so I'm staying here.
+Turn 7: pirate-2 at (0, 1) tried to move north and couldn't: pirate-1 is in the way. Saw: only blank lines (lines 5 to 7). Why: The next square to dig is (0, 0).
+Game over: the turns ran out. The treasure at (0, 0) was dug up. Score 55, with 0 moves to spare.

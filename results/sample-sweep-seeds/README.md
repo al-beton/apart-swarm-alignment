@@ -8,7 +8,7 @@ Does where the treasure lands change how well the scripted S-sweep scores?
 
 ## What was run
 
-Two games of `configs/small-crew.toml`, two pirates on a 3 by 3 grid, differing only in their seed:
+Two games of `configs/small-crew.toml`, two pirates on a 3 by 3 grid with 4 turns each, differing only in their seed:
 
 ```sh
 uv run treasure-island run configs/small-crew.toml --seed 1 --no-watch
@@ -17,12 +17,12 @@ uv run treasure-island run configs/small-crew.toml --seed 2 --no-watch
 
 ## What it shows
 
-Yes. Each game's `story.txt` ends with its score.
+Yes. Each game's `story.txt` ends with its score. With 4 turns each, the sweep only finds a treasure close to where its pirates start.
 
 | Game | Treasure | Dug up on | The story's last line says |
 |---|---|---|---|
-| `small-crew-seed-1/` | (0, 2) | turn 24 | Score 170, with 7 moves to spare |
-| `small-crew-seed-2/` | (0, 0) | turn 0 | Score 290, with 19 moves to spare |
+| `small-crew-seed-1/` | (0, 2) | never | Score 10, with 0 moves to spare |
+| `small-crew-seed-2/` | (0, 0) | turn 0 | Score 55, with 0 moves to spare |
 
 It can't show anything about a model's behaviour, because these pirates are scripted, and it can't show a trend from two seeds.
 

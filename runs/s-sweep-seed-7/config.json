@@ -2,10 +2,6 @@
   "brain": "s-sweep",
   "crew_size": 3,
   "grid_size": 5,
-  "landing_square": [
-    0,
-    0
-  ],
   "log_window": 3,
   "pirates": [
     {

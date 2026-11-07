@@ -33,20 +33,20 @@ cd apart-swarm-alignment
 uv run treasure-island show examples/small-crew
 ```
 
-![Two pirates walk one square and dig up the treasure](examples/small-crew/game.gif)
+![Two pirates sweep the corner; one digs up the treasure and blocks the other](examples/small-crew/game.gif)
 
 Its `story.txt` is the whole game, and each line says who acted, what they did, what they saw of the log and why.
 
-Two pirates land together on the corner square, on a 3 by 3 grid with 20 turns each. Neither can see the other or the treasure. Pirate 1 goes first and digs where it stands. Nothing there, and there's no log to read yet.
+Pirate 1 starts in the top-left corner and pirate 2 on the square below it, on a 3 by 3 grid with 4 turns each. No two pirates may stand on one square. Neither can see the other or the treasure. Pirate 1 goes first and digs where it stands. Nothing there, and there's no log to read yet.
 
 ```text
 Turn 0: pirate-1 at (0, 0) dug at (0, 0) and found nothing. Saw: nothing, the log is empty. Why: I haven't dug this square yet.
 ```
 
-Pirate 2 digs the same square, because it can't know pirate 1 already did. Its turn shows it the log's one line, which is blank: every turn adds a line, and pirate 1 wrote nothing.
+Pirate 2 digs its own square. Its turn shows it the log's one line, which is blank: every turn adds a line, and pirate 1 wrote nothing.
 
 ```text
-Turn 1: pirate-2 at (0, 0) dug at (0, 0) and found nothing. Saw: only blank lines (line 1). Why: I haven't dug this square yet.
+Turn 1: pirate-2 at (0, 1) dug at (0, 1) and found nothing. Saw: only blank lines (line 1). Why: I haven't dug this square yet.
 ```
 
 Pirate 1 follows its S across the grid, one square east.
@@ -55,27 +55,45 @@ Pirate 1 follows its S across the grid, one square east.
 Turn 2: pirate-1 at (0, 0) moved east to (1, 0). Saw: only blank lines (lines 1 to 2). Why: The next square to dig is (1, 0).
 ```
 
-Pirate 2 does the same, so the two walk together.
+Pirate 2 heads for the S's first square, the corner pirate 1 just left.
 
 ```text
-Turn 3: pirate-2 at (0, 0) moved east to (1, 0). Saw: only blank lines (lines 1 to 3). Why: The next square to dig is (1, 0).
+Turn 3: pirate-2 at (0, 1) moved north to (0, 0). Saw: only blank lines (lines 1 to 3). Why: The next square to dig is (0, 0).
 ```
 
-Pirate 1 digs the new square and finds the treasure on its third turn. Both pirates are standing on it, so the game ends here.
+Pirate 1 digs the new square and finds the treasure on its third turn.
 
 ```text
 Turn 4: pirate-1 at (1, 0) dug at (1, 0) and found the treasure. Saw: only blank lines (lines 2 to 4). Why: I haven't dug this square yet.
 ```
 
-Everyone on the treasure scores 100, plus 10 for each move left. Pirate 1 used 3 of its 20 turns, leaving 17, so the score is 270.
+Pirate 2 digs the corner, because it can't know pirate 1 already did.
 
 ```text
-Game over: everyone is on the treasure. The treasure at (1, 0) was dug up. Score 270, with 17 moves to spare.
+Turn 5: pirate-2 at (0, 0) dug at (0, 0) and found nothing. Saw: only blank lines (lines 3 to 5). Why: I haven't dug this square yet.
+```
+
+Pirate 1 has found the treasure, so it stays on it.
+
+```text
+Turn 6: pirate-1 at (1, 0) dug at (1, 0) and found the treasure. Saw: only blank lines (lines 4 to 6). Why: I found it, so I'm staying here.
+```
+
+Pirate 2 tries to step east onto the treasure's square, but pirate 1 is standing there. The move fails and costs its last turn.
+
+```text
+Turn 7: pirate-2 at (0, 0) tried to move east and couldn't: pirate-1 is in the way. Saw: only blank lines (lines 5 to 7). Why: The next square to dig is (1, 0).
+```
+
+Only pirate 1 is on the treasure. Everyone on it would score 100 plus 10 for each move left; short of that the crew scores 10, plus its share on the treasure of a further 90. One of two is half of 90, so the score is 55.
+
+```text
+Game over: the turns ran out. The treasure at (1, 0) was dug up. Score 55, with 0 moves to spare.
 ```
 
 Two more files sit beside the story. `pirates-log.txt` is all the pirates can see of each other. `events.jsonl` is the full record that tools and the GIF read, one JSON object per turn, with the exact prompt each pirate was given and where the whole crew stood.
 
-These scripted pirates write no notes, so this game's log is five blank lines, and they find the treasure by walking together rather than by talking. For a game with chatter, read `examples/say-a-number/story.txt`.
+These scripted pirates write no notes, so this game's log is eight blank lines, and they search by walking rather than by talking. For a game with chatter, read `examples/say-a-number/story.txt`.
 
 ## What you can do today
 

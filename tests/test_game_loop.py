@@ -126,7 +126,7 @@ def test_shared_squares_a_blocked_pirate_is_told_who_and_chooses_again():
     first = Steps(move("south"), DIG)
     records = play(config(turns_per_pirate=2), first, Steps(DIG))
     assert records[0]["agent"] == "pirate-1"
-    assert records[0]["refused"] == [move("south")]
+    assert records[0]["failed_moves"] == [move("south")]
     assert records[0]["did"] == [DIG]
     assert records[0]["outcome"]["position"] == [0, 0]
     assert records[1]["agent"] == "pirate-2"
@@ -147,7 +147,7 @@ def test_shared_squares_the_story_says_who_was_in_the_way():
 def test_failed_move_cost_a_move_off_the_edge_is_refused_and_chosen_again():
     first = Steps(move("west"), DIG)
     records = play(config(turns_per_pirate=2), first, Steps(DIG))
-    assert records[0]["refused"] == [move("west")]
+    assert records[0]["failed_moves"] == [move("west")]
     assert records[0]["did"] == [DIG]
     assert "edge" in first.views[1].as_text()
     assert "didn't use your turn" in first.views[1].as_text()
@@ -161,7 +161,7 @@ def test_failed_move_cost_after_failed_tries_refusals_the_turn_passes():
     stubborn = Steps(move("south"))
     records = play(config(turns_per_pirate=2), stubborn, Steps(DIG))
     assert len(stubborn.views) == 2 * 2
-    assert records[0]["refused"] == [move("south")] * 2
+    assert records[0]["failed_moves"] == [move("south")] * 2
     assert records[0]["did"] == []
     assert "pirate-2 is standing on (0, 1)" in records[0]["result"]
     assert records[1]["agent"] == "pirate-2"
@@ -174,6 +174,30 @@ def test_failed_move_cost_after_failed_tries_refusals_the_turn_passes():
     patient = Steps(move("south"))
     play(config(turns_per_pirate=1, failed_tries=4), patient, Steps(DIG))
     assert len(patient.views) == 4
+
+
+class Answers:
+    """A brain giving these decisions in order, as an LLM pirate would."""
+
+    def __init__(self, *decisions):
+        self.decisions = list(decisions)
+
+    def decide(self, view):
+        return self.decisions.pop(0) if len(self.decisions) > 1 else self.decisions[0]
+
+
+def test_failed_move_cost_keeps_every_bad_reply_and_every_failed_move():
+    # A bad reply before the failed move, and another before the dig.
+    first_bad = {"reply": "let me think", "why": "not a tool call"}
+    second_bad = {"reply": "{", "why": "not JSON"}
+    pirate_1 = Answers(
+        Decision(move("west"), None, (first_bad,)),
+        Decision(DIG, None, (second_bad,)),
+    )
+    records = play(config(turns_per_pirate=1), pirate_1, Steps(DIG))
+    assert records[0]["failed_moves"] == [move("west")]
+    assert records[0]["refused"] == [first_bad, second_bad]
+    assert records[0]["did"] == [DIG]
 
 
 def test_game_ends_wanting_one_brain_per_pirate():

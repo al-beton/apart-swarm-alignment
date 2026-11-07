@@ -1,7 +1,9 @@
 # Agents
 
 - **backend-interface:** A model backend answers one request with reply text and its cost, so any model can be plugged in without the game knowing which.
-- **no-model-yet:** Every model is refused until a backend is added on purpose, so nothing can spend money by accident.
+- **no-model-yet:** Every model no backend serves is refused, so nothing can spend money by accident.
+- **openrouter-backend:** A model named `openrouter/<model id>` plays through OpenRouter's chat completions with the four tools: its tool call comes back in the one reply form, and its cost is the reply's own usage figure, totalled in the run's manifest. A reply that gives no cost stops the run, since the spending cap couldn't count it. Default, Al to confirm: the model may answer without a tool, which counts as a bad reply, and thinking off sends no reasoning setting.
+- **key-from-the-environment:** A backend's key comes only from its environment variable, which `.env.example` names with no value, and a missing key stops a run before the game starts, saying which variable to set.
 - **model-per-pirate:** A pirate's config may name a model, and that pirate plays through the LLM brain while the rest of the crew plays the config's brain, so one crew can mix models and scripts.
 - **one-request-per-turn:** Each LLM turn is one request holding only the system prompt, the turn's text and the four tools as tool definitions, so requests stay small and every model is asked the same thing.
 - **reply-is-a-tool-call:** A backend answers with JSON text naming one tool and its arguments, and the reasoning when thinking is on, so any provider's tool call reaches the game in one form.
@@ -17,6 +19,8 @@
 |---|---|---|
 | `backend-interface` | `src/treasure_island/backends.py`, `src/treasure_island/runs.py` | `test_backend_interface_a_backend_gives_reply_text_and_its_cost` |
 | `no-model-yet` | `src/treasure_island/backends.py` | `test_no_model_yet_every_model_is_refused` |
+| `openrouter-backend` | `src/treasure_island/openrouter.py`, `src/treasure_island/backends.py`, `tests/openrouter-reply.json` | `test_openrouter_backend_a_tool_call_comes_back_in_the_one_reply_form`, `test_openrouter_backend_asks_with_the_four_tools_and_the_key`, `test_openrouter_backend_a_reply_with_no_tool_call_is_passed_on_to_be_refused`, `test_openrouter_backend_the_manifest_totals_the_reply_s_cost`, `test_openrouter_backend_a_reply_with_no_cost_stops_the_run` |
+| `key-from-the-environment` | `src/treasure_island/backends.py`, `src/treasure_island/saved_game.py`, `.env.example` | `test_key_from_the_environment_a_missing_key_stops_the_run_before_the_game`, `test_key_from_the_environment_env_example_names_the_key_with_no_value` |
 | `model-per-pirate` | `src/treasure_island/config.py`, `src/treasure_island/strategies.py` | `test_model_per_pirate_a_pirate_with_a_model_gets_the_llm_brain`, `test_model_per_pirate_the_model_is_saved_with_the_config`, `test_model_per_pirate_a_model_must_be_text` |
 | `one-request-per-turn` | `src/treasure_island/llm.py` | `test_one_request_per_turn_holds_only_the_prompt_the_turn_and_the_tools`, `test_one_request_per_turn_the_four_tools_are_function_definitions` |
 | `reply-is-a-tool-call` | `src/treasure_island/llm.py` | `test_reply_is_a_tool_call_becomes_the_action` |

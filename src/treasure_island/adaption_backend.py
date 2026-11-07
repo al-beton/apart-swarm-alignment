@@ -18,7 +18,7 @@ and spends nothing. `backends` makes one for each run, with the key from `ADAPTI
 key goes only to the SDK's client, so it never reaches a request, a reply or a
 run folder.
 
-Implements: agents/adaption-backend, agents/adaption-cost, agents/check-keys
+Implements: agents/normal-temperature, agents/adaption-backend, agents/adaption-cost, agents/check-keys
 """
 
 import json

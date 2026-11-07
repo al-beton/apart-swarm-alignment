@@ -14,7 +14,7 @@ so each model reasons as it does by default and its reasoning isn't kept.
 `OpenRouter.check_key` asks OpenRouter about a key, not a model, so it spends nothing.
 It never says the key's `label`, since OpenRouter's label is the key, masked.
 
-Implements: agents/openrouter-backend, agents/check-keys
+Implements: agents/normal-temperature, agents/openrouter-backend, agents/check-keys
 """
 
 import json

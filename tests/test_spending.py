@@ -7,12 +7,12 @@ import json
 from pathlib import Path
 
 import pytest
-from treasure_island.spending import estimate
 
 from treasure_island import backends, cli, saved_game
 from treasure_island.config import load_config
 from treasure_island.event_log import log_errors
 from treasure_island.saved_game import Models
+from treasure_island.spending import estimate
 
 DIG = json.dumps({"tool": "dig", "arguments": {}})
 CONFIG = """

@@ -22,7 +22,7 @@ import math
 from treasure_island.backends import price_for
 from treasure_island.brain import system_prompt
 from treasure_island.game_loop import GameStopped
-from treasure_island.llm import ASKS, TOOL_DEFINITIONS
+from treasure_island.llm import TOOL_DEFINITIONS
 from treasure_island.runs import earlier_rows
 
 TURN_CHARS = 300  # an earlier turn's line in a request, at most, for the estimate
@@ -41,8 +41,8 @@ class Estimate:
     def as_text(self, cap_usd):
         found = (
             f"This crew can make up to {self.calls} model calls (each pirate with "
-            "a model, every try at every turn, as a failed move tries again, and "
-            "once more after a reply that isn't a tool call). Earlier runs hold "
+            "a model, every try at every turn, as a failed move or a reply that "
+            "isn't a tool call tries again). Earlier runs hold "
             f"{self.cached} replies from these pirates with this seed, and those "
             f"cost nothing. At most about {self.tokens} tokens"
         )
@@ -62,13 +62,14 @@ def estimate(config):
         for index, pirate in enumerate(config.pirates)
         if pirate.model
     ]
-    # A failed move asks again in the same turn, and each try can ask twice.
+    # A failed action, a bad reply included, asks again in the same turn.
     tries = config.turns_per_pirate * config.failed_tries
-    per_pirate = tries * ASKS
+    per_pirate = tries
     fixed = len(system_prompt(config)) + len(json.dumps(TOOL_DEFINITIONS))
-    retry = config.reply_tokens * CHARS_PER_TOKEN + TURN_CHARS
+    # Each reply, and the model's own reasoning on top when thinking is on.
+    out = config.reply_tokens + (config.thinking_tokens if config.thinking else 0)
     # Every try, failed or not, adds a line to the pirate's own earlier turns.
-    asked = math.ceil((fixed + tries * TURN_CHARS + retry) / CHARS_PER_TOKEN)
+    asked = math.ceil((fixed + tries * TURN_CHARS) / CHARS_PER_TOKEN)
     wanted = {(name, model) for name, model in with_models}
     cached = sum(
         1
@@ -81,13 +82,11 @@ def estimate(config):
     cost = None
     if not unpriced:
         cost = sum(
-            per_pirate
-            * (asked * prices[model][0] + config.reply_tokens * prices[model][1])
-            / 1_000_000
+            per_pirate * (asked * prices[model][0] + out * prices[model][1]) / 1_000_000
             for _, model in with_models
         )
     calls = per_pirate * len(with_models)
-    tokens = calls * (asked + config.reply_tokens)
+    tokens = calls * (asked + out)
     return Estimate(calls, min(cached, calls), tokens, cost, unpriced)
 
 

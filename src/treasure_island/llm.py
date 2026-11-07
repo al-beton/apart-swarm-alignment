@@ -1,21 +1,28 @@
 """The LLM brain: one model request per turn, and its reply back as a tool call.
 
 A request holds only what a pirate needs: the system prompt, the turn's text,
-the pirate's tools as function definitions, the reply cap and whether to think. It
+the pirate's tools as function definitions, the reply cap, whether to think and
+the budget for a model's own reasoning. It
 goes through `Replies`, so it's stored, reused across runs and replayed without
 a backend. A backend answers with JSON text: `{"tool": ..., "arguments": {...}}`,
 plus `"thinking"` when thinking is on. Each backend turns its provider's tool
 call into that one form.
 
-A reply that isn't a valid tool call is kept for our record, and the pirate is
-told why and asked once more. If that answer is no good either, the turn passes
-with no action (default, Al to confirm).
+Each backend says which way its models think (`backends.thinking_way`). A model
+that reasons on its own gets `thinking_tokens` for it, and what it returns is
+kept; any other model, fakes included, is asked to write a short thought in its
+answer, inside `reply_tokens`.
 
-Implements: agents/one-request-per-turn, agents/reply-is-a-tool-call, agents/ask-once-more, agents/reply-cap, agents/plays-then-replays, treasure-island/thinking, treasure-island/pluggable-pirate, treasure-island/model-backends
+A reply that isn't a valid tool call is kept for our record and comes back as a
+failed action, so the game tells the pirate why and asks again, and after
+`failed_tries` failed actions in one turn the turn passes.
+
+Implements: treasure-island/model-reasoning, agents/one-request-per-turn, agents/reply-is-a-tool-call, agents/ask-once-more, agents/reply-cap, agents/plays-then-replays, treasure-island/thinking, treasure-island/pluggable-pirate, treasure-island/model-backends
 """
 
 import json
 
+from treasure_island.backends import thinking_way
 from treasure_island.brain import TOOLS, BadToolCall, Decision, tool_call
 from treasure_island.event_log import DIRECTIONS
 
@@ -36,7 +43,11 @@ TOOL_DEFINITIONS = [
     }
     for tool in TOOLS
 ]
-ASKS = 2  # the first request, and once more after a reply that wasn't a tool call
+# Asked of a model that doesn't reason on its own, when thinking is on.
+THOUGHT = (
+    "Think before you act: put a short thought, a sentence or two, in your "
+    'answer as "thinking", beside your tool call.'
+)
 
 
 def _read_reply(text):
@@ -51,45 +62,40 @@ def _read_reply(text):
 
 
 class LLMPirate:
-    """A brain that asks a model, through stored replies, for each turn's action."""
+    """A brain that asks a model, through stored replies, for each try at a turn."""
 
     def __init__(self, name, model, replies, config):
         self._name = name
         self._model = model
         self._replies = replies
         self._config = config
+        self._built_in = thinking_way(model) == "built-in"
 
-    def _request(self, view, messages):
+    def _request(self, view):
+        thinking = self._config.thinking
+        turn = view.turn_text()
+        if thinking and not self._built_in:
+            turn += f"\n\n{THOUGHT}"
         return {
             "agent": self._name,
             "model": self._model,
             "seed": self._config.seed,
             "system": view.system_prompt,
-            "messages": messages,
+            "messages": [{"role": "user", "content": turn}],
             "tools": TOOL_DEFINITIONS,
             "max_tokens": self._config.reply_tokens,
-            "thinking": self._config.thinking,
+            "thinking": thinking,
+            "thinking_tokens": (
+                self._config.thinking_tokens if thinking and self._built_in else 0
+            ),
         }
 
     def decide(self, view):
-        messages = [{"role": "user", "content": view.turn_text()}]
-        refused = []
-        for _ in range(ASKS):
-            text = self._replies.ask(self._request(view, messages))
-            try:
-                action, thinking = _read_reply(text)
-            except BadToolCall as why:
-                refused.append({"reply": text, "why": str(why)})
-                messages = [
-                    *messages,
-                    {"role": "assistant", "content": text},
-                    {
-                        "role": "user",
-                        "content": f"That isn't a tool call you can make: {why}. "
-                        "Answer with exactly one of your tools.",
-                    },
-                ]
-                continue
-            kept = thinking if self._config.thinking and thinking else None
-            return Decision(action, kept, tuple(refused))
-        return Decision(None, None, tuple(refused))
+        text = self._replies.ask(self._request(view))
+        try:
+            action, thinking = _read_reply(text)
+        except BadToolCall as why:
+            # A failed action: the game tells the pirate why and asks again.
+            return Decision(None, None, ({"reply": text, "why": str(why)},))
+        kept = thinking if self._config.thinking and thinking else None
+        return Decision(action, kept)

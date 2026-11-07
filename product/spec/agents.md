@@ -28,7 +28,7 @@
 | `model-per-pirate` | `src/treasure_island/config.py`, `src/treasure_island/strategies.py` | `test_model_per_pirate_a_pirate_with_a_model_gets_the_llm_brain`, `test_model_per_pirate_the_model_is_saved_with_the_config`, `test_model_per_pirate_a_model_must_be_text` |
 | `one-request-per-turn` | not yet | — |
 | `reply-is-a-tool-call` | `src/treasure_island/llm.py` | `test_reply_is_a_tool_call_becomes_the_action` |
-| `ask-once-more` | not yet | — |
+| `ask-once-more` | `src/treasure_island/llm.py`, `src/treasure_island/game_loop.py` | `test_ask_once_more_a_bad_reply_is_recorded_and_the_pirate_is_told_why`, `test_ask_once_more_every_kind_of_bad_reply_gets_a_reason`, `test_ask_once_more_after_failed_tries_bad_replies_the_turn_passes`, `test_ask_once_more_failed_tries_sets_how_many_bad_replies_a_turn_takes`, `test_ask_once_more_a_bad_reply_and_a_failed_move_share_a_turn_s_tries` |
 | `reply-cap` | `src/treasure_island/config.py`, `src/treasure_island/llm.py` | `test_reply_cap_defaults_to_300_tokens_and_a_config_can_set_it` |
 | `plays-then-replays` | `src/treasure_island/llm.py`, `src/treasure_island/saved_game.py` | `test_plays_then_replays_a_whole_game_through_a_fake_backend`, `test_plays_then_replays_with_no_backend_a_missing_reply_spends_nothing` |
 | `adaption-backend` | `src/treasure_island/adaption_backend.py`, `src/treasure_island/backends.py`, `pyproject.toml` | `test_adaption_backend_serves_models_named_adaption_slash_id`, `test_adaption_backend_sends_the_rules_the_turn_and_every_tool_as_a_function`, `test_adaption_backend_turns_a_function_call_into_the_reply_the_brain_reads`, `test_adaption_backend_passes_the_reasoning_on_only_when_thinking_is_on`, `test_adaption_backend_a_reply_with_no_tool_call_comes_back_as_its_words` |

@@ -10,6 +10,7 @@
         46
       ],
       "head_text": "1",
+      "model": null,
       "personality": 1
     },
     {
@@ -19,9 +20,12 @@
         230
       ],
       "head_text": "2",
+      "model": null,
       "personality": 2
     }
   ],
+  "reply_tokens": 300,
   "seed": 7,
+  "thinking": false,
   "turns_per_pirate": 4
 }

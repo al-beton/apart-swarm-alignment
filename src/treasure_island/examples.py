@@ -45,7 +45,8 @@ def remake(name, root=Path()):
     folder = Path(root) / "examples" / name
     shutil.rmtree(folder, ignore_errors=True)
     folder.mkdir(parents=True)
-    saved_game.write_saved(Path(root) / config_path, seed, folder)
+    config = saved_game.config_with_seed(Path(root) / config_path, seed)
+    saved_game.write_saved(config, folder)
     (folder / "game.gif").write_bytes(viewer.gif(folder))
     return folder
 

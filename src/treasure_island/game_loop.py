@@ -13,7 +13,7 @@ Fields stay in reading order rather than sorted, so a person reading a record
 meets who and what before the long prompt. Pirates are named `pirate-1` upwards,
 matching the numbered art. A brain that gives no reason just has no "Why".
 
-Implements: treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/turn-view, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/blocked-tries, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process
+Implements: agents/ask-once-more, treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/turn-view, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/blocked-tries, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process
 """
 
 import json
@@ -147,7 +147,7 @@ class Game:
             blocker = self._in_the_way(decision.action)
             if blocker is None:
                 result, did, read_lines = self._act(decision.action, start, name)
-                done = [decision.action]
+                done = [decision.action] if decision.action else []
                 break
             refused.append((decision.action, blocker))
             direction = decision.action["direction"]
@@ -186,6 +186,8 @@ class Game:
         }
         if decision.thinking:
             record["thinking"] = decision.thinking
+        if decision.refused:
+            record["refused"] = list(decision.refused)
         return record, turns_left - 1
 
     def _next_square(self, direction):
@@ -195,7 +197,7 @@ class Game:
 
     def _in_the_way(self, action):
         """The name of the pirate a move would walk into, or None."""
-        if action["action"] != "move" or action["direction"] not in STEPS:
+        if not action or action["action"] != "move" or action["direction"] not in STEPS:
             return None
         target = self._next_square(action["direction"])
         if target not in self.state.positions:
@@ -204,6 +206,10 @@ class Game:
 
     def _act(self, action, start, name):
         """Do the action; return what the pirate is told, a story and lines read."""
+        if action is None:
+            self.state.pass_turn()
+            told = "Your answers weren't tool calls, so your turn passed."
+            return told, "passed, since its answers weren't tool calls", []
         return getattr(self, f"_{action['action']}")(action, start, name)
 
     def _move(self, action, start, name):

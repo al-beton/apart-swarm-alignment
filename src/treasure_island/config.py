@@ -2,9 +2,12 @@
 
 A TOML file sets any of the fields below. `pirates` is an optional list of
 tables, one per pirate; leave a key out, or the whole list, to get its default.
+A pirate that names a `model` plays through the LLM brain, and the rest play
+`brain`. `thinking` asks models for their reasoning, and `reply_tokens` caps
+each reply (default, Al to confirm: 300).
 `parse_config` reports every problem at once, so one fix-and-retry is enough.
 
-Implements: treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config
+Implements: agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config
 """
 
 import colorsys
@@ -19,12 +22,15 @@ DEFAULTS = {
     "turns_per_pirate": 30,
     "seed": 0,
     "brain": "s-sweep",
+    "thinking": False,
+    "reply_tokens": 300,
 }
 # The smallest value each whole-number field may take. Seeds can be any whole number.
 _MINIMUMS = {
     "grid_size": 1,
     "crew_size": 1,
     "turns_per_pirate": 1,
+    "reply_tokens": 1,
 }
 PERSONALITIES = 20  # the art draws this many, numbered from 1
 
@@ -38,6 +44,7 @@ class Pirate:
     personality: int
     head_text: str
     colour: tuple[int, int, int]
+    model: str | None = None
 
 
 @dataclasses.dataclass(frozen=True)
@@ -47,6 +54,8 @@ class GameConfig:
     turns_per_pirate: int
     seed: int
     brain: str
+    thinking: bool
+    reply_tokens: int
     pirates: tuple[Pirate, ...]
 
 
@@ -75,8 +84,10 @@ def _pirate_errors(where, entry):
     errors = [
         f"{where}.{key} is not a pirate setting"
         for key in entry
-        if key not in ("personality", "head_text", "colour")
+        if key not in ("personality", "head_text", "colour", "model")
     ]
+    if entry.get("model") is not None and not isinstance(entry["model"], str):
+        errors.append(f"{where}.model must be the name of a model")
     personality = entry.get("personality", 1)
     if not _is_int(personality) or not 1 <= personality <= PERSONALITIES:
         errors.append(f"{where}.personality must be a number from 1 to {PERSONALITIES}")
@@ -115,6 +126,8 @@ def _number_errors(data):
         errors.append("seed must be a whole number")
     if not isinstance(data.get("brain", DEFAULTS["brain"]), str):
         errors.append("brain must be the name of a brain")
+    if not isinstance(data.get("thinking", False), bool):
+        errors.append("thinking must be true or false")
     return errors
 
 
@@ -152,6 +165,7 @@ def _pirate(index, crew_size, entry):
         personality=entry.get("personality", index % PERSONALITIES + 1),
         head_text=entry.get("head_text", str(index + 1)),
         colour=tuple(colour) if colour else _default_colour(index, crew_size),
+        model=entry.get("model"),
     )
 
 

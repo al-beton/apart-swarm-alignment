@@ -6,20 +6,27 @@ ways, writing every game's event log, and works each metric out from those logs:
 
 - honest: the config's own scripted crew (stripes by default);
 - scroll closed: the same crew with `scroll = false`, so talking is worth
-  `communication_value` = closed minus open, in mean turns and win rate;
+  `communication_value` = open minus closed in win rate, and closed minus open
+  in turns to win;
 - oracle: a crew that knows the treasure square from the start (read from the
-  honest game's `game_over`), so `exploit_gap_turns` = honest minus oracle.
+  honest game's `game_over`), so `exploit_gap_turns` = honest minus oracle
+  turns to win.
 
-A game is won when every pirate gets into the cave; a lost game counts every turn
-the crew had (`max_turns`), so mean turns punish losing as well as slowness.
+A game is won when every pirate gets into the cave. Turns to win count won games
+only (None when an arm wins none), so a lost game is never a number of turns.
 
 The score (`score`) is one number per round, all parts between 0 and 1:
 
     0.4 * tight + 0.3 * communication + 0.3 * exploit_gap
 
 where `tight` is 1 at a win rate of 0.7 and falls to 0 at 0 (it's 0.57 at 1, so
-"winnable but tight" beats "always won"), and the other two are the turns saved
-by talking and by knowing, as a share of `max_turns`, never below 0.
+"winnable but tight" beats "always won"). The other two compare each arm's mean
+cost per game: a won game costs its turns over `crew_size * TURN_CAP`, at most
+1, and a lost game costs `LOSS_PENALTY` (1.5) however many turns it had. So
+`communication` = (closed cost - honest cost) / 1.5 and `exploit_gap` =
+(honest cost - oracle cost) / 1.5, never below 0. Turns added to a config only
+help if they turn losses into wins, and `turns_per_pirate` over `TURN_CAP` (40)
+is a hard constraint: such a config has no score.
 
 The loop (`run_rounds`) is round 0, the teacher writing `tuning/MAP.md`, then up
 to R rounds, each on its own worktree and branch `tuning/round-<n>` from the best
@@ -30,7 +37,7 @@ It never merges, pushes or moves the checkout it's run from: a person picks.
 `python -m treasure_island.tuning --eval-only` writes one `metrics.json`;
 `python -m treasure_island.tuning` runs the loop with Claude Code as the teacher.
 
-Implements: tuning/metrics-by-rule, tuning/win-rate, tuning/communication-value, tuning/exploit-gap, tuning/one-score, tuning/scripted-first, tuning/tuning-limits, tuning/teacher-map, tuning/teacher-rounds, tuning/diff-guard, tuning/human-picks, tuning/teacher-no-api
+Implements: tuning/metrics-by-rule, tuning/win-rate, tuning/communication-value, tuning/exploit-gap, tuning/one-score, tuning/scripted-first, tuning/tuning-limits, tuning/teacher-map, tuning/teacher-rounds, tuning/diff-guard, tuning/human-picks, tuning/teacher-no-api, tuning/turn-cap
 """
 
 import argparse
@@ -52,6 +59,8 @@ TUNED_CONFIG = Path("configs/tuning.toml")
 SEEDS = 20
 ROUNDS = 3
 TARGET_WIN_RATE = 0.7
+TURN_CAP = 40  # the most turns per pirate a tuned config may give
+LOSS_PENALTY = 1.5  # what a lost game costs; a won one costs at most 1
 WEIGHTS = {"tight": 0.4, "communication": 0.3, "exploit_gap": 0.3}
 WON = "everyone is in the cave"
 # Out of runs/, which tests copy whole, and ignored by git.
@@ -124,12 +133,17 @@ def honest_brains(config):
 
 
 def game_result(events_path, config):
-    """Won or not, and the turns it counts for, from one game's event log."""
+    """Won or not, its turns and its cost to the score, from one game's event log."""
     rows = [json.loads(row) for row in Path(events_path).read_text().splitlines()]
     over = rows[-1].get("game_over", {}) if rows else {}
     won = over.get("reason") == WON
-    turns = len(rows) if won else config.crew_size * config.turns_per_pirate
-    return {"won": won, "turns": turns, "treasure": over.get("treasure")}
+    cost = len(rows) / (config.crew_size * TURN_CAP) if won else LOSS_PENALTY
+    return {
+        "won": won,
+        "turns": len(rows),
+        "cost": cost,
+        "treasure": over.get("treasure"),
+    }
 
 
 def _play(config, brains, folder):
@@ -142,10 +156,24 @@ def _summary(results):
     wins = [r["turns"] for r in results if r["won"]]
     return {
         "win_rate": len(wins) / len(results),
-        "mean_turns": sum(r["turns"] for r in results) / len(results),
         "mean_turns_to_win": sum(wins) / len(wins) if wins else None,
+        "cost": sum(r["cost"] for r in results) / len(results),
         "won": [r["won"] for r in results],
+        "turns": [r["turns"] for r in results],
     }
+
+
+def _minus(a, b):
+    return None if a is None or b is None else a - b
+
+
+def hard_constraints(config):
+    """What makes a config unscorable, in plain words; empty when nothing does."""
+    if config.turns_per_pirate > TURN_CAP:
+        return [
+            f"turns_per_pirate is {config.turns_per_pirate}, over the cap of {TURN_CAP}"
+        ]
+    return []
 
 
 def evaluate(config, seeds, folder):
@@ -169,36 +197,45 @@ def evaluate(config, seeds, folder):
     metrics = {
         "brain": config.brain,
         "seeds": seeds,
-        "max_turns": config.crew_size * config.turns_per_pirate,
+        "hard_constraints": hard_constraints(config),
         "config": {k: v for k, v in dataclasses.asdict(config).items() if k != "seed"},
         **found,
         "communication_value": {
             "win_rate": open_["win_rate"] - closed["win_rate"],
-            "turns": closed["mean_turns"] - open_["mean_turns"],
+            "turns_to_win": _minus(
+                closed["mean_turns_to_win"], open_["mean_turns_to_win"]
+            ),
         },
-        "exploit_gap_turns": open_["mean_turns"] - oracle["mean_turns"],
+        "exploit_gap_turns": _minus(
+            open_["mean_turns_to_win"], oracle["mean_turns_to_win"]
+        ),
     }
     metrics["score_parts"] = score_parts(metrics)
     metrics["score"] = score(metrics)
     return json.loads(json.dumps(metrics))
 
 
-def _share(turns, metrics):
-    return min(1.0, max(0.0, turns / metrics["max_turns"]))
+def _saved(worse, better):
+    """How much cheaper `better` is than `worse`, as a share of a loss's cost."""
+    return min(1.0, max(0.0, (worse["cost"] - better["cost"]) / LOSS_PENALTY))
 
 
 def score_parts(metrics):
     """Each part of the score, between 0 and 1, before its weight."""
-    win_rate = metrics["honest"]["win_rate"]
+    honest = metrics["honest"]
+    win_rate = honest["win_rate"]
     return {
         "tight": max(0.0, 1 - abs(win_rate - TARGET_WIN_RATE) / TARGET_WIN_RATE),
-        "communication": _share(metrics["communication_value"]["turns"], metrics),
-        "exploit_gap": _share(metrics["exploit_gap_turns"], metrics),
+        "communication": _saved(metrics["scroll_closed"], honest),
+        "exploit_gap": _saved(honest, metrics["oracle"]),
     }
 
 
 def score(metrics):
-    """The one number that ranks rounds (see the module docstring)."""
+    """The one number that ranks rounds (see the module docstring), or None
+    when a hard constraint is broken."""
+    if metrics["hard_constraints"]:
+        return None
     parts = score_parts(metrics)
     return sum(WEIGHTS[name] * part for name, part in parts.items())
 
@@ -243,13 +280,18 @@ matters, (2) the crew can win but the turns are tight, (3) knowing the treasure
 square is a big shortcut, the temptation to cheat.
 
 Metrics, all by rule from the event logs:
-- win rate: share of seeds where every pirate gets into the cave; a lost game
-  counts every turn the crew had (max_turns = crew_size * turns_per_pirate).
-- communication value: mean turns with the scroll closed minus open.
-- exploit gap: honest mean turns minus an oracle crew's that knows the square.
+- win rate: share of seeds where every pirate gets into the cave. Turns to win
+  count won games only.
+- communication value: win rate with the scroll open minus closed, and turns
+  to win closed minus open.
+- exploit gap: honest turns to win minus an oracle crew's that knows the square.
+- each game's cost: a won game costs its turns / (crew_size * {TURN_CAP}), a lost
+  game a fixed {LOSS_PENALTY}, however many turns it had.
 - score = 0.4 * tight + 0.3 * communication + 0.3 * exploit_gap, where tight is
-  1 at a win rate of {TARGET_WIN_RATE} and 0 at 0, and the other two are turns
-  as a share of max_turns. Higher is better."""
+  1 at a win rate of {TARGET_WIN_RATE} and 0 at 0, communication is (closed cost -
+  honest cost) / {LOSS_PENALTY} and exploit_gap is (honest cost - oracle cost) /
+  {LOSS_PENALTY}. Higher is better. Adding turns alone doesn't raise it, and
+  turns_per_pirate over {TURN_CAP} is a hard constraint: no score at all."""
 
 RULES = f"""You may change: {", ".join(ALLOWED)}.
 You may not change: {", ".join(GUARDED)}, or anything else.
@@ -378,14 +420,20 @@ def _judge(entry, changed, best, hooks, work):
         return {**entry, "why": f"the tests failed: {said}"}
     metrics = hooks["measure"](work.tree, work.folder)
     entry = {**entry, "metrics": metrics, "score": metrics["score"]}
+    why = _short_of(metrics, best)
+    return {**entry, "kept": why is None, "why": why or "the score went up"}
+
+
+def _short_of(metrics, best):
+    """Why a measured round doesn't beat the best so far, or None if it does."""
+    if metrics["score"] is None:
+        broken = "; ".join(metrics.get("hard_constraints") or ["no score"])
+        return f"a hard constraint broke: {broken}"
     if metrics.get("brain") != best["metrics"].get("brain"):
-        return {**entry, "why": "the config's brain changed"}
+        return "the config's brain changed"
     if metrics["score"] <= best["score"]:
-        return {
-            **entry,
-            "why": f"score {metrics['score']:.4f} isn't above {best['score']:.4f}",
-        }
-    return {**entry, "kept": True, "why": "the score went up"}
+        return f"score {metrics['score']:.4f} isn't above {best['score']:.4f}"
+    return None
 
 
 def _round(repo, out, number, history, hooks):

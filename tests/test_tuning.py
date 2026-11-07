@@ -1,4 +1,4 @@
-# Implements: tuning/metrics-by-rule, tuning/win-rate, tuning/communication-value, tuning/exploit-gap, tuning/one-score, tuning/scripted-first, tuning/teacher-map, tuning/teacher-rounds, tuning/diff-guard, tuning/human-picks, tuning/teacher-no-api
+# Implements: tuning/metrics-by-rule, tuning/win-rate, tuning/communication-value, tuning/exploit-gap, tuning/one-score, tuning/scripted-first, tuning/teacher-map, tuning/teacher-rounds, tuning/diff-guard, tuning/human-picks, tuning/teacher-no-api, tuning/turn-cap
 """The tuning harness on real scripted games, and its loop with a fake teacher.
 
 No test here calls `claude`: the loop takes its teacher, its test run and its
@@ -63,8 +63,9 @@ def test_communication_value_is_open_scroll_against_closed_on_the_same_seeds(
     value = metrics["communication_value"]
     assert value["win_rate"] == pytest.approx(honest["win_rate"] - closed["win_rate"])
     assert value["win_rate"] > 0, "striping pirates do better when they can talk"
-    assert closed["mean_turns_to_win"] is None, "closed, they never all get in"
-    assert value["turns_to_win"] is None, "only won games count turns"
+    turns = closed["mean_turns_to_win"] - honest["mean_turns_to_win"]
+    assert value["turns_to_win"] == pytest.approx(turns), "won games only"
+    assert closed["win_rate"] < 1, "closed, some games are lost and count no turns"
 
 
 def test_metrics_by_rule_the_same_seeds_give_the_same_metrics(tmp_path):

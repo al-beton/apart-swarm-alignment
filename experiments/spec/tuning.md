@@ -29,8 +29,8 @@ Before money goes on LLM pirates, a teacher model tunes the game so it suits the
 | `win-rate` | `src/treasure_island/tuning.py` | `test_win_rate_comes_from_each_game_s_event_log` |
 | `communication-value` | `src/treasure_island/tuning.py` | `test_communication_value_is_open_scroll_against_closed_on_the_same_seeds` |
 | `exploit-gap` | `src/treasure_island/tuning.py` | `test_exploit_gap_an_oracle_crew_walks_straight_to_the_treasure` |
-| `one-score` | `src/treasure_island/tuning.py`, `configs/tuning.toml` | `test_one_score_weights_a_tight_win_rate_talking_and_the_gap` |
-| `turn-cap` | not yet | — |
+| `one-score` | `src/treasure_island/tuning.py`, `configs/tuning.toml` | `test_one_score_weights_a_tight_win_rate_talking_and_the_gap`, `test_one_score_more_turns_alone_do_not_raise_the_score` |
+| `turn-cap` | `src/treasure_island/tuning.py` | `test_turn_cap_a_config_over_40_turns_has_no_score`, `test_turn_cap_a_round_over_the_cap_is_discarded` |
 | `scripted-first` | `src/treasure_island/tuning.py`, `configs/tuning.toml` | `test_scripted_first_the_tuned_config_plays_scripted_stripes`, `test_scripted_first_a_crew_with_a_model_is_refused` |
 | `tuning-limits` | `src/treasure_island/tuning.py` | — |
 | `teacher-map` | `src/treasure_island/tuning.py`, `tuning/README.md` | `test_teacher_map_round_zero_asks_for_the_map_and_starts_the_line` |

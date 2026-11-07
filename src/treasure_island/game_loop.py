@@ -145,9 +145,10 @@ class Game:
             )
         }
         self._found_this_turn = False
-        seat, refused = self._seats[pirate], []
+        seat, refused, bad_replies = self._seats[pirate], [], []
         while True:
             decision = seat.take_turn(start, turns_left)
+            bad_replies += decision.refused
             refusal = self._refusal(decision.action)
             if refusal is None:
                 result, did, read_lines = self._act(decision.action, start, name)
@@ -174,7 +175,7 @@ class Game:
             "story": story,
             "happened": f"{did}.",
             "did": done,
-            **({"refused": [action for action, _ in refused]} if refused else {}),
+            **({"failed_moves": [action for action, _ in refused]} if refused else {}),
             "result": result,
             "outcome": {
                 "position": list(self.state.positions[pirate]),
@@ -186,8 +187,8 @@ class Game:
         }
         if decision.thinking:
             record["thinking"] = decision.thinking
-        if decision.refused:
-            record["refused"] = list(decision.refused)
+        if bad_replies:
+            record["refused"] = bad_replies
         return record, turns_left - 1
 
     def _refusal(self, action):

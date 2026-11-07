@@ -11,7 +11,7 @@ position and its turns left, and later what each of its reads found on the
 scroll. So other pirates and the treasure can't reach a brain, and neither can
 another pirate's thinking. Nothing on the scroll is shown for free.
 
-Implements: treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/thinking, treasure-island/what-they-are-told, treasure-island/looks-are-cosmetic
+Implements: treasure-island/failed-move-cost, treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/thinking, treasure-island/what-they-are-told, treasure-island/looks-are-cosmetic
 """
 
 import dataclasses
@@ -23,7 +23,10 @@ from treasure_island.event_log import DIRECTIONS, is_action
 TOOLS = (
     {
         "name": "move",
-        "description": "Walk one square. A move off the grid fails and uses your turn.",
+        "description": (
+            "Walk one square. A move off the grid or onto another pirate fails "
+            "without using your turn, and you choose again."
+        ),
         "parameters": {"direction": f"one of {', '.join(DIRECTIONS)}"},
     },
     {
@@ -86,6 +89,9 @@ def system_prompt(config):
         "with your name on it. Reading shows you everything new on it since you "
         "last read, your own lines included, each line with who wrote it. "
         "Writing and reading each use your turn.\n"
+        "A move that fails, off the grid or onto another pirate, doesn't use your "
+        "turn: you're told why and choose again. After "
+        f"{config.failed_tries} failed moves in one turn, your turn passes.\n"
         f"Each turn is exactly one action:\n{tools}"
     )
 

@@ -146,6 +146,20 @@ def test_adaption_cost_is_totalled_in_the_manifest(tmp_path, monkeypatch, key):
     )
 
 
+def test_adaption_cost_a_reply_with_no_usage_stops_the_run(tmp_path, monkeypatch, key):
+    monkeypatch.chdir(tmp_path)
+    client = FakeClient({**DIGS, "usage": None})
+    monkeypatch.setattr(adaption_backend, "client", lambda key: client)
+    path = tmp_path / "adaption.toml"
+    path.write_text(CONFIG)
+    folder = saved_game.play_saved(path, 0, models=Models(agree=lambda: True))
+    assert len(client.responses.calls) == 1
+    last = (folder / "story.txt").read_text().splitlines()[-1]
+    assert last.startswith("Game stopped:")
+    assert "no token usage" in last
+    assert saved_game.differences(folder) == []
+
+
 DIGS = {
     **RECORDED,
     "output": [{"type": "function_call", "name": "dig", "arguments": "{}"}],

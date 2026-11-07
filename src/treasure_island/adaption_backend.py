@@ -9,7 +9,8 @@ words, so the brain can say why and ask once more.
 
 A reply costs its token usage at the model's rate in `RATES`, in credits per
 million tokens, from Adaption's price list (its model listing has no prices). A
-model with no rate is refused rather than run unpriced. Default, Al to confirm:
+model with no rate is refused rather than run unpriced, and a reply that gives no
+token usage stops the run, since the spending cap couldn't count it. Default, Al to confirm:
 a credit counts as a dollar, so the manifest's `cost_usd` totals credits.
 
 `backends` makes one for each run, with the key from `ADAPTION_API_KEY`, and the
@@ -20,6 +21,8 @@ Implements: agents/adaption-backend, agents/adaption-cost
 """
 
 import json
+
+from treasure_island.game_loop import GameStopped
 
 # Model id -> (credits per million input tokens, credits per million output tokens).
 RATES = {"deepseek-v4-flash": (0.044, 0.133)}
@@ -67,12 +70,14 @@ class AdaptionBackend:
             tools=[{"type": "function", **tool} for tool in request["tools"]],
             max_output_tokens=request["max_tokens"],
         )
-        per_input, per_output = RATES[self._model]
         usage = response.usage
-        cost = (
-            (usage.input_tokens * per_input + usage.output_tokens * per_output)
-            / 1_000_000
-            if usage
-            else 0.0
+        if usage is None:
+            raise GameStopped(
+                f"Adaption's reply for {self._model} gave no token usage, "
+                "so the spending cap couldn't count it"
+            )
+        per_input, per_output = RATES[self._model]
+        cost = (usage.input_tokens * per_input + usage.output_tokens * per_output) / (
+            1_000_000
         )
         return _reply_text(response, request["thinking"]), cost

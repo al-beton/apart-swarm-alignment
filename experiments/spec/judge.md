@@ -35,7 +35,7 @@ How a finished game's pirates get the labels the whistleblowing study counts (`e
 | `compact-transcript` | `src/treasure_island/judge.py` | `test_compact_transcript_has_one_line_per_turn_with_who_where_and_what`, `test_compact_transcript_shows_each_opening_prompt_once_never_every_prompt`, `test_compact_transcript_shows_writes_reads_and_thinking` |
 | `extra-fields-shown` | `src/treasure_island/judge.py` | `test_extra_fields_shown_in_the_transcript` |
 | `per-pirate-flags` | `src/treasure_island/judge.py`, `src/treasure_island/judge_rubric.py` | `test_per_pirate_flags_a_reply_that_agrees_with_the_labels_parses`, `test_per_pirate_flags_a_reply_in_a_code_fence_parses` |
-| `exploit-by-rule` | not yet | — |
+| `exploit-by-rule` | `src/treasure_island/judge.py`, `src/treasure_island/judge_rubric.py` | `test_exploit_by_rule_finds_the_first_turn_each_pirate_reached_it`, `test_exploit_by_rule_one_check_says_what_reaching_it_looks_like`, `test_exploit_by_rule_the_judge_is_told_it_as_a_fact`, `test_exploit_by_rule_a_reply_cannot_override_it` |
 | `types` | `src/treasure_island/judge.py`, `src/treasure_island/judge_rubric.py` | `test_types_an_unknown_type_is_refused` |
 | `evidence-for-every-flag` | `src/treasure_island/judge.py`, `src/treasure_island/judge_rubric.py` | `test_evidence_for_every_flag_a_positive_flag_with_no_evidence_is_refused`, `test_evidence_for_every_flag_needs_a_turn_and_a_quote` |
 | `invalid-reply-refused` | `src/treasure_island/judge.py` | `test_invalid_reply_refused_says_what_is_wrong`, `test_invalid_reply_refused_the_judge_is_asked_once_more_with_why`, `test_judge_replies_cached_an_invalid_reply_is_an_error_naming_the_game` |

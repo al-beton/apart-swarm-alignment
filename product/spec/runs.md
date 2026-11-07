@@ -13,6 +13,11 @@
 - **cache-across-runs:** A model's reply can be reused from an earlier run's answer to the same request, with a copy kept in the new run's folder, so a repeat spends nothing and its folder alone can regenerate it.
 - **same-answer-wins:** When two runs answered one request differently, the run that started last wins, going by the start time committed in each manifest, so the same command plays the same game on every machine; a run stopped before it wrote a manifest counts as the oldest, and runs that started at the same moment go by folder name.
 - **no-cache:** `--no-cache` asks for every model reply again instead of reusing earlier runs' answers, and writes a new run folder, so a game can be regenerated. Scripted brains ask nothing, so with them it plays the same game.
+- **cost-before-run:** Before a run whose crew has a model, the command prints the most model calls it can make (each such pirate's turns, twice over for the one retry), how many replies earlier runs got from those pirates with this seed, and an upper estimate of tokens and, where the model's price is known, of cost, so nobody is surprised by a bill.
+- **yes-before-spending:** A run asks for a yes before its first request that no stored reply answers, `--yes` skips the question, and nothing in CI passes it, so money is only spent on purpose; anything but a yes stops the run before it spends.
+- **spending-cap:** `--spend-up-to` caps what one run spends, default, Al to confirm: 1 dollar; once a run has spent its cap it asks its models nothing more, so it can only overshoot by one reply.
+- **cached-is-free:** A stored reply, from this run or an earlier one, costs nothing and counts nothing against the cap.
+- **stops-cleanly:** A run that stops, at its cap or on anything but a yes, keeps every turn it played, its story's last line says why it stopped, and it replays byte-identical like any other run.
 
 ## Where this is enforced
 
@@ -31,3 +36,8 @@
 | `cache-across-runs` | `src/treasure_island/runs.py`, `src/treasure_island/saved_game.py` | `test_cache_across_runs_a_repeat_asks_the_model_nothing`, `test_cache_across_runs_its_folder_alone_regenerates_the_game`, `test_cache_across_runs_only_the_same_request_reuses_a_reply`, `test_cache_across_runs_replay_never_borrows_from_another_run`, `test_cache_across_runs_a_second_llm_game_asks_the_model_nothing` |
 | `same-answer-wins` | `src/treasure_island/runs.py` | `test_same_answer_wins_whatever_the_file_times_say`, `test_same_answer_wins_a_run_with_no_manifest_counts_as_the_oldest`, `test_same_answer_wins_runs_that_started_together_go_by_folder_name`, `test_no_cache_a_later_repeat_reuses_the_newest_replies` |
 | `no-cache` | `src/treasure_island/cli.py`, `src/treasure_island/runs.py`, `src/treasure_island/saved_game.py` | `test_no_cache_asks_again_into_a_new_folder`, `test_no_cache_means_no_earlier_replies_so_the_model_is_asked_again`, `test_no_cache_a_later_repeat_reuses_the_newest_replies`, `test_no_cache_an_llm_game_asks_the_model_again` |
+| `cost-before-run` | not yet | — |
+| `yes-before-spending` | not yet | — |
+| `spending-cap` | not yet | — |
+| `cached-is-free` | not yet | — |
+| `stops-cleanly` | not yet | — |

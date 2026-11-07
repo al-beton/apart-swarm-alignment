@@ -1,4 +1,4 @@
-# Implements: treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition
+# Implements: treasure-island/failed-move-cost, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition
 """A game config sets every lever, has the spec's defaults and rejects bad values."""
 
 import pytest
@@ -162,3 +162,10 @@ def test_config_variables_a_file_that_is_not_toml_is_rejected(tmp_path):
     path = write_config(tmp_path, "grid_size = = 3")
     with pytest.raises(ConfigError, match=path.name):
         load_config(path)
+
+
+def test_failed_move_cost_failed_tries_defaults_to_2_and_can_be_set():
+    assert parse_config({}).failed_tries == 2
+    assert parse_config({"failed_tries": 5}).failed_tries == 5
+    with pytest.raises(ConfigError, match="failed_tries"):
+        parse_config({"failed_tries": 0})

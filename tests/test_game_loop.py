@@ -1,4 +1,4 @@
-# Implements: treasure-island/turn-view, treasure-island/reading-costs, treasure-island/every-turn-a-line, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/blocked-tries, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions
+# Implements: treasure-island/turn-view, treasure-island/reading-costs, treasure-island/every-turn-a-line, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/failed-move-cost, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions
 """A whole game: brains take turns, and both logs come out."""
 
 import json
@@ -144,19 +144,36 @@ def test_shared_squares_the_story_says_who_was_in_the_way():
     )
 
 
-def test_blocked_tries_after_3_refused_moves_the_turn_passes():
+def test_failed_move_cost_a_move_off_the_edge_is_refused_and_chosen_again():
+    first = Steps(move("west"), DIG)
+    records = play(config(turns_per_pirate=2), first, Steps(DIG))
+    assert records[0]["refused"] == [move("west")]
+    assert records[0]["did"] == [DIG]
+    assert "edge" in first.views[1].as_text()
+    assert "didn't use your turn" in first.views[1].as_text()
+    assert records[0]["story"].startswith(
+        "Turn 0: pirate-1 at (0, 0) tried to move west but it was at the grid's "
+        "edge, then dug at (0, 0) and found nothing."
+    )
+
+
+def test_failed_move_cost_after_failed_tries_refusals_the_turn_passes():
     stubborn = Steps(move("south"))
     records = play(config(turns_per_pirate=2), stubborn, Steps(DIG))
-    assert len(stubborn.views) == 2 * 3
-    assert records[0]["refused"] == [move("south")] * 3
+    assert len(stubborn.views) == 2 * 2
+    assert records[0]["refused"] == [move("south")] * 2
     assert records[0]["did"] == []
     assert "pirate-2 is standing on (0, 1)" in records[0]["result"]
     assert records[1]["agent"] == "pirate-2"
     assert records[0]["story"].startswith(
-        "Turn 0: pirate-1 at (0, 0) tried to move south 3 times but pirate-2 was in "
+        "Turn 0: pirate-1 at (0, 0) tried to move south 2 times but pirate-2 was in "
         "the way, so its turn passed."
     )
     assert len(records) == 4
+
+    patient = Steps(move("south"))
+    play(config(turns_per_pirate=1, failed_tries=4), patient, Steps(DIG))
+    assert len(patient.views) == 4
 
 
 def test_game_ends_wanting_one_brain_per_pirate():
@@ -263,10 +280,10 @@ def test_story_record_says_who_did_what_in_plain_words():
     stories = [record["story"] for record in play(game_config, *brains)]
     assert stories[0].startswith("Turn 0: pirate-1 at (0, 0) ")
     assert "tried to move west" in stories[0]
-    assert stories[2].startswith("Turn 2: pirate-1 at (0, 0) moved east to (1, 0)")
-    assert "dug at (1, 0)" in stories[4]
-    assert 'wrote "over here"' in stories[6]
-    assert "read the scroll" in stories[8]
+    assert "then moved east to (1, 0)" in stories[0]
+    assert stories[2].startswith("Turn 2: pirate-1 at (1, 0) dug at (1, 0)")
+    assert 'wrote "over here"' in stories[4]
+    assert "read the scroll" in stories[6]
 
 
 def test_story_record_says_why_when_the_brain_gave_a_reason():
@@ -290,7 +307,10 @@ def test_story_record_is_a_file_with_one_line_per_turn_and_the_ending(tmp_path):
 def test_story_record_reads_cleanly_when_things_go_wrong():
     brains = [Steps(move("west"), READ), Steps(DIG)]
     stories = [record["story"] for record in play(config(turns_per_pirate=3), *brains)]
-    assert stories[0] == "Turn 0: pirate-1 at (0, 0) tried to move west and couldn't."
+    assert stories[0] == (
+        "Turn 0: pirate-1 at (0, 0) tried to move west but it was at the grid's edge, "
+        "then read the scroll and found nothing new."
+    )
     assert stories[2] == (
         "Turn 2: pirate-1 at (0, 0) read the scroll and found nothing new."
     )

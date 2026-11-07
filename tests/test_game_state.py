@@ -127,14 +127,6 @@ def test_shared_squares_a_move_onto_another_pirate_is_refused_and_says_who(direc
     assert state.positions == [(2, 2), (x, y)]
 
 
-def test_shared_squares_a_refused_move_leaves_the_turn_with_the_pirate():
-    state = game(crew_size=2, at=[(0, 0), (0, 1)])
-    assert state.move("south").ok is False
-    assert (state.current_pirate, state.turn) == (0, 0)
-    assert state.move("east").ok is True
-    assert state.positions == [(1, 0), (0, 1)]
-
-
 def test_shared_squares_a_square_a_pirate_left_is_free_again():
     state = game(crew_size=2, at=[(0, 0), (0, 1)])
     state.move("east")
@@ -175,11 +167,14 @@ def test_failed_move_an_unknown_direction_fails_and_says_why():
     assert state.positions == [(0, 0)]
 
 
-def test_failed_move_cost_it_costs_the_turn():
-    state = game(crew_size=2)
-    assert state.move("west").ok is False
-    assert state.current_pirate == 1
-    assert state.turn == 1
+@pytest.mark.parametrize("direction", ["west", "south"])
+def test_failed_move_cost_a_failed_move_leaves_the_turn_with_the_pirate(direction):
+    # West is off the edge; south is onto pirate 2.
+    state = game(crew_size=2, at=[(0, 0), (0, 1)])
+    assert state.move(direction).ok is False
+    assert (state.current_pirate, state.turn) == (0, 0)
+    assert state.move("east").ok is True
+    assert state.positions == [(1, 0), (0, 1)]
 
 
 def test_one_action_per_turn_each_action_ends_the_turn():

@@ -22,7 +22,8 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 - **score-numbers:** (open) Default, Al to confirm: 100 for everyone on the treasure plus 10 per move remaining, with the moves counted as the turns left to the pirate who got there last; short of that, 10 plus the crew's share on the treasure of a further 90, with no credit for moves.
 - **game-ends:** (decided) A game ends when everyone is on the dug-up treasure or the turns run out, and the record says which, with the score.
 - **hidden-terrain:** (decided) Hidden terrain such as sinking sand, found only by trying to move, is left out of the base game and added later as its own change.
-- **shared-squares:** (decided) Two pirates never stand on one square, because pirates stacked on one square confuse whoever watches and the drawing looks broken.
+- **shared-squares:** (decided) Two pirates never stand on one square, because pirates stacked on one square confuse whoever watches and the drawing looks broken. A move onto another pirate's square doesn't happen and doesn't use the turn: the pirate is told who is there and chooses again.
+- **blocked-tries:** (open) Default, Al to confirm: a pirate gets 3 tries at a blocked move in one turn, and after the third its turn passes, so a brain that keeps choosing a blocked move can't stall the game.
 - **random-events:** (open) Game events such as a clue washing ashore would give pirates a reason to look back through the log; default, Al to confirm: none in the base game.
 
 ## The pirates
@@ -44,7 +45,7 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 - **turn-order:** (decided) Agents take turns in a fixed order, one at a time.
 - **turn-view:** (decided) Each turn a pirate sees its system prompt with the rules and its actions, its own position, and the last few log lines (3 by default).
 - **tools-only:** (decided) A pirate acts only through a small set of tool calls (move, dig, write, read), so a brain of any kind plugs into the same interface.
-- **failed-move:** (decided) An impossible move, such as left from the left edge or onto a square another pirate stands on, fails and the response tells the pirate why.
+- **failed-move:** (decided) An impossible move, such as left from the left edge, fails and the response tells the pirate why.
 - **failed-move-cost:** (open) Whether a failed move costs the turn may depend on why it failed (walking off the map against hitting hidden terrain); default, Al to confirm: in the base game every failed move costs the turn.
 - **no-vision:** (decided) Pirates have no vision: a pirate knows only its own position and what it has dug, and learns about the others only through the log.
 - **actions:** (decided) The actions are move in one of 4 directions, dig, write to the log and read the log; digging and searching a square are the same action.
@@ -129,7 +130,8 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 | `score-numbers` | `src/treasure_island/score.py` | `test_score_numbers_everyone_there_scores_100_plus_10_per_move_remaining`, `test_score_numbers_some_there_scores_a_share_with_no_credit_for_moves`, `test_score_numbers_treasure_never_dug_up_scores_10_whatever_the_moves` |
 | `game-ends` | `src/treasure_island/game_loop.py` | `test_game_ends_when_everyone_is_on_the_dug_up_treasure`, `test_game_ends_counting_the_moves_of_the_pirate_who_got_there_last`, `test_game_ends_when_the_turns_run_out`, `test_game_ends_only_if_the_treasure_has_been_dug_up`, `test_game_ends_with_the_treasure_named_in_the_record`, `test_game_ends_wanting_one_brain_per_pirate` |
 | `hidden-terrain` | not yet | — |
-| `shared-squares` | `src/treasure_island/game_state.py` | `test_shared_squares_a_move_onto_another_pirate_fails_and_says_why`, `test_shared_squares_a_blocked_move_costs_the_turn`, `test_shared_squares_a_square_a_pirate_left_is_free_again`, `test_shared_squares_no_two_pirates_ever_stand_together` |
+| `shared-squares` | `src/treasure_island/game_state.py`, `src/treasure_island/game_loop.py` | `test_shared_squares_a_move_onto_another_pirate_is_refused_and_says_who`, `test_shared_squares_a_refused_move_leaves_the_turn_with_the_pirate`, `test_shared_squares_a_square_a_pirate_left_is_free_again`, `test_shared_squares_no_two_pirates_ever_stand_together`, `test_shared_squares_a_blocked_pirate_is_told_who_and_chooses_again`, `test_shared_squares_the_story_says_who_was_in_the_way` |
+| `blocked-tries` | `src/treasure_island/game_loop.py` | `test_blocked_tries_after_3_refused_moves_the_turn_passes` |
 | `random-events` | not yet | — |
 | `pirate-definition` | `src/treasure_island/config.py` | `test_pirate_definition_each_pirate_has_its_own_looks`, `test_pirate_definition_a_default_crew_can_be_told_apart`, `test_pirate_definition_a_partly_defined_pirate_keeps_the_other_defaults` |
 | `personality-numbers` | `src/treasure_island/config.py` | `test_personality_numbers_a_default_crew_counts_up_and_wraps`, `test_personality_numbers_a_config_can_choose_one`, `test_personality_numbers_outside_1_to_20_are_rejected` |
@@ -145,7 +147,7 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 | `turn-order` | `src/treasure_island/game_state.py` | `test_turn_order_is_fixed_and_comes_round_again` |
 | `turn-view` | `src/treasure_island/brain.py` | `test_turn_view_holds_the_rules_position_turns_left_and_log_lines`, `test_turn_view_system_prompt_gives_the_rules_and_every_action`, `test_turn_view_a_blank_log_line_reads_as_blank` |
 | `tools-only` | `src/treasure_island/brain.py` | `test_tools_only_there_are_exactly_four_tools`, `test_tools_only_a_tool_call_becomes_an_event_log_action`, `test_tools_only_anything_else_is_refused_and_says_why`, `test_tools_only_a_seat_refuses_a_brain_that_acts_any_other_way` |
-| `failed-move` | `src/treasure_island/game_state.py`, `src/treasure_island/game_loop.py` | `test_failed_move_off_any_edge_fails_and_says_why`, `test_failed_move_an_unknown_direction_fails_and_says_why`, `test_failed_move_a_pirate_in_the_way_is_named_in_the_story_and_the_result` |
+| `failed-move` | `src/treasure_island/game_state.py` | `test_failed_move_off_any_edge_fails_and_says_why`, `test_failed_move_an_unknown_direction_fails_and_says_why` |
 | `failed-move-cost` | `src/treasure_island/game_state.py` | `test_failed_move_cost_it_costs_the_turn` |
 | `no-vision` | `src/treasure_island/brain.py`, `src/treasure_island/game_loop.py` | `test_no_vision_a_view_only_has_room_for_the_pirate_s_own_knowledge`, `test_no_vision_the_view_never_shows_other_pirates_or_the_treasure`, `test_no_vision_a_pirate_s_looks_never_reach_its_view`, `test_no_vision_a_pirate_is_shown_only_its_own_position`, `test_no_vision_the_treasure_never_reaches_a_brain`, `test_no_vision_a_dig_result_reaches_only_the_digger` |
 | `actions` | `src/treasure_island/game_state.py`, `src/treasure_island/pirates_log.py`, `src/treasure_island/game_loop.py` | `test_actions_a_move_goes_one_square_in_any_of_four_directions`, `test_actions_digging_says_nothing_found_off_the_treasure`, `test_actions_digging_says_treasure_on_the_treasure`, `test_actions_a_dug_up_treasure_stays_dug_up`, `test_actions_digging_elsewhere_digs_nothing_up`, `test_actions_a_dig_reports_only_to_the_pirate_that_dug`, `test_actions_write_and_read_each_end_the_turn_like_any_other` |

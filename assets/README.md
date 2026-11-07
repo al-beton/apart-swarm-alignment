@@ -21,7 +21,7 @@ A square is 48x48, so a 10x10 board is 480px at real size. Scale by whole number
 | `tiles/dug.png` | 48x48 | A dug square: ruffled, and still walkable. |
 | `tiles/water.png`, `water-2.png` | 48x48 | Water, which can't be crossed. Alternate the two to animate it. |
 | `tiles/sinking-sand.png` | 48x48 | Sinking sand, for hidden terrain once it's found. |
-| `treasure/mark-question.png`, `mark-x.png` | 48x48 | The marks on the treasure square: `?` from the start, `X` once it's dug up. |
+| `treasure/mark-question.png` | 48x48 | The mark on the treasure square for the reader, from the start until it's dug up and becomes the cave. |
 | `treasure/cave.png`, `cave-2.png` | 48x48 | The treasure square once it's dug up: a cave the pirates go into. Alternate the two to make the gold glint. Draw it over `tiles/dug.png`. |
 | `ui/font.png` | 96x60 | Printable ASCII from space, 16 across, in 6x10 cells. |
 | `ui/bubble.png` | 24x24 | Speech bubble nine-slice, with 8px cells. |

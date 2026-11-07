@@ -152,7 +152,7 @@ def test_readable_at_once_a_bubble_with_no_room_above_goes_below_the_crowd():
     _, top = viewer.bubble_box((0, 0), (60, 30), 4)
     assert top >= 2 * 14 + viewer.TILE
     _, top = viewer.bubble_box((0, 3), (60, 30), 4)
-    assert top == 3 * viewer.TILE - 30
+    assert top == 3 * viewer.TILE - viewer.ARROW_ROOM - 30  # above the turn arrow
 
 
 def test_readable_at_once_a_real_game_tells_its_ending_in_the_frame():

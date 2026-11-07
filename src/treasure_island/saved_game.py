@@ -120,7 +120,7 @@ def write_saved(config, folder, on_start=None, pace=0, models=ASK_EVERY_MODEL):
     manifest = {
         "started_at": started_at,
         "finished_at": _now(),
-        "cost_usd": round(replies.cost_usd, 6) if replies.cost_usd else 0,
+        "cost_usd": round(replies.cost_usd, 9) if replies.cost_usd else 0,
         "cache_hits": replies.hits,
         "cache_misses": replies.misses,
     }

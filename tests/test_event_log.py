@@ -12,7 +12,12 @@ def good_record(turn=0):
     return {
         "turn": turn,
         "agent": "pirate-a",
-        "saw": {"position": [2, 3], "prompt": "You are at (2, 3)."},
+        "saw": {
+            "position": [2, 3],
+            "prompt": "You are at (2, 3).",
+            "neighbours": {"north": "pirate-b"},
+            "square_dug": False,
+        },
         "did": [
             {"action": "move", "direction": "north"},
             {"action": "write", "text": "heading north"},
@@ -77,6 +82,21 @@ def test_who_acted_needs_a_named_agent():
 )
 def test_what_they_saw_needs_a_position_and_a_prompt(path, value):
     assert record_errors(changed(path, value))
+
+
+@pytest.mark.parametrize(
+    "path, value",
+    [
+        (["saw", "neighbours"], ["pirate-b"]),
+        (["saw", "neighbours"], {"up": "pirate-b"}),
+        (["saw", "neighbours"], {"north": 3}),
+        (["saw", "square_dug"], "no"),
+    ],
+)
+def test_what_they_saw_needs_neighbours_and_whether_the_square_was_dug(path, value):
+    assert record_errors(changed(path, value))
+    assert record_errors(without(path))
+    assert record_errors(changed(["saw", "neighbours"], {})) == []
 
 
 @pytest.mark.parametrize(

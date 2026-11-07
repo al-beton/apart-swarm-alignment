@@ -1,5 +1,5 @@
 # Implements: assets/viewer-parts, assets/original-art
-"""A 5x7 pixel font for printable ASCII, for speech bubbles, the side panel and the log."""
+"""A 5x7 pixel font for printable ASCII, for scroll notes, the side panel and the log."""
 
 from PIL import Image
 

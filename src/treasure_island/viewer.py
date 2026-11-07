@@ -35,7 +35,7 @@ import assets
 from assets.cave import going_in, hat_stack
 from assets.font import draw_text, text_width, wrap
 from assets.pirates import pirate, portrait
-from assets.ui import panel, speech_bubble
+from assets.ui import panel, scroll_note
 from treasure_island.config import parse_config
 from treasure_island.game_state import GameState
 from treasure_island.looks import sprite_values
@@ -47,7 +47,7 @@ TILE = 48
 # Where a label sits on a sprite: (left, top, right, bottom).
 _LABEL_BOX = (14, 2, 34, 16)
 # The turn arrow floats this far above the acting pirate's hat, centred, as on the
-# art sheet, so it never covers the label; a bubble goes above the arrow.
+# art sheet, so it never covers the label; a note goes above the arrow.
 ARROW_ROOM = 14
 _ARROW_LEFT = 16
 _FACING = {"north": "up", "south": "down", "east": "right", "west": "left"}
@@ -62,7 +62,8 @@ THOUGHTS = 3
 LINE = 12
 _DID_LINES = 3
 _THOUGHT_LINES = 6
-_BUBBLE_CHARACTERS = 90
+_NOTE_CHARACTERS = 90
+STRIP_TITLE = "The scroll"
 STRIP_ROWS = 5
 STRIP = 24 + (STRIP_ROWS + 1) * LINE + 4  # the parchment's edges, a heading and rows
 _STRIP_LEFT = 14
@@ -142,8 +143,21 @@ def _dug(records, turn):
     }
 
 
+def _note(record):
+    """What a pirate wrote on its turn, or None: only writing is drawn over a pirate."""
+    words = [a["text"] for a in record["did"] if a["action"] == "write"]
+    return " ".join(words) if words else None
+
+
+def _read(record):
+    """The lines a read returned, or None on a turn that didn't read."""
+    if not any(action["action"] == "read" for action in record["did"]):
+        return None
+    return [_shown(line) for line in record["log_shown"]]
+
+
 def _said(record):
-    """What a pirate's turn says in its bubble: its words, else its actions."""
+    """A turn in plain words, for a record that doesn't say what happened."""
     if record["outcome"]["found_treasure"]:
         return "I found the treasure!"
     words = [a["text"] for a in record["did"] if a["action"] == "write"]
@@ -245,10 +259,10 @@ def scene(records, turn, size, treasure=None):
         "turn": turn,
         "positions": positions,
         "acting": current["agent"],
-        "bubble": _said(current),
+        "note": _note(current),
         "did": _did(current),
         "thoughts": _thoughts(records, turn),
-        "log": [_shown(line) for line in current["log_shown"]],
+        "read": _read(current),
         "treasure": found,
         "mark": _mark(records, treasure, found),
         "log_so_far": _log_so_far(records, turn),
@@ -345,7 +359,7 @@ def _draw_pirates(image, shown, pirates):
 
 
 def _draw_labels(image, shown, pirates):
-    """Labels go over everything, bubbles included, so every pirate can be told apart."""
+    """Labels go over the pirates and the arrow, so every pirate can be told apart."""
     for agent, spot in _placed(shown):
         if agent == shown["going_in"]:
             continue  # its back is turned as it goes in
@@ -353,13 +367,13 @@ def _draw_labels(image, shown, pirates):
         image.paste(label, spot, label)
 
 
-def bubble_box(position, bubble_size, size):
-    """Where a bubble goes: above the pirate's arrow, or below it if there's no room."""
+def note_box(position, note_size, size):
+    """Where a note goes: above the pirate's arrow, or below it if there's no room."""
     x, y = position
-    width, height = bubble_size
+    width, height = note_size
     left = min(x * TILE + 6, max(0, size * TILE - width))
     above = y * TILE - ARROW_ROOM - height
-    # With no room above, the arrow goes under the feet and the bubble under that.
+    # With no room above, the arrow goes under the feet and the note under that.
     return left, above if above >= 0 else y * TILE + TILE + ARROW_ROOM + 2
 
 
@@ -397,14 +411,49 @@ def turn_arrow(shown):
     return candidates[1]
 
 
-def _draw_bubble(image, position, text, size, arrow_box):
-    if len(text) > _BUBBLE_CHARACTERS:
-        text = text[: _BUBBLE_CHARACTERS - 3] + "..."
-    bubble = speech_bubble(text)
-    x, y = bubble_box(position, bubble.size, size)
-    if _overlap((x, y, x + bubble.width, y + bubble.height), arrow_box):
-        y = arrow_box[3] + 2  # an arrow under the feet: the bubble goes below it
-    image.paste(bubble, (x, y), bubble)
+def note_spot(shown, note_size, arrow_box):
+    """Where the writer's note goes: beside the writer, clear of every other pirate.
+
+    It tries above, then right, then left, then below, and takes the first spot
+    on the board that covers no other pirate and not the turn arrow, so the note
+    reads as the writer's own. With none, it falls back on `note_box`.
+    """
+    size = shown["size"]
+    x, y = shown["positions"][shown["acting"]]
+    width, height = note_size
+    edge = size * TILE
+    middle = y * TILE + (TILE - height) // 2
+    candidates = [
+        (min(x * TILE + 6, max(0, edge - width)), y * TILE - ARROW_ROOM - height),
+        ((x + 1) * TILE + 2, middle),
+        (x * TILE - 2 - width, middle),
+        (min(x * TILE + 6, max(0, edge - width)), (y + 1) * TILE + ARROW_ROOM + 2),
+    ]
+    others = [
+        (ox * TILE, oy * TILE, (ox + 1) * TILE, (oy + 1) * TILE)
+        for agent, (ox, oy) in shown["positions"].items()
+        if agent != shown["acting"]
+    ]
+    for left, top in candidates:
+        box = (left, top, left + width, top + height)
+        on_board = left >= 0 and top >= 0 and box[2] <= edge and box[3] <= edge
+        clear = not any(_overlap(box, other) for other in [*others, arrow_box])
+        if on_board and clear:
+            return left, top
+    left, top = note_box((x, y), note_size, size)
+    if _overlap((left, top, left + width, top + height), arrow_box):
+        top = arrow_box[3] + 2  # an arrow under the feet: the note goes below it
+    return left, top
+
+
+def _draw_note(image, shown, arrow_box):
+    text = shown["note"]
+    if text is None:
+        return
+    if len(text) > _NOTE_CHARACTERS:
+        text = text[: _NOTE_CHARACTERS - 3] + "..."
+    note = scroll_note(text)
+    image.paste(note, note_spot(shown, note.size, arrow_box), note)
 
 
 def wrapped(text):
@@ -432,9 +481,10 @@ def _panel_image(shown, height, look):
         lines = [line for thought in shown["thoughts"] for line in wrapped(thought)]
         # The latest thought matters most, so older lines are the ones to go.
         sections.append(("Thinking:", lines[-_THOUGHT_LINES:], _THOUGHT_LINES))
-    log = [line or "(blank)" for line in shown["log"][-LOG_LINES:]] or ["(nothing)"]
-    log = [line[:PANEL_COLUMNS] for line in log]
-    sections.append(("It read:", log, LOG_LINES))
+    if shown["read"] is not None:
+        read = [line or "(blank)" for line in shown["read"][-LOG_LINES:]]
+        read = [line[:PANEL_COLUMNS] for line in read or ["(nothing new)"]]
+        sections.append(("It read:", read, LOG_LINES))
     for title, lines, most in sections:
         draw_text(image, (_PANEL_LEFT, y), title)
         y += LINE
@@ -457,7 +507,7 @@ def log_rows(lines, width):
 
 def _strip_image(shown, width):
     image = panel(width, STRIP)
-    draw_text(image, (_STRIP_LEFT, 12), "The pirates' scroll")
+    draw_text(image, (_STRIP_LEFT, 12), STRIP_TITLE)
     rows = log_rows(shown["log_so_far"], width - 2 * _STRIP_LEFT)
     for row, text in enumerate(rows, start=1):
         draw_text(image, (_STRIP_LEFT, 14 + row * LINE), text)
@@ -488,7 +538,7 @@ def _caption_image(story, width, height):
 
 
 def frame(records, turn, size, pirates=None, treasure=None):
-    """The image for one turn: ground, pirates, turn arrow, bubble, panel, caption, log."""
+    """The image for one turn: ground, pirates, turn arrow, note, panel, caption, log."""
     pirates = pirates or _default_pirates(_crew_names(records))
     shown = scene(records, turn, size, treasure)
     grid = max(size, 1) * TILE
@@ -500,13 +550,11 @@ def frame(records, turn, size, pirates=None, treasure=None):
     _draw_pirates(image, shown, pirates)
     _draw_going_in(image, shown, pirates)
     arrow, spot = turn_arrow(shown)
-    image.paste(
-        arrow, spot, arrow
-    )  # before the bubble and labels, so it covers neither
+    image.paste(arrow, spot, arrow)  # before the note and labels, so it covers neither
     arrow_box = (*spot, spot[0] + arrow.width, spot[1] + arrow.height)
-    acting = shown["positions"][shown["acting"]]
-    _draw_bubble(image, acting, shown["bubble"], size, arrow_box)
     _draw_labels(image, shown, pirates)
+    # The note goes over the labels, so what was written always shows in full.
+    _draw_note(image, shown, arrow_box)
     side = _panel_image(shown, board, pirates[shown["acting"]])
     image.paste(side, (grid, 0), side)
     words = _caption_image(records[turn].get("story", ""), width, caption)

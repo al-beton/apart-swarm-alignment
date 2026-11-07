@@ -22,7 +22,7 @@ from assets.pirates import (
 from assets.pixels import SIZE
 from assets.tiles import TILES
 from assets.treasure import ITEMS
-from assets.ui import panel, speech_bubble
+from assets.ui import panel, quill, scroll_note
 
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS = ROOT / "assets"
@@ -126,12 +126,23 @@ def test_treasure_shown_a_question_mark_marks_it_until_it_is_dug_up():
     assert ITEMS["mark-question"]().getextrema()[3][0] == 0
 
 
-def test_viewer_parts_bubble_fits_its_text():
-    short = speech_bubble("Hi")
-    long = speech_bubble("I'll search row 1, then row 2, then we check in.")
+def test_viewer_parts_scroll_note_fits_its_text():
+    short = scroll_note("Hi")
+    long = scroll_note("I'll search row 1, then row 2, then we check in.")
     assert long.width > short.width or long.height > short.height
     assert short.height >= FONT_HEIGHT
-    assert speech_bubble("x" * 200, max_width=160).width <= 160
+    assert scroll_note("x" * 200, max_width=160).width <= 160
+
+
+def test_viewer_parts_scroll_note_carries_the_quill():
+    note = scroll_note("Hi")
+    feather = quill()
+    x, y = note.width - feather.width, note.height - feather.height
+    corner = note.crop((x, y, note.width, note.height))
+    solid = feather.getchannel("A").point(lambda value: 255 if value == 255 else 0)
+    assert solid.getbbox()
+    wanted = Image.composite(feather, corner, solid)
+    assert corner.tobytes() == wanted.tobytes()
 
 
 def test_viewer_parts_panel_stretches_to_any_size():

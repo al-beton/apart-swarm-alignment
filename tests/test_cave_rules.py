@@ -49,7 +49,7 @@ def test_actions_entering_is_an_action_the_event_log_takes():
     record = {
         "turn": 0,
         "agent": "pirate-1",
-        "saw": {"position": [0, 0], "prompt": ""},
+        "saw": {"position": [0, 0], "prompt": "", "neighbours": {}, "square_dug": True},
         "did": [ENTER],
         "log_shown": [],
         "outcome": {"position": [0, 0], "found_treasure": False, "in_cave": True},

@@ -82,6 +82,24 @@ def _position_errors(section, record):
     return []
 
 
+def _surroundings_errors(saw):
+    """What's wrong with what a record says the pirate saw around it."""
+    if not isinstance(saw, dict):
+        return []
+    errors = []
+    neighbours = saw.get("neighbours")
+    if not isinstance(neighbours, dict) or not all(
+        direction in DIRECTIONS and _is_text(name) and name
+        for direction, name in neighbours.items()
+    ):
+        errors.append(
+            "saw.neighbours must map each direction that holds a pirate to its name"
+        )
+    if not isinstance(saw.get("square_dug"), bool):
+        errors.append("saw.square_dug must say whether the pirate's square was dug")
+    return errors
+
+
 def record_errors(record):
     """What is wrong with one record, as a list of messages (empty if valid)."""
     if not isinstance(record, dict):
@@ -98,6 +116,7 @@ def record_errors(record):
         record["saw"].get("prompt")
     ):
         errors.append("saw.prompt must be the text the pirate was given")
+    errors += _surroundings_errors(record.get("saw"))
     errors += _did_errors(record.get("did"))
     errors += _log_shown_errors(record.get("log_shown"))
     errors += _position_errors("outcome", record)

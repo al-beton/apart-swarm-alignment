@@ -1,10 +1,10 @@
-# Implements: treasure-island/side-panel, treasure-island/readable-at-once, viewer/frame-shows-the-swarm
+# Implements: treasure-island/side-panel, treasure-island/readable-at-once, treasure-island/pokemon-style, viewer/frame-shows-the-swarm
 """A reader follows the game from the frame: who, what they did and why."""
 
 from PIL import Image, ImageChops
 
 from assets.pirates import portrait
-from assets.ui import speech_bubble
+from assets.ui import scroll_note
 from treasure_island import viewer
 from treasure_island.brain import Decision
 from treasure_island.config import parse_config
@@ -126,32 +126,57 @@ def test_side_panel_fits_whatever_is_said_inside_the_frame():
 
 def test_readable_at_once_the_winning_turn_says_so():
     found = record(0, found=True)
-    assert shown([found])["bubble"] == "I found the treasure!"
+    assert "found the treasure" in shown([found])["did"].lower()
 
 
-def test_readable_at_once_a_note_is_the_pirates_own_words_in_a_bubble():
+def test_readable_at_once_a_note_is_the_pirates_own_words_on_a_scroll():
     note = record(0, did=[{"action": "write", "text": "Over here, crew!"}])
-    assert shown([note])["bubble"] == "Over here, crew!"
+    assert shown([note])["note"] == "Over here, crew!"
 
 
-def test_readable_at_once_the_bubble_is_the_art_not_a_shape():
-    image = viewer.frame([record(0, found=True, at=[3, 3])], 0, 4)
-    bubble = speech_bubble("I found the treasure!")
-    assert drawn_at(image, bubble, viewer.bubble_box((3, 3), bubble.size, 4))
+def test_readable_at_once_a_turn_that_does_not_write_has_nothing_over_the_pirate():
+    for did in ([{"action": "dig"}], [{"action": "read"}], []):
+        assert shown([record(0, did=did)])["note"] is None
+    assert shown([record(0, found=True)])["note"] is None
+    # Nothing is drawn over the pirate: the board is the same as a turn with no action.
+    quiet = viewer.frame([record(0, did=[], at=[2, 2])], 0, 4)
+    dig = viewer.frame([record(0, at=[2, 2])], 0, 4)
+    above = (0, 0, 4 * viewer.TILE, 2 * viewer.TILE)
+    assert quiet.crop(above).tobytes() == dig.crop(above).tobytes()
 
 
-def test_readable_at_once_the_bubble_stays_on_the_board():
+def test_readable_at_once_the_scroll_is_the_art_not_a_shape():
+    did = [{"action": "write", "text": "Over here, crew!"}]
+    image = viewer.frame([record(0, did=did, at=[3, 3])], 0, 4)
+    note = scroll_note("Over here, crew!")
+    assert drawn_at(image, note, viewer.note_box((3, 3), note.size, 4))
+
+
+def test_readable_at_once_the_scroll_stays_on_the_board():
     for square in ((0, 0), (3, 0), (0, 3), (3, 3)):
-        x, y = viewer.bubble_box(square, (150, 60), 4)
+        x, y = viewer.note_box(square, (150, 60), 4)
         assert 0 <= x and x + 150 <= 4 * viewer.TILE
         assert 0 <= y
 
 
-def test_readable_at_once_a_bubble_with_no_room_above_goes_below_the_pirate():
-    _, top = viewer.bubble_box((0, 0), (60, 30), 4)
+def test_readable_at_once_a_scroll_with_no_room_above_goes_below_the_pirate():
+    _, top = viewer.note_box((0, 0), (60, 30), 4)
     assert top == viewer.TILE + viewer.ARROW_ROOM + 2  # below the arrow under its feet
-    _, top = viewer.bubble_box((0, 3), (60, 30), 4)
+    _, top = viewer.note_box((0, 3), (60, 30), 4)
     assert top == 3 * viewer.TILE - viewer.ARROW_ROOM - 30  # above the turn arrow
+
+
+def test_side_panel_shows_what_a_read_returned_and_only_on_a_read():
+    line = {"line": 1, "text": "dig east", "by": "pirate-2"}
+    read = {**record(0, did=[{"action": "read"}]), "log_shown": [line]}
+    assert shown([read])["read"] == ["pirate-2: dig east"]
+    nothing_new = record(0, did=[{"action": "read"}])
+    assert shown([nothing_new])["read"] == []
+    assert shown([record(0)])["read"] is None
+    # The panel has a section for the read only on the turn that reads.
+    with_read = panel_of(viewer.frame([read], 0, 4))
+    dig = panel_of(viewer.frame([record(0)], 0, 4))
+    assert ImageChops.difference(with_read, dig).getbbox()
 
 
 def test_readable_at_once_a_real_game_tells_its_ending_in_the_frame():
@@ -164,6 +189,40 @@ def test_readable_at_once_a_real_game_tells_its_ending_in_the_frame():
     config = parse_config({"grid_size": 5, "crew_size": 1, "seed": 2})
     records = list(Game(config, [Dig()]).records())
     last = shown(records[:1])  # the turn it dug the treasure up
-    assert last["bubble"] == "I found the treasure!"
+    assert last["note"] is None
     assert "found the treasure" in last["did"]
     assert last["thoughts"] == ["Digging right here."]
+
+
+def stacked(writer):
+    """Two pirates in one column, `writer` writing; a 4 by 4 board."""
+    crew = {"pirate-1": [0, 0], "pirate-2": [0, 1]}
+    did = [{"action": "write", "text": "Over here, crew!"}]
+    made = record(0, agent=writer, did=did, at=crew[writer])
+    return [{**made, "crew": crew}], crew
+
+
+def test_frame_shows_the_swarm_a_note_never_covers_another_pirate():
+    for writer, other in (("pirate-1", "pirate-2"), ("pirate-2", "pirate-1")):
+        records, crew = stacked(writer)
+        shown = viewer.scene(records, 0, 4)
+        arrow, spot = viewer.turn_arrow(shown)
+        arrow_box = (*spot, spot[0] + arrow.width, spot[1] + arrow.height)
+        note = scroll_note("Over here, crew!")
+        x, y = viewer.note_spot(shown, note.size, arrow_box)
+        ox, oy = (value * viewer.TILE for value in crew[other])
+        box = (x, y, x + note.width, y + note.height)
+        assert not viewer._overlap(box, (ox, oy, ox + viewer.TILE, oy + viewer.TILE))
+        assert not viewer._overlap(box, arrow_box)
+        assert 0 <= x and box[2] <= 4 * viewer.TILE and 0 <= y
+
+
+def test_frame_shows_the_swarm_what_was_written_shows_in_full():
+    for writer in ("pirate-1", "pirate-2"):
+        records, _ = stacked(writer)
+        image = viewer.frame(records, 0, 4)
+        shown = viewer.scene(records, 0, 4)
+        arrow, spot = viewer.turn_arrow(shown)
+        arrow_box = (*spot, spot[0] + arrow.width, spot[1] + arrow.height)
+        note = scroll_note("Over here, crew!")
+        assert drawn_at(image, note, viewer.note_spot(shown, note.size, arrow_box))

@@ -93,10 +93,10 @@ The pirates' log is a scroll: nothing of it is shown for free, and writing on it
 ## The viewer
 
 - **readable-at-once:** (decided) A reader should grasp what happened from the animation alone, as much a goal as the mechanics.
-- **pokemon-style:** (decided) The view is classic tile-based, with pirates told apart by their colour and head text, moving in 4 directions, speaking in speech bubbles.
-- **side-panel:** (decided) A side panel shows the pirate whose turn it is: its avatar, its trail of thought and what it did, animated turn by turn.
+- **pokemon-style:** (decided) The view is classic tile-based, with pirates told apart by their colour and head text, moving in 4 directions; pirates write rather than talk, so a pirate writing is shown with a small scroll and quill, never a speech bubble.
+- **side-panel:** (decided) A side panel shows the pirate whose turn it is: its avatar, its trail of thought and what it did, and on a turn that reads, the lines the read returned and on no other turn, animated turn by turn.
 - **treasure-mark:** (decided) By default the reader sees the treasure square as a question mark from the start, which becomes an X once it's dug up; the pirates never see either.
-- **log-at-bottom:** (decided) The pirates' log scrolls along the bottom of the replay, so a reader sees what the crew could see.
+- **log-at-bottom:** (decided) The scroll runs along the bottom of the replay under the title "The scroll", showing every line as written so far, so a reader sees what the crew could see.
 - **slideshow:** (decided) An HTML page replays a whole game as a slideshow, stepping through turns with the arrow keys.
 - **paper-figures:** (open) Since a paper can't embed an animation, it gets a sequence of about 4 stills with arrows showing where agents went.
 - **brain-in-config:** (decided) A config names the brain its crew plays with, so one command can play any game and a saved game says what played it.

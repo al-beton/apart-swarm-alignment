@@ -226,3 +226,22 @@ def test_frame_shows_the_swarm_what_was_written_shows_in_full():
         arrow_box = (*spot, spot[0] + arrow.width, spot[1] + arrow.height)
         note = scroll_note("Over here, crew!")
         assert drawn_at(image, note, viewer.note_spot(shown, note.size, arrow_box))
+
+
+def test_frame_shows_the_swarm_a_tall_note_on_the_top_row_stays_clear_of_the_crew():
+    # The default crew starts down the left edge, so the writer on the top row has
+    # pirates below it and the board's edge above.
+    crew = {f"pirate-{n}": [0, n - 1] for n in range(1, 4)}
+    text = "I'll search row 1, then row 2, then we check in."
+    made = record(0, did=[{"action": "write", "text": text}], at=[0, 0])
+    shown = viewer.scene([{**made, "crew": crew}], 0, 5)
+    arrow, spot = viewer.turn_arrow(shown)
+    arrow_box = (*spot, spot[0] + arrow.width, spot[1] + arrow.height)
+    note = scroll_note(text)
+    assert note.height > viewer.TILE // 2  # three lines: taller than a centred spot allows
+    x, y = viewer.note_spot(shown, note.size, arrow_box)
+    box = (x, y, x + note.width, y + note.height)
+    for other in ("pirate-2", "pirate-3"):
+        ox, oy = (value * viewer.TILE for value in crew[other])
+        assert not viewer._overlap(box, (ox, oy, ox + viewer.TILE, oy + viewer.TILE))
+    assert 0 <= y and box[3] <= 5 * viewer.TILE

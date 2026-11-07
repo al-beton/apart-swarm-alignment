@@ -19,7 +19,7 @@ First, the people working in this code over and over to make it really good; nex
 
 ## Pace
 
-This is a hackathon prototype. Submissions close Monday 9 November 2026. Aim for the smallest change that works and can be shared. Fix real bugs; decline speculative hardening and edge cases nobody has hit, with a reason. Automatic review stops after three rounds, or sooner when a round finds nothing real.
+This is a hackathon prototype. Submissions close Monday 9 November 2026. Aim for the smallest change that works and can be shared. Fix real bugs; decline speculative hardening and edge cases nobody has hit, with a reason. A pull request gets one Codex round: fix P1 findings in one push, answer the rest "follow-up", and the builder merges it once checks are green and Codex has finished on the latest commit.
 
 ## Commands
 

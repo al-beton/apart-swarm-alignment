@@ -32,9 +32,11 @@ from treasure_island.pirates_log import PiratesLog
 from treasure_island.score import score
 
 
-def _surroundings(neighbours, dug):
+def _surroundings(neighbours, dug, on_cave=False):
     """What a pirate saw around it, for its turn's line of the story."""
-    ground = "on dug sand" if dug else "on undug sand"
+    ground = (
+        "on the open cave" if on_cave else "on dug sand" if dug else "on undug sand"
+    )
     beside = " and ".join(
         f"{name} to the {direction}" for direction, name in neighbours
     )
@@ -168,9 +170,10 @@ class Game:
             for direction, index in self.state.neighbours(pirate)
         )
         dug_here = start in self.state.dug
+        on_cave = self.state.treasure_dug_up and start == self.state.treasure
         seat, refused, bad_replies = self._seats[pirate], [], []
         while True:
-            decision = seat.take_turn(start, turns_left, around, dug_here)
+            decision = seat.take_turn(start, turns_left, around, dug_here, on_cave)
             bad_replies += decision.refused
             refusal = self._refusal(decision.action)
             if refusal is None:
@@ -194,7 +197,7 @@ class Game:
             self._left_on_entering[pirate] = turns_left - 1
         did = _with_refusals(refused, did)
         story = f"Turn {turn}: {name} at {_square(start)}, "
-        story += f"{_surroundings(around, dug_here)}, {did}."
+        story += f"{_surroundings(around, dug_here, on_cave)}, {did}."
         if decision.thinking:
             story += f" Why: {_one_line(decision.thinking)}"
         record = {

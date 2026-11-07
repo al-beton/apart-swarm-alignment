@@ -14,14 +14,14 @@ from treasure_island.config import ConfigError, load_config, parse_config
 from treasure_island.strategies import brains_for
 
 ROOT = Path(__file__).resolve().parents[1]
-COMMITTED = ROOT / "runs/s-sweep-seed-7"
+COMMITTED = ROOT / "runs/silent-seed-7"
 LOGS = ("events.jsonl", "story.txt", "pirates-log.txt")
 
 
 @pytest.fixture
 def config(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    return shutil.copy(ROOT / "configs/s-sweep.toml", tmp_path / "s-sweep.toml")
+    return shutil.copy(ROOT / "configs/silent.toml", tmp_path / "silent.toml")
 
 
 def played(config_path, capsys, seed=7):
@@ -43,7 +43,7 @@ def test_named_runs_save_config_seed_both_logs_and_replies(config, capsys):
     }
     saved = json.loads((folder / "config.json").read_text())
     assert saved["seed"] == 7
-    assert saved["brain"] == "s-sweep"
+    assert saved["brain"] == "silent"
     manifest = json.loads((folder / "manifest.json").read_text())
     assert manifest["cost_usd"] == 0
     assert set(manifest) >= {"started_at", "finished_at"}
@@ -53,8 +53,8 @@ def test_named_runs_are_named_after_config_and_seed_and_never_overwrite(config, 
     first = played(config, capsys)
     before = contents(first)
     second = played(config, capsys)
-    assert first.name == "s-sweep-seed-7"
-    assert second.name == "s-sweep-seed-7-2"
+    assert first.name == "silent-seed-7"
+    assert second.name == "silent-seed-7-2"
     assert contents(first) == before
 
 
@@ -67,7 +67,7 @@ def test_named_runs_the_seed_on_the_command_line_decides_the_game(config, capsys
 
 def test_named_runs_the_committed_game_replays_byte_identical(capsys):
     assert cli.main(["replay", str(COMMITTED)]) == 0
-    assert "Score 360" in (COMMITTED / "story.txt").read_text()
+    assert "Score 490" in (COMMITTED / "story.txt").read_text()
 
 
 def test_named_runs_save_every_lever_even_the_defaults(tmp_path, monkeypatch, capsys):

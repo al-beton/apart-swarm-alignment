@@ -2,12 +2,12 @@
 
 Each is a brain, like any other. Everything a strategy knows comes from its view
 (its position and its own earlier turns), so it remembers nothing itself and a
-game can't depend on anything else. The sweeper is told the grid's size when
-it's made, because that's in the rules a model reads as text.
+game can't depend on anything else. The silent pirate is told the grid's size
+when it's made, because that's in the rules a model reads as text.
 
 `python -m treasure_island.strategies` remakes the committed reference games.
 
-Implements: agents/model-per-pirate, treasure-island/sweeper, treasure-island/say-a-number, treasure-island/reference-games, treasure-island/no-token-strategies, treasure-island/brain-in-config
+Implements: agents/model-per-pirate, treasure-island/silent, treasure-island/say-a-number, treasure-island/reference-games, treasure-island/no-token-strategies, treasure-island/brain-in-config
 """
 
 from pathlib import Path
@@ -15,43 +15,79 @@ from pathlib import Path
 from treasure_island.brain import Decision, tool_call
 from treasure_island.config import ConfigError, load_config, save_config
 from treasure_island.game_loop import write_game
-from treasure_island.game_state import CAVE_HERE, TREASURE_FOUND
+from treasure_island.game_state import STEPS
 from treasure_island.llm import LLMPirate
 
 
-def _s_shape(size):
-    """Every square once: along the top row, back along the next, and so on."""
-    return [
-        (x if y % 2 == 0 else size - 1 - x, y) for y in range(size) for x in range(size)
-    ]
+def _distance(a, b):
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])
 
 
-def _step_towards(here, there):
-    if there[0] != here[0]:
-        return "east" if there[0] > here[0] else "west"
-    return "south" if there[1] > here[1] else "north"
-
-
-class Sweeper:
-    """Digs each square along an S, and goes into the cave once it finds it."""
+class Silent:
+    """Searches alone: digs what isn't dug, walks to the nearest square it hasn't
+    seen dug, and goes into the cave once it stands on it. It never writes or reads.
+    """
 
     def __init__(self, grid_size):
-        self._squares = _s_shape(grid_size)
+        self._size = grid_size
+        # Ties go to the topmost square, then the leftmost (default, Al to confirm).
+        self._squares = [(x, y) for y in range(grid_size) for x in range(grid_size)]
+
+    def _nearest_unseen(self, square, seen):
+        unseen = [other for other in self._squares if other not in seen]
+        if not unseen:
+            return None
+        return min(unseen, key=lambda other: _distance(square, other))
 
     def decide(self, view):
-        earlier = view.earlier_turns
-        if earlier and earlier[-1].result in (TREASURE_FOUND, CAVE_HERE):
+        if view.on_cave:
             return Decision(
-                tool_call("enter", {}), "This is the cave, so I'm going in."
+                tool_call("enter", {}), "This is the open cave, so I'm going in."
             )
-        dug = {turn.position for turn in earlier if turn.action["action"] == "dig"}
-        if view.position not in dug:
-            return Decision(tool_call("dig", {}), "I haven't dug this square yet.")
-        # Some square is always left: digging them all would have found the treasure.
-        x, y = next(square for square in self._squares if square not in dug)
-        direction = _step_towards(view.position, (x, y))
-        why = f"The next square to dig is ({x}, {y})."
-        return Decision(tool_call("move", {"direction": direction}), why)
+        if not view.square_dug:
+            return Decision(tool_call("dig", {}), "Nobody has dug this square yet.")
+        # Every square it has stood on was dug by the time it left, as it digs
+        # any it finds undug.
+        seen = {turn.position for turn in view.earlier_turns} | {view.position}
+        here = view.position
+        target = self._nearest_unseen(here, seen)
+        if target is None:
+            return Decision(tool_call("dig", {}), "I've seen every square dug.")
+        blockers = dict(view.neighbours)
+        steps = {
+            direction: (here[0] + step_x, here[1] + step_y)
+            for direction, (step_x, step_y) in STEPS.items()
+        }
+        free = [
+            direction
+            for direction, (x, y) in steps.items()
+            if 0 <= x < self._size and 0 <= y < self._size and direction not in blockers
+        ]
+        closer = [
+            direction
+            for direction in free
+            if _distance(steps[direction], target) < _distance(here, target)
+        ]
+        where = f"({target[0]}, {target[1]})"
+        if closer:
+            why = f"The nearest square I haven't seen dug is {where}."
+            return Decision(tool_call("move", {"direction": closer[0]}), why)
+        in_way = " and ".join(
+            name
+            for direction, name in view.neighbours
+            if _distance(steps[direction], target) < _distance(here, target)
+        )
+        if not free:
+            why = f"{in_way or 'A pirate'} is in the way and I can't go round, so I dig here again."
+            return Decision(tool_call("dig", {}), why)
+        around = min(
+            free,
+            key=lambda direction: _distance(
+                steps[direction], self._nearest_unseen(steps[direction], seen)
+            ),
+        )
+        why = f"I'm heading for {where}, but {in_way} is in the way, so I go round."
+        return Decision(tool_call("move", {"direction": around}), why)
 
 
 class SayANumber:
@@ -65,7 +101,7 @@ class SayANumber:
 def brains_for(name, config, replies=None):
     """One fresh brain per pirate: its model's, through `replies`, else `name`'s."""
     known = {
-        "s-sweep": lambda: Sweeper(config.grid_size),
+        "silent": lambda: Silent(config.grid_size),
         "say-a-number": SayANumber,
     }
     if name not in known:
@@ -79,7 +115,7 @@ def brains_for(name, config, replies=None):
     ]
 
 
-REFERENCE_GAMES = ("s-sweep", "say-a-number")
+REFERENCE_GAMES = ("silent", "say-a-number")
 
 
 def write_reference(name, folder, root=Path()):

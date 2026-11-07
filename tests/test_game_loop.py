@@ -524,7 +524,7 @@ def test_story_record_keeps_what_a_read_found_on_one_line(tmp_path):
 @pytest.mark.parametrize(
     "folder",
     [
-        "examples/s-sweep",
+        "examples/silent",
         "examples/say-a-number",
         "results/sample-sweep-seeds/small-crew-seed-1",
     ],

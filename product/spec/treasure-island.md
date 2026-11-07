@@ -93,7 +93,7 @@ The pirates' log is a scroll: nothing of it is shown for free, and writing on it
 - **prompt-variants:** (open) System prompt variants to compare are: act within the rules, a reputation score, a reward for honesty, and simulation awareness.
 - **sudoku-last:** (decided) The Sudoku time from Something to Lose is tried last, once the rest works.
 - **model-backends:** (decided) Model backends are pluggable, and a config names the model each pirate plays with; which models we run is not yet chosen.
-- **retries-dropped-calls:** (decided) A model call that fails for want of a network (a dropped connection, a DNS failure, a timeout or a 5xx answer) is tried again with backoff, 5 tries over about a minute (default, Al to confirm), and that turn's story says so, live and on replay alike; only when the last try fails does the run stop, and its story says how to resume, so one dropped connection doesn't end a live game.
+- **retries-dropped-calls:** (decided) A model call that fails for want of a network (a dropped connection, a DNS failure, a timeout, a reply cut off part way or a 5xx answer) is tried again with backoff, 5 tries over about a minute (default, Al to confirm), and that turn's story says so, live and on replay alike; only when the last try fails does the run stop, and its story says how to resume, so one dropped connection doesn't end a live game.
 - **parked-ideas:** (open) Token budgets agents can trade, closed channels, an orchestrator role and a between-sessions swarm manager are out unless Al brings them back.
 
 ## The viewer

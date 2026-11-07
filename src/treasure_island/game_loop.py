@@ -159,21 +159,17 @@ class Game:
                 break
             refused.append((decision.action, blocker))
             direction = decision.action["direction"]
+            told = (
+                f"You can't move {direction}: {blocker} is standing on "
+                f"{_square(self._next_square(direction))}."
+            )
             if len(refused) < BLOCKED_TRIES:
-                seat.remember(
-                    f"You can't move {direction}: {blocker} is standing on "
-                    f"{_square(self._next_square(direction))}. "
-                    "That didn't use your turn: choose again."
-                )
+                seat.remember(f"{told} That didn't use your turn: choose again.")
                 continue
             # A brain that keeps choosing a blocked move loses the turn instead.
             self.state.pass_turn()
             self.log.pass_turn()
-            result = (
-                f"You can't move {direction}: {blocker} is standing on "
-                f"{_square(self._next_square(direction))}. "
-                "That was your last try, so your turn passed."
-            )
+            result = f"{told} That was your last try, so your turn passed."
             did, read_lines, done = "", [], []
             break
         seat.remember(result, read_lines)

@@ -1,7 +1,7 @@
 """The LLM brain: one model request per turn, and its reply back as a tool call.
 
 A request holds only what a pirate needs: the system prompt, the turn's text,
-the four tools as function definitions, the reply cap and whether to think. It
+the pirate's tools as function definitions, the reply cap and whether to think. It
 goes through `Replies`, so it's stored, reused across runs and replayed without
 a backend. A backend answers with JSON text: `{"tool": ..., "arguments": {...}}`,
 plus `"thinking"` when thinking is on. Each backend turns its provider's tool
@@ -86,7 +86,7 @@ class LLMPirate:
                     {
                         "role": "user",
                         "content": f"That isn't a tool call you can make: {why}. "
-                        "Answer with exactly one of the four tools.",
+                        "Answer with exactly one of your tools.",
                     },
                 ]
                 continue

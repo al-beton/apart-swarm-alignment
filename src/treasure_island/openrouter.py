@@ -1,6 +1,6 @@
 """OpenRouter's chat completions, as a backend: `openrouter/<model id>`.
 
-One request asks the model for one of the four tools. Its tool call comes back in
+One request asks the model for one of the pirate's tools. Its tool call comes back in
 the one reply form the LLM brain reads, `{"tool": ..., "arguments": {...}}`, with
 `"thinking"` when thinking is on. A reply with no tool call is passed on as its
 text, so the brain records why it's refused and asks once more. The cost is the

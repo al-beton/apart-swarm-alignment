@@ -93,7 +93,7 @@ def test_openrouter_backend_a_tool_call_comes_back_in_the_one_reply_form(
     assert json.loads(text)["thinking"] == "The square to the east is unchecked."
 
 
-def test_openrouter_backend_asks_with_the_four_tools_and_the_key(offline, monkeypatch):
+def test_openrouter_backend_asks_with_every_tool_and_the_key(offline, monkeypatch):
     fake = answering(monkeypatch)
     ask()
     ask({**REQUEST, "thinking": True})

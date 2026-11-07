@@ -24,8 +24,8 @@ A square is 48x48, so a 10x10 board is 480px at real size. Scale by whole number
 | `treasure/mark-question.png`, `mark-x.png` | 48x48 | The marks on the treasure square: `?` from the start, `X` once it's dug up. |
 | `treasure/cave.png`, `cave-2.png` | 48x48 | The treasure square once it's dug up: a cave the pirates go into. Alternate the two to make the gold glint. Draw it over `tiles/dug.png`. |
 | `ui/font.png` | 96x60 | Printable ASCII from space, 16 across, in 6x10 cells. |
-| `ui/bubble.png` | 24x24 | Speech bubble nine-slice, with 8px cells. |
-| `ui/bubble-tail.png` | 12x8 | Goes under the bubble, pointing at the speaker. |
+| `ui/note.png` | 24x24 | Scroll note nine-slice, with 8px cells: parchment rolled at the top and bottom, for a pirate writing. |
+| `ui/quill.png` | 12x16 | The quill, writing at the note's bottom right. |
 | `ui/panel.png` | 36x36 | Side panel and log frame nine-slice, with 12px cells. |
 | `ui/turn-arrow.png` | 16x12 | Floats above the pirate whose turn it is. |
 | `sheet.png` | 1024x1104 | All of the above on one page. |
@@ -37,16 +37,16 @@ Loop frames 0, 1, 0, 2 of a row. `dig` and `cheer` have two frames each, in colu
 
 ## Drawing from Python
 
-For a colour or label the PNGs don't have, or a bubble that fits its text:
+For a colour or label the PNGs don't have, or a note that fits its text:
 
 ```python
 from assets.pirates import pirate, portrait
-from assets.ui import panel, speech_bubble
+from assets.ui import panel, scroll_note
 from assets.font import draw_text
 
 pirate(5, "#2f6fc0", "12", "right", 1)  # personality, any RGB, label, pose, frame
 portrait(5, "#2f6fc0", "12")  # 96x64 head for the side panel
-speech_bubble("I'll search row 1.")  # sized to its text, tail included
+scroll_note("I'll search row 1.")  # sized to its text, quill included
 panel(200, 288)  # any size of at least 24x24
 ```
 

@@ -50,7 +50,7 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 - **actions:** (decided) The actions are move in one of 4 directions, dig, write on the scroll and read the scroll; digging and searching a square are the same action.
 - **one-action-per-turn:** (decided) A turn is exactly one action, so writing a note costs a turn that could have been a move or a dig.
 - **agent-memory:** (decided) An agent keeps its own earlier turns in context, because without them it can't follow a plan.
-- **thinking:** (decided) Private internal thinking is an optional setting, recorded for us and invisible to other agents.
+- **thinking:** (decided) Private internal thinking is an optional setting, off by default, recorded for us and invisible to other agents.
 
 ## The log
 
@@ -87,7 +87,7 @@ The pirates' log is a scroll: nothing of it is shown for free, and writing on it
 - **toggles:** (decided) Terrain, agent count and the exploit can each be changed or switched off in a run's config; the scroll has no length to set, since nothing on it is shown for free.
 - **prompt-variants:** (open) System prompt variants to compare are: act within the rules, a reputation score, a reward for honesty, and simulation awareness.
 - **sudoku-last:** (decided) The Sudoku time from Something to Lose is tried last, once the rest works.
-- **model-backends:** (decided) Model backends are pluggable; which models we run is not yet chosen, and no LLM pirate is wired in until the deterministic stack works.
+- **model-backends:** (decided) Model backends are pluggable, and a config names the model each pirate plays with; which models we run is not yet chosen.
 - **parked-ideas:** (open) Token budgets agents can trade, closed channels, an orchestrator role and a between-sessions swarm manager are out unless Al brings them back.
 
 ## The viewer

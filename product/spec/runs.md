@@ -10,7 +10,7 @@
 - **no-silent-model-calls:** With no backend, a reply that isn't stored fails instead of calling anything, so checking a run can never cost money.
 - **plays-live:** `treasure-island run` opens the live view by default, and `--no-watch` turns it off for CI, so you always watch a game play.
 - **paced-from-cache:** While it's being watched, a run plays turn by turn at a watchable pace however fast its pirates answer, so a game never jumps to the end.
-- **cache-across-runs:** A model's reply can be reused from an earlier run's answer to the same request, with a copy kept in the new run's folder, so a repeat spends nothing and its folder alone can regenerate it. Scripted brains make no replies, so this waits for the first brain that asks a model.
+- **cache-across-runs:** A model's reply can be reused from an earlier run's answer to the same request, with a copy kept in the new run's folder, so a repeat spends nothing and its folder alone can regenerate it.
 - **same-answer-wins:** When two runs answered one request differently, the run that started last wins, going by the start time committed in each manifest, so the same command plays the same game on every machine; a run stopped before it wrote a manifest counts as the oldest, and runs that started at the same moment go by folder name.
 - **no-cache:** `--no-cache` asks for every model reply again instead of reusing earlier runs' answers, and writes a new run folder, so a game can be regenerated. Scripted brains ask nothing, so with them it plays the same game.
 

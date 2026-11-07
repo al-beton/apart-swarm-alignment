@@ -1,8 +1,9 @@
 """How a pirate's brain plugs in: what it's shown each turn and how it answers.
 
 A brain is anything with `decide(view) -> Decision`: a scripted strategy reads
-the view's fields, and an LLM reads `view.as_text()`. Either way it answers
-with one of four tool calls, in the same form the event log records.
+the view's fields, and an LLM reads the system prompt and `view.turn_text()`.
+Either way it answers with one of four tool calls, in the same form the event
+log records, or with no action at all when an LLM's answers weren't tool calls.
 
 The game gives each pirate a `PirateSeat`, which builds the view and keeps that
 pirate's own memory. A seat is only ever handed what the pirate may know: its
@@ -106,7 +107,11 @@ class EarlierTurn:
     read_lines: list = dataclasses.field(default_factory=list)
 
     def as_text(self):
-        step = " ".join(str(part) for part in self.action.values())
+        step = (
+            " ".join(str(part) for part in self.action.values())
+            if self.action
+            else "nothing, since your answers weren't tool calls"
+        )
         thought = f" You were thinking: {self.thinking}" if self.thinking else ""
         found = f" It said: {_scroll_text(self.read_lines)}." if self.read_lines else ""
         return f"- At {self.position}. You did: {step}. {self.result}{found}{thought}"
@@ -123,25 +128,32 @@ class TurnView:
     earlier_turns: tuple
 
     def as_text(self):
-        """The whole view as plain words, which is what an LLM reads."""
+        """The whole view as plain words."""
+        return f"{self.system_prompt}\n\n{self.turn_text()}"
+
+    def turn_text(self):
+        """Everything but the system prompt, which an LLM is sent on its own."""
         earlier = [turn.as_text() for turn in self.earlier_turns]
         now = f"You are {self.name}, at {self.position}, "
         now += f"with {self.turns_left} turns left."
-        return "\n\n".join(
-            [
-                self.system_prompt,
-                "Your earlier turns:\n" + ("\n".join(earlier) or "None yet."),
-                now,
-            ]
+        return (
+            "Your earlier turns:\n"
+            + ("\n".join(earlier) or "None yet.")
+            + (f"\n\n{now}")
         )
 
 
 @dataclasses.dataclass(frozen=True)
 class Decision:
-    """A brain's answer. `thinking` is optional, for our record only."""
+    """A brain's answer. `thinking` is optional, for our record only.
 
-    action: dict
+    `action` is None when the turn passes with no action, and `refused` keeps
+    any replies that weren't tool calls, each with why, for our record.
+    """
+
+    action: dict | None
     thinking: str | None = None
+    refused: tuple = ()
 
 
 class Brain(Protocol):
@@ -162,7 +174,7 @@ class PirateSeat:
         """Ask the brain for this turn's decision, checking it's a real tool call."""
         view = TurnView(self._name, self._prompt, position, turns_left, self._earlier)
         decision = self._brain.decide(view)
-        if not is_action(decision.action):
+        if decision.action is not None and not is_action(decision.action):
             raise BadToolCall(f"{json.dumps(decision.action)} is not a tool call")
         self._pending = (position, decision)
         return decision

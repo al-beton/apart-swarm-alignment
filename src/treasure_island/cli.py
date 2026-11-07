@@ -34,7 +34,8 @@ def _reporting_a_bad_config(play):
 
 def _run(args):
     def play(on_start=None, pace=0):
-        return saved_game.play_saved(args.config, args.seed, on_start, pace)
+        models = saved_game.Models(cache=not args.no_cache)
+        return saved_game.play_saved(args.config, args.seed, on_start, pace, models)
 
     if args.no_watch:
         return _reporting_a_bad_config(lambda: print(play()))

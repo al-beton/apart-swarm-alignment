@@ -13,6 +13,7 @@ from treasure_island.event_log import log_errors
 from treasure_island.game_loop import Game
 from treasure_island.llm import TOOL_DEFINITIONS, LLMPirate
 from treasure_island.runs import Replies
+from treasure_island.saved_game import Models
 from treasure_island.strategies import Sweeper, brains_for
 
 DIG = json.dumps({"tool": "dig", "arguments": {}})
@@ -200,7 +201,7 @@ def toml(tmp_path, monkeypatch):
 
 def test_plays_then_replays_a_whole_game_through_a_fake_backend(toml, tmp_path):
     model = FakeModel()
-    folder = saved_game.play_saved(toml, 4, backend=model)
+    folder = saved_game.play_saved(toml, 4, models=Models(model))
     assert model.requests
     assert log_errors(folder / "events.jsonl") == []
     assert (folder / "replies.jsonl").read_text().count("\n") == len(model.requests)
@@ -217,9 +218,9 @@ def test_plays_then_replays_with_no_backend_a_missing_reply_spends_nothing(toml)
 
 
 def test_cache_across_runs_a_second_llm_game_asks_the_model_nothing(toml):
-    first = saved_game.play_saved(toml, 4, backend=FakeModel())
+    first = saved_game.play_saved(toml, 4, models=Models(FakeModel()))
     model = FakeModel()
-    second = saved_game.play_saved(toml, 4, backend=model)
+    second = saved_game.play_saved(toml, 4, models=Models(model))
     assert model.requests == []
     assert (second / "events.jsonl").read_bytes() == (
         first / "events.jsonl"
@@ -228,9 +229,9 @@ def test_cache_across_runs_a_second_llm_game_asks_the_model_nothing(toml):
 
 
 def test_no_cache_an_llm_game_asks_the_model_again(toml):
-    saved_game.play_saved(toml, 4, backend=FakeModel())
+    saved_game.play_saved(toml, 4, models=Models(FakeModel()))
     model = FakeModel()
-    saved_game.play_saved(toml, 4, backend=model, cache=False)
+    saved_game.play_saved(toml, 4, models=Models(model, cache=False))
     assert model.requests
 
 

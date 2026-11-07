@@ -17,11 +17,11 @@
 |---|---|---|
 | `backend-interface` | `src/treasure_island/backends.py`, `src/treasure_island/runs.py` | `test_backend_interface_a_backend_gives_reply_text_and_its_cost` |
 | `no-model-yet` | `src/treasure_island/backends.py` | `test_no_model_yet_every_model_is_refused` |
-| `model-per-pirate` | not yet | — |
-| `one-request-per-turn` | not yet | — |
-| `reply-is-a-tool-call` | not yet | — |
-| `ask-once-more` | not yet | — |
-| `reply-cap` | not yet | — |
-| `plays-then-replays` | not yet | — |
+| `model-per-pirate` | `src/treasure_island/config.py`, `src/treasure_island/strategies.py` | `test_model_per_pirate_a_pirate_with_a_model_gets_the_llm_brain`, `test_model_per_pirate_the_model_is_saved_with_the_config`, `test_model_per_pirate_a_model_must_be_text` |
+| `one-request-per-turn` | `src/treasure_island/llm.py` | `test_one_request_per_turn_holds_only_the_prompt_the_turn_and_the_tools`, `test_one_request_per_turn_the_four_tools_are_function_definitions` |
+| `reply-is-a-tool-call` | `src/treasure_island/llm.py` | `test_reply_is_a_tool_call_becomes_the_action` |
+| `ask-once-more` | `src/treasure_island/llm.py`, `src/treasure_island/game_loop.py` | `test_ask_once_more_a_bad_reply_is_recorded_and_the_pirate_is_told_why`, `test_ask_once_more_every_kind_of_bad_reply_gets_a_reason`, `test_ask_once_more_a_second_bad_reply_passes_the_turn` |
+| `reply-cap` | `src/treasure_island/config.py`, `src/treasure_island/llm.py` | `test_reply_cap_defaults_to_300_tokens_and_a_config_can_set_it` |
+| `plays-then-replays` | `src/treasure_island/llm.py`, `src/treasure_island/saved_game.py` | `test_plays_then_replays_a_whole_game_through_a_fake_backend`, `test_plays_then_replays_with_no_backend_a_missing_reply_spends_nothing` |
 | `free-runs-in-ci` | `configs/s-sweep.toml`, `configs/say-a-number.toml`, `.github/workflows/blocking-checks.yml` | `test_free_runs_in_ci_each_scripted_brain_plays_a_full_game` |
 | `committed-runs` | `runs/s-sweep-seed-7/**`, `runs/reference-s-sweep/**`, `runs/reference-say-a-number/**` | `test_committed_runs_pass_the_validator_and_replay_byte_identical` |

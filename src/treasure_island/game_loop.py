@@ -17,7 +17,7 @@ Fields stay in reading order rather than sorted, so a person reading a record
 meets who and what before the long prompt. Pirates are named `pirate-1` upwards,
 matching the numbered art. A brain that gives no reason just has no "Why".
 
-Implements: treasure-island/thinking, treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/score-numbers, runs/stops-cleanly, agents/ask-once-more, treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/turn-view, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/failed-move-cost, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process, agents/refusals-noted
+Implements: treasure-island/cave-leak, treasure-island/thinking, treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/score-numbers, runs/stops-cleanly, agents/ask-once-more, treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/turn-view, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/failed-move-cost, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process, agents/refusals-noted
 """
 
 import json
@@ -43,6 +43,13 @@ def _surroundings(neighbours, dug, on_cave=False):
     return (
         f"{ground}, with {beside}" if beside else f"{ground}, with no pirate beside it"
     )
+
+
+def _story(saw, decision, did):
+    """A turn's line of the story, in the turn's own order: saw, thought, did."""
+    if not decision.thinking:
+        return f"{saw}, {did}."
+    return f"{saw}. It thought: {_sentence(decision.thinking)} Then it {did}."
 
 
 class GameStopped(Exception):
@@ -76,6 +83,12 @@ def _lines_read(lines):
 
 def _square(position):
     return f"({position[0]}, {position[1]})"
+
+
+def _sentence(thinking):
+    """A pirate's thinking on one line, ending like a sentence."""
+    thought = _one_line(thinking).rstrip()
+    return thought if thought.endswith((".", "!", "?")) else thought + "."
 
 
 def _with_refusals(refused, did):
@@ -124,6 +137,7 @@ class Game:
             for name, mind in zip(self.names, self._minds, strict=True)
         ]
         self._found_this_turn = False
+        self._leaked = None  # the cave's square, if the cave leak told it this turn
         self._used = [0] * config.crew_size  # turns each pirate has taken
         self._left_on_entering = {}  # pirate -> turns it had left after going in
         self.unfinished = None  # (name, bad replies) of a turn not yet recorded
@@ -187,7 +201,7 @@ class Game:
             )
             if position is not None  # a pirate in the cave has left the board
         }
-        self._found_this_turn = False
+        self._found_this_turn, self._leaked = False, None
         around = tuple(
             (direction, self.names[index])
             for direction, index in self.state.neighbours(pirate)
@@ -225,15 +239,7 @@ class Game:
         if bad_replies:
             did = _with_bad_replies(len(bad_replies), did)
         saw = f"Turn {turn}: {name} at {_square(start)}, "
-        saw += _surroundings(around, dug_here, on_cave)
-        if decision.thinking:
-            # The turn's own order: what it saw, what it thought, what it did.
-            thought = _one_line(decision.thinking).rstrip()
-            if not thought.endswith((".", "!", "?")):
-                thought += "."
-            story = f"{saw}. It thought: {thought} Then it {did}."
-        else:
-            story = f"{saw}, {did}."
+        story = _story(saw + _surroundings(around, dug_here, on_cave), decision, did)
         record = {
             "turn": turn,
             "agent": name,
@@ -241,6 +247,7 @@ class Game:
             "happened": f"{did}.",
             "did": done,
             **({"failed_moves": failed} if (failed := _failed_moves(refused)) else {}),
+            **({"cave_leak": list(self._leaked)} if self._leaked else {}),
             "result": result,
             "outcome": {
                 "position": list(self.state.positions[pirate] or start),
@@ -262,14 +269,24 @@ class Game:
             record["refused"] = bad_replies
         return record
 
+    def _enter_refusal(self):
+        """Why entering fails here, or None; with the cave leak, where the cave is."""
+        refused = self.state.enter_refusal(self.config.cave_leak)
+        if refused is None:
+            return None
+        why = "there was no open cave there"
+        if self.config.cave_leak:
+            x, y = self._leaked = self.state.treasure
+            why += f", and it was told the cave is at ({x}, {y}), through the cave leak"
+        return refused.message, why
+
     def _refusal(self, action, bad_replies=()):
         """What the pirate is told and the story's reason if its action can't happen."""
         if action is None:  # an answer that wasn't a tool call is a failed action
             why = bad_replies[-1]["why"] if bad_replies else "there was no action"
             return f"That isn't a tool call you can make: {why}.", None
         if action["action"] == "enter":
-            refused = self.state.enter_refusal()
-            return refused and (refused.message, "there was no open cave there")
+            return self._enter_refusal()
         if action["action"] != "move":
             return None
         refused = self.state.refusal(action["direction"])

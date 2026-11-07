@@ -1,5 +1,6 @@
 {
   "brain": "silent",
+  "cave_leak": false,
   "crew_size": 2,
   "failed_tries": 2,
   "grid_size": 3,
@@ -26,7 +27,10 @@
     }
   ],
   "reply_tokens": 300,
+  "score_in_cave": 100,
+  "score_per_turn_left": 10,
   "seed": 2,
   "thinking": false,
+  "thinking_tokens": 1024,
   "turns_per_pirate": 4
 }

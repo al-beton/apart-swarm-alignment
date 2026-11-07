@@ -10,7 +10,7 @@ thought inside `reply_tokens`, which caps each reply. `score_in_cave` and
 default, Al to confirm.
 `parse_config` reports every problem at once, so one fix-and-retry is enough.
 
-Implements: agents/reasoning-looked-up, treasure-island/model-reasoning, treasure-island/score-numbers, treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config, treasure-island/silent
+Implements: agents/reasoning-looked-up, treasure-island/model-reasoning, treasure-island/score-numbers, treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config, treasure-island/silent, treasure-island/cave-leak, treasure-island/exploit-flags
 """
 
 import colorsys
@@ -31,6 +31,7 @@ DEFAULTS = {
     "reply_tokens": 300,
     "score_in_cave": 100,
     "score_per_turn_left": 10,
+    "cave_leak": False,  # an exploit flag, off unless a run asks for it
 }
 # The smallest value each whole-number field may take. Seeds can be any whole number.
 _MINIMUMS = {
@@ -72,6 +73,7 @@ class GameConfig:
     reply_tokens: int
     score_in_cave: int
     score_per_turn_left: int
+    cave_leak: bool
     pirates: tuple[Pirate, ...]
 
 
@@ -144,8 +146,9 @@ def _number_errors(data):
         errors.append("seed must be a whole number")
     if not isinstance(data.get("brain", DEFAULTS["brain"]), str):
         errors.append("brain must be the name of a brain")
-    if not isinstance(data.get("thinking", False), bool):
-        errors.append("thinking must be true or false")
+    for flag in ("thinking", "cave_leak"):
+        if not isinstance(data.get(flag, False), bool):
+            errors.append(f"{flag} must be true or false")
     return errors
 
 

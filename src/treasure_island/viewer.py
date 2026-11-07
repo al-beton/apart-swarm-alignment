@@ -19,7 +19,12 @@ The side panel is the art's parchment with the acting pirate's portrait, what it
 in plain words and a trail of its recent thoughts, all wrapped to fit: a reader should
 be able to follow the game from the frames alone.
 
-Implements: viewer/cave-drawn, treasure-island/cave, viewer/turn-marked, viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, treasure-island/pokemon-style, viewer/slideshow-file, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process
+A pirate that moves walks there: its turn gets `WALK_FRAMES` frames, steps 1 to
+`WALK_FRAMES`, with the pirate a step further along each, and the last step is the
+turn's own frame. `walk_steps` says which steps a turn has, and the GIF and the page
+both draw exactly those.
+
+Implements: viewer/cave-drawn, treasure-island/cave, viewer/turn-marked, viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/walks-between-squares, treasure-island/pokemon-style, viewer/slideshow-file, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process
 """
 
 import base64
@@ -71,6 +76,8 @@ STRIP = 24 + (STRIP_ROWS + 1) * LINE + 4  # the parchment's edges, a heading and
 _STRIP_LEFT = 14
 _CAPTION_ROWS = 2  # the least a caption keeps room for
 FRAME_MS = 600
+WALK_FRAMES = 4  # frames a move takes, its landing included (default, Al to confirm)
+WALK_MS = 120  # how long each in-between frame shows
 _PLACES_THE_TREASURE = ("grid_size", "crew_size", "seed")
 
 
@@ -232,8 +239,37 @@ def _mark(records, treasure, found):
     return ("mark-question", tuple(known)) if known else None
 
 
-def scene(records, turn, size, treasure=None):
-    """What the frame for `turn` shows, from the records up to and including it."""
+def _walk(record):
+    """Where a turn's pirate walked from and to, or None if it stayed put."""
+    start, end = record["saw"]["position"], record["outcome"]["position"]
+    moved = any(action["action"] == "move" for action in record["did"])
+    return (start, end) if moved and list(start) != list(end) else None
+
+
+def walk_steps(records, turn):
+    """The steps a turn is drawn in: 1 to WALK_FRAMES for a move, else [None]."""
+    if _walk(records[turn]):
+        return list(range(1, WALK_FRAMES + 1))
+    return [None]
+
+
+def _walking(shown, record, step):
+    """Put the turn's pirate `step` of the way along its walk, on its walking feet."""
+    (sx, sy), (ex, ey) = _walk(record)
+    part = step / WALK_FRAMES
+    agent = record["agent"]
+    shown["positions"][agent] = [sx + (ex - sx) * part, sy + (ey - sy) * part]
+    pose, feet = shown["poses"][agent]
+    # Feet alternate frame by frame and land on the turn's own.
+    shown["poses"][agent] = (pose, feet if (WALK_FRAMES - step) % 2 == 0 else 3 - feet)
+    return shown
+
+
+def scene(records, turn, size, treasure=None, step=None):
+    """What the frame for `turn` shows, from the records up to and including it.
+
+    `step`, one of `walk_steps`, is how far along its walk a moving pirate is drawn.
+    """
     positions = dict(records[turn].get("crew", {}))
     for record in records:
         positions.setdefault(record["agent"], record["saw"]["position"])
@@ -249,7 +285,7 @@ def scene(records, turn, size, treasure=None):
             inside.append(record["agent"])
     current = records[turn]
     going = current["agent"] if current["outcome"].get("in_cave") else None
-    return {
+    shown = {
         "size": size,
         "turn": turn,
         "positions": positions,
@@ -266,6 +302,9 @@ def scene(records, turn, size, treasure=None):
         "inside": inside,
         "going_in": going,
     }
+    if step is not None and step < WALK_FRAMES and _walk(current):
+        return _walking(shown, current, step)
+    return shown
 
 
 @cache
@@ -340,7 +379,8 @@ def _label(look, pose, frame):
 def _placed(shown):
     """Each pirate and where it stands, whoever's acting last so it's drawn on top."""
     placed = [
-        (agent, (x * TILE, y * TILE)) for agent, (x, y) in shown["positions"].items()
+        (agent, (round(x * TILE), round(y * TILE)))
+        for agent, (x, y) in shown["positions"].items()
     ]
     return sorted(placed, key=lambda spot: spot[0] == shown["acting"])
 
@@ -535,10 +575,11 @@ def _caption_image(story, width, height):
     return image
 
 
-def frame(records, turn, size, pirates=None, treasure=None):
+# One argument over the limit: `step` sits beside the others every caller already passes.
+def frame(records, turn, size, pirates=None, treasure=None, step=None):  # noqa: PLR0913
     """The image for one turn: ground, pirates, turn arrow, note, panel, caption, log."""
     pirates = pirates or _default_pirates(_crew_names(records))
-    shown = scene(records, turn, size, treasure)
+    shown = scene(records, turn, size, treasure, step)
     grid = max(size, 1) * TILE
     board = max(grid, PANEL_HEIGHT)
     width = grid + PANEL
@@ -568,31 +609,35 @@ def _png(image):
     return out.getvalue()
 
 
-def frame_png(folder, turn):
-    """The PNG the page serves for one turn, read fresh from the run folder."""
-    records = records_in(folder)
-    size = grid_size(folder, records)
-    pirates = pirates_in(folder, records)
-    return _png(frame(records, turn, size, pirates, treasure_in(folder, records)))
-
-
-def gif(folder):
-    """The whole run as GIF bytes, one frame per turn, from the same frames."""
+def frame_png(folder, turn, step=None):
+    """The PNG the page serves for one turn's step, read fresh from the run folder."""
     records = records_in(folder)
     size = grid_size(folder, records)
     pirates = pirates_in(folder, records)
     treasure = treasure_in(folder, records)
-    frames = [
-        Image.open(io.BytesIO(_png(frame(records, turn, size, pirates, treasure))))
-        for turn in range(len(records))
-    ]
+    return _png(frame(records, turn, size, pirates, treasure, step=step))
+
+
+def gif(folder):
+    """The whole run as GIF bytes, every turn in its steps, from the same frames."""
+    records = records_in(folder)
+    size = grid_size(folder, records)
+    pirates = pirates_in(folder, records)
+    treasure = treasure_in(folder, records)
+    frames, durations = [], []
+    for turn in range(len(records)):
+        for step in walk_steps(records, turn):
+            drawn = frame(records, turn, size, pirates, treasure, step=step)
+            frames.append(Image.open(io.BytesIO(_png(drawn))))
+            last = step is None or step == WALK_FRAMES
+            durations.append(FRAME_MS if last else WALK_MS)
     out = io.BytesIO()
     frames[0].save(
         out,
         format="GIF",
         save_all=True,
         append_images=frames[1:],
-        duration=FRAME_MS,
+        duration=durations,
         loop=0,
     )
     return out.getvalue()
@@ -675,12 +720,23 @@ img { image-rendering: pixelated; margin-top: 1em; }
 <img id="frame" alt="the current turn">
 <p>← → step through turns · End follows the game live</p>
 <script>
-let turns = 0, shown = -1, live = true;
+let turns = 0, shown = -1, live = true, walk = 0;
 const frame = document.getElementById("frame"), status = document.getElementById("status");
-function show(turn) {
+function draw(turn, step) {
+  const at = step ? "?step=" + step + "&t=" : "?t=";
+  frame.src = "/frame/" + turn + ".png" + at + Date.now();
+}
+async function show(turn) {
+  const forward = turn === shown + 1, mine = ++walk;
   shown = turn;
-  frame.src = "/frame/" + turn + ".png?t=" + Date.now();
   status.textContent = "Turn " + turn + " of " + turns + (live ? " (live)" : "");
+  // Stepping forward onto a move plays its walk; jumping anywhere else doesn't.
+  const steps = forward ? (await (await fetch("/steps/" + turn)).json()).steps : 1;
+  for (let step = 1; step < steps && mine === walk; step++) {
+    draw(turn, step);
+    await new Promise((done) => setTimeout(done, @WALK_MS@));
+  }
+  if (mine === walk) draw(turn, 0);
 }
 async function poll() {
   const reply = await fetch("/turns");
@@ -705,14 +761,23 @@ class _Handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         path = self.path.split("?")[0]
+        query = self.path.partition("?")[2]
         if path == "/":
-            self._reply("text/html", PAGE.encode())
+            page = PAGE.replace("@WALK_MS@", str(WALK_MS))
+            self._reply("text/html", page.encode())
         elif path == "/turns":
             count = len(records_in(self.folder))
             self._reply("application/json", json.dumps({"turns": count}).encode())
         elif path.startswith("/frame/") and path.endswith(".png"):
             turn = int(path[len("/frame/") : -len(".png")])
-            self._reply("image/png", frame_png(self.folder, turn))
+            asked = dict(part.partition("=")[::2] for part in query.split("&") if part)
+            step = int(asked["step"]) if asked.get("step", "0") != "0" else None
+            self._reply("image/png", frame_png(self.folder, turn, step))
+        elif path.startswith("/steps/"):
+            steps = len(
+                walk_steps(records_in(self.folder), int(path[len("/steps/") :]))
+            )
+            self._reply("application/json", json.dumps({"steps": steps}).encode())
         else:
             self.send_error(404)
 

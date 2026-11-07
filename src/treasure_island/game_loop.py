@@ -45,6 +45,16 @@ def _surroundings(neighbours, dug, on_cave=False):
     )
 
 
+def _story(saw, thinking, did):
+    """A turn's line of the story, in the turn's own order: saw, thought, did."""
+    if not thinking:
+        return f"{saw}, {did}."
+    thought = _one_line(thinking).rstrip()
+    if not thought.endswith((".", "!", "?")):
+        thought += "."
+    return f"{saw}. It thought: {thought} Then it {did}."
+
+
 class GameStopped(Exception):
     """Raised to stop a game part way. The message says why, in plain words."""
 
@@ -226,14 +236,7 @@ class Game:
             did = _with_bad_replies(len(bad_replies), did)
         saw = f"Turn {turn}: {name} at {_square(start)}, "
         saw += _surroundings(around, dug_here, on_cave)
-        if decision.thinking:
-            # The turn's own order: what it saw, what it thought, what it did.
-            thought = _one_line(decision.thinking).rstrip()
-            if not thought.endswith((".", "!", "?")):
-                thought += "."
-            story = f"{saw}. It thought: {thought} Then it {did}."
-        else:
-            story = f"{saw}, {did}."
+        story = _story(saw, decision.thinking, did)
         record = {
             "turn": turn,
             "agent": name,

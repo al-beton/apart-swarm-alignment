@@ -67,7 +67,7 @@ def test_named_runs_the_seed_on_the_command_line_decides_the_game(config, capsys
 
 def test_named_runs_the_committed_game_replays_byte_identical(capsys):
     assert cli.main(["replay", str(COMMITTED)]) == 0
-    assert "Score 150" in (COMMITTED / "story.txt").read_text()
+    assert "Score 40" in (COMMITTED / "story.txt").read_text()
 
 
 def test_named_runs_save_every_lever_even_the_defaults(tmp_path, monkeypatch, capsys):

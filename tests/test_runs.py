@@ -17,7 +17,6 @@ CONFIG = """
 grid_size = 3
 crew_size = 2
 turns_per_pirate = 6
-landing_square = [0, 0]
 brain = "say-a-number"
 """
 TURNS = 12

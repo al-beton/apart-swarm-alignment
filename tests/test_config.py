@@ -19,7 +19,6 @@ def test_config_variables_a_file_sets_every_lever(tmp_path):
         grid_size = 8
         crew_size = 2
         turns_per_pirate = 12
-        landing_square = [3, 4]
         log_window = 5
         read_size = 2
         seed = 7
@@ -29,7 +28,6 @@ def test_config_variables_a_file_sets_every_lever(tmp_path):
     assert config.grid_size == 8
     assert config.crew_size == 2
     assert config.turns_per_pirate == 12
-    assert config.landing_square == (3, 4)
     assert config.log_window == 5
     assert config.read_size == 2
     assert config.seed == 7
@@ -51,12 +49,25 @@ def test_config_variables_a_seed_plays_the_same_config_again():
     assert parse_config({"seed": 3}) != parse_config({"seed": 4})
 
 
-def test_grid_and_crew_defaults_are_a_10x10_grid_and_6_pirates_on_one_square():
+def test_grid_and_crew_defaults_are_a_10x10_grid_and_6_pirates():
     config = parse_config({})
     assert config.grid_size == 10
     assert config.crew_size == 6
     assert len(config.pirates) == 6
-    assert config.landing_square == (0, 0)
+
+
+def test_grid_and_crew_a_config_cannot_choose_where_pirates_start():
+    with pytest.raises(ConfigError, match="landing_square is not a config setting"):
+        parse_config({"landing_square": [0, 0]})
+
+
+def test_grid_and_crew_a_crew_bigger_than_the_grid_is_rejected():
+    assert parse_config({"grid_size": 3, "crew_size": 9}).crew_size == 9
+    with pytest.raises(ConfigError, match="10 pirates can't each have a square"):
+        parse_config({"grid_size": 3, "crew_size": 10})
+    listed = {"grid_size": 1, "pirates": [{}, {}]}
+    with pytest.raises(ConfigError, match="2 pirates can't each have a square"):
+        parse_config(listed)
 
 
 def test_scarce_turns_defaults_to_30_turns_per_pirate():
@@ -128,10 +139,6 @@ def test_pirate_definition_a_partly_defined_pirate_keeps_the_other_defaults():
         ({"log_window": -1}, "log_window"),
         ({"read_size": 0}, "read_size"),
         ({"seed": "one"}, "seed"),
-        ({"landing_square": [1]}, "landing_square"),
-        ({"landing_square": 3}, "landing_square"),
-        ({"landing_square": [10, 0]}, "landing_square"),
-        ({"landing_square": [0, -1]}, "landing_square"),
         ({"grid_sizes": 10}, "grid_sizes"),
         ({"pirates": []}, "pirates"),
         ({"pirates": "anne"}, "pirates"),

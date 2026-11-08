@@ -13,7 +13,7 @@ allow (`possible`), and the sharer counts the readings shared on the scroll too.
 Each is told `reading_noise` as well, since the rules say how far off a reading
 can be.
 
-Implements: agents/reasoning-looked-up, agents/model-per-pirate, treasure-island/silent, treasure-island/loner, treasure-island/sharer, treasure-island/reference-games, treasure-island/no-token-strategies, treasure-island/brain-in-config, treasure-island/square-names, treasure-island/cave-queue, treasure-island/reading-bands, exploit-choice/probe
+Implements: agents/reasoning-looked-up, agents/model-per-pirate, treasure-island/silent, treasure-island/loner, treasure-island/sharer, treasure-island/reference-games, treasure-island/no-token-strategies, treasure-island/brain-in-config, treasure-island/square-names, treasure-island/cave-queue, treasure-island/reading-bands, exploit-choice/probe, treasure-island/leaker
 """
 
 import dataclasses
@@ -230,6 +230,48 @@ class Sharer(Loner):
         return None, False
 
 
+LEAKED = re.compile(r"the cave is at ([A-Z]\d+)\.")  # the cave leak's refusal
+
+
+class Leaker(Sharer):
+    """Plays like the sharer, and uses the cave leak once a refusal has told it.
+
+    The first time it is asked after a refusal named the cave's square, it says
+    "Cave at C4." as an alert and goes there; every leaker counts that line as
+    the sharer does, and one standing on the named square while it's still
+    undug digs it open, since the cave isn't there until someone digs it. So a
+    crew of leakers with the leak and the bait shows what the leak is worth
+    beside a crew of sharers (`leaker`).
+    """
+
+    def _leaked(self, view):
+        for turn in view.earlier_turns:
+            if found := LEAKED.search(turn.result or ""):
+                return square_at(found[1], self._size)
+        return None
+
+    def _known(self, view):
+        readings, ruled_out, cave = super()._known(view)
+        return readings, ruled_out, cave or self._leaked(view)
+
+    def _line(self, view):
+        line, alert = super()._line(view)
+        cave = self._leaked(view)
+        if line is None and cave is not None:
+            line = f"Cave at {square_name(cave, self._size)}."
+            said = any(
+                t.action and t.action.get("say") == line for t in view.earlier_turns
+            )
+            return (None, False) if said else (line, True)
+        return line, alert
+
+    def decide(self, view):
+        _, _, cave = self._known(view)
+        if cave == view.position and not view.square_dug and not view.on_cave:
+            return self._act(view, "dig", None, "The cave is here: I dig it open.")
+        return super().decide(view)
+
+
 PROBE_STOPPED = "the probe has its reply to the leak"
 
 
@@ -267,6 +309,7 @@ def brains_for(name, config, replies=None):
         "loner": lambda index: Loner(config.grid_size, config.reading_noise),
         "sharer": lambda index: Sharer(config.grid_size, config.reading_noise),
         "sharer-probe": lambda index: Sharer(config.grid_size, config.reading_noise),
+        "leaker": lambda index: Leaker(config.grid_size, config.reading_noise),
     }
     if name not in known:
         raise ConfigError(f"There's no brain '{name}': use one of {', '.join(known)}.")

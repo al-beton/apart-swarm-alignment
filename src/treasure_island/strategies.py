@@ -8,9 +8,15 @@ a model reads as text.
 
 `python -m treasure_island.strategies` remakes the committed reference games.
 
-Implements: agents/reasoning-looked-up, agents/model-per-pirate, treasure-island/silent, treasure-island/reference-games, treasure-island/no-token-strategies, treasure-island/brain-in-config, treasure-island/square-names
+The loner and the sharer also triangulate: each keeps the squares its readings
+allow (`possible`), and the sharer counts the readings said on the scroll too.
+Each is told `reading_noise` as well, since the rules say how far off a reading
+can be.
+
+Implements: agents/reasoning-looked-up, agents/model-per-pirate, treasure-island/silent, treasure-island/loner, treasure-island/sharer, treasure-island/reference-games, treasure-island/no-token-strategies, treasure-island/brain-in-config, treasure-island/square-names
 """
 
+import re
 from pathlib import Path
 
 from treasure_island.brain import Decision, tool_call
@@ -18,7 +24,7 @@ from treasure_island.config import ConfigError, load_config, save_config
 from treasure_island.game_loop import write_game
 from treasure_island.game_state import distance, first_step
 from treasure_island.llm import LLMPirate
-from treasure_island.squares import square_name
+from treasure_island.squares import square_at, square_name
 
 
 class Silent:
@@ -64,10 +70,159 @@ class Silent:
         return Decision(tool_call("wait"), "I've seen every square dug.")
 
 
+def allows(dug, away, square, noise=0):
+    """Whether a reading of `away` got at `dug` leaves the treasure on `square`.
+
+    A reading is the true distance off by up to `noise` either way but never
+    below 1, so a reading of 1 allows every square up to 1 + `noise` away. The
+    dug square itself never holds the treasure: digging it would have found it.
+    """
+    true = distance(dug, square)
+    if true == 0:
+        return False
+    if away <= 1:
+        return true <= 1 + noise
+    return abs(true - away) <= noise
+
+
+def possible(grid_size, noise, readings, ruled_out=()):
+    """Every square every (square, away) reading allows and isn't ruled out.
+
+    They come topmost first, then leftmost, which is how ties are broken.
+    """
+    ruled_out = set(ruled_out)
+    return [
+        (x, y)
+        for y in range(grid_size)
+        for x in range(grid_size)
+        if (x, y) not in ruled_out
+        and all(allows(dug, away, (x, y), noise) for dug, away in readings)
+    ]
+
+
+DUG_LINE = re.compile(r"Dug ([A-Z]\d+): (\d+) away\.")
+CAVE_LINE = re.compile(r"Cave at ([A-Z]\d+)\.")
+
+
+def said(lines, grid_size):
+    """What lines in the sharer's two forms say: readings, by whom, and the cave.
+
+    Returns ((square, away, by), ...) and the cave's square or None. Any other
+    line, or a square that isn't on the island, is passed over.
+    """
+    readings, cave = [], None
+    for line in lines:
+        if found := DUG_LINE.fullmatch(line["text"]):
+            square = square_at(found[1], grid_size)
+            if square is not None:
+                readings.append((square, int(found[2]), line["by"]))
+        elif (found := CAVE_LINE.fullmatch(line["text"])) and cave is None:
+            cave = square_at(found[1], grid_size)
+    return tuple(readings), cave
+
+
+class Loner(Silent):
+    """Triangulates from its own readings: goes for the nearest square they allow.
+
+    It digs its square when the readings allow it and it isn't dug, otherwise
+    goes to the nearest square they allow that it hasn't seen dug. It never says
+    anything and enters the cave once it stands on it.
+    """
+
+    def __init__(self, grid_size, noise=0):
+        super().__init__(grid_size)
+        self._noise = noise
+
+    def _known(self, view):
+        """The (square, away) readings it counts, the squares ruled out, the cave."""
+        readings = [(r.position, r.away) for r in view.readings if r.away is not None]
+        return readings, self._seen_dug(view), None
+
+    def _line(self, view):
+        """The line to say with this turn's action, and whether it's an alert."""
+        return None, False
+
+    def _act(self, view, name, arguments, why):
+        """A tool call with this turn's line, if there is one."""
+        line, alert = self._line(view)
+        if line:
+            arguments = {**(arguments or {}), "say": line, "alert": alert}
+        return Decision(tool_call(name, arguments), why)
+
+    def decide(self, view):
+        if view.on_cave:
+            return self._act(view, "enter", None, "This is the open cave, so I go in.")
+        readings, ruled_out, cave = self._known(view)
+        if cave is not None:
+            return self._head_for(view, [cave], "The cave is at {}, so I go there.")
+        keep = possible(self._size, self._noise, readings, ruled_out)
+        if not view.square_dug and view.position in keep:
+            return self._act(view, "dig", None, "The treasure could be right here.")
+        if not keep:  # only readings that disagree with the rules could leave none
+            keep = [square for square in self._squares if square not in ruled_out]
+        why = "The nearest square the readings allow is {}."
+        return self._head_for(view, keep, why)
+
+    def _head_for(self, view, targets, why):
+        """Go to the nearest target whose way is free, else step aside, else wait."""
+        here, blocked = view.position, dict(view.neighbours)
+        targets = sorted(
+            (target for target in targets if target != here),
+            key=lambda target: distance(here, target),
+        )
+        for target in targets:
+            if first_step(here, target) not in blocked:
+                where = square_name(target, self._size)
+                return self._act(view, "go_to", {"square": where}, why.format(where))
+        if targets and targets[0][0] != here[0] and targets[0][1] != here[1]:
+            # The row is blocked, so take the column's step first, if it's free.
+            aside = (here[0], here[1] + (1 if targets[0][1] > here[1] else -1))
+            if first_step(here, aside) not in blocked:
+                where = square_name(aside, self._size)
+                return self._act(
+                    view, "go_to", {"square": where}, "A pirate is in my way."
+                )
+        return self._act(view, "wait", None, "Pirates block my way, so I wait.")
+
+
+class Sharer(Loner):
+    """Plays like the loner, counting every reading said on the scroll as well.
+
+    After each dig it says the reading as "Dug C4: 5 away.", it never digs a
+    square said dug, it says "Cave at C4." as an alert when it dug up the cave
+    and goes in, and once it is shown where the cave is it goes there.
+    """
+
+    def _heard(self, view):
+        lines = [line for turn in view.earlier_turns for line in turn.shown]
+        return said([*lines, *view.new_lines], self._size)
+
+    def _known(self, view):
+        readings, ruled_out, _ = super()._known(view)
+        heard, cave = self._heard(view)
+        readings += [(square, away) for square, away, _ in heard]
+        ruled_out |= {square for square, _, _ in heard}
+        return readings, ruled_out, cave
+
+    def _line(self, view):
+        if view.on_cave and any(r.away is None for r in view.readings):
+            return f"Cave at {view.square}.", True
+        heard, _ = self._heard(view)
+        mine = {square for square, _, by in heard if by == view.name}
+        unsaid = [
+            r for r in view.readings if r.away is not None and r.position not in mine
+        ]
+        if unsaid:
+            return f"Dug {unsaid[-1].square}: {unsaid[-1].away} away.", False
+        return None, False
+
+
 def brains_for(name, config, replies=None):
     """One fresh brain per pirate: its model's, through `replies`, else `name`'s."""
     known = {
         "silent": lambda index: Silent(config.grid_size),
+        "loner": lambda index: Loner(config.grid_size, config.reading_noise),
+        "sharer": lambda index: Sharer(config.grid_size, config.reading_noise),
     }
     if name not in known:
         raise ConfigError(f"There's no brain '{name}': use one of {', '.join(known)}.")
@@ -80,7 +235,7 @@ def brains_for(name, config, replies=None):
     ]
 
 
-REFERENCE_GAMES = ("silent",)
+REFERENCE_GAMES = ("silent", "loner", "sharer")
 
 
 def write_reference(name, folder, root=Path()):

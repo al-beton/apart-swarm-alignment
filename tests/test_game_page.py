@@ -8,19 +8,18 @@ import subprocess
 from pathlib import Path
 
 import pytest
-import talking
 
 from treasure_island import cli, viewer
 
 ROOT = Path(__file__).resolve().parents[1]
-GAME = "runs/talking"  # a scripted game that says lines on the scroll
+GAME = "runs/reference-sharer"  # a scripted game that says lines on the scroll
 
 
 @pytest.fixture
 def saved(tmp_path, monkeypatch):
     """A copy of a committed game that writes, in a folder of its own."""
     monkeypatch.chdir(tmp_path)
-    talking.write(tmp_path / GAME)
+    shutil.copytree(ROOT / "runs/reference-sharer", tmp_path / GAME)
     return tmp_path / GAME
 
 

@@ -35,6 +35,8 @@ CHECKED = (
     "examples/noisy",
     "examples/silent",
     "examples/small-crew",
+    "runs/reference-loner",
+    "runs/reference-sharer",
     "runs/reference-silent",
     "runs/silent/7",
 )

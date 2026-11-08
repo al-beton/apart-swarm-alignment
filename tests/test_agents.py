@@ -43,7 +43,7 @@ def test_no_model_yet_every_model_is_refused():
         backend_for("some-provider/some-model")
 
 
-@pytest.mark.parametrize("name", ["silent", "noisy"])
+@pytest.mark.parametrize("name", ["silent", "noisy", "loner", "sharer"])
 def test_free_runs_in_ci_each_scripted_brain_plays_a_full_game(name, offline, capsys):
     config = ROOT / "configs" / f"{name}.toml"
     assert cli.main(["run", str(config), "--seed", "7", "--no-watch"]) == 0

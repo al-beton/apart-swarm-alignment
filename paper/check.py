@@ -65,13 +65,16 @@ def committed(root):
     return frozenset(filter(None, listed))
 
 
+# A number, signed when its minus follows a space, a bracket or the line's start,
+# but never part of a name like pirate-1 or A5.
+NUMBER = r"(?:(?<![^\s(])-|(?<![\w.-]))\d[\d,]*(?:\.\d+)?"
 # A number and its source comment, as a results section writes them.
 SOURCED = re.compile(
-    r"(?<![\w.-])(\d[\d,]*(?:\.\d+)?)(%?)\s*<!--\s*from\s+(\S+?):\s+(.*?)\s*-->",
+    rf"({NUMBER})(%?)\s*<!--\s*from\s+(\S+?):\s+(.*?)\s*-->",
     re.DOTALL,
 )
-# A number in prose: not part of a name like pirate-1 or A5.
-BARE = re.compile(r"(?<![\w.-])\d[\d,]*(?:\.\d+)?(?![\w-])")
+# A number in prose.
+BARE = re.compile(rf"{NUMBER}(?![\w-])")
 # What isn't prose: comments, code, and where links and images point.
 NOT_PROSE = re.compile(r"<!--.*?-->|```.*?```|`[^`]*`|\]\([^)]*\)", re.DOTALL)
 SOURCE_FILES = (".jsonl", ".json")

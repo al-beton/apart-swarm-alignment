@@ -8,6 +8,7 @@
   "crew_size": 4,
   "failed_tries": 2,
   "grid_size": 6,
+  "memory_full_turns": 2,
   "pirates": [
     {
       "colour": [

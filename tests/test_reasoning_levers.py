@@ -105,15 +105,29 @@ def test_reasoning_memory_must_be_a_whole_number_of_turns(turns):
         parse_config({"reasoning_memory_turns": turns})
 
 
+# Games committed before these levers existed: their configs must not change.
+EARLIER_GAMES = (
+    "examples/stripes",
+    "examples/llm-crew",
+    "runs/reference-scribe",
+    "runs/reference-silent",
+    "runs/reference-stripes",
+    "runs/silent-seed-7",
+    "runs/readme-walkthrough",
+)
+
+
 def test_stated_budget_and_reasoning_memory_left_out_save_nothing(tmp_path):
     save_config(parse_config({}), tmp_path / "config.json")
     saved = json.loads((tmp_path / "config.json").read_text())
     assert "stated_thinking_tokens" not in saved
     assert "reasoning_memory_turns" not in saved
-    for folder in ("examples", "runs", "results"):
-        for committed in (ROOT / folder).glob("**/config.json"):
-            assert "stated_thinking_tokens" not in committed.read_text(), committed
-            assert "reasoning_memory_turns" not in committed.read_text(), committed
+    for game in EARLIER_GAMES:
+        committed = json.loads((ROOT / game / "config.json").read_text())
+        resaved = tmp_path / game.replace("/", "-")
+        save_config(parse_config(committed), resaved)
+        assert "stated_thinking_tokens" not in resaved.read_text(), game
+        assert "reasoning_memory_turns" not in resaved.read_text(), game
 
 
 def test_stated_budget_and_reasoning_memory_set_are_saved_and_read_back(tmp_path):

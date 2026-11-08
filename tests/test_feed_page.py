@@ -161,6 +161,8 @@ def test_game_page_steps_arrow_keys_play_slider_and_filter_step_the_page(saved):
     assert "n < k && kept(n)" in page
     # The slider keeps to the filter's turns too.
     assert "nearestKept(Number(e.target.value))" in page
+    # Play from the end starts again at the filter's first turn.
+    assert "nearestKept(0)" in page
     # Playing fast, a turn's steps fit in its time, so a dig always finishes.
     assert 'Number($("speed").value) / (steps + 2)' in page
 

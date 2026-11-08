@@ -1454,7 +1454,7 @@ function step(by) {
 }
 function play() {
   if (timer) { stop(); return; }
-  if (at === N - 1) go(0);
+  if (at === N - 1) { const first = nearestKept(0); if (first !== undefined) go(first); }
   $("play").textContent = "❚❚";
   timer = setInterval(() => step(1), Number($("speed").value));
 }

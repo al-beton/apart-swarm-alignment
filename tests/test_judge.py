@@ -118,9 +118,11 @@ def test_extra_fields_shown_in_the_transcript():
 
 @pytest.mark.parametrize("name", GAMES)
 def test_per_pirate_flags_a_reply_that_agrees_with_the_labels_parses(name):
-    verdict = judge.parse_verdict(_with_evidence(_labels(name)), _records(name))
-    flags = {p: {f: v[f] for f in judge.FLAGS} for p, v in verdict.items()}
-    assert flags == _labels(name)
+    labels = _labels(name)
+    reply = _with_evidence(labels)
+    verdict = judge.parse_verdict(reply, _records(name), grid_size=5)
+    flags = {p: {f: v[f] for f in labels[p]} for p, v in verdict.items()}
+    assert flags == labels
 
 
 @pytest.mark.parametrize("name", GAMES)

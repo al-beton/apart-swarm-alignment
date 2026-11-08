@@ -24,7 +24,7 @@ A pirate that moves walks there: its turn gets `WALK_FRAMES` frames, steps 1 to
 turn's own frame. `walk_steps` says which steps a turn has, and the GIF and the page
 both draw exactly those.
 
-Implements: viewer/cave-drawn, treasure-island/cave, viewer/turn-marked, viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/walks-between-squares, treasure-island/pokemon-style, viewer/slideshow-file, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process, treasure-island/square-names
+Implements: viewer/cave-drawn, treasure-island/cave, viewer/turn-marked, viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/walks-between-squares, treasure-island/pokemon-style, viewer/slideshow-file, viewer/game-page, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process, treasure-island/square-names
 """
 
 import base64
@@ -679,14 +679,41 @@ def render(folder, out=None):
     return out
 
 
+def _scroll_writes(records):
+    """The lines each turn added to the scroll, numbered as the scroll numbers them."""
+    line, writes = 0, []
+    for record in records:
+        wrote = []
+        for action in record.get("did", []):
+            if action.get("action") == "write":
+                line += 1
+                wrote.append(
+                    {"line": line, "by": record["agent"], "text": action["text"]}
+                )
+        writes.append(wrote)
+    return writes
+
+
 def slideshow_page(folder):
-    """One HTML file holding every turn's frame and story, as text."""
+    """The game page: every turn's frame and whole record, as one HTML file's text."""
+    records = records_in(folder)
     turns = [
         {
             "frame": base64.b64encode(frame_png(folder, number)).decode(),
             "story": record.get("story", ""),
+            "turn": record.get("turn", number),
+            "agent": record["agent"],
+            "happened": record.get("happened", ""),
+            "prompt": record.get("saw", {}).get("prompt", ""),
+            "thinking": record.get("thinking") or "",
+            "refused": record.get("refused", []),
+            "did": record.get("did", []),
+            "result": record.get("result", ""),
+            "wrote": wrote,
         }
-        for number, record in enumerate(records_in(folder))
+        for number, (record, wrote) in enumerate(
+            zip(records, _scroll_writes(records), strict=True)
+        )
     ]
     # No raw "<" in the data, which is still the same JSON, so a note can't close the
     # script it's held in or stop it closing. Escaping "</" alone misses "<!-- <script>".
@@ -695,43 +722,151 @@ def slideshow_page(folder):
 
 
 def slideshow(folder, out=None):
-    """Write the slideshow next to the run's folder (or to `out`); return the path."""
+    """Write the game page next to the run's folder (or to `out`); return the path."""
     out = Path(out) if out else Path(folder).with_suffix(".html")
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(slideshow_page(folder), encoding="utf-8")
     return out
 
 
+# Every word from the game goes in with textContent, never as markup.
 SLIDESHOW = """<!doctype html>
 <html><head><meta charset="utf-8"><title>Treasure Island</title>
 <style>
-body { background: #1a1a1a; color: #eee; font: 14px sans-serif; text-align: center; }
-img { image-rendering: pixelated; margin-top: 1em; max-width: 100%; }
-#story { max-width: 60em; margin: 1em auto; min-height: 3em; }
+body { background: #1a1a1a; color: #eee; font: 14px sans-serif; margin: 0 16px; }
+header { display: flex; gap: 1em; align-items: baseline; flex-wrap: wrap; }
+h1 { font-size: 18px; } h2 { font-size: 16px; margin: 0 0 .5em; }
+h3 { font-size: 12px; text-transform: uppercase; color: #aaa; margin: 1em 0 .3em; }
+.page { display: grid; grid-template-columns: auto minmax(0, 2fr) minmax(0, 1fr);
+  gap: 16px; align-items: start; }
+.page > section { min-width: 0; }
+@media (max-width: 1100px) { .page { grid-template-columns: minmax(0, 1fr); } }
+img { image-rendering: pixelated; max-width: 100%; display: block; }
+pre, #story, #scroll li { white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; }
+pre { font: 13px/1.45 ui-monospace, Menlo, monospace; background: #222;
+  padding: .6em; border-radius: 4px; }
+.thinking { color: #9a9a9a; font-style: italic; }
+.refused { color: #e0a060; }
+.empty { color: #777; }
+details summary { cursor: pointer; color: #aaa; }
+#prompt { max-height: 40em; overflow: auto; }
+#turns { position: relative; list-style: none; padding: 0; max-height: 18em; overflow: auto; margin: .5em 0; }
+#turns button { all: unset; display: block; width: 100%; cursor: pointer;
+  padding: 2px 4px; overflow-wrap: anywhere; }
+#turns button.now { background: #3a3a5a; }
+#turns button:hover { background: #2c2c2c; }
+#scroll { padding-left: 0; list-style: none; max-height: 40em; overflow: auto; }
+#scroll li { padding: 2px 0; border-bottom: 1px solid #2a2a2a; }
 </style></head>
 <body>
-<p id="status"></p>
-<img id="frame" alt="the current turn">
+<header>
+<h1>Treasure Island</h1>
+<span id="status"></span>
+<label>Show <select id="pirate"><option value="">every pirate</option></select></label>
+<span class="empty">← → step through turns · Home and End jump to the first and last</span>
+</header>
+<main class="page">
+<section>
+<img id="frame" alt="the board on the current turn">
 <p id="story"></p>
-<p>← → step through turns · Home and End jump to the first and the last</p>
+<ol id="turns"></ol>
+</section>
+<section id="record">
+<h2 id="who"></h2>
+<details><summary id="shown">What it was shown</summary><pre id="prompt"></pre></details>
+<h3>Its thinking</h3><pre id="thinking" class="thinking"></pre>
+<div id="refused"></div>
+<h3>What it did</h3><pre id="did"></pre>
+<h3>The result</h3><pre id="result"></pre>
+</section>
+<section>
+<h3>The scroll so far</h3>
+<ol id="scroll"></ol>
+</section>
+</main>
 <script>
 const TURNS = @TURNS@;
-const frame = document.getElementById("frame");
-const story = document.getElementById("story");
-const status = document.getElementById("status");
-let shown = 0;
-function show(turn) {
-  shown = Math.max(0, Math.min(turn, TURNS.length - 1));
-  frame.src = "data:image/png;base64," + TURNS[shown].frame;
-  story.textContent = TURNS[shown].story;
-  status.textContent = "Turn " + shown + " (" + (shown + 1) + " of " + TURNS.length + ")";
+const $ = (id) => document.getElementById(id);
+const filter = $("pirate"), list = $("turns");
+let shown = 0, visible = [];
+function text(id, words, none) {
+  $(id).textContent = words || none;
+  $(id).classList.toggle("empty", !words);
 }
-document.addEventListener("keydown", (key) => {
-  if (key.key === "ArrowLeft") show(shown - 1);
-  if (key.key === "ArrowRight") show(shown + 1);
-  if (key.key === "Home") show(0);
-  if (key.key === "End") show(TURNS.length - 1);
+function call(action) {
+  const { action: name, ...rest } = action;
+  return Object.keys(rest).length ? name + " " + JSON.stringify(rest) : name;
+}
+for (const name of [...new Set(TURNS.map((t) => t.agent))]) {
+  const option = document.createElement("option");
+  option.value = option.textContent = name;
+  filter.appendChild(option);
+}
+function listTurns() {
+  visible = TURNS.map((t, i) => i).filter((i) => !filter.value || TURNS[i].agent === filter.value);
+  list.replaceChildren(...visible.map((i) => {
+    const item = document.createElement("li"), button = document.createElement("button");
+    button.dataset.turn = i;
+    button.textContent = "Turn " + TURNS[i].turn + " · " + TURNS[i].agent + " · " + TURNS[i].happened;
+    item.appendChild(button);
+    return item;
+  }));
+}
+function show(turn) {
+  shown = turn;
+  const t = TURNS[turn];
+  $("frame").src = "data:image/png;base64," + t.frame;
+  $("story").textContent = t.story;
+  $("status").textContent = "Turn " + t.turn + " (" + (turn + 1) + " of " + TURNS.length + ")";
+  $("who").textContent = "Turn " + t.turn + ": " + t.agent;
+  $("shown").textContent = "What it was shown (" + t.prompt.length + " characters)";
+  text("prompt", t.prompt, "No prompt recorded: a scripted pirate reads no words.");
+  text("thinking", t.thinking, "No thinking recorded.");
+  $("refused").replaceChildren(...t.refused.map((bad) => {
+    const line = document.createElement("pre");
+    line.className = "refused";
+    line.textContent = "A reply that wasn't a tool call: " + bad.reply + "\\n(" + bad.why + ")";
+    return line;
+  }));
+  text("did", t.did.map(call).join("\\n"), "Nothing: the turn passed.");
+  text("result", t.result, "No result recorded.");
+  $("scroll").replaceChildren(...TURNS.slice(0, turn + 1).flatMap((each) => each.wrote).map((w) => {
+    const line = document.createElement("li");
+    line.textContent = w.line + " " + w.by + ": " + w.text;
+    return line;
+  }));
+  $("scroll").scrollTop = $("scroll").scrollHeight;  // the newest line in view
+  for (const button of list.querySelectorAll("button")) {
+    const now = Number(button.dataset.turn) === turn;
+    button.classList.toggle("now", now);
+    // Scroll the list alone, never the page, so the board stays where it is.
+    const top = button.offsetTop, bottom = top + button.offsetHeight;
+    if (now && (top < list.scrollTop || bottom > list.scrollTop + list.clientHeight)) {
+      list.scrollTop = top - list.clientHeight / 2;
+    }
+  }
+}
+function step(by) {
+  const at = visible.indexOf(shown);
+  const next = at < 0 ? visible.find((i) => i > shown) ?? visible.at(-1) : visible[at + by];
+  if (next !== undefined) show(next);
+}
+list.addEventListener("click", (click) => {
+  const button = click.target.closest("button");
+  if (button) show(Number(button.dataset.turn));
 });
+filter.addEventListener("change", () => {
+  listTurns();
+  if (!visible.includes(shown) && visible.length) step(1); else show(shown);
+});
+document.addEventListener("keydown", (key) => {
+  if (key.target === filter) return;
+  if (key.key === "ArrowLeft") step(-1);
+  if (key.key === "ArrowRight") step(1);
+  if (key.key === "Home" && visible.length) show(visible[0]);
+  if (key.key === "End" && visible.length) show(visible.at(-1));
+});
+listTurns();
 show(0);
 </script>
 </body></html>

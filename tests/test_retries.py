@@ -106,6 +106,17 @@ def test_retries_dropped_calls_a_5xx_is_retried_but_a_4xx_is_not(toml, waits):
         play(toml, Flaky(refused))
 
 
+def test_retries_dropped_calls_a_stream_the_server_closes_part_way_is_retried():
+    # httpx's own error when Adaption closes a streamed reply before its end.
+    import httpx
+
+    closed = httpx.RemoteProtocolError(
+        "peer closed connection without sending complete message body"
+    )
+    assert retries.dropped(closed)
+    assert retries.dropped(httpx.ReadTimeout("slow"))
+
+
 def test_retries_dropped_calls_only_the_last_failure_stops_the_run(toml, waits):
     backend = Flaky(*[dns() for _ in range(5)])
     folder, story = play(toml, backend)

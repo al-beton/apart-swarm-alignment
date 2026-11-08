@@ -1,7 +1,7 @@
 """Model calls that drop are tried again, with backoff, before a live run gives up.
 
 A dropped connection, a DNS failure, a timeout, a reply cut off part way
-(`http.client.IncompleteRead` and the like) or a 5xx answer is the network's
+(`http.client.IncompleteRead`, a stream the server closes and the like) or a 5xx answer is the network's
 fault, not the model's, so `Retrying` tries the call again after `WAITS` seconds,
 5 tries over about a minute (default, Al to confirm). Anything else, a 4xx answer
 say, is raised at once. After the last try the game stops, saying how to resume:
@@ -21,8 +21,14 @@ from treasure_island.game_loop import GameStopped
 
 WAITS = (4, 8, 16, 32)  # seconds before each try after the first
 _sleep = time.sleep  # tests stand in for it, so they never wait
-# The SDKs' own names for a network failure, so no SDK is imported here.
-_DROPPED = {"APIConnectionError", "APITimeoutError", "InternalServerError"}
+# The SDKs' own names for a network failure, so no SDK is imported here; httpx's
+# `TransportError` covers a streamed reply the server closes part way.
+_DROPPED = {
+    "APIConnectionError",
+    "APITimeoutError",
+    "InternalServerError",
+    "TransportError",
+}
 
 
 def dropped(error):
@@ -33,7 +39,7 @@ def dropped(error):
     network = (urllib.error.URLError, TimeoutError, ConnectionError)
     if isinstance(error, (*network, http.client.HTTPException)):
         return True
-    if type(error).__name__ in _DROPPED:
+    if any(kind.__name__ in _DROPPED for kind in type(error).__mro__):
         return True
     return getattr(error, "status_code", 0) >= 500
 

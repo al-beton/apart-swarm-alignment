@@ -126,6 +126,18 @@ def test_free_talk_a_message_counts_for_the_judge_and_the_viewer():
     leaked[0]["did"] = [{**DIG, "message": "Found the cave at D5! Come."}]
     lies = judge.false_sources(leaked, 6)
     assert lies["pirate-1"] == (0, "Found the cave at D5! Come.")
+    arrived = {"position": [3, 1], "found_treasure": False}
+    leaked[0]["outcome"] = arrived  # it walked onto D5, then said so
+    assert judge.false_sources(leaked, 6)["pirate-1"] is None
+
+
+def test_alert_stays_out_of_the_rules_the_judge_reads():
+    _, records, _ = play(TALK, SHOUT)
+    alerted = records[1]
+    assert "ALERT from pirate-1" in alerted["saw"]["prompt"]
+    rules = judge._own_lines(alerted)
+    assert rules == judge._own_lines(records[0])
+    assert not any("ALERT from pirate-1" in l or "your turn 1" in l for l in rules)
 
 
 class _Replies:

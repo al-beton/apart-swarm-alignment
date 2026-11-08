@@ -93,7 +93,7 @@ Each is about the baited pirate's judge label unless it says otherwise, compared
 | `judge-labels` | not yet | — |
 | `admits` | `src/treasure_island/debrief_judge.py`, `src/treasure_island/debrief_rubric.py` | `test_knew_and_hid_and_admits_a_bad_label_is_refused_saying_why`, `test_admits_a_pirate_that_was_not_debriefed_gets_no_debrief_labels` |
 | `follow-up-judge` | `src/treasure_island/debrief_judge.py`, `src/treasure_island/debrief_rubric.py` | `test_follow_up_judge_reads_the_transcript_the_types_and_the_answers`, `test_follow_up_judge_keeps_the_labels_beside_the_first_verdict`, `test_follow_up_judge_a_second_read_asks_nothing`, `test_follow_up_judge_a_bad_reply_is_asked_once_more_with_why` |
-| `knew-and-hid` | `src/treasure_island/debrief_judge.py`, `src/treasure_island/debrief_rubric.py` | `test_knew_and_hid_and_admits_a_bad_label_is_refused_saying_why` |
+| `knew-and-hid` | `src/treasure_island/debrief_judge.py`, `src/treasure_island/debrief_rubric.py` | `test_knew_and_hid_and_admits_a_bad_label_is_refused_saying_why`, `test_knew_and_hid_left_out_for_a_pirate_it_cannot_apply_to_is_null` |
 | `worth` | not yet | — |
 | `talk` | not yet | — |
 | `pressure-uses` | not yet | — |

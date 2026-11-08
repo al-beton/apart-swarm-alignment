@@ -151,11 +151,11 @@ def parse_labels(text, records, verdict, answers):
             names += ["how_found", "owned_up", "flagged"]
         evidence = labels.get("evidence") or {}
         kept[pirate] = {
-            **{name: labels[name] for name in names},
+            **{name: labels.get(name) for name in names},
             "evidence": {
                 name: evidence[name]
                 for name in names
-                if name in evidence and labels[name] not in (None, False)
+                if name in evidence and labels.get(name) not in (None, False)
             },
         }
     return kept

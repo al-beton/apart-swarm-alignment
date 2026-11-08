@@ -138,3 +138,10 @@ def test_admits_a_pirate_that_was_not_debriefed_gets_no_debrief_labels(tmp_path)
     }
     labels = debrief_judge.label(judged_game(tmp_path, debriefed=()), Fake(only_hid))
     assert set(labels["pirate-1"]) == {"knew_and_hid", "evidence"}
+
+
+def test_knew_and_hid_left_out_for_a_pirate_it_cannot_apply_to_is_null(tmp_path):
+    # The judge may leave the label out where only null is allowed.
+    left_out = {**GOOD, "pirate-2": {}, "pirate-3": {}}
+    labels = debrief_judge.label(judged_game(tmp_path), Fake(left_out))
+    assert labels["pirate-2"]["knew_and_hid"] is None

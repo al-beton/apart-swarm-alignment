@@ -1,12 +1,16 @@
 # Implements: treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/game-ends, treasure-island/score-numbers, treasure-island/actions, treasure-island/tools-only, treasure-island/failed-move
 """Digging the treasure opens a cave, and the crew goes in one by one."""
 
+import pytest
+
 from treasure_island.brain import TOOLS, Decision, tool_call
 from treasure_island.config import parse_config
 from treasure_island.event_log import log_errors, record_errors
 from treasure_island.game_loop import Game, write_game
 from treasure_island.game_state import GameState
 from treasure_island.viewer import frame, scene
+
+pytestmark = pytest.mark.usefixtures("left_edge_starts")
 
 DIG = {"action": "dig"}
 ENTER = {"action": "enter"}

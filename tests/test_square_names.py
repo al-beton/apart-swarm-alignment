@@ -14,6 +14,8 @@ from treasure_island.game_state import GameState
 from treasure_island.squares import square_at, square_name
 from treasure_island.strategies import Sharer
 
+pytestmark = pytest.mark.usefixtures("left_edge_starts")
+
 # A square written the game's inside way, as "(x, y)", must never reach a pirate.
 COORDINATES = re.compile(r"\(\d+, \d+\)")
 

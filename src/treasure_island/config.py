@@ -196,9 +196,10 @@ def _fit_errors(data):
         if isinstance(pirates, list)
         else data.get("crew_size", DEFAULTS["crew_size"])
     )
-    if not (_is_int(size) and size >= 1 and _is_int(crew)) or crew <= size * size:
+    if not (_is_int(size) and size >= 1 and _is_int(crew)) or crew < size * size:
         return []
-    return [f"{crew} pirates can't each have a square on a grid of size {size}"]
+    off = "a square off the treasure's"
+    return [f"{crew} pirates can't each have {off} on a grid of size {size}"]
 
 
 def _bait_errors(data):

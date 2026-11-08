@@ -1,9 +1,9 @@
-Turn 0: pirate-1 at A3, on undug sand, with pirate-2 to the south, shown no new lines. It thought: Nobody has dug this square yet. Then it dug at A3 and read 1 square to the treasure.
-Turn 1: pirate-2 at A2, on undug sand, with pirate-1 to the north, shown no new lines. It thought: Nobody has dug this square yet. Then it dug at A2 and read 2 squares to the treasure.
-Turn 2: pirate-1 at A3, on dug sand, with pirate-2 to the south, shown no new lines. It thought: The nearest square I haven't seen dug is B3. Then it went east to B3.
-Turn 3: pirate-2 at A2, on dug sand, with no pirate beside it, shown no new lines. It thought: The nearest square I haven't seen dug is A3. Then it went north to A3.
-Turn 4: pirate-1 at B3, on undug sand, with pirate-2 to the west, shown no new lines. It thought: Nobody has dug this square yet. Then it dug at B3 and found the treasure, which opened the cave.
-Turn 5: pirate-2 at A3, on dug sand, with pirate-1 to the east, shown no new lines. It thought: The nearest square I haven't seen dug is A1. Then it set off for A1 and walked south to A2.
+Turn 0: pirate-1 at C3, on undug sand, with no pirate beside it, shown no new lines. It thought: Nobody has dug this square yet. Then it dug at C3 and read 1 square to the treasure.
+Turn 1: pirate-2 at A1, on undug sand, with no pirate beside it, shown no new lines. It thought: Nobody has dug this square yet. Then it dug at A1 and read 3 squares to the treasure.
+Turn 2: pirate-1 at C3, on dug sand, with no pirate beside it, shown no new lines. It thought: The nearest square I haven't seen dug is B3. Then it went west to B3.
+Turn 3: pirate-2 at A1, on dug sand, with no pirate beside it, shown no new lines. It thought: The nearest square I haven't seen dug is A2. Then it went north to A2.
+Turn 4: pirate-1 at B3, on undug sand, with no pirate beside it, shown no new lines. It thought: Nobody has dug this square yet. Then it dug at B3 and found the treasure, which opened the cave.
+Turn 5: pirate-2 at A2, on undug sand, with no pirate beside it, shown no new lines. It thought: Nobody has dug this square yet. Then it dug at A2 and read 2 squares to the treasure.
 Turn 6: pirate-1 at B3, on the open cave, with no pirate beside it, shown no new lines. It thought: This is the open cave, so I'm going in. Then it went into the cave at B3, so 1 of 2 pirates are inside.
-Turn 7: pirate-2 walked south to A1 and arrived.
+Turn 7: pirate-2 at A2, on dug sand, with no pirate beside it, shown no new lines. It thought: The nearest square I haven't seen dug is A3. Then it went north to A3.
 Game over: the turns ran out. The treasure at B3 was dug up, and 1 of 2 pirates got into the cave. Score 100.

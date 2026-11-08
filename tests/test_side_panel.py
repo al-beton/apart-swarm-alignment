@@ -1,6 +1,7 @@
 # Implements: treasure-island/side-panel, treasure-island/readable-at-once, treasure-island/pokemon-style, viewer/frame-shows-the-swarm
 """A reader follows the game from the frame: who, what they did and why."""
 
+import pytest
 from PIL import Image, ImageChops
 
 from assets.pirates import portrait
@@ -236,6 +237,7 @@ def test_frame_shows_the_swarm_a_writer_holds_the_scroll_and_its_line_shows_besi
     )
 
 
+@pytest.mark.usefixtures("left_edge_starts")
 def test_readable_at_once_a_real_game_tells_its_ending_in_the_frame():
     class Dig:
         def decide(self, view):
@@ -281,8 +283,8 @@ def test_frame_shows_the_swarm_what_was_written_shows_in_full():
 
 
 def test_frame_shows_the_swarm_a_tall_note_on_the_top_row_stays_clear_of_the_crew():
-    # The default crew starts down the left edge, so the writer on the top row has
-    # pirates below it and the board's edge above.
+    # A crew standing down the left edge: the writer on the top row has pirates
+    # below it and the board's edge above.
     crew = {f"pirate-{n}": [0, n - 1] for n in range(1, 4)}
     text = "I'll search row 1, then row 2, then we check in."
     made = record(0, did=[{"action": "write", "text": text}], at=[0, 0])

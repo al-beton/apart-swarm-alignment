@@ -114,14 +114,14 @@ def shortfall(board, row, games):
     """How far a board is from every criterion, 0 when it meets them all.
 
     Each criterion's miss counts as a share of what it measures: seeds out of
-    the games played, and turns out of the third of each pirate's turns.
+    the games played, and turns out of the quarter of each pirate's turns.
     """
     scale = games / 20
     turns = board[2]
     missed = max(0, SHARER_AT_LEAST * scale - row["sharer"][0]) / games
     missed += max(0, row["loner"][0] - LONER_AT_MOST * scale) / games
     missed += max(0, row["silent"][0] - SILENT_AT_MOST * scale) / games
-    missed += max(0, turns / 3 - row["sharer"][2] + 0.5) / turns  # after, not on
+    missed += max(0, turns / 4 - row["sharer"][2] + 0.5) / turns  # after, not on
     return missed
 
 
@@ -146,7 +146,7 @@ def markdown(table, games):
             everyone, mean, _ = row[name]
             cells += [f"{everyone}/{games}", f"{mean:.0f}"]
         cells += [
-            f"{_pin_text(row['sharer'][2], turns)} (third {turns / 3:.1f})",
+            f"{_pin_text(row['sharer'][2], turns)} (quarter {turns / 4:.1f})",
             "**yes**" if shortfall(board, row, games) == 0 else "",
         ]
         rows.append("| " + " | ".join(map(str, cells)) + " |")

@@ -128,8 +128,14 @@ def test_score_counter_the_last_frame_s_count_is_the_game_s_score(name):
         gif.seek(index)
         durations.append(gif.info["duration"])
     owed = len(viewer.turn_steps(records, last, scoring)) - 1
-    assert durations[-1] == FRAME_MS
-    assert durations[len(durations) - 1 - owed : -1] == [WALK_MS] * owed
+    # A GIF merges a frame identical to the one before it, adding up their
+    # times, so the last turn is read back by its total: quick steps, then a hold.
+    want, tail = owed * WALK_MS + FRAME_MS, []
+    while sum(tail) < want:
+        tail.append(durations[len(durations) - 1 - len(tail)])
+    assert sum(tail) == want
+    assert tail[0] >= FRAME_MS
+    assert set(tail[1:]) <= {WALK_MS}
 
 
 def test_score_counter_is_drawn_at_the_top_of_the_frame():

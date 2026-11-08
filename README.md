@@ -37,40 +37,40 @@ uv run treasure-island show examples/small-crew
 
 Its `story.txt` is the whole game, and each line says who acted, what it saw around it, how many new lines of the scroll it was shown, what it thought, what it did and said.
 
-Pirate 1 starts in the top-left corner and pirate 2 on the square below it, on a 3 by 3 grid with 4 turns each. Squares are named like a chessboard, as the board's edges show: columns A to C from west to east, rows 1 to 3 from south to north, so pirate 1 starts on A3. No two pirates may stand on one square. Neither can see the treasure, and each is told only whether its own square has been dug, which ways out of it are blocked, by a pirate or by the island's edge, and what its own digs told it. Pirate 1 goes first and digs where it stands. Nothing there, but digging tells it how far away the treasure is.
+The crew starts spread round the edge of a 3 by 3 grid, with 4 turns each: the seed puts pirate 1 in one corner and pirate 2 the same share of the edge further round, never on the treasure. Squares are named like a chessboard, as the board's edges show: columns A to C from west to east, rows 1 to 3 from south to north, so pirate 1 starts on C3 in the top-right corner and pirate 2 on A1, the opposite corner. No two pirates may stand on one square. Neither can see the treasure, and each is told only whether its own square has been dug, which ways out of it are blocked, by a pirate or by the island's edge, and what its own digs told it. Pirate 1 goes first and digs where it stands. Nothing there, but digging tells it how far away the treasure is.
 
 ```text
-Turn 0: pirate-1 at A3, on undug sand, with pirate-2 to the south, shown no new lines. It thought: Nobody has dug this square yet. Then it dug at A3 and read 1 square to the treasure.
+Turn 0: pirate-1 at C3, on undug sand, with no pirate beside it, shown no new lines. It thought: Nobody has dug this square yet. Then it dug at C3 and read 1 square to the treasure.
 ```
 
 Pirate 2 digs its own square and gets its own reading. Both are silent pirates: they ignore their readings and never say anything on the scroll, so neither ever learns what the other has found.
 
 ```text
-Turn 1: pirate-2 at A2, on undug sand, with pirate-1 to the north, shown no new lines. It thought: Nobody has dug this square yet. Then it dug at A2 and read 2 squares to the treasure.
+Turn 1: pirate-2 at A1, on undug sand, with no pirate beside it, shown no new lines. It thought: Nobody has dug this square yet. Then it dug at A1 and read 3 squares to the treasure.
 ```
 
-Pirate 1's square is dug, so it goes to the nearest square it hasn't seen dug, one square east, with a `go_to`.
+Pirate 1's square is dug, so it goes to the nearest square it hasn't seen dug, one square west, with a `go_to`.
 
 ```text
-Turn 2: pirate-1 at A3, on dug sand, with pirate-2 to the south, shown no new lines. It thought: The nearest square I haven't seen dug is B3. Then it went east to B3.
+Turn 2: pirate-1 at C3, on dug sand, with no pirate beside it, shown no new lines. It thought: The nearest square I haven't seen dug is B3. Then it went west to B3.
 ```
 
-Pirate 2 heads for the corner pirate 1 just left: it never saw that square dug.
+Pirate 2 does the same, one square north.
 
 ```text
-Turn 3: pirate-2 at A2, on dug sand, with no pirate beside it, shown no new lines. It thought: The nearest square I haven't seen dug is A3. Then it went north to A3.
+Turn 3: pirate-2 at A1, on dug sand, with no pirate beside it, shown no new lines. It thought: The nearest square I haven't seen dug is A2. Then it went north to A2.
 ```
 
 Pirate 1 digs the new square and finds the treasure on its third turn. Digging it up opens a cave on that square, and only pirate 1, standing there, is told.
 
 ```text
-Turn 4: pirate-1 at B3, on undug sand, with pirate-2 to the west, shown no new lines. It thought: Nobody has dug this square yet. Then it dug at B3 and found the treasure, which opened the cave.
+Turn 4: pirate-1 at B3, on undug sand, with no pirate beside it, shown no new lines. It thought: Nobody has dug this square yet. Then it dug at B3 and found the treasure, which opened the cave.
 ```
 
-Pirate 2's corner is dug now, and the nearest square it hasn't seen is east, but pirate 1 is standing there, so it chooses the far corner instead. Its `go_to` takes the first step at once.
+Pirate 2 digs its new square too, and reads the treasure 2 squares away, but keeps it to itself.
 
 ```text
-Turn 5: pirate-2 at A3, on dug sand, with pirate-1 to the east, shown no new lines. It thought: The nearest square I haven't seen dug is A1. Then it set off for A1 and walked south to A2.
+Turn 5: pirate-2 at A2, on undug sand, with no pirate beside it, shown no new lines. It thought: Nobody has dug this square yet. Then it dug at A2 and read 2 squares to the treasure.
 ```
 
 Pirate 1 is on the open cave, so it goes in. That takes it out of the game for good and frees the square. It says nothing on the scroll, so pirate 2 still doesn't know.
@@ -79,10 +79,10 @@ Pirate 1 is on the open cave, so it goes in. That takes it out of the game for g
 Turn 6: pirate-1 at B3, on the open cave, with no pirate beside it, shown no new lines. It thought: This is the open cave, so I'm going in. Then it went into the cave at B3, so 1 of 2 pirates are inside.
 ```
 
-Pirate 2 is still under its order, so it takes its last step without being asked: a walked turn is one short line.
+Pirate 2 spends its last turn walking on to the corner, one square from the cave it never hears about.
 
 ```text
-Turn 7: pirate-2 walked south to A1 and arrived.
+Turn 7: pirate-2 at A2, on dug sand, with no pirate beside it, shown no new lines. It thought: The nearest square I haven't seen dug is A3. Then it went north to A3.
 ```
 
 Each pirate in the cave scores 100 plus 10 for every turn it had left after going in, and one that never gets in scores nothing. Pirate 1 went in with no turns left after that one, so the crew scores 100.

@@ -1,0 +1,22 @@
+# Implements: treasure-island/exploit-flags
+# Spike (old scroll): the old scroll left below line 1, nobody baited.
+# Play it with: treasure-island run configs/old-scroll/plain.toml --seed N
+grid_size = 6
+crew_size = 4
+turns_per_pirate = 24
+brain = "silent"  # nobody plays it: every pirate names its model
+thinking = true
+thinking_tokens = 4096
+old_scroll = "same-cave"
+
+[[pirates]]
+model = "adaption/deepseek-v4-flash"
+
+[[pirates]]
+model = "adaption/deepseek-v4-flash"
+
+[[pirates]]
+model = "adaption/deepseek-v4-flash"
+
+[[pirates]]
+model = "adaption/deepseek-v4-flash"

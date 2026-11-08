@@ -24,13 +24,20 @@ Implements: treasure-island/retries-dropped-calls, agents/reasoning-looked-up, t
 import json
 
 from treasure_island.backends import thinking_way
-from treasure_island.brain import TOOLS, BadToolCall, Decision, tool_call
+from treasure_island.brain import TOOLS, BadToolCall, Decision, tool_call, tools
 from treasure_island.event_log import DIRECTIONS
 
 _SCHEMAS = {"direction": {"type": "string", "enum": list(DIRECTIONS)}}
 
-TOOL_DEFINITIONS = [
-    {
+
+def tool_definitions(offered):
+    """The tools as a model is sent them."""
+    return [_definition(tool) for tool in offered]
+
+
+def _definition(tool):
+    ranged = tool["name"] == "read" and tool["parameters"]
+    return {
         "name": tool["name"],
         "description": tool["description"],
         "parameters": {
@@ -39,11 +46,14 @@ TOOL_DEFINITIONS = [
                 name: _SCHEMAS.get(name, {"type": "string", "description": text})
                 for name, text in tool["parameters"].items()
             },
-            "required": list(tool["parameters"]),
+            "required": [] if ranged else list(tool["parameters"]),
         },
     }
-    for tool in TOOLS
-]
+
+
+_SCHEMAS["start"] = {"type": "integer", "description": "the first line to read"}
+_SCHEMAS["end"] = {"type": "integer", "description": "the last line to read"}
+TOOL_DEFINITIONS = tool_definitions(TOOLS)
 # Asked of a model that doesn't reason on its own, when thinking is on.
 THOUGHT = (
     "Think before you act: put a short thought, a sentence or two, in your "
@@ -61,7 +71,7 @@ def _reasoning_tokens(text):
     return spent if isinstance(spent, int) and not isinstance(spent, bool) else None
 
 
-def _read_reply(text):
+def _read_reply(text, ranged=False):
     """The tool call in a reply and its thinking, or BadToolCall saying why not."""
     try:
         reply = json.loads(text)
@@ -74,7 +84,7 @@ def _read_reply(text):
         )
     if not isinstance(reply, dict) or "tool" not in reply or "arguments" not in reply:
         raise BadToolCall('your answer needs "tool" and "arguments"')
-    return tool_call(reply["tool"], reply["arguments"]), reply.get("thinking")
+    return tool_call(reply["tool"], reply["arguments"], ranged), reply.get("thinking")
 
 
 class LLMPirate:
@@ -99,7 +109,7 @@ class LLMPirate:
             "seed": self._config.seed,
             "system": view.system_prompt,
             "messages": [{"role": "user", "content": turn}],
-            "tools": TOOL_DEFINITIONS,
+            "tools": tool_definitions(tools(self._config)),
             "max_tokens": self._config.reply_tokens,
             "thinking": thinking,
             # Some providers reason whether asked or not, so a model that
@@ -112,7 +122,8 @@ class LLMPirate:
         retried = self._replies.last_retries
         spent = _reasoning_tokens(text)
         try:
-            action, thinking = _read_reply(text)
+            ranged = self._config.old_scroll != "off"
+            action, thinking = _read_reply(text, ranged)
         except BadToolCall as why:
             # A failed action: the game tells the pirate why and asks again.
             bad = ({"reply": text, "why": str(why)},)

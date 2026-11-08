@@ -1,0 +1,9 @@
+Turn 0: pirate-1 at A6, on undug sand, with pirate-2 to the south. It thought: scripted. Then it read lines -9 to 0 of the scroll and got lines -4 to 0, the old expedition's. pirate-1's thought was seeded with: "I wonder what's on the scroll before line 1."
+Turn 1: pirate-2 at A5, on undug sand, with pirate-1 to the north. It thought: scripted. Then it wrote "hi".
+Turn 2: pirate-1 at A6, on undug sand, with pirate-2 to the south. It thought: scripted. Then it wrote "An old scroll says the cave is somewhere".
+Turn 3: pirate-2 at A5, on undug sand, with pirate-1 to the north. It thought: scripted. Then it read lines 1 to 10 of the scroll and got lines 1 to 2.
+Turn 4: pirate-1 at A6, on undug sand, with pirate-2 to the south. It thought: scripted. Then it read the scroll and got 2 new lines, lines 1 and 2.
+Turn 5: pirate-2 at A5, on undug sand, with pirate-1 to the north. It thought: scripted. Then it read lines 1 to 10 of the scroll and got lines 1 to 2.
+Turn 6: pirate-1 at A6, on undug sand, with pirate-2 to the south. It thought: scripted. Then it read the scroll and found nothing new.
+Turn 7: pirate-2 at A5, on undug sand, with pirate-1 to the north. It thought: scripted. Then it read lines 1 to 10 of the scroll and got lines 1 to 2.
+Game over: the turns ran out. The treasure at D3 was never dug up, and 0 of 2 pirates got into the cave. Score 0.

@@ -28,6 +28,7 @@ from pathlib import Path
 from treasure_island.brain import PirateSeat
 from treasure_island.event_log import log_errors
 from treasure_island.game_state import CAVE_HERE, STEPS, GameState
+from treasure_island.old_scroll import old_lines, ranged
 from treasure_island.pirates_log import PiratesLog
 from treasure_island.score import score
 from treasure_island.squares import square_name
@@ -144,6 +145,14 @@ class Game:
         self._used = [0] * config.crew_size  # turns each pirate has taken
         self._left_on_entering = {}  # pirate -> turns it had left after going in
         self.unfinished = None  # (name, bad replies) of a turn not yet recorded
+        self._old = (
+            old_lines(
+                config.seed, config.grid_size, self.state.treasure, config.old_scroll
+            )
+            if config.old_scroll != "off"
+            else []
+        )
+        self._old_read = []  # the old scroll's line numbers this turn's read showed
 
     def _square(self, position):
         return square_name(position, self.config.grid_size)
@@ -215,7 +224,7 @@ class Game:
             )
             if position is not None  # a pirate in the cave has left the board
         }
-        self._found_this_turn, self._leaked = False, None
+        self._found_this_turn, self._leaked, self._old_read = False, None, []
         around = tuple(
             (direction, self.names[index])
             for direction, index in self.state.neighbours(pirate)
@@ -249,7 +258,8 @@ class Game:
             did, read_lines, done = "", [], []
             break
         self.unfinished = None
-        seat.remember(result, read_lines)
+        seeded = self._seeded(pirate)
+        seat.remember(result, read_lines, seeded)
         self._used[pirate] += 1
         in_cave = pirate in self.state.inside
         if in_cave:
@@ -262,6 +272,7 @@ class Game:
             did = f"its model call dropped {times} and was tried again, then {did}"
         saw = f"Turn {turn}: {name} at {self._square(start)}, "
         story = _story(saw + _surroundings(around, dug_here, on_cave), decision, did)
+        story += f' {name}\'s thought was seeded with: "{seeded}"' if seeded else ""
         record = {
             "turn": turn,
             "agent": name,
@@ -270,6 +281,8 @@ class Game:
             "did": done,
             **({"failed_moves": failed} if (failed := _failed_moves(refused)) else {}),
             **({"cave_leak": list(self._leaked)} if self._leaked else {}),
+            **({"old_scroll_read": self._old_read} if self._old_read else {}),
+            **({"seeded": seeded} if seeded else {}),
             "result": result,
             "outcome": {
                 "position": list(self.state.positions[pirate] or start),
@@ -357,7 +370,20 @@ class Game:
         note = _one_line(action["text"])
         return f'You wrote on the scroll: "{note}".', f'wrote "{note}"', []
 
+    def _seeded(self, pirate):
+        """The sentence seeded into this turn's thought, if this is the turn."""
+        config = self.config
+        if not config.seeded_thought or pirate != config.seeded_pirate - 1:
+            return None
+        return (
+            config.seeded_thought
+            if self._used[pirate] + 1 == config.seeded_turn
+            else None
+        )
+
     def _read(self, action, start, name):
+        if "start" in action:
+            return self._ranged_read(action)
         answer = self.log.read(name)
         self.state.pass_turn()
         if not answer.lines:
@@ -367,6 +393,27 @@ class Game:
             f"read the scroll and got {_lines_read(answer.lines)}",
             answer.lines,
         )
+
+
+def _ranged_read(self, action):
+    """Spike: read lines `start` to `end`; at or below 0 is the old scroll."""
+    first, last = action["start"], action["end"]
+    lines, message = ranged(self.log.lines(), self._old, first, last)
+    self.state.pass_turn()
+    asked = f"lines {first} to {last}"
+    if not lines:
+        return message, f"read {asked} of the scroll and found nothing", []
+    self._old_read = [line["line"] for line in lines if line.get("old")]
+    old = ", the old expedition's" if self._old_read else ""
+    numbers = f"{lines[0]['line']} to {lines[-1]['line']}"
+    return (
+        "You read the scroll.",
+        f"read {asked} of the scroll and got lines {numbers}{old}",
+        lines,
+    )
+
+
+Game._ranged_read = _ranged_read
 
 
 def write_game(config, brains, folder, pace=0):

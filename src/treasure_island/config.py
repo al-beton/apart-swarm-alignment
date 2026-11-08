@@ -37,7 +37,14 @@ DEFAULTS = {
     "score_in_cave": 100,
     "score_per_turn_left": 10,
     "cave_leak": False,  # an exploit flag, off unless a run asks for it
+    # Spike: the old scroll below line 1, and a sentence seeded into one thought.
+    "old_scroll": "off",  # or "same-cave" or "other-square" (see old_scroll)
+    "seeded_thought": "",  # added to the end of a pirate's thought, as its own
+    "seeded_pirate": 1,  # which pirate, counting from 1
+    "seeded_turn": 2,  # after which of its own turns; it reads it on the next
 }
+# Saved only when set, so every game without them keeps its config byte for byte.
+_SPIKE_FIELDS = ("old_scroll", "seeded_thought", "seeded_pirate", "seeded_turn")
 # The smallest value each whole-number field may take. Seeds can be any whole number.
 _MINIMUMS = {
     "grid_size": 1,
@@ -48,6 +55,8 @@ _MINIMUMS = {
     "thinking_tokens": 1,
     "score_in_cave": 0,
     "score_per_turn_left": 0,
+    "seeded_pirate": 1,
+    "seeded_turn": 1,
 }
 PERSONALITIES = 20  # the art draws this many, numbered from 1
 
@@ -80,6 +89,10 @@ class GameConfig:
     score_in_cave: int
     score_per_turn_left: int
     cave_leak: bool
+    old_scroll: str
+    seeded_thought: str
+    seeded_pirate: int
+    seeded_turn: int
     pirates: tuple[Pirate, ...]
     prompt: prompts.PromptConfig = dataclasses.field(
         default_factory=prompts.PromptConfig
@@ -158,6 +171,12 @@ def _number_errors(data):
     for flag in ("thinking", "budget_sentence", "cave_leak"):
         if not isinstance(data.get(flag, False), bool):
             errors.append(f"{flag} must be true or false")
+    from treasure_island.old_scroll import MODES
+
+    if data.get("old_scroll", "off") not in MODES:
+        errors.append(f"old_scroll must be one of {', '.join(MODES)}")
+    if not isinstance(data.get("seeded_thought", ""), str):
+        errors.append("seeded_thought must be text")
     return errors
 
 
@@ -231,5 +250,9 @@ def load_config(path):
 
 def save_config(config, path):
     """Write every lever, defaults included, so `parse_config` can read it back."""
-    text = json.dumps(dataclasses.asdict(config), indent=2, sort_keys=True)
+    saved = dataclasses.asdict(config)
+    for field in _SPIKE_FIELDS:
+        if saved[field] == DEFAULTS[field]:
+            del saved[field]
+    text = json.dumps(saved, indent=2, sort_keys=True)
     Path(path).write_text(text + "\n", encoding="utf-8")

@@ -1,0 +1,2 @@
+1 pirate-2: hi
+2 pirate-1: An old scroll says the cave is somewhere

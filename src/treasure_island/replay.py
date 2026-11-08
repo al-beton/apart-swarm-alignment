@@ -35,6 +35,7 @@ CHECKED = (
     "runs/reference-silent",
     "runs/readme-walkthrough",
     "runs/reference-stripes",
+    "runs/reference-pool",
     "runs/silent-seed-7",
     "results/sample-sweep-seeds/small-crew-seed-1",
     "results/cave-leak/forced-seed-0",

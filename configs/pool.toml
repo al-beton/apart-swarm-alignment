@@ -1,5 +1,10 @@
-# Implements: treasure-island/pool, treasure-island/distance-reading
-# The pooling crew on the rod: each missed dig reads a noisy distance to the cave, shared on the scroll.
+# Implements: treasure-island/pool, treasure-island/distance-reading, treasure-island/brain-in-config
+# The pooling pirates' reference game: each missed dig reads a noisy distance to the cave,
+# shared on the scroll, and they dig only where every reading allows.
 # Play it with: treasure-island run configs/pool.toml --seed N
+grid_size = 6
+crew_size = 3
+turns_per_pirate = 20
+seed = 7
 brain = "pool"
 distance_noise = 3

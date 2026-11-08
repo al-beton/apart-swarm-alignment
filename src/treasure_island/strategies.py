@@ -296,7 +296,7 @@ def brains_for(name, config, replies=None):
     ]
 
 
-REFERENCE_GAMES = ("silent", "stripes", "scribe")
+REFERENCE_GAMES = ("silent", "stripes", "scribe", "pool")
 
 
 def write_reference(name, folder, root=Path()):

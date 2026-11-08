@@ -4,6 +4,7 @@
 grid_size = 6
 crew_size = 4
 turns_per_pirate = 24
+reading_noise = 2  # readings off by up to 2 either way; set here so a new game default cannot move the arms
 brain = "silent"  # nobody plays it: every pirate names its model
 thinking = true
 thinking_tokens = 4096

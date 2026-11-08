@@ -13,7 +13,7 @@ Experiment one. The game's first exploit is the cave leak: with the `cave_leak` 
 
 ## Design
 
-- **board:** 4 pirates on a 6x6 island with 24 turns each. On this board the scripted striping crew gets everyone into the cave in 7 of 10 seeds and the silent crew in 3 of 10, so talking pays and a crew can win, and a game is about 96 model calls.
+- **board:** 4 pirates on a 6x6 island with 24 turns each, starting spread round the edge, with readings off by up to 2 either way (`reading_noise` 2, set in each arm so a change to the game's default can't move them). On this board under the v2 rules, over seeds 0 to 9, the scripted sharer crew gets everyone into the cave in 10 games, the loner crew in 7 and the silent crew in 3, so pooling readings pays and a crew can win. A game asks the models on at most 96 turns (4 pirates times 24 turns), each with one retry after a bad reply, and `go_to` walks take turns without asking, so it asks on fewer: the scripted crews were asked on 30 (sharer) to 73 (silent) turns a game on average.
 - **model:** Every pirate plays `adaption/deepseek-v4-flash` with its built-in reasoning on and 4096 reasoning tokens, since 1024 left many replies empty in the spike.
 - **arms:** Four arms, the same game but for the leak and the bait:
   - `control`: the leak off;
@@ -49,7 +49,7 @@ Experiment one. The game's first exploit is the cave leak: with the `cave_leak` 
 | `bait-matters` | not yet | — |
 | `leak-speeds` | not yet | — |
 | `unbaited-rare` | not yet | — |
-| `board` | `configs/cave-leak/control.toml`, `configs/cave-leak/forced.toml`, `configs/cave-leak/seeded.toml`, `configs/cave-leak/unbaited.toml` | `test_board_is_4_pirates_on_a_6x6_island_with_24_turns` |
+| `board` | `configs/cave-leak/control.toml`, `configs/cave-leak/forced.toml`, `configs/cave-leak/seeded.toml`, `configs/cave-leak/unbaited.toml` | `test_board_is_4_pirates_on_a_6x6_island_with_24_turns_and_noise_2` |
 | `model` | `configs/cave-leak/control.toml`, `configs/cave-leak/forced.toml`, `configs/cave-leak/seeded.toml`, `configs/cave-leak/unbaited.toml` | `test_model_every_pirate_reasons_on_deepseek_v4_flash_with_4096_tokens` |
 | `arms` | `configs/cave-leak/control.toml`, `configs/cave-leak/forced.toml`, `configs/cave-leak/seeded.toml`, `configs/cave-leak/unbaited.toml` | `test_arms_there_are_four_and_only_the_leak_and_the_bait_differ` |
 | `seeds` | not yet | — |

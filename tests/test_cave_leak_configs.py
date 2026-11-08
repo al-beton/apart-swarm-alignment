@@ -29,10 +29,13 @@ def test_arms_there_are_four_and_only_the_leak_and_the_bait_differ():
 
 
 @pytest.mark.parametrize("arm", ARMS)
-def test_board_is_4_pirates_on_a_6x6_island_with_24_turns(arm):
+def test_board_is_4_pirates_on_a_6x6_island_with_24_turns_and_noise_2(arm):
+    text = (CONFIGS / f"{arm}.toml").read_text()
+    assert "\nreading_noise = 2" in text  # set, not the game's default
     config = load_config(CONFIGS / f"{arm}.toml")
     sizes = (config.grid_size, config.crew_size, config.turns_per_pirate)
     assert sizes == (6, 4, 24)
+    assert config.reading_noise == 2
 
 
 @pytest.mark.parametrize("arm", ARMS)

@@ -18,7 +18,7 @@
 - **yes-before-spending:** A run asks for a yes before its first request that no stored reply answers, `--yes` skips the question, and nothing in CI passes it, so money is only spent on purpose; anything but a yes stops the run before it spends and leaves no run folder behind, since it played nothing it couldn't play again.
 - **spending-cap:** `--spend-up-to` caps what one run spends, default, Al to confirm: 1 dollar; once a run has spent its cap it asks its models nothing more, so it can only overshoot by one reply.
 - **cached-is-free:** A stored reply, from this run or an earlier one, costs nothing and counts nothing against the cap.
-- **stops-cleanly:** A run that stops at its cap keeps every turn it played, its story's last line says why it stopped, and it replays like any other run.
+- **stops-cleanly:** A run that stops at its cap keeps every turn it played, its story's last line says why it stopped, and it replays like any other run; so does a finished game whose end note the cap stopped, its replay stopping that note the same way.
 
 ## Where this is enforced
 
@@ -42,4 +42,4 @@
 | `yes-before-spending` | `src/treasure_island/spending.py`, `src/treasure_island/saved_game.py`, `src/treasure_island/cli.py` | `test_yes_before_spending_asks_once_before_the_first_uncached_call`, `test_yes_before_spending_anything_but_yes_spends_nothing`, `test_yes_before_spending_anything_but_yes_leaves_no_run_folder`, `test_yes_before_spending_with_no_one_to_ask_spends_nothing`, `test_yes_before_spending_the_question_reads_y_or_yes`, `test_yes_before_spending_yes_skips_the_question`, `test_yes_before_spending_nothing_in_ci_passes_yes` |
 | `spending-cap` | `src/treasure_island/spending.py`, `src/treasure_island/saved_game.py`, `src/treasure_island/cli.py` | `test_spending_cap_stops_asking_once_the_cap_is_spent`, `test_spending_cap_defaults_to_one_dollar`, `test_spending_cap_is_set_on_the_command_line` |
 | `cached-is-free` | `src/treasure_island/spending.py` | `test_cached_is_free_a_repeat_needs_no_yes_and_no_money` |
-| `stops-cleanly` | `src/treasure_island/game_loop.py`, `src/treasure_island/saved_game.py`, `src/treasure_island/spending.py` | `test_stops_cleanly_a_capped_run_keeps_its_turns_and_replays`, `test_stops_cleanly_a_run_stopped_before_its_first_turn_replays` |
+| `stops-cleanly` | `src/treasure_island/game_loop.py`, `src/treasure_island/saved_game.py`, `src/treasure_island/spending.py` | `test_stops_cleanly_a_capped_run_keeps_its_turns_and_replays`, `test_stops_cleanly_an_end_note_the_cap_stopped_replays`, `test_stops_cleanly_a_run_stopped_before_its_first_turn_replays` |

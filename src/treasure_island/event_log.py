@@ -3,7 +3,7 @@
 The format is documented in product/spec/event-log.md. Only required fields are
 checked, so a record may carry more (event-log/room-to-grow).
 
-Implements: treasure-island/old-scroll, event-log/one-record-per-turn, event-log/who-acted, event-log/what-they-saw, event-log/what-they-did, event-log/what-the-log-showed, event-log/the-outcome, event-log/room-to-grow, event-log/validator, treasure-island/audit-record, treasure-island/private-report
+Implements: treasure-island/old-scroll, event-log/one-record-per-turn, event-log/who-acted, event-log/what-they-saw, event-log/what-they-did, event-log/what-the-log-showed, event-log/the-outcome, event-log/room-to-grow, event-log/validator, treasure-island/audit-record, treasure-island/private-report, treasure-island/free-talk
 """
 
 import json
@@ -57,11 +57,17 @@ _ACTIONS = {
 }
 
 
+def _talk_is_valid(action):
+    """Any message is text and any alert true or false (`free-talk`, `alert`)."""
+    message_ok = "message" not in action or _is_text(action["message"])
+    return message_ok and ("alert" not in action or isinstance(action["alert"], bool))
+
+
 def is_action(value):
     if not isinstance(value, dict) or not _is_text(value.get("action")):
         return False
     check = _ACTIONS.get(value["action"])
-    return check is not None and check(value)
+    return check is not None and check(value) and _talk_is_valid(value)
 
 
 def _did_errors(did):

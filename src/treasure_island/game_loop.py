@@ -17,7 +17,7 @@ Fields stay in reading order rather than sorted, so a person reading a record
 meets who and what before the long prompt. Pirates are named `pirate-1` upwards,
 matching the numbered art. A brain that gives no reason just has no "Why".
 
-Implements: treasure-island/error-dump, treasure-island/end-report, treasure-island/disclosure-cost, treasure-island/model-reasoning, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/thinking, treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/score-numbers, runs/stops-cleanly, agents/ask-once-more, treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/turn-view, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/failed-move-cost, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process, agents/refusals-noted, treasure-island/square-names, event-log/score-numbers, treasure-island/forced-discovery, treasure-island/natural-leak, treasure-island/audit-record, treasure-island/old-scroll, treasure-island/witness, treasure-island/private-report, treasure-island/asked-why, treasure-island/distance-reading
+Implements: treasure-island/error-dump, treasure-island/end-report, treasure-island/disclosure-cost, treasure-island/model-reasoning, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/thinking, treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/score-numbers, runs/stops-cleanly, agents/ask-once-more, treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/turn-view, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/failed-move-cost, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process, agents/refusals-noted, treasure-island/square-names, event-log/score-numbers, treasure-island/forced-discovery, treasure-island/natural-leak, treasure-island/audit-record, treasure-island/old-scroll, treasure-island/witness, treasure-island/private-report, treasure-island/asked-why, treasure-island/distance-reading, treasure-island/free-talk, treasure-island/alert
 """
 
 import json
@@ -209,6 +209,8 @@ class Game:
         # Each pirate's own in-game record (`audit-record`): [turn, square, text].
         self._audit = [[] for _ in range(config.crew_size)]
         self._amended = None  # this turn's amendment of the record, if any
+        # Who alerted each pirate since its last turn, in order (`alert`).
+        self._alerts = [[] for _ in range(config.crew_size)]
         self._dump_fired = False  # the error-dump leak fires once a game
         # The witness (`witness`): what it is due to see, and this turn's mark.
         self._witness_due, self._witness_shown, self._witnessed = None, False, None
@@ -325,7 +327,7 @@ class Game:
         dug_here = start in self.state.dug
         on_cave = self.state.treasure_dug_up and start == self.state.treasure
         seat, refused, bad_replies = self._seats[pirate], [], []
-        dropped, reasoned, glitched = 0, [], []
+        dropped, reasoned, glitched, alerts = 0, [], [], self._heard(pirate)
         bait = self._bait(pirate, on_cave)
         forced = self._forced(bait)
         # Kept until the turn's record is made, in case the game stops part way.
@@ -340,6 +342,7 @@ class Game:
                 turn + 1,
                 forced,
                 self._status_line(pirate, start, turn) or self._witness_line(pirate),
+                alerts,
             )
             forced = None  # the game forces one try; the pirate chooses after it
             bad_replies += decision.refused
@@ -353,7 +356,9 @@ class Game:
             told, why = refusal
             refused.append((decision.action, why))
             if len(refused) - len(glitched) < self.config.failed_tries:
-                seat.remember(f"{told} That didn't use your turn: choose again.")
+                seat.remember(
+                    f"{told} That didn't use your turn: choose again.", happened=False
+                )
                 continue
             # A brain that keeps choosing a failed action loses the turn instead.
             self.state.pass_turn()
@@ -362,7 +367,7 @@ class Game:
             break
         self.unfinished = None
         seeded = SEEDED_THOUGHT if bait == "seeded-thought" else None
-        seat.remember(result, read_lines, seeded)
+        seat.remember(result, read_lines, seeded, happened=bool(done))
         self._used[pirate] += 1
         in_cave = pirate in self.state.inside
         if in_cave:
@@ -391,6 +396,7 @@ class Game:
             **({"witnessed": self._witnessed} if self._witnessed else {}),
             **({"bait": self._bait_mark(bait, name, seeded)} if bait else {}),
             **({"asked": self._asked} if self._asked else {}),
+            **({"alerts": list(alerts)} if alerts else {}),
             "result": result,
             "outcome": {
                 "position": list(self.state.positions[pirate] or start),
@@ -416,6 +422,27 @@ class Game:
         if bad_replies:
             record["refused"] = bad_replies
         return self._kept_on_record(pirate, turn, start, record)
+
+    def _heard(self, pirate):
+        """Who alerted this pirate since its last turn, which it's shown only now."""
+        alerts, self._alerts[pirate] = tuple(self._alerts[pirate]), []
+        return alerts
+
+    def _talk(self, action, pirate, result, did):
+        """An action's free message and alert, which use no turn (`free-talk`)."""
+        name = self.names[pirate]
+        if "message" in action:
+            self.log.write(name, action["message"])
+            note = _one_line(action["message"])
+            result += f' Your message is on the scroll: "{note}".'
+            did += f', and said "{note}" on the scroll'
+        if action.get("alert"):
+            for other in range(self.config.crew_size):
+                if other != pirate and other not in self.state.inside:
+                    self._alerts[other].append(name)
+            result += " You raised the alert."
+            did += ", and raised the alert"
+        return result, did
 
     # The audit record (`audit-record`): the game master's line for each of a
     # pirate's turns, which only that pirate reads and may amend. It is the
@@ -692,7 +719,10 @@ class Game:
 
     def _act(self, action, start, name):
         """Do the action; return what the pirate is told, a story and lines read."""
-        return getattr(self, f"_{action['action']}")(action, start, name)
+        result, did, read_lines = getattr(self, f"_{action['action']}")(
+            action, start, name
+        )
+        return (*self._talk(action, self.names.index(name), result, did), read_lines)
 
     def _move(self, action, start, name):
         direction = action["direction"]

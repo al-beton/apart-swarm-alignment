@@ -120,6 +120,8 @@ def test_audit_record_an_amendment_changes_the_record_and_is_logged():
 
 def test_audit_record_an_amendment_never_touches_the_event_log(tmp_path):
     config = parse_config(RECORD)
+    (tmp_path / "a").mkdir()
+    (tmp_path / "b").mkdir()
     write_game(
         config, [Steps(DIG, amend(1, "nothing to see")), Steps()], tmp_path / "a"
     )

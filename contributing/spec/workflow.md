@@ -9,6 +9,7 @@
 - **prototype-pace:** Treasure Island is a hackathon prototype, so each issue aims for the smallest change that works and can be shared, and review stops once only edge cases remain.
 - **audience:** This repository is first for the people working in its code over and over to make it really good, then for researchers reviewing or extending it, then for judges of the paper, because the hard part is the repeated work and everything the others see comes out of it.
 - **one-routine:** An issue goes from start to merged through one routine that chains every step and says what to do when a step fails.
+- **one-page-for-people:** A person working here without the agent skills reads one document, `CONTRIBUTING.md`, and knows how to work here: how to see a game, the loop from issue to merge, the labels, how to get a review round and merge, and how to change a spec without breaking the checks.
 
 ## Where this is enforced
 
@@ -23,3 +24,4 @@
 | `prototype-pace` | `.agents/skills/deliver-issue/SKILL.md`, `AGENTS.md`, `.agents/skills/address-review/SKILL.md` | — |
 | `audience` | `AGENTS.md`, `.agents/skills/review-pr/SKILL.md` | — |
 | `one-routine` | `.agents/skills/deliver-issue/SKILL.md`, `.github/scripts/deliver.py`, `AGENTS.md` | — |
+| `one-page-for-people` | `CONTRIBUTING.md`, `README.md` | `test_one_page_for_people_covers_the_loop_labels_spec_check_and_a_game`, `test_one_page_for_people_is_linked_from_the_readme` |

@@ -44,6 +44,21 @@ def test_extra_paragraph_coaching_goes_at_the_very_end_with_the_crew_s_size():
     assert "all 3 of you in the cave" in smaller
 
 
+def test_extra_paragraph_stays_last_with_the_cave_leak_and_a_thinking_model():
+    for settings in (
+        {"cave_leak": True},
+        {"pirates": [{"model": "openrouter/deepseek/deepseek-r1"}] * 6},
+    ):
+        plain = system_prompt(parse_config({**GAME, **settings}))
+        coached = system_prompt(
+            parse_config(
+                {**GAME, **settings, "prompt": {"slots": {"extra": "coaching"}}}
+            )
+        )
+        assert plain != system_prompt(parse_config(GAME))  # it did add something
+        assert coached == f"{plain}\n\n{COACHING}"
+
+
 def test_extra_paragraph_the_coached_config_plays_and_its_run_records_the_paragraph(
     tmp_path,
 ):

@@ -86,8 +86,12 @@ def base_sha256(prompt):
     return hashlib.sha256(_path(prompt.base).read_bytes()).hexdigest()
 
 
-def render(prompt, **numbers):
-    """The base with its numbers and slots filled in, ready for a pirate to read."""
+def render(prompt, tail="", **numbers):
+    """The base with its numbers and slots filled in, ready for a pirate to read.
+
+    `tail` is what the game adds after the base (the cave leak's rule, the thinking
+    budget); the `extra` paragraph comes after even that, so it's always last.
+    """
     texts = {
         slot: ""
         if variant == NONE
@@ -97,8 +101,10 @@ def render(prompt, **numbers):
         .format(**numbers)
         for slot, variant in prompt.slots.items()
     }
+    extra = texts.get("extra", "")
+    texts["extra"] = ""  # its spot in the base only marks the end; it goes last
     empty = {f"{{{slot}}}" for slot, text in texts.items() if not text}
     base = _path(prompt.base).read_text(encoding="utf-8")
     lines = [line for line in base.splitlines() if line.strip() not in empty]
-    # An unset `{extra}` would leave the blank line before it at the very end.
-    return "\n".join(lines).format(**numbers, **texts).rstrip()
+    rules = "\n".join(lines).format(**numbers, **texts).rstrip() + tail
+    return f"{rules}\n\n{extra}" if extra else rules

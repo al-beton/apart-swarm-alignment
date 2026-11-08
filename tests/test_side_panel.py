@@ -302,7 +302,7 @@ def test_side_panel_a_long_thought_shows_its_end_after_dots_at_the_normal_size()
     lines = viewer.thought_lines([LONG])
     assert len(lines) == viewer.THOUGHT_ROWS  # as much as fits, no more
     assert lines[0].startswith("...")
-    assert lines[-1].endswith("dig here now.")
+    assert " ".join(lines).endswith("dig here now.")
     assert all(
         len(line) <= viewer.PANEL_COLUMNS for line in lines
     )  # never smaller type

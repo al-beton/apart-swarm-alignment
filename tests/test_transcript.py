@@ -55,7 +55,7 @@ def test_transcript_one_heading_per_turn_from_the_game_page_s_record(saved):
 
 def test_transcript_each_turn_holds_its_folded_prompt_thinking_action_and_result(saved):
     records = records_of(saved)
-    records[1]["thinking"] = "First I look.\n\nThen I dig."
+    records[1]["thinking"] = "First I look.\n\nThen I dig.\nAnd I write."
     records[1]["refused"] = [{"reply": "I'd rather nap", "why": "no tool call"}]
     records[1]["did"] = [{"action": "write", "text": "Dug here"}]
     rewrite(saved, records)
@@ -66,7 +66,7 @@ def test_transcript_each_turn_holds_its_folded_prompt_thinking_action_and_result
         re.DOTALL,
     )
     assert folded and folded.group(3) == records[1]["saw"]["prompt"]
-    assert "> First I look.\n>\n> Then I dig." in section
+    assert "> First I look.\n>\n> Then I dig.\\\n> And I write." in section
     assert "I'd rather nap" in section and "no tool call" in section
     assert 'write {"text": "Dug here"}' in section
     assert records[1]["result"] in section
@@ -115,11 +115,14 @@ def test_transcript_a_pirate_s_words_cannot_break_its_structure(saved):
     records[0]["result"] = words
     records[0]["did"] = [{"action": "write", "text": words}]
     rewrite(saved, records)
-    text = viewer.transcript(saved)
+    # Inside a code fence the words are shown as they are; outside it, as text.
+    fenced = r"^(`{3,})text\n.*?\n\1$"
+    text = re.sub(fenced, "", viewer.transcript(saved), flags=re.DOTALL | re.MULTILINE)
     assert len(headings(text)) == len(records)
-    assert text.count("</details>") == text.count("<details>")
-    assert "<script>" not in text.replace("```text", "").split("</details>", 1)[1]
-    assert not re.search(r"^## Turn 99", text, re.MULTILINE)
+    assert text.count("</details>") == text.count("<details>") == len(records)
+    assert "<script>" not in text
+    assert "```" not in text
+    assert not re.search(r"^#+ Turn 99", text, re.MULTILINE)
 
 
 def test_transcript_the_same_game_writes_the_same_text(saved):

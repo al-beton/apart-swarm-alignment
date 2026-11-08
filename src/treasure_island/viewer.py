@@ -24,12 +24,13 @@ A pirate that moves walks there: its turn gets `WALK_FRAMES` frames, steps 1 to
 turn's own frame. `walk_steps` says which steps a turn has, and the GIF and the page
 both draw exactly those.
 
-Implements: viewer/cave-drawn, treasure-island/cave, viewer/turn-marked, viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/walks-between-squares, treasure-island/pokemon-style, viewer/slideshow-file, viewer/game-page, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process
+Implements: viewer/cave-drawn, treasure-island/cave, viewer/turn-marked, viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/walks-between-squares, treasure-island/pokemon-style, viewer/slideshow-file, viewer/game-page, viewer/transcript, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process
 """
 
 import base64
 import io
 import json
+import re
 from functools import cache
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -666,12 +667,10 @@ def _scroll_writes(records):
     return writes
 
 
-def slideshow_page(folder):
-    """The game page: every turn's frame and whole record, as one HTML file's text."""
-    records = records_in(folder)
-    turns = [
+def turn_records(records):
+    """Each turn's whole record as the game page and the transcript both show it."""
+    return [
         {
-            "frame": base64.b64encode(frame_png(folder, number)).decode(),
             "story": record.get("story", ""),
             "turn": record.get("turn", number),
             "agent": record["agent"],
@@ -687,6 +686,15 @@ def slideshow_page(folder):
             zip(records, _scroll_writes(records), strict=True)
         )
     ]
+
+
+def slideshow_page(folder):
+    """The game page: every turn's frame and whole record, as one HTML file's text."""
+    records = records_in(folder)
+    turns = [
+        {"frame": base64.b64encode(frame_png(folder, number)).decode(), **turn}
+        for number, turn in enumerate(turn_records(records))
+    ]
     # No raw "<" in the data, which is still the same JSON, so a note can't close the
     # script it's held in or stop it closing. Escaping "</" alone misses "<!-- <script>".
     data = json.dumps(turns, ensure_ascii=False).replace("<", "\\u003c")
@@ -698,6 +706,78 @@ def slideshow(folder, out=None):
     out = Path(out) if out else Path(folder).with_suffix(".html")
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(slideshow_page(folder), encoding="utf-8")
+    return out
+
+
+def call_text(action):
+    """A tool call as one line, as the game page shows it: `write {"text": "..."}`."""
+    rest = {key: value for key, value in action.items() if key != "action"}
+    return action["action"] + (
+        " " + json.dumps(rest, ensure_ascii=False) if rest else ""
+    )
+
+
+def _quoted(text):
+    """Text as a Markdown blockquote that can't open a heading, tag or code span."""
+    text = text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+    text = re.sub(r"([\\`*_\[\]|~#])", r"\\\1", text)
+    lines = text.splitlines() or [""]
+    # A trailing backslash keeps each line its own, as GitHub would otherwise join them.
+    broken = [
+        line + ("\\" if line.strip() and after.strip() else "")
+        for line, after in zip(lines, [*lines[1:], ""], strict=True)
+    ]
+    return "\n".join(f"> {line}".rstrip() for line in broken)
+
+
+def _fenced(text):
+    """Text in a code fence longer than any run of backticks inside it."""
+    fence = "`" * max([3, *(len(run) + 1 for run in re.findall("`+", text))])
+    return f"{fence}text\n{text}\n{fence}"
+
+
+def _transcript_turn(turn):
+    parts = [f"## Turn {turn['turn']}: {turn['agent']}"]
+    if turn["prompt"]:
+        summary = f"What it was shown ({len(turn['prompt'])} characters)"
+        details = f"<details>\n<summary>{summary}</summary>\n\n"
+        parts.append(details + _fenced(turn["prompt"]) + "\n\n</details>")
+    else:
+        parts.append("*No prompt recorded: a scripted pirate reads no words.*")
+    thinking = _quoted(turn["thinking"]) if turn["thinking"] else None
+    parts.append("**Its thinking**\n\n" + (thinking or "*No thinking recorded.*"))
+    for bad in turn["refused"]:
+        refused = f"{bad['reply']}\n({bad['why']})"
+        parts.append("**A reply that wasn't a tool call**\n\n" + _quoted(refused))
+    did = "\n".join(call_text(action) for action in turn["did"])
+    parts.append(
+        "**What it did**\n\n" + (_quoted(did) if did else "*Nothing: the turn passed.*")
+    )
+    result = _quoted(turn["result"]) if turn["result"] else "*No result recorded.*"
+    parts.append("**The result**\n\n" + result)
+    return "\n\n".join(parts)
+
+
+def transcript(folder):
+    """The game's transcript as Markdown: every turn in full, then how it ended."""
+    records = records_in(folder)
+    parts = [f"# Transcript: {Path(folder).name}"]
+    parts += [_transcript_turn(turn) for turn in turn_records(records)]
+    game_over = records[-1].get("game_over") if records else None
+    if game_over:
+        ending = (
+            f"## Game over\n\n{game_over['story']}\n\n**Score:** {game_over['score']}"
+        )
+    else:
+        ending = "*This game has no game over line yet: it stopped or is still going.*"
+    parts.append(ending)
+    return "\n\n".join(parts) + "\n"
+
+
+def write_transcript(folder):
+    """Write `transcript.md` into the run folder; return its path."""
+    out = Path(folder) / "transcript.md"
+    out.write_text(transcript(folder), encoding="utf-8")
     return out
 
 

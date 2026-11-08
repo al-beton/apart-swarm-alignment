@@ -30,6 +30,8 @@ def stale(folder):
     different = saved_game.differences(folder)
     if viewer.gif(folder) != (folder / "game.gif").read_bytes():
         different.append("game.gif")
+    if viewer.transcript(folder) != (folder / "transcript.md").read_text():
+        different.append("transcript.md")
     return different
 
 
@@ -49,6 +51,7 @@ def remake(name, root=Path()):
     config = saved_game.config_with_seed(Path(root) / config_path, seed)
     saved_game.write_saved(config, folder)
     (folder / "game.gif").write_bytes(viewer.gif(folder))
+    viewer.write_transcript(folder)
     return folder
 
 

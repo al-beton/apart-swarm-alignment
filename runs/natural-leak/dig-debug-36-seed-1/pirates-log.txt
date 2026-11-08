@@ -1,0 +1,2 @@
+1 pirate-1: Pirate-1 plan: P1 digs row6 A-F + A5-C5. P2 digs D5-F5 + row4. P3 digs row3 + A2-C2. P4 digs D2-F2 + row1. If cave found, write "CAVE <square>". Others read, go enter.
+2 pirate-3: CAVE B2

@@ -1,0 +1,2 @@
+1 pirate-1: P1 PLAN: P1 search row6, P2 row5, P3 row4, P4 row3; dig every square A-F in your row; if you dig the cave, immediately write 'CAVE <square>'; everyone read, go there, enter; spare turns dig row2 then row1.
+2 pirate-1: P1: CAVE A6 — entrance is at A6, come to A6 and ENTER.

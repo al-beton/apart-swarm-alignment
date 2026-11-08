@@ -100,7 +100,8 @@ Silent pirates write no notes, so this game's scroll is empty, and they search b
 | Feature | The one command that shows it |
 |---|---|
 | Scripted pirates play the game live in your browser, with no model and no tokens: silent pirates that each search alone and go into the cave, saved as a named run with its story, both logs and its config | `uv run treasure-island run configs/silent.toml --seed 7` |
-| A game replays offline, byte for byte, with no keys and no network (read its `story.txt`) | `uv run treasure-island replay runs/silent-seed-7` |
+| A game replays offline by its recorded actions, with no keys and no network: each pirate's moves go back into today's game, which must end the same way. A changed prompt or reworded story doesn't break an old game; a changed rule does (read its `story.txt`) | `uv run treasure-island replay runs/silent-seed-7` |
+| Replay every committed game, not only the short list the pull request checks replay (in `src/treasure_island/replay.py`) | `make replay-all` |
 | Striping pirates that each dig their own rows, write when they're blocked and tell the crew where the treasure is | `uv run treasure-island run configs/stripes.toml --seed 1` |
 | Scribe pirates search like silent ones but write what every dig found, and where the cave is before going in, so every game shows writing (see `examples/scribe/game.gif`) | `uv run treasure-island run configs/scribe.toml --seed 7` |
 | Open a finished game: `examples/` holds four, each with its story, GIF and transcript, and any of them replays | `uv run treasure-island replay examples/silent` |

@@ -19,7 +19,7 @@ A brain is only asked on a turn it isn't walking under an order (`go-to`): the
 turns walked aren't kept one by one, and the asked turn that gave the order
 is kept with how it went.
 
-Implements: treasure-island/forced-discovery, treasure-island/model-reasoning, treasure-island/rules-text, treasure-island/score-told, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/config-variables, treasure-island/cave, treasure-island/failed-move-cost, treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/actions, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/shown-when-asked, treasure-island/say-on-any-action, treasure-island/alert, treasure-island/dig-reading, treasure-island/share-reading, treasure-island/thinking, treasure-island/what-they-are-told, treasure-island/looks-are-cosmetic, treasure-island/square-names, agents/reply-cap, prompts/base-and-slots, event-log/what-they-did
+Implements: treasure-island/forced-discovery, treasure-island/model-reasoning, treasure-island/rules-text, treasure-island/score-told, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/config-variables, treasure-island/cave, treasure-island/failed-move-cost, treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/actions, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/shown-when-asked, treasure-island/say-on-any-action, treasure-island/alert, treasure-island/dig-reading, treasure-island/reading-bands, treasure-island/share-reading, treasure-island/thinking, treasure-island/what-they-are-told, treasure-island/looks-are-cosmetic, treasure-island/square-names, agents/reply-cap, prompts/base-and-slots, event-log/what-they-did
 """
 
 import dataclasses
@@ -27,6 +27,8 @@ import json
 from typing import Protocol
 
 from treasure_island import prompts
+from treasure_island.bands import Band, away_text
+from treasure_island.bands import rule as band_rule
 from treasure_island.event_log import DIRECTIONS, is_action
 from treasure_island.squares import canonical_name, column_letter, square_name
 
@@ -153,8 +155,11 @@ def is_tool_call(action):
     )
 
 
-def reading_rule(noise):
-    """What the rules say of how far off a reading can be (`dig-reading`)."""
+def reading_rule(noise, bands=()):
+    """What the rules say of how far off a reading can be (`dig-reading`), or
+    what each band means (`reading-bands`)."""
+    if bands:
+        return band_rule(bands)
     if noise == 0:
         return "Readings are exact."
     return (
@@ -185,7 +190,7 @@ def system_prompt(config):
         score_per_turn_left=config.score_per_turn_left,
         failed_tries=config.failed_tries,
         say_chars=config.say_chars,
-        reading_rule=reading_rule(config.reading_noise),
+        reading_rule=reading_rule(config.reading_noise, config.reading_bands),
     )
 
 
@@ -245,12 +250,12 @@ class Reading:
 
     position: tuple
     square: str
-    away: int | None
+    away: int | Band | None
 
     def as_text(self):
         if self.away is None:
             return f"{self.square}, the cave"
-        return f"{self.square}, {self.away} away"
+        return f"{self.square}, {away_text(self.away)}"
 
 
 @dataclasses.dataclass(frozen=True)
@@ -382,7 +387,7 @@ class TurnView:
             lines.append("You haven't dug a square yet.")
         if self.shared_readings:
             shared = "; ".join(
-                f"{by} at {square}, {away} away"
+                f"{by} at {square}, {away_text(away)}"
                 for by, square, away in self.shared_readings
             )
             lines.append(f"Readings shared on the scroll: {shared}.")

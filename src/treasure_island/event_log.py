@@ -3,7 +3,7 @@
 The format is documented in product/spec/event-log.md. Only required fields are
 checked, so a record may carry more (event-log/room-to-grow).
 
-Implements: treasure-island/share-reading, event-log/asked-or-walked, event-log/one-record-per-turn, event-log/who-acted, event-log/what-they-saw, event-log/what-they-did, event-log/what-the-log-showed, event-log/the-outcome, event-log/room-to-grow, event-log/validator
+Implements: treasure-island/share-reading, treasure-island/reading-bands, event-log/asked-or-walked, event-log/one-record-per-turn, event-log/who-acted, event-log/what-they-saw, event-log/what-they-did, event-log/what-the-log-showed, event-log/the-outcome, event-log/room-to-grow, event-log/validator
 """
 
 import json
@@ -87,17 +87,34 @@ def _did_errors(did):
     ]
 
 
+def _is_band(shared):
+    """A banded reading (`reading-bands`): its `band`, `near` and `far`, if any."""
+    far = shared.get("far")
+    return (
+        _is_text(shared.get("band"))
+        and _is_int(shared.get("near"))
+        and "far" in shared
+        and (far is None or _is_int(far))
+    )
+
+
 def _shared_errors(shared):
-    """A dig's shared reading names its scroll `line`, its `square` and `away`."""
+    """A dig's shared reading names its scroll `line`, its `square` and `away`,
+    or with bands its `band`, `near` and `far`."""
     if shared is None:
         return []
     if not (
         isinstance(shared, dict)
         and _is_int(shared.get("line"))
         and _is_text(shared.get("square"))
-        and _is_int(shared.get("away"))
+        and (_is_int(shared.get("away")) or _is_band(shared))
     ):
-        return ["shared must name the scroll `line`, the `square` and the `away`"]
+        return [
+            (
+                "shared must name the scroll `line`, the `square` and the `away`, "
+                "or the `band`, `near` and `far`"
+            )
+        ]
     return []
 
 

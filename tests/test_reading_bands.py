@@ -65,7 +65,9 @@ def test_reading_bands_and_noise_are_exclusive():
         parse_config({"reading_bands": [2, 5]})  # noise defaults to 2
     with pytest.raises(ConfigError, match="reading_noise must be 0"):
         parse_config({"reading_bands": [2, 5], "reading_noise": 1})
-    assert parse_config({"reading_bands": [2, 5], "reading_noise": 0}).reading_noise == 0
+    assert (
+        parse_config({"reading_bands": [2, 5], "reading_noise": 0}).reading_noise == 0
+    )
 
 
 def test_reading_bands_are_named_from_the_nearest():
@@ -157,9 +159,7 @@ def test_reading_bands_loner_and_sharer_keep_the_squares_inside_a_band():
     warm = Band("warm", 3, 5)
     kept = possible(10, 0, [((0, 0), warm)])
     assert kept and all(3 <= distance((0, 0), square) <= 5 for square in kept)
-    assert len(kept) == sum(
-        1 for x in range(10) for y in range(10) if 3 <= x + y <= 5
-    )
+    assert len(kept) == sum(1 for x in range(10) for y in range(10) if 3 <= x + y <= 5)
     cold = Band("cold", 6, None)
     assert (9, 9) in possible(10, 0, [((0, 0), cold)])
     assert (2, 2) not in possible(10, 0, [((0, 0), cold)])

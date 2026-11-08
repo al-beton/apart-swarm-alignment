@@ -5,7 +5,8 @@
 row per pirate: the turns it was asked and the turns it walked under an order,
 its model calls, the lines it said, how many of them were alerts and how many
 readings it said, each square said with its distance counted once, in the forms
-pirates write ("Dug C4: 5 away.", "A10=9", "A10 reads 9", "reading 9 at A10"). A
+pirates write ("Dug C4: 5 away.", "A10=9", "A10 reads 9", "reading 9 at A10"),
+banded ones too ("Dug C4: warm (3-5).", "C4 cold", `reading-bands`). A
 total row ends each game. It is how we check a live crew keeps talking all game
 rather than going quiet after its first few turns.
 
@@ -16,7 +17,7 @@ dropped call tried again isn't counted twice. A scripted pirate makes none, and
 a run with no `config.json` counts every pirate as asking a model (default, Edu
 to confirm).
 
-Implements: results/talk-stats
+Implements: results/talk-stats, treasure-island/reading-bands
 """
 
 import json
@@ -30,6 +31,7 @@ from typing import NamedTuple
 _S = r"\b[A-Z][1-9]\d?\b"
 _N = r"\b\d{1,2}\b"
 _UNIT = r"(?i:\s*(?:away|squares?|steps?)\b)"
+_BAND = r"(?i:hot|warm|cool|cold)\b"
 _NOT_A_COUNT = r"(?!(?i:\s*(?:turns?|pirates?|of)\b))"
 _READING = re.compile(
     "|".join(
@@ -39,6 +41,7 @@ _READING = re.compile(
             rf"{_S}\s+(?i:reads?|gave|gives|shows?)\s*:?\s*{_N}",  # A10 reads 9
             rf"(?i:reading)\s+(?i:of\s+)?{_N}\s+(?i:at|on|from)\s+{_S}",  # reading 9 at A10
             rf"{_N}{_UNIT}\s+(?i:from|at|of)\s+{_S}",  # 9 away from A10
+            rf"{_S}\s*(?:=|:|->|\s(?i:is|reads?|gave|gives|shows?))?\s*{_BAND}",  # C4 warm
         )
     )
 )

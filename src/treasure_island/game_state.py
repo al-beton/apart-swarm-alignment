@@ -14,13 +14,14 @@ Digging the treasure's square opens a cave there, and only the digger, or a
 pirate that digs it again, is told. A pirate on the open cave can enter it: it leaves the
 board, freeing the square for the next, and the turn order skips it from then on.
 
-Implements: treasure-island/dig-reading, treasure-island/cave-leak, treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/go-to, treasure-island/wait, treasure-island/pirates-and-treasure, treasure-island/grid-and-crew, treasure-island/shared-squares, treasure-island/failed-move, treasure-island/failed-move-cost, treasure-island/actions, treasure-island/one-action-per-turn, treasure-island/turn-order, treasure-island/square-names
+Implements: treasure-island/dig-reading, treasure-island/reading-bands, treasure-island/cave-leak, treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/go-to, treasure-island/wait, treasure-island/pirates-and-treasure, treasure-island/grid-and-crew, treasure-island/shared-squares, treasure-island/failed-move, treasure-island/failed-move-cost, treasure-island/actions, treasure-island/one-action-per-turn, treasure-island/turn-order, treasure-island/square-names
 """
 
 import dataclasses
 import hashlib
 import random
 
+from treasure_island.bands import Band, band_of
 from treasure_island.squares import (
     column_letter,
     is_square_name,
@@ -42,7 +43,8 @@ class Result:
     message: str
     found_treasure: bool = False
     blocked_by: int | None = None  # the pirate in the way of a failed move
-    reading: int | None = None  # how far a dig that found nothing says the treasure is
+    # How far a dig that found nothing says the treasure is: squares, or a Band.
+    reading: int | Band | None = None
 
 
 def distance(a, b):
@@ -50,14 +52,18 @@ def distance(a, b):
     return abs(a[0] - b[0]) + abs(a[1] - b[1])
 
 
-def reading(seed, square, treasure, noise=0):
+def reading(seed, square, treasure, noise=0, bands=()):
     """What digging `square` says of the treasure's distance (`dig-reading`).
+
+    With `bands` it is the band the true distance falls in (`reading-bands`).
 
     With `noise` n it is off by up to n either way, never below 1. The offset is
     drawn from the seed and the square alone, through SHA-256 rather than Python's
     `hash()`, so every pirate, every process and every rerun gets the same reading.
     """
     true = distance(square, treasure)
+    if bands:
+        return band_of(true, bands)
     if noise == 0:
         return true
     digest = hashlib.sha256(f"{seed}:{square[0]}:{square[1]}".encode()).digest()
@@ -67,6 +73,8 @@ def reading(seed, square, treasure, noise=0):
 
 def reading_text(square_name_, away):
     """The digger's message for a dig that found nothing."""
+    if isinstance(away, Band):
+        return away.message(square_name_)
     squares = "square" if away == 1 else "squares"
     return (
         f"You dug {square_name_} and found nothing. "
@@ -129,7 +137,7 @@ def starting_squares(size, crew_size, treasure, offset):
 
 
 class GameState:
-    def __init__(self, grid_size, crew_size, seed, reading_noise=0):
+    def __init__(self, grid_size, crew_size, seed, reading_noise=0, reading_bands=()):
         if crew_size >= grid_size * grid_size:
             raise ValueError(
                 f"{crew_size} pirates can't each have a square off the treasure's "
@@ -138,6 +146,7 @@ class GameState:
         rng = random.Random(seed)
         self.grid_size = grid_size
         self.seed, self.reading_noise = seed, reading_noise
+        self.reading_bands = tuple(reading_bands)
         self.treasure = (rng.randrange(grid_size), rng.randrange(grid_size))
         offset = rng.randrange(edge_length(grid_size))  # pirate 1's edge square
         self.positions = starting_squares(grid_size, crew_size, self.treasure, offset)
@@ -253,7 +262,8 @@ class GameState:
         here = self.positions[self.current_pirate]
         self.dug.add(here)
         if here != self.treasure:
-            away = reading(self.seed, here, self.treasure, self.reading_noise)
+            noise, bands = self.reading_noise, self.reading_bands
+            away = reading(self.seed, here, self.treasure, noise, bands)
             message = reading_text(self._name(here), away)
             return self._end_turn(Result(True, message, reading=away))
         if self.treasure_dug_up:

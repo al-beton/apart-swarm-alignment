@@ -13,12 +13,13 @@ allow (`possible`), and the sharer counts the readings shared on the scroll too.
 Each is told `reading_noise` as well, since the rules say how far off a reading
 can be.
 
-Implements: agents/reasoning-looked-up, agents/model-per-pirate, treasure-island/silent, treasure-island/loner, treasure-island/sharer, treasure-island/reference-games, treasure-island/no-token-strategies, treasure-island/brain-in-config, treasure-island/square-names
+Implements: agents/reasoning-looked-up, agents/model-per-pirate, treasure-island/silent, treasure-island/loner, treasure-island/sharer, treasure-island/reading-bands, treasure-island/reference-games, treasure-island/no-token-strategies, treasure-island/brain-in-config, treasure-island/square-names
 """
 
 import re
 from pathlib import Path
 
+from treasure_island.bands import Band
 from treasure_island.brain import Decision, tool_call
 from treasure_island.config import ConfigError, load_config, save_config
 from treasure_island.game_loop import write_game
@@ -76,10 +77,13 @@ def allows(dug, away, square, noise=0):
     A reading is the true distance off by up to `noise` either way but never
     below 1, so a reading of 1 allows every square up to 1 + `noise` away. The
     dug square itself never holds the treasure: digging it would have found it.
+    A banded reading (`reading-bands`) allows every distance inside its band.
     """
     true = distance(dug, square)
     if true == 0:
         return False
+    if isinstance(away, Band):
+        return away.holds(true)
     if away <= 1:
         return true <= 1 + noise
     return abs(true - away) <= noise

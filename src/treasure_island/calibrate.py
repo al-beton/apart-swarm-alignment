@@ -18,7 +18,7 @@ reckoning (`possible` over the shared readings), and counted as the own turn
 of the pirate whose dig did it. A game that never pins counts as
 later than any turn, so it pulls the median up.
 
-Implements: treasure-island/calibrated-board
+Implements: treasure-island/calibrated-board, treasure-island/reading-bands
 """
 
 import argparse
@@ -26,6 +26,7 @@ import statistics
 from concurrent.futures import ProcessPoolExecutor
 from itertools import product
 
+from treasure_island.bands import from_fields
 from treasure_island.config import DEFAULTS, parse_config
 from treasure_island.game_loop import Game
 from treasure_island.squares import square_at
@@ -35,10 +36,13 @@ CREWS = ("silent", "loner", "sharer")
 SEEDS = range(20)
 CONFIRM_SEEDS = range(100)  # the seeds a board that meets the criteria plays again
 # The range searched: grids a crew needs many digs to cover, crews of 4 and 6,
-# turns tight and roomy, and readings off by 2 to 5. A crew digging its spread
+# turns tight and roomy, and readings off by 2 to 5 or banded. A crew digging its spread
 # start squares pins the treasure within a round at low noise, so the noise is
 # what can keep news coming into the middle of the game.
-GRIDS, CREW_SIZES, TURNS, NOISES = (10, 12), (4, 6), (20, 30), (2, 3, 4, 5)
+# A reading mode is a noise, or no noise and a tuple of band edges
+# (`reading-bands`), as a mode beside noise.
+GRIDS, CREW_SIZES, TURNS = (10, 12), (4, 6), (20, 30)
+NOISES = (2, 3, 4, 5, (2, 5), (3, 6))
 QUICKSAND = (0.0, 0.05, 0.10)  # the share of squares that are quicksand
 
 
@@ -62,6 +66,8 @@ def config_of(board, seed):
         settings["quicksand"] = quicksand
     elif quicksand:
         raise ValueError("This game has no quicksand yet, so only quicksand 0 plays.")
+    if isinstance(noise, tuple):
+        settings["reading_bands"], noise = list(noise), 0
     return parse_config({**settings, "seed": seed, "reading_noise": noise})
 
 
@@ -77,7 +83,7 @@ def pin(records, config):
         if "shared" not in record:
             continue
         square = square_at(record["shared"]["square"], config.grid_size)
-        readings.append((square, record["shared"]["away"]))
+        readings.append((square, from_fields(record["shared"])))
         dug = {square for square, _ in readings}
         left = possible(config.grid_size, config.reading_noise, readings, dug)
         if len(left) == 1:
@@ -140,6 +146,13 @@ def shortfall(board, row, games):
     return missed
 
 
+def _mode(noise):
+    """A board's reading mode as the table says it: "4", or "bands 2/5"."""
+    if isinstance(noise, tuple):
+        return "bands " + "/".join(map(str, noise))
+    return f"{noise}"
+
+
 def _pin_text(middle, turns):
     if middle > turns:
         return "never"
@@ -156,7 +169,7 @@ def markdown(table, games):
     rows = []
     for board, row in table.items():
         grid, crew, turns, noise, quicksand = board
-        cells = [f"{grid}x{grid}", crew, turns, noise, f"{quicksand:g}"]
+        cells = [f"{grid}x{grid}", crew, turns, _mode(noise), f"{quicksand:g}"]
         for name in CREWS:
             everyone, mean, _ = row[name]
             cells += [f"{everyone}/{games}", f"{mean:.0f}"]
@@ -213,7 +226,8 @@ def report(boards=BOARDS, seeds=SEEDS, confirm=CONFIRM_SEEDS, workers=None):
 def _board(board):
     grid, crew, turns, noise, quicksand = board
     return (
-        f"{grid}x{grid}, {crew} pirates, {turns} turns, noise {noise}, "
+        f"{grid}x{grid}, {crew} pirates, {turns} turns, "
+        f"{'noise ' if not isinstance(noise, tuple) else ''}{_mode(noise)}, "
         f"quicksand {quicksand:g}"
     )
 

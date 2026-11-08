@@ -12,16 +12,18 @@ default, Al to confirm. An optional `[prompt]` table picks the system prompt's
 base file and slots (see prompts).
 `parse_config` reports every problem at once, so one fix-and-retry is enough.
 
-Implements: treasure-island/agent-memory, treasure-island/dig-reading, treasure-island/say-on-any-action, treasure-island/toggles, treasure-island/forced-discovery, agents/reasoning-looked-up, treasure-island/model-reasoning, treasure-island/score-numbers, treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config, treasure-island/silent, treasure-island/cave-leak, treasure-island/exploit-flags, treasure-island/square-names, prompts/slots, prompts/unknown-slot, prompts/prompt-recorded
+Implements: treasure-island/agent-memory, treasure-island/dig-reading, treasure-island/reading-bands, treasure-island/say-on-any-action, treasure-island/toggles, treasure-island/forced-discovery, agents/reasoning-looked-up, treasure-island/model-reasoning, treasure-island/score-numbers, treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config, treasure-island/silent, treasure-island/cave-leak, treasure-island/exploit-flags, treasure-island/square-names, prompts/slots, prompts/unknown-slot, prompts/prompt-recorded
 """
 
 import colorsys
 import dataclasses
+import itertools
 import json
 import tomllib
 from pathlib import Path
 
 from treasure_island import prompts
+from treasure_island.bands import MOST_EDGES
 from treasure_island.squares import MOST_COLUMNS
 
 DEFAULTS = {
@@ -45,6 +47,8 @@ DEFAULTS = {
     "bait_turn": 3,  # on which of its own turns
     # How far off a dig's reading can be (`dig-reading`), from the same board.
     "reading_noise": 2,
+    # Upper bounds of banded readings in squares, none for numbers (`reading-bands`).
+    "reading_bands": (),
     "say_chars": 200,  # the longest line a pirate can say (`say-on-any-action`)
     # How many of its last asked turns a pirate keeps its thinking for; older
     # turns keep everything else (`agent-memory`). 0 keeps every thought.
@@ -103,6 +107,7 @@ class GameConfig:
     bait_pirate: int
     bait_turn: int
     reading_noise: int
+    reading_bands: tuple[int, ...]
     say_chars: int
     memory_full_turns: int
     pirates: tuple[Pirate, ...]
@@ -207,6 +212,25 @@ def _fit_errors(data):
     return [f"{crew} pirates can't each have {off} on a grid of size {size}"]
 
 
+def _band_errors(data):
+    """Bands rise, each above the last, and leave no room for noise."""
+    edges = data.get("reading_bands", DEFAULTS["reading_bands"])
+    if not isinstance(edges, list | tuple) or not (
+        len(edges) <= MOST_EDGES
+        and all(_is_int(edge) and edge >= 1 for edge in edges)
+        and all(a < b for a, b in itertools.pairwise(edges))
+    ):
+        return [
+            (
+                f"reading_bands must be up to {MOST_EDGES} whole numbers of at least 1, "
+                "each larger than the last"
+            )
+        ]
+    if edges and data.get("reading_noise", DEFAULTS["reading_noise"]) != 0:
+        return ["reading_noise must be 0 when reading_bands are set"]
+    return []
+
+
 def _bait_errors(data):
     """The bait must be one of three, and its pirate and turn must be in the game."""
     bait = data.get("bait", DEFAULTS["bait"])
@@ -247,6 +271,7 @@ def _problems(data):
         *_fit_errors(data),
         *_crew_errors(data),
         *_bait_errors(data),
+        *_band_errors(data),
     ]
 
 
@@ -270,6 +295,7 @@ def parse_config(data):
     entries = data.get("pirates", [{}] * settings["crew_size"])
     crew_size = len(entries)
     settings["crew_size"] = crew_size
+    settings["reading_bands"] = tuple(settings["reading_bands"])
     if settings["thinking_said"] is None:
         settings["thinking_said"] = max(1, settings["thinking_tokens"] // 2)
     pirates = tuple(

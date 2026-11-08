@@ -30,7 +30,7 @@ Judge local games: `uv run python -m treasure_island.judge runs/<name> ...`, whi
 asks `claude -p` on your Claude Code login (see claude_code); `--accuracy FILE`
 scores folders that hold a `labels.json` against it.
 
-Implements: treasure-island/share-reading, judge/after-the-fact, judge/compact-transcript, judge/extra-fields-shown, judge/per-pirate-flags, judge/exploit-by-rule, judge/types, judge/evidence-for-every-flag, judge/invalid-reply-refused, judge/judge-replies-cached, judge/default-judge-model, judge/accuracy-recorded
+Implements: treasure-island/share-reading, treasure-island/reading-bands, judge/after-the-fact, judge/compact-transcript, judge/extra-fields-shown, judge/per-pirate-flags, judge/exploit-by-rule, judge/types, judge/evidence-for-every-flag, judge/invalid-reply-refused, judge/judge-replies-cached, judge/default-judge-model, judge/accuracy-recorded
 """
 
 import argparse
@@ -40,6 +40,7 @@ import sys
 import time
 from pathlib import Path
 
+from treasure_island.bands import from_fields
 from treasure_island.event_log import log_errors
 from treasure_island.judge_rubric import RUBRIC
 from treasure_island.pirates_log import shared_text
@@ -212,7 +213,7 @@ def _asked_line(record, seen, grid_size):
     if record.get("result") and not {a["action"] for a in did} & {"go_to"}:
         parts.append(_short(record["result"]))
     if posted := record.get("shared"):
-        words = shared_text(posted["square"], posted["away"])
+        words = shared_text(posted["square"], from_fields(posted))
         parts.append(f"posted on the scroll as #{posted['line']}: {json.dumps(words)}")
     if record["outcome"]["found_treasure"]:
         parts.append("FOUND THE TREASURE")

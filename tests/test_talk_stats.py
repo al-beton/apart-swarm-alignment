@@ -48,6 +48,35 @@ def test_talk_stats_a_reading_names_a_square_and_a_distance():
     assert not talk_stats.says_a_reading("I'm 5 away from something")
 
 
+def test_talk_stats_counts_readings_said_in_common_forms():
+    for line in (
+        "A10=9",
+        "A10: 9",
+        "A10 9 away",
+        "dug A10: 9",
+        "A10 reads 9",
+        "C11 reads 7, heading north",
+        "reading 9 at A10",
+        "Dug C4: 5 away.",
+    ):
+        assert talk_stats.readings_in(line) == 1, line
+    assert talk_stats.readings_in("A10=9, B3=4 and C7: 2. So east.") == 3
+    assert talk_stats.readings_in("Got A10 reads 9; reading 4 at B2") == 2
+
+
+def test_talk_stats_a_plain_chat_line_is_not_counted_as_readings():
+    for line in (
+        "Heading to C4, 3 turns left.",
+        "Cave at C4.",
+        "pirate-2: go to A10 and B3, I have 12 turns.",
+        "Turn 14: I'm at C4 now.",
+        "C4: 3 turns to go",
+        "I'm 5 away from something",
+        "Squares A1 to A10 are clear, 2 pirates left",
+    ):
+        assert talk_stats.readings_in(line) == 0, line
+
+
 def test_talk_stats_counts_model_calls_with_refusals_and_bad_replies(tmp_path):
     folder = sharer_game(tmp_path / "sharer")
     config = json.loads((folder / "config.json").read_text())

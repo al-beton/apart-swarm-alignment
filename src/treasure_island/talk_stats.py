@@ -4,7 +4,8 @@
 (a folder holding `events.jsonl`) under the folders given and prints one Markdown
 row per pirate: the turns it was asked and the turns it walked under an order,
 its model calls, the lines it said, how many of them were alerts and how many
-said a reading, a line naming a square and a distance ("Dug C4: 5 away."). A
+readings it said, each square said with its distance counted once, in the forms
+pirates write ("Dug C4: 5 away.", "A10=9", "A10 reads 9", "reading 9 at A10"). A
 total row ends each game. It is how we check a live crew keeps talking all game
 rather than going quiet after its first few turns.
 
@@ -24,9 +25,23 @@ import sys
 from pathlib import Path
 from typing import NamedTuple
 
-# A reading said on the scroll: a square's name and a distance near it.
-_SQUARE = re.compile(r"\b[A-Z][1-9]\d?\b")
-_DISTANCE = re.compile(r"\b\d+\s*(?:away|squares?|steps?)\b", re.IGNORECASE)
+# A reading said on the scroll: a square and the distance dug there, in the forms
+# pirates use. Squares are capitals, as the game names them; the words aren't.
+_S = r"\b[A-Z][1-9]\d?\b"
+_N = r"\b\d{1,2}\b"
+_UNIT = r"(?i:\s*(?:away|squares?|steps?)\b)"
+_NOT_A_COUNT = r"(?!(?i:\s*(?:turns?|pirates?|of)\b))"
+_READING = re.compile(
+    "|".join(
+        (
+            rf"{_S}\s*(?:=|:|->)\s*{_N}{_NOT_A_COUNT}",  # A10=9, Dug A10: 9 away
+            rf"{_S}\s+(?i:(?:is|reads?|gave|gives|shows?)\s+)?{_N}{_UNIT}",  # A10 9 away
+            rf"{_S}\s+(?i:reads?|gave|gives|shows?)\s*:?\s*{_N}",  # A10 reads 9
+            rf"(?i:reading)\s+(?i:of\s+)?{_N}\s+(?i:at|on|from)\s+{_S}",  # reading 9 at A10
+            rf"{_N}{_UNIT}\s+(?i:from|at|of)\s+{_S}",  # 9 away from A10
+        )
+    )
+)
 COLUMNS = (
     "Asked",
     "Walked",
@@ -51,9 +66,14 @@ class Talk(NamedTuple):
         return Talk(*(a + b for a, b in zip(self, other, strict=True)))
 
 
+def readings_in(line):
+    """How many readings a said line gives: each square with its distance, once."""
+    return len(_READING.findall(line))
+
+
 def says_a_reading(line):
-    """Whether a said line names a square and a distance, as a reading does."""
-    return bool(_SQUARE.search(line) and _DISTANCE.search(line))
+    """Whether a said line gives at least one reading."""
+    return readings_in(line) > 0
 
 
 def _model_pirates(folder, names):
@@ -85,7 +105,7 @@ def _turn(record, asks_a_model):
         calls=_calls(record) if asks_a_model and not walked else 0,
         said=len(lines),
         alerts=sum(1 for a in lines if a.get("alert")),
-        readings=sum(1 for a in lines if says_a_reading(a["say"])),
+        readings=sum(readings_in(a["say"]) for a in lines),
     )
 
 

@@ -134,7 +134,9 @@ A test runs or checks each of these commands, so this table can't go stale. Each
 
 ## What the pirates are told
 
-The system prompt is `prompts/base.md`, the rules with the game's numbers filled in, plus slots a config's `[prompt]` table sets per experiment arm: `framing`, `rules`, `disclosure`, `identity` and `extra`, a paragraph of its own at the very end. Each is `none` by default, which adds nothing. `[prompt.slots] identity = "ai-research-study"` tells the pirates it's a study; `extra = "coaching"` tells them how to swarm, and `configs/coached.toml` is the stripes game with it. `prompts/README.md` lists the variants, and a new one is just a file. A run's `manifest.json` keeps the whole system prompt it rendered and the base file's hash, so a reader sees exactly what the pirates were told.
+The system prompt is `prompts/base.md`, the rules with the game's numbers filled in, plus slots a config's `[prompt]` table sets per experiment arm: `framing`, `rules`, `disclosure`, `identity` and `extra`, a paragraph of its own at the very end. Each is `none` by default, which adds nothing. `[prompt.slots] identity = "ai-research-study"` tells the pirates it's a study; `extra = "coaching"` tells them how to swarm, and `configs/coached.toml` is the stripes game with it. `prompts/README.md` lists the variants, and a new one is just a file.
+
+To try a prompt of your own, set `[prompt] system` to the whole system prompt, as text or a file's path: the pirates are told it word for word, in place of the base and its slots. Only the system prompt is a setting; the turn text (the earlier turns, the square names) is the game's own code. A run writes the exact system prompt it used into its `config.json` under `prompt.system`, so running that `config.json` again (`uv run treasure-island run runs/<name>/config.json --seed N`) tells the pirates the same words, and its `manifest.json` keeps that prompt and the base file's hash, so a reader sees exactly what the pirates were told.
 
 ## The cave leak, the first exploit
 

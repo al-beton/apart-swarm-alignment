@@ -11,10 +11,14 @@ experiment arm picks one variant per slot, the file
 the slot's line entirely, so an unset slot leaves no blank line behind, and an
 unset `{extra}` leaves none at the end either.
 
+A config's `system`, text or a file's path, replaces all of that: the pirates
+are told it word for word. A run records the prompt it used there, so running
+its `config.json` again tells the pirates the same words.
+
 Relative paths are read from the repository root, not the working directory, so
 a game plays the same prompt wherever it's started from.
 
-Implements: treasure-island/extra-paragraph, prompts/base-and-slots, prompts/base-file, prompts/slots, prompts/unknown-slot, prompts/prompt-recorded
+Implements: treasure-island/extra-paragraph, prompts/base-and-slots, prompts/base-file, prompts/slots, prompts/unknown-slot, prompts/system-override, prompts/prompt-recorded
 """
 
 import dataclasses
@@ -35,6 +39,7 @@ class PromptConfig:
 
     base: str = BASE
     slots: dict = dataclasses.field(default_factory=lambda: dict.fromkeys(SLOTS, NONE))
+    system: str = ""  # the whole system prompt, or a file's path; "" uses the base
 
 
 def _path(name):
@@ -52,8 +57,10 @@ def problems(block):
     errors = [
         f"prompt.{key} is not a prompt setting"
         for key in block
-        if key not in ("base", "slots")
+        if key not in ("base", "slots", "system")
     ]
+    if not isinstance(block.get("system", ""), str):
+        errors.append("prompt.system must be text, or the path of a file")
     base = block.get("base", BASE)
     if not isinstance(base, str) or not _path(base).is_file():
         errors.append(f"prompt.base {base!r} is not a file")
@@ -78,7 +85,24 @@ def problems(block):
 def prompt_config(block):
     """A checked block as a PromptConfig, every slot named (see `problems`)."""
     slots = {**dict.fromkeys(SLOTS, NONE), **block.get("slots", {})}
-    return PromptConfig(block.get("base", BASE), slots)
+    return PromptConfig(block.get("base", BASE), slots, block.get("system", ""))
+
+
+def overridden(prompt):
+    """The system prompt a config sets outright, read from its file if it names one.
+
+    One line naming a file is that file; anything else is the prompt itself.
+    """
+    system = prompt.system
+    if system and "\n" not in system:
+        for path in (Path(system), _path(system)):
+            try:
+                is_file = path.is_file()
+            except OSError:  # too long to be a file's name: it's the prompt itself
+                is_file = False
+            if is_file:
+                return path.read_text(encoding="utf-8")
+    return system or None
 
 
 def base_sha256(prompt):

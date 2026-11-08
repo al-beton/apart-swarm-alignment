@@ -1,11 +1,12 @@
 # Implements: viewer/turn-marked
-"""The pirate whose turn it is has the turn arrow over its hat, in every frame."""
+"""The pirate whose turn it is has its square outlined in yellow, in every frame."""
 
 from PIL import Image, ImageChops
 
 from treasure_island import viewer
 
-YELLOW = (255, 216, 74)  # the arrow's fill, in assets/ui.py
+YELLOW = (255, 216, 74)  # the turn-arrow art's fill, in assets/ui.py
+OUTLINE = (255, 210, 63)  # #ffd23f, the square's outline
 
 
 def record(turn, agent, at, did=({"action": "dig"},), crew=None):
@@ -48,77 +49,67 @@ TWO = [
 ]
 
 
-def test_turn_marked_every_frame_has_exactly_one_arrow_over_the_acting_pirate():
-    for turn, (x, y) in ((0, (1, 2)), (1, (3, 2))):
-        image, on_board = board(TWO, turn, 4)
-        arrow, (left, top) = viewer.turn_arrow(viewer.scene(TWO, turn, 4))
-        assert drawn_at(image, arrow, (left, top))
-        assert yellow(on_board) == yellow(arrow)
-        assert x * viewer.TILE <= left and left + arrow.width <= (x + 1) * viewer.TILE
-        assert top + arrow.height <= y * viewer.TILE
+def ring(image, spot, inset):
+    """The pixels of one 1-pixel rectangle `inset` inside the tile at board `spot`."""
+    x, y = spot[0] + viewer.EDGE_LEFT + inset, spot[1] + inset
+    far = viewer.TILE - 1 - 2 * inset
+    edges = [(x + i, y) for i in range(far + 1)] + [
+        (x + i, y + far) for i in range(far + 1)
+    ]
+    edges += [(x, y + i) for i in range(far + 1)] + [
+        (x + far, y + i) for i in range(far + 1)
+    ]
+    return [image.getpixel(point)[:3] for point in edges]
 
 
-def test_turn_marked_a_turn_that_does_not_write_still_marks_the_pirate():
-    silent = [record(0, "pirate-1", (2, 2), did=[])]
-    image, on_board = board(silent, 0, 4)
-    arrow, spot = viewer.turn_arrow(viewer.scene(silent, 0, 4))
-    assert drawn_at(image, arrow, spot)
-    assert yellow(on_board) == yellow(arrow)
+def outlined(image, square):
+    """Whether the square has the three yellow rings round it.
+
+    The pirate is drawn over its square, exactly its sprite, so it hides a little of
+    each ring; most of every ring shows.
+    """
+    spot = (square[0] * viewer.TILE, square[1] * viewer.TILE)
+    for inset in range(3):
+        pixels = ring(image, spot, inset)
+        if sum(pixel == OUTLINE for pixel in pixels) < 0.7 * len(pixels):
+            return False
+    return True
 
 
-def test_turn_marked_the_arrow_and_the_note_never_overlap():
-    for square in ((0, 1), (2, 2), (3, 3), (1, 0)):
-        records = [
-            record(0, "pirate-1", square, did=[{"action": "write", "text": "x" * 40}])
-        ]
-        shown = viewer.scene(records, 0, 4)
-        arrow, (ax, ay) = viewer.turn_arrow(shown)
-        note = viewer.scroll_note(shown["note"])
-        bx, by = viewer.note_box(square, note.size, 4)
-        apart = (
-            ax + arrow.width <= bx
-            or bx + note.width <= ax
-            or ay + arrow.height <= by
-            or by + note.height <= ay
-        )
-        assert apart, square
+def test_turn_marked_the_acting_pirate_s_square_is_outlined_in_yellow():
+    image = viewer.frame(TWO, 0, 4)
+    assert outlined(image, (1, 2))
+    assert not outlined(image, (3, 2))
 
 
-def test_turn_marked_the_arrow_never_covers_a_label():
-    # Pirate 1 stands on the square above, so the arrow floats over its feet.
-    crew = {"pirate-1": [1, 1], "pirate-2": [1, 2]}
-    records = [record(0, "pirate-2", (1, 2), crew=crew)]
-    image = viewer.frame(records, 0, 4)
-    shown = viewer.scene(records, 0, 4)
-    pirates = viewer._default_pirates(["pirate-1", "pirate-2"])
-    for agent, spot in viewer._placed(shown):
-        label = viewer._label(pirates[agent], *shown["poses"][agent])
-        assert drawn_at(image, label, spot), agent
-    # ...and the arrow goes where it can still be seen.
-    arrow, where = viewer.turn_arrow(shown)
-    assert drawn_at(image, arrow, where)
-    grid = (viewer.EDGE_LEFT, 0, viewer.EDGE_LEFT + 4 * viewer.TILE, 4 * viewer.TILE)
-    assert yellow(image.crop(grid)) == yellow(arrow)
+def test_turn_marked_every_frame_outlines_one_square_whoever_acts():
+    for turn, square in ((0, (1, 2)), (1, (3, 2))):
+        image = viewer.frame(TWO, turn, 4)
+        squares = [(x, y) for x in range(4) for y in range(4)]
+        assert [s for s in squares if outlined(image, s)] == [square]
 
 
-def test_turn_marked_on_the_top_row_the_arrow_points_up_from_under_its_feet():
-    top_row = [record(0, "pirate-1", (2, 0))]
-    image, on_board = board(top_row, 0, 4)
-    arrow, (left, top) = viewer.turn_arrow(viewer.scene(top_row, 0, 4))
-    assert drawn_at(image, arrow, (left, top))
-    assert yellow(on_board) == yellow(arrow)
-    assert top >= viewer.TILE
-    pointing_down = viewer._art("ui/turn-arrow")
-    assert arrow.tobytes() == pointing_down.transpose(Image.FLIP_TOP_BOTTOM).tobytes()
+def test_turn_marked_no_turn_arrow_is_drawn():
+    # Two pirates stacked in one column, the lower one acting: its square is
+    # outlined, and nothing on the board is drawn in the turn-arrow art's yellow.
+    stacked = {"pirate-1": [1, 2], "pirate-2": [1, 1]}
+    image, sand = board([record(0, "pirate-1", (1, 2), crew=stacked)], 0, 4)
+    assert yellow(sand) == 0
+    assert outlined(image, (1, 2))
+    assert not hasattr(viewer, "turn_arrow")
 
 
-def test_turn_marked_on_the_bottom_row_the_arrow_stays_on_the_board():
-    crew = {f"pirate-{n}": [n - 1, 9] for n in range(1, 7)}
-    crew["pirate-7"] = [0, 8]
-    for acting, square in crew.items():
-        records = [record(0, acting, tuple(square), crew=crew)]
-        image, on_board = board(records, 0, 10)
-        arrow, (left, top) = viewer.turn_arrow(viewer.scene(records, 0, 10))
-        assert 0 <= top and top + arrow.height <= 10 * viewer.TILE, acting
-        assert drawn_at(image, arrow, (left, top)), acting
-        assert yellow(on_board) == yellow(arrow), acting
+def test_turn_marked_the_outline_follows_a_walking_pirate():
+    east = [{"action": "move", "direction": "east"}]
+    walked = [
+        {
+            **record(0, "pirate-1", (2, 2), did=east),
+            "saw": {"position": [1, 2], "prompt": ""},
+        }
+    ]
+    halfway = viewer.frame(walked, 0, 4, step=2)
+    spot = viewer.scene(walked, 0, 4, step=2)["positions"]["pirate-1"]
+    pixel = (round(spot[0] * viewer.TILE), round(spot[1] * viewer.TILE))
+    shown = ring(halfway, pixel, 0)
+    assert sum(p == OUTLINE for p in shown) >= 0.7 * len(shown)
+    assert outlined(viewer.frame(walked, 0, 4), (2, 2))  # it lands on its new square

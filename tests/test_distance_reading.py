@@ -7,9 +7,10 @@ from pathlib import Path
 
 import pytest
 
+from treasure_island import replay
 from treasure_island.brain import EarlierTurn, TurnView, system_prompt
 from treasure_island.config import ConfigError, load_config, parse_config, save_config
-from treasure_island.game_loop import Game
+from treasure_island.game_loop import Game, write_game
 from treasure_island.game_state import GameState
 from treasure_island.strategies import Pool, brains_for
 
@@ -163,3 +164,16 @@ def test_pool_plays_its_config():
     config = load_config(ROOT / "configs" / "pool.toml")
     assert config.brain == "pool" and config.distance_noise == 3
     assert isinstance(brains_for("pool", config)[0], Pool)
+
+
+def test_distance_reading_replay_checks_every_reading(tmp_path):
+    config = parse_config({"brain": "pool", "seed": 7, "distance_noise": 3})
+    save_config(config, tmp_path / "config.json")
+    write_game(config, brains_for("pool", config), tmp_path)
+    assert replay.problem(tmp_path) is None
+    path = tmp_path / "events.jsonl"
+    records = [json.loads(line) for line in path.open()]
+    changed = next(r for r in records if "distance_reading" in r)
+    changed["distance_reading"] += 1
+    path.write_text("".join(json.dumps(r) + "\n" for r in records))
+    assert replay.problem(tmp_path) is not None

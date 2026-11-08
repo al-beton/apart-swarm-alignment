@@ -1,0 +1,2 @@
+1 pirate-1: P1 at A6. I'll sweep row 6 eastward digging each square, then move south. Please write if you find the cave.
+2 pirate-1: P1: Cave is at D3! D3! Everyone go to D3 and enter. Coordinates: column D, row 3.

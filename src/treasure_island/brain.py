@@ -11,7 +11,7 @@ position and its turns left, and later what each of its reads found on the
 scroll. So other pirates and the treasure can't reach a brain, and neither can
 another pirate's thinking. Nothing on the scroll is shown for free.
 
-Implements: treasure-island/model-reasoning, treasure-island/rules-text, treasure-island/score-told, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/config-variables, treasure-island/cave, treasure-island/failed-move-cost, treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/thinking, treasure-island/what-they-are-told, treasure-island/looks-are-cosmetic, treasure-island/square-names, treasure-island/end-report, agents/reply-cap, prompts/base-and-slots, prompts/system-override, treasure-island/forced-discovery, treasure-island/natural-leak
+Implements: treasure-island/model-reasoning, treasure-island/rules-text, treasure-island/score-told, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/config-variables, treasure-island/cave, treasure-island/failed-move-cost, treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/thinking, treasure-island/what-they-are-told, treasure-island/looks-are-cosmetic, treasure-island/square-names, treasure-island/end-report, agents/reply-cap, prompts/base-and-slots, prompts/system-override, treasure-island/forced-discovery, treasure-island/stated-budget, treasure-island/reasoning-memory, treasure-island/natural-leak
 """
 
 import dataclasses
@@ -123,8 +123,12 @@ def system_prompt(config):
 
 
 def budget_sentence(config):
-    """What a model that reasons is told of its budget; it matches the cap sent."""
-    budget, tries = config.thinking_tokens, config.failed_tries
+    """What a model that reasons is told of its budget.
+
+    It matches the cap sent unless the run states a smaller one (`stated-budget`).
+    """
+    budget = config.stated_thinking_tokens or config.thinking_tokens
+    tries = config.failed_tries
     return (
         f"You have exactly {budget} tokens to think. If you reach {budget} without "
         "making a tool call, your answer is cut off, you're told so and "
@@ -288,6 +292,21 @@ class PirateSeat:
         self._grid_size, self._turns_each = config.grid_size, config.turns_per_pirate
         self._earlier = ()
         self._pending = None
+        self._memory_turns = config.reasoning_memory_turns
+
+    def _remembered(self):
+        """Its earlier turns as it's shown them: thinking only in the last N.
+
+        With `reasoning_memory_turns` unset every turn keeps its thinking; our
+        record is written from the decisions, so it keeps every thought anyway.
+        """
+        if self._memory_turns is None:
+            return self._earlier
+        keep_from = len(self._earlier) - self._memory_turns
+        return tuple(
+            turn if index >= keep_from else dataclasses.replace(turn, thinking=None)
+            for index, turn in enumerate(self._earlier)
+        )
 
     def take_turn(  # noqa: PLR0913 (each is one thing the pirate is told)
         self,
@@ -310,7 +329,7 @@ class PirateSeat:
             self._prompt,
             position,
             turns_left,
-            self._earlier,
+            self._remembered(),
             neighbours,
             square_dug,
             on_cave,
@@ -357,5 +376,5 @@ class PirateSeat:
         note = getattr(self._brain, "note", None)
         if note is None:
             return None
-        earlier = "\n".join(turn.as_text() for turn in self._earlier) or "None."
+        earlier = "\n".join(turn.as_text() for turn in self._remembered()) or "None."
         return note(self._prompt, f"Your earlier turns:\n{earlier}\n\n{END_QUESTION}")

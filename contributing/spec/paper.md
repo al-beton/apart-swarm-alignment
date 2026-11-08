@@ -1,0 +1,21 @@
+# Paper
+
+- **one-source:** The paper is written once, in Markdown under `paper/`, one file per section, and `paper/paper.md` lists the sections in order, so moving, adding or swapping a section is editing one list and one file.
+- **built-two-ways:** `make paper-html` and `make paper-pdf` build the same source into Apart's layout (title, authors, abstract, teaser, contents, numbered sections, references, appendix), and `make paper-watch` rebuilds on every save, so a draft is seen as it will be submitted.
+- **sections-bind-to-evidence:** Every results section names, in a marker on its first lines, the experiment spec in `experiments/spec/` or the result folder in `results/` it reports, and every figure the paper shows is a named figure or a committed file, so the build fails on a section whose evidence isn't in the repository.
+- **numbers-from-logs:** Every number a results section states carries, in a comment beside it, the committed file and the expression it comes from, and `make paper-check` recomputes each from the logs and fails on a mismatch, so no number in the paper is from memory or a console.
+- **sprint-rules-checked:** The build warns when the abstract or the main text run past the sprint's limits, which the skeleton's front matter states, so a draft that can't be submitted is noticed at once and the limits change in one place when the sprint's do.
+- **preview-on-every-pr:** Every push to a pull request that touches the paper builds it and publishes the HTML and PDF to GitHub Pages under `pr-<number>/`, linked from one comment on the pull request, and main's build is the site's front page; it's its own workflow, so it never gates a merge and never calls a model.
+- **paper-plan:** `paper/plan.md` holds the paper's question, its claim and which experiment or result each results section rests on, so the writers agree on what the paper says before they write it.
+
+## Where this is enforced
+
+| Statement | Enforced by | Tested by |
+|---|---|---|
+| `one-source` | `paper/paper.md`, `paper/sections/**`, `paper/include.lua`, `paper/check.py`, `paper/references.bib`, `paper/README.md` | `test_one_source_every_listed_section_exists_and_every_section_is_listed`, `test_one_source_builds_the_html_from_the_sections` |
+| `built-two-ways` | `Makefile`, `paper/apart.html`, `paper/style.css`, `paper/apart.latex`, `paper/preview.html`, `paper/watch.sh`, `paper/stills.py`, `.gitignore` | `test_built_two_ways_make_knows_every_paper_target`, `test_built_two_ways_a_gif_becomes_a_still_for_the_pdf` |
+| `sections-bind-to-evidence` | `paper/check.py`, `paper/sections/results/**` | `test_sections_bind_to_evidence_an_unknown_experiment_fails`, `test_sections_bind_to_evidence_an_unknown_result_fails`, `test_sections_bind_to_evidence_a_results_section_without_a_marker_fails`, `test_sections_bind_to_evidence_an_unregistered_figure_fails`, `test_sections_bind_to_evidence_the_paper_passes` |
+| `numbers-from-logs` | `paper/check.py`, `paper/README.md`, `paper/sections/results/**`, `Makefile` | `test_numbers_from_logs_a_number_that_matches_its_logs_passes`, `test_numbers_from_logs_a_mismatch_fails_naming_the_section_and_number`, `test_numbers_from_logs_a_number_with_no_source_fails`, `test_numbers_from_logs_a_count_a_mean_and_a_percentage`, `test_numbers_from_logs_reads_a_manifest_too`, `test_numbers_from_logs_a_source_outside_results_fails`, `test_numbers_from_logs_a_source_matching_nothing_fails`, `test_numbers_from_logs_names_and_code_are_not_numbers`, `test_numbers_from_logs_the_sample_section_reports_a_real_number` |
+| `sprint-rules-checked` | `paper/check.py`, `paper/paper.md` | `test_sprint_rules_checked_abstract_length_is_a_warning`, `test_sprint_rules_checked_page_cap_read_from_the_aux` |
+| `preview-on-every-pr` | `.github/workflows/paper-preview.yml` | `test_preview_on_every_pr_publishes_to_a_slot_and_one_comment`, `test_preview_on_every_pr_is_not_the_gate_and_holds_no_key` |
+| `paper-plan` | `paper/plan.md` | `test_paper_plan_names_each_results_section` |

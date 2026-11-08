@@ -6,7 +6,6 @@ import shutil
 from pathlib import Path
 
 import pytest
-import talking
 from PIL import Image
 
 from treasure_island import viewer
@@ -18,6 +17,14 @@ from treasure_island.pirates_log import PiratesLog
 ROOT = Path(__file__).resolve().parents[1]
 SAVED = ROOT / "runs/silent-seed-7"
 CREW = {"pirate-1": [0, 0]}
+
+ROOT = Path(__file__).resolve().parent.parent
+
+
+def sharer_game(folder):
+    """A copy of the committed sharer game, whose crew says readings and alerts."""
+    shutil.copytree(ROOT / "runs/reference-sharer", folder)
+    return folder
 
 
 def record(turn, did=(), found=False, position=(0, 0), **rest):
@@ -220,7 +227,7 @@ def test_log_at_bottom_is_titled_the_scroll():
 
 def test_log_at_bottom_marks_each_said_line_s_turn_and_alert(tmp_path):
     # A v2 game whose pirates say readings and raise alerts.
-    folder = talking.write(tmp_path / "talking")
+    folder = sharer_game(tmp_path / "sharer")
     file = (folder / "pirates-log.txt").read_text().splitlines()
     records = records_of(folder)
     lines = viewer.scene(records, len(records) - 1, 5)["log_so_far"]

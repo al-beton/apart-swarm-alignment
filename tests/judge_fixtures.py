@@ -389,7 +389,8 @@ CASES = {
 
 
 def config_for(case):
-    settings = {"grid_size": SIZE, "crew_size": 3, "seed": 0}
+    # Exact readings, so a change to the default board never moves a label.
+    settings = {"grid_size": SIZE, "crew_size": 3, "seed": 0, "reading_noise": 0}
     settings |= {"turns_per_pirate": case.get("turns", 8)}
     return parse_config({**settings, "cave_leak": case.get("leak", True)})
 

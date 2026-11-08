@@ -2,10 +2,18 @@
 """How much a crew talked, per game and pirate, from its event log alone."""
 
 import json
-
-import talking
+import shutil
+from pathlib import Path
 
 from treasure_island import talk_stats
+
+ROOT = Path(__file__).resolve().parent.parent
+
+
+def sharer_game(folder):
+    """A copy of the committed sharer game, whose crew says readings and alerts."""
+    shutil.copytree(ROOT / "runs/reference-sharer", folder)
+    return folder
 
 
 def records_of(folder):
@@ -15,7 +23,7 @@ def records_of(folder):
 
 
 def test_talk_stats_counts_each_pirate_s_turns_lines_alerts_and_readings(tmp_path):
-    folder = talking.write(tmp_path / "talking")
+    folder = sharer_game(tmp_path / "sharer")
     talk = talk_stats.game_talk(folder)
     records = records_of(folder)
     assert list(talk) == ["pirate-1", "pirate-2", "pirate-3"]
@@ -26,7 +34,7 @@ def test_talk_stats_counts_each_pirate_s_turns_lines_alerts_and_readings(tmp_pat
         assert counts.walked == sum(not r["asked"] for r in own)
         assert counts.said == len(lines)
         assert counts.alerts == sum(bool(a.get("alert")) for a in lines)
-        # The talking crew says each dig's reading and, as an alert, the cave.
+        # The sharer says each dig's reading and, as an alert, the cave.
         assert counts.readings == counts.said - counts.alerts
         assert counts.calls == 0  # scripted pirates ask no model
     assert sum(t.walked for t in talk.values()) > 0
@@ -41,7 +49,7 @@ def test_talk_stats_a_reading_names_a_square_and_a_distance():
 
 
 def test_talk_stats_counts_model_calls_with_refusals_and_bad_replies(tmp_path):
-    folder = talking.write(tmp_path / "talking")
+    folder = sharer_game(tmp_path / "sharer")
     config = json.loads((folder / "config.json").read_text())
     config["pirates"][0]["model"] = "some/model"
     (folder / "config.json").write_text(json.dumps(config))
@@ -59,8 +67,8 @@ def test_talk_stats_counts_model_calls_with_refusals_and_bad_replies(tmp_path):
 
 def test_talk_stats_prints_a_row_per_pirate_and_a_total_per_game(tmp_path, capsys):
     root = tmp_path / "runs"
-    talking.write(root / "talking" / "7")
-    talking.write(root / "talking" / "8", seed=8)
+    sharer_game(root / "sharer" / "7")
+    sharer_game(root / "sharer" / "8")
     assert talk_stats.main([str(root)]) == 0
     out = capsys.readouterr().out.splitlines()
     assert out[0].startswith("| Game | Pirate | Asked | Walked | Model calls")

@@ -249,14 +249,15 @@ runs.{]}
 \subsection{Reproducibility}\label{reproducibility}
 
 Every run is saved with its config, seed, both logs and every model
-request and reply, word for word. Replaying a run reuses those replies,
-so
+request and reply, word for word.
 \texttt{uv\ run\ treasure-island\ replay\ \textless{}run\textgreater{}}
-plays a committed game again with no API keys and no network and checks
-it ends the same way, and CI replays every committed game on every
-change. Every number in the results sections is recomputed by
-\texttt{make\ paper-check} from the games' own logs, and every figure is
-rebuilt from a committed game.
+plays a committed game again from its recorded actions, with no API keys
+and no network, and checks it ends the same way; CI does this for a
+fixed list of games on every change, and \texttt{make\ replay-all} for
+every committed game. Running a game's config again reuses its stored
+replies, so it spends nothing. Every number in the results sections is
+recomputed by \texttt{make\ paper-check} from the games' own logs, and
+every figure is rebuilt from a committed game.
 
 \begin{figure}
 \centering

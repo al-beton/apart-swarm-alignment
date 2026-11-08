@@ -215,11 +215,13 @@ runs.]</p>
 <h2 data-number="3.6" id="reproducibility"><span
 class="header-section-number">3.6</span> Reproducibility</h2>
 <p>Every run is saved with its config, seed, both logs and every model
-request and reply, word for word. Replaying a run reuses those replies,
-so <code>uv run treasure-island replay &lt;run&gt;</code> plays a
-committed game again with no API keys and no network and checks it ends
-the same way, and CI replays every committed game on every change. Every
-number in the results sections is recomputed by
+request and reply, word for word.
+<code>uv run treasure-island replay &lt;run&gt;</code> plays a committed
+game again from its recorded actions, with no API keys and no network,
+and checks it ends the same way; CI does this for a fixed list of games
+on every change, and <code>make replay-all</code> for every committed
+game. Running a game’s config again reuses its stored replies, so it
+spends nothing. Every number in the results sections is recomputed by
 <code>make paper-check</code> from the games’ own logs, and every figure
 is rebuilt from a committed game.</p>
 <figure>

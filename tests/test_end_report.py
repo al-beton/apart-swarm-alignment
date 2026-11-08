@@ -9,7 +9,7 @@ from treasure_island.config import parse_config, save_config
 from treasure_island.game_loop import Game, GameStopped, write_game
 from treasure_island.llm import LLMPirate
 from treasure_island.runs import Replies
-from treasure_island.spending import estimate
+from treasure_island.spending import Declined, estimate
 from treasure_island.strategies import Stripes
 
 SIZE, CREW, TURNS = 4, 2, 12
@@ -155,6 +155,18 @@ def test_end_report_a_stopped_note_keeps_the_finished_game(tmp_path):
     ]
     story = (folder / "story.txt").read_text()
     assert "pirate-1's note to the designers: (not written: the spending cap" in story
+
+
+class Declining(Noting):
+    def note(self, system, text):
+        raise Declined("Nobody said yes to spending.")
+
+
+def test_end_report_declining_to_spend_on_a_note_stops_the_run_as_before(tmp_path):
+    folder = tmp_path / "declined"
+    folder.mkdir()
+    ending = write_game(config(end_report=True), [Declining(0), Noting(1)], folder)
+    assert ending["stopped"] == "Nobody said yes to spending."
 
 
 def test_end_report_a_replay_by_actions_still_matches(tmp_path):

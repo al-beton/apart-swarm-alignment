@@ -176,6 +176,8 @@ class Game:
             try:
                 notes.append({"agent": name, "note": seat.end_note()})
             except GameStopped as why:
+                if getattr(why, "declined", False):
+                    raise  # nobody said yes to spending: the run stops as it always has
                 notes.append({"agent": name, "note": None, "stopped": str(why)})
         return notes
 

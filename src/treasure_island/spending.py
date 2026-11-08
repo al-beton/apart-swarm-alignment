@@ -110,6 +110,8 @@ def estimate(config):
 class Declined(GameStopped):
     """Nobody said yes to spending, so the run stopped before it spent anything."""
 
+    declined = True  # a stop the whole run honours, end notes included
+
 
 class Guard:
     """A backend that spends only after a yes, and only up to its cap."""

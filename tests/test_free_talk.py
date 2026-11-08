@@ -10,7 +10,7 @@ import json
 
 import pytest
 
-from treasure_island import replay
+from treasure_island import judge, replay, viewer
 from treasure_island.brain import BadToolCall, Decision, system_prompt, tool_call
 from treasure_island.config import parse_config, save_config
 from treasure_island.game_loop import Game, write_game
@@ -99,6 +99,33 @@ def test_free_talk_a_refused_try_writes_no_message():
     game, records, _ = play(TALK, west, DIG)  # pirate-1 starts on the west edge
     assert records[0]["failed_moves"] == [west]
     assert game.log.lines() == []
+
+
+def test_free_talk_a_refused_try_is_remembered_without_its_message():
+    west = {
+        "action": "move",
+        "direction": "west",
+        "message": "meet here",
+        "alert": True,
+    }
+    _, records, brains = play(TALK, west, DIG)
+    retry = brains[0].views[1].turn_text()  # the same turn, asked again
+    assert "You did: move west." in retry
+    assert "meet here" not in retry
+    assert "raised the alert" not in retry
+    assert all("alerts" not in record for record in records)
+
+
+def test_free_talk_a_message_counts_for_the_judge_and_the_viewer():
+    talk = {"action": "write", "text": "first", "message": "second"}
+    records = play(TALK, talk, {**DIG, "message": "third"})[1]
+    texts = [line["text"] for line in viewer._scroll_writes(records)[0]]
+    assert texts == ["first", "second"]
+    assert [n for n, _ in viewer._log_so_far(records, 3)] == [1, 2, 3]
+    leaked = [dict(record, cave_leak=[3, 1]) for record in records]
+    leaked[0]["did"] = [{**DIG, "message": "Found the cave at D5! Come."}]
+    lies = judge.false_sources(leaked, 6)
+    assert lies["pirate-1"] == (0, "Found the cave at D5! Come.")
 
 
 class _Replies:

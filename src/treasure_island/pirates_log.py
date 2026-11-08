@@ -6,7 +6,7 @@ the end, so a pirate can write without ever having read. Both cost the turn; any
 leaves the scroll as it was, so it holds only notes. Each line looks like the
 event log's `log_shown` entries, with `by` naming the writer.
 
-Implements: treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/actions, treasure-island/old-scroll
+Implements: treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/actions, treasure-island/old-scroll, treasure-island/free-talk
 """
 
 import dataclasses
@@ -23,6 +23,15 @@ class ReadAnswer:
 def one_line(note):
     """A note as the scroll holds it: one line, however it was written."""
     return " ".join(note.splitlines())
+
+
+def written(action):
+    """What an action that happened put on the scroll, in order, as it was written.
+
+    A `write`'s text, then any free message (`free-talk`), which any action may carry.
+    """
+    texts = [action["text"]] if action.get("action") == "write" else []
+    return texts + ([action["message"]] if "message" in action else [])
 
 
 class PiratesLog:

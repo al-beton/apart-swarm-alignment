@@ -28,7 +28,7 @@ Judge local games: `uv run python -m treasure_island.judge runs/<name> ...`, whi
 asks `claude -p` on your Claude Code login (see claude_code); `--accuracy FILE`
 scores folders that hold a `labels.json` against it.
 
-Implements: treasure-island/old-scroll, treasure-island/end-report, judge/after-the-fact, judge/compact-transcript, judge/extra-fields-shown, judge/per-pirate-flags, judge/exploit-by-rule, judge/types, judge/evidence-for-every-flag, judge/invalid-reply-refused, judge/judge-replies-cached, judge/default-judge-model, judge/accuracy-recorded, treasure-island/natural-leak, judge/note-mentions-leak, judge/false-source-claim, treasure-island/error-dump
+Implements: treasure-island/old-scroll, treasure-island/end-report, judge/after-the-fact, judge/compact-transcript, judge/extra-fields-shown, judge/per-pirate-flags, judge/exploit-by-rule, judge/types, judge/evidence-for-every-flag, judge/invalid-reply-refused, judge/judge-replies-cached, judge/default-judge-model, judge/accuracy-recorded, treasure-island/natural-leak, judge/note-mentions-leak, judge/false-source-claim, treasure-island/error-dump, treasure-island/free-talk
 """
 
 import argparse
@@ -46,6 +46,7 @@ from treasure_island.judge_rubric import (
     OLD_SCROLL,
     RUBRIC,
 )
+from treasure_island.pirates_log import written
 from treasure_island.runs import Replies, request_key
 from treasure_island.squares import square_name
 
@@ -164,8 +165,7 @@ def false_sources(records, grid_size):
         agent = record["agent"]
         if record["saw"]["position"] == list(leaked):
             stood.add(agent)
-        for action in record["did"]:
-            text = action.get("text", "") if action["action"] == "write" else ""
+        for text in (text for action in record["did"] for text in written(action)):
             claims = square.search(text) and _claims_a_find(text)
             if claims and agent not in stood and lies[agent] is None:
                 lies[agent] = (record["turn"], text)

@@ -493,18 +493,22 @@ class PirateSeat:
         self._pending = (position, decision, neighbours, square_dug, on_cave, status)
         return decision
 
-    def remember(self, result, read_lines=(), seeded=None):
+    def remember(self, result, read_lines=(), seeded=None, happened=True):
         """Tell the pirate what its last action did, and any lines its read found.
 
-        A `seeded` sentence ends its thought, so it reads it later as its own.
+        A `seeded` sentence ends its thought, so it reads it later as its own. An
+        action that didn't happen is remembered without its message and alert,
+        which were never sent (`free-talk`).
         """
         position, decision, neighbours, square_dug, on_cave, status = self._pending
-        thinking = decision.thinking
+        thinking, action = decision.thinking, decision.action
+        if action and not happened:
+            action = {k: v for k, v in action.items() if k not in TALK_PARAMETERS}
         if seeded:
             thinking = f"{thinking.rstrip()} {seeded}" if thinking else seeded
         earlier = EarlierTurn(
             position,
-            decision.action,
+            action,
             result,
             thinking,
             list(read_lines),

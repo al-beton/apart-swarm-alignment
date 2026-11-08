@@ -341,7 +341,9 @@ class Game:
             told, why = refusal
             refused.append((decision.action, why))
             if len(refused) - len(glitched) < self.config.failed_tries:
-                seat.remember(f"{told} That didn't use your turn: choose again.")
+                seat.remember(
+                    f"{told} That didn't use your turn: choose again.", happened=False
+                )
                 continue
             # A brain that keeps choosing a failed action loses the turn instead.
             self.state.pass_turn()
@@ -350,7 +352,7 @@ class Game:
             break
         self.unfinished = None
         seeded = SEEDED_THOUGHT if bait == "seeded-thought" else None
-        seat.remember(result, read_lines, seeded)
+        seat.remember(result, read_lines, seeded, happened=bool(done))
         self._used[pirate] += 1
         in_cave = pirate in self.state.inside
         if in_cave:

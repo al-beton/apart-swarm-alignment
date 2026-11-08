@@ -17,7 +17,7 @@ Experiment one. The game's first exploit is the cave leak: with the `cave_leak` 
 - **model:** Every pirate plays `adaption/deepseek-v4-flash` with its built-in reasoning on and 4096 reasoning tokens, since 1024 left many replies empty in the spike.
 - **arms:** Four arms, the same game but for the leak and the bait:
   - `control`: the leak off;
-  - `forced`: the leak on, and pirate-1's third turn is taken by the game and spent trying to enter where it stands;
+  - `forced`: the leak on, and the game opens pirate-1's third turn with a try to enter where it stands, so the refusal names the cave's square; like any refused enter it doesn't use the turn, so pirate-1 then acts on that turn itself (`forced-discovery`);
   - `seeded`: the leak on, and a sentence is seeded into pirate-1's thinking before its third turn, suggesting it try to enter where it stands, so its own reasoning decides;
   - `unbaited`: the leak on and nobody baited.
 - **seeds:** Seeds 0 to 9, the same ten in every arm, so games pair by seed.

@@ -28,7 +28,12 @@ GIF and the page both draw exactly those.
 The board is drawn in board pixels and set into the art's wooden frame at
 `(EDGE_LEFT, 0)`, whose letters and numbers name the squares like a chessboard.
 
-Implements: viewer/cave-drawn, treasure-island/cave, viewer/turn-marked, viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/walks-between-squares, treasure-island/pokemon-style, viewer/slideshow-file, viewer/game-page, viewer/scroll-steps, viewer/score-counter, viewer/transcript, viewer/board-framed, viewer/dig-steps, viewer/enter-steps, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process, treasure-island/square-names, treasure-island/forced-discovery
+The game page (`slideshow_page`) is a feed: on the left `board`, the board alone
+with no note, and the scroll as parchment; on the right one entry for every turn
+`planned_turns` lists, each played turn's steps drawn ahead so stepping onto it
+plays them.
+
+Implements: viewer/planned-turns, viewer/game-page-steps, viewer/scroll-written-live, viewer/cave-drawn, treasure-island/cave, viewer/turn-marked, viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/walks-between-squares, treasure-island/pokemon-style, viewer/slideshow-file, viewer/game-page, viewer/scroll-steps, viewer/score-counter, viewer/transcript, viewer/board-framed, viewer/dig-steps, viewer/enter-steps, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process, treasure-island/square-names, treasure-island/forced-discovery
 """
 
 import base64
@@ -103,7 +108,7 @@ def grid_size(folder, records):
     return max((max(x, y) for x, y in spots), default=0) + 1
 
 
-def _crew_names(records):
+def crew_names(records):
     """Every pirate's name, in crew order."""
     names = list(records[0].get("crew", {})) if records else []
     for record in records:
@@ -119,7 +124,7 @@ def _default_pirates(names):
 
 def pirates_in(folder, records):
     """What each pirate's sprite is made from, as `pirate()` takes it."""
-    names = _crew_names(records)
+    names = crew_names(records)
     config = Path(folder) / "config.json"
     saved = json.loads(config.read_text()).get("pirates") if config.exists() else None
     if saved is None:
@@ -145,7 +150,7 @@ def _poses(records, turn):
     elif "dig" in done:
         found = current["outcome"]["found_treasure"]
         poses[current["agent"]] = ("cheer" if found else "dig", step % 2)
-    for name in _crew_names(records):
+    for name in crew_names(records):
         poses.setdefault(name, ("down", 0))
     return poses
 
@@ -343,7 +348,7 @@ def score_gains(records, scoring):
     its seat it earns `per_turn_left`, for as many turns as it had left. A game that
     ends first still owes it the rest, which the last turn plays out in rounds.
     """
-    seats = {name: index for index, name in enumerate(_crew_names(records))}
+    seats = {name: index for index, name in enumerate(crew_names(records))}
     used, owed, gains, before = {}, {}, [], None
     for record in records:
         name, earned = record["agent"], []
@@ -769,10 +774,40 @@ def _draw_score(image, shown, grid):
     draw_text(image, (grid + PANEL - _PANEL_LEFT - text_width(words), 14), words)
 
 
+def _draw_sand(sand, shown, pirates, note=True):
+    """The board's squares: ground, outline, pirates, labels, the note and gains."""
+    _draw_ground(sand, shown["size"], shown, pirates)
+    _draw_outline(sand, shown)  # under the pirates: a pirate is exactly its sprite
+    _draw_pirates(sand, shown, pirates)
+    _draw_labels(sand, shown, pirates)
+    if note:  # the note goes over the labels, so what was written shows in full
+        _draw_note(sand, shown)
+    _draw_gains(sand, shown)
+
+
+# Two arguments over the limit: `step` and `scoring` sit beside the others callers pass.
+def board(records, turn, size, pirates=None, treasure=None, step=None, scoring=None):  # noqa: PLR0913
+    """The board alone, in its frame, as every frame draws it but with no note.
+
+    The game page shows the side panel, caption and scroll itself, beside it.
+    """
+    pirates = pirates or _default_pirates(crew_names(records))
+    shown = scene(records, turn, size, treasure, step, scoring)
+    grid = max(size, 1) * TILE
+    image = Image.new("RGB", (EDGE_LEFT + grid, grid + EDGE_BOTTOM), "#2b2b2b")
+    edges = board_edges(max(size, 1))
+    image.paste(edges, (0, 0), edges)
+    spot = (EDGE_LEFT, 0, EDGE_LEFT + grid, image.height)  # as `frame` crops it
+    sand = image.crop(spot)
+    _draw_sand(sand, shown, pirates, note=False)
+    image.paste(sand, spot[:2])
+    return image
+
+
 # Two arguments over the limit: `step` and `scoring` sit beside the others callers pass.
 def frame(records, turn, size, pirates=None, treasure=None, step=None, scoring=None):  # noqa: PLR0913
     """The image for one turn: ground, outline, pirates, note, panel, caption, log."""
-    pirates = pirates or _default_pirates(_crew_names(records))
+    pirates = pirates or _default_pirates(crew_names(records))
     shown = scene(records, turn, size, treasure, step, scoring)
     grid = max(size, 1) * TILE
     board = max(grid + EDGE_BOTTOM, PANEL_HEIGHT)
@@ -785,13 +820,7 @@ def frame(records, turn, size, pirates=None, treasure=None, step=None, scoring=N
     # Everything on the board is placed in board pixels, then set into the frame.
     spot = (EDGE_LEFT, 0, right, board)
     sand = image.crop(spot)
-    _draw_ground(sand, size, shown, pirates)
-    _draw_outline(sand, shown)  # under the pirates: a pirate is exactly its sprite
-    _draw_pirates(sand, shown, pirates)
-    _draw_labels(sand, shown, pirates)
-    # The note goes over the labels, so what was written always shows in full.
-    _draw_note(sand, shown)
-    _draw_gains(sand, shown)
+    _draw_sand(sand, shown, pirates)
     image.paste(sand, spot[:2])
     side = _panel_image(shown, board, pirates[shown["acting"]])
     image.paste(side, (right, 0), side)
@@ -817,6 +846,15 @@ def frame_png(folder, turn, step=None):
     treasure = treasure_in(folder, records)
     scoring = scoring_in(folder)
     return _png(frame(records, turn, size, pirates, treasure, step, scoring))
+
+
+def board_png(folder, turn, step=None):
+    """The PNG of the board alone for one turn's step, as the game page holds it."""
+    records = records_in(folder)
+    size = grid_size(folder, records)
+    pirates = pirates_in(folder, records)
+    treasure = treasure_in(folder, records)
+    return _png(board(records, turn, size, pirates, treasure, step, scoring_in(folder)))
 
 
 def gif(folder):
@@ -899,17 +937,113 @@ def turn_records(records):
     ]
 
 
-def slideshow_page(folder):
-    """The game page: every turn's frame and whole record, as one HTML file's text."""
-    records = records_in(folder)
-    turns = [
-        {"frame": base64.b64encode(frame_png(folder, number)).decode(), **turn}
-        for number, turn in enumerate(turn_records(records))
-    ]
+def planned_turns(records, scoring):
+    """Every turn the game could have, the crew times `turns_per_pirate`, by round.
+
+    Each is `played` (`turn` is its record's index), `cave` (its pirate had gone in,
+    so it earns the crew `score_per_turn_left`), `over` (the game ended first) or
+    `later` (not reached in a game still going). `after` is the record from which
+    the page shows it as reached: a cave turn once the turn order has passed it, a
+    turn the game ended before once the game is over.
+    """
+    crew = crew_names(records)
+    own = {name: [] for name in crew}
+    entered = {}  # each pirate that went in: its own turn number then
+    for index, record in enumerate(records):
+        own[record["agent"]].append(index)
+        if record["outcome"].get("in_cave"):
+            entered[record["agent"]] = len(own[record["agent"]])
+    over = bool(records and records[-1].get("game_over"))
+    slots = []
+    for round_number in range(1, scoring.turns_per_pirate + 1):
+        for name in crew:
+            slot = {"agent": name, "round": round_number, "turn": None}
+            if round_number <= len(own[name]):
+                slot |= {"kind": "played", "turn": own[name][round_number - 1]}
+                slot["after"] = slot["turn"]
+            elif name in entered and round_number > entered[name]:
+                slot["kind"] = "cave"
+            else:
+                slot["kind"] = "over" if over else "later"
+            slots.append(slot)
+    # A turn not played is reached with the next turn played after it, or the end.
+    reached = len(records) - 1 if over else None
+    for slot in reversed(slots):
+        if slot["kind"] == "played":
+            reached = slot["turn"]
+        else:
+            slot["after"] = len(records) - 1 if slot["kind"] == "over" else reached
+    return slots
+
+
+_NOW = re.compile(
+    r"[^\n]*, this is your turn \d+ of \d+, turn \d+ of the game\. (.*)$", re.DOTALL
+)
+
+
+def _told(prompt):
+    """What a pirate was told that turn: the end of its prompt, after its turn number."""
+    found = _NOW.search(prompt)
+    if found:
+        return found.group(1).strip()
+    return prompt.rsplit("\n\n", 1)[-1].strip()
+
+
+def _encoded(image):
+    return base64.b64encode(_png(image)).decode()
+
+
+def _as_data(value):
     # No raw "<" in the data, which is still the same JSON, so a note can't close the
     # script it's held in or stop it closing. Escaping "</" alone misses "<!-- <script>".
-    data = json.dumps(turns, ensure_ascii=False).replace("<", "\\u003c")
-    return SLIDESHOW.replace("@TURNS@", data)
+    return json.dumps(value, ensure_ascii=False).replace("<", "\\u003c")
+
+
+def slideshow_page(folder):
+    """The game page: the board and scroll beside a feed of every planned turn."""
+    records = records_in(folder)
+    size = grid_size(folder, records)
+    pirates = pirates_in(folder, records)
+    treasure = treasure_in(folder, records)
+    scoring = scoring_in(folder)
+    own, turns = {}, []
+    for number, turn in enumerate(turn_records(records)):
+        own[turn["agent"]] = own.get(turn["agent"], 0) + 1
+        steps = turn_steps(records, number, scoring)
+        drawn = [
+            _encoded(board(records, number, size, pirates, treasure, step, scoring))
+            for step in steps[:-1]
+        ]
+        last = scene(records, number, size, treasure, steps[-1], scoring)
+        turns.append(
+            {
+                "frame": _encoded(
+                    board(records, number, size, pirates, treasure, None, scoring)
+                ),
+                "steps": drawn,
+                "score": last["score"],
+                "own": own[turn["agent"]],
+                "told": _told(turn["prompt"]),
+                "calls": [call_text(action) for action in turn["did"]],
+                **turn,
+            }
+        )
+    game_over = records[-1].get("game_over") if records else None
+    game = {
+        "name": Path(folder).name,
+        "crew": {
+            name: {"colour": look[1], "face": _encoded(_sprite(look, "down", 0))}
+            for name, look in pirates.items()
+        },
+        "turns_each": scoring.turns_per_pirate,
+        "per_turn_left": scoring.per_turn_left,
+        "slots": planned_turns(records, scoring),
+        "ending": game_over["story"] if game_over else "",
+        "score": game_over["score"] if game_over else None,
+    }
+    data = {"@GAME@": _as_data(game), "@TURNS@": _as_data(turns)}
+    # In one pass, so nothing a pirate wrote is ever taken for the other placeholder.
+    return re.sub("@GAME@|@TURNS@", lambda found: data[found.group(0)], SLIDESHOW)
 
 
 def slideshow(folder, out=None):
@@ -1004,146 +1138,377 @@ def write_transcript(folder):
 
 
 # Every word from the game goes in with textContent, never as markup.
-SLIDESHOW = """<!doctype html>
-<html><head><meta charset="utf-8"><title>Treasure Island</title>
+SLIDESHOW = r"""<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Treasure Island</title>
 <style>
-body { background: #1a1a1a; color: #eee; font: 14px sans-serif; margin: 0 16px; }
-header { display: flex; gap: 1em; align-items: baseline; flex-wrap: wrap; }
-h1 { font-size: 18px; } h2 { font-size: 16px; margin: 0 0 .5em; }
-h3 { font-size: 12px; text-transform: uppercase; color: #aaa; margin: 1em 0 .3em; }
-.page { display: grid; grid-template-columns: auto minmax(0, 2fr) minmax(0, 1fr);
-  gap: 16px; align-items: start; }
-.page > section { min-width: 0; }
-@media (max-width: 1100px) { .page { grid-template-columns: minmax(0, 1fr); } }
-img { image-rendering: pixelated; max-width: 100%; display: block; }
-pre, #story, #scroll li { white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; }
-pre { font: 13px/1.45 ui-monospace, Menlo, monospace; background: #222;
+:root { --bg: #f7f4ee; --fg: #1f1d1a; --mut: #6b665e; --card: #fffdf9; --line: #e2dccf;
+  --acc: #9a4f12; --soft: #f0ebe1; --bad: #c0392b; }
+@media (prefers-color-scheme: dark) { :root { --bg: #191816; --fg: #ece8e1; --mut: #a39d92;
+  --card: #22201d; --line: #37342f; --acc: #e3a35f; --soft: #2b2925; --bad: #e06c5f; } }
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--fg);
+  font: 15px/1.5 system-ui, -apple-system, sans-serif; }
+button, select { font: inherit; padding: 5px 11px; border: 1px solid var(--line);
+  background: var(--card); color: var(--fg); border-radius: 6px; cursor: pointer; }
+button:disabled { opacity: .4; cursor: default; }
+.mut { color: var(--mut); }
+header { position: sticky; top: 0; z-index: 5; background: var(--bg);
+  border-bottom: 1px solid var(--line); padding: 8px 16px; display: flex;
+  flex-wrap: wrap; gap: 8px 12px; align-items: center; }
+header h1 { font-size: 15px; margin: 0; }
+header input[type=range] { flex: 1; min-width: 140px; accent-color: var(--acc); }
+#count { min-width: 8.5em; color: var(--mut); }
+.feed { display: grid; grid-template-columns: minmax(220px, 34%) minmax(0, 1fr); gap: 18px;
+  padding: 16px; max-width: 1300px; margin: auto; }
+.feed > section { min-width: 0; }
+.left { position: sticky; top: 64px; align-self: start; max-height: calc(100vh - 72px);
+  overflow-y: auto; }
+@media (max-width: 760px) { .feed { grid-template-columns: minmax(0, 1fr); }
+  .left { top: 96px; z-index: 3; background: var(--bg); max-height: none; }
+  .left img { max-height: 32vh; object-fit: contain; } }
+img.board { width: 100%; image-rendering: pixelated; border-radius: 6px;
+  border: 1px solid var(--line); display: block; }
+.face { width: 28px; height: 28px; image-rendering: pixelated; }
+#where { margin: 6px 0 10px; }
+.parchment { background: #efe0bd; color: #3b2a14; border-radius: 4px; padding: 14px 18px;
+  box-shadow: inset 0 0 24px #b8955a66; border-top: 10px solid #c9a86a;
+  border-bottom: 10px solid #c9a86a; font-family: Georgia, serif; max-height: 38vh; overflow: auto; }
+.parchment .title { font-variant: small-caps; letter-spacing: .08em; color: #7a5a2a; margin-bottom: 6px; }
+.parchment ol { padding-left: 22px; margin: 0; }
+.parchment li { margin-bottom: 6px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.parchment li.new { background: #f8eccb; border-radius: 3px; padding: 2px 4px; margin-left: -4px; }
+.parchment .none { color: #8a7454; }
+.ending { font-weight: 600; margin-top: 10px; }
+.round { color: var(--mut); font-size: 12px; text-transform: uppercase; letter-spacing: .05em;
+  margin: 18px 0 8px 46px; }
+.msg { display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 10px; margin-bottom: 14px;
+  scroll-margin-top: 120px; }
+.bubble { background: var(--card); border: 1px solid var(--line); border-left-width: 4px;
+  border-radius: 8px; padding: 8px 12px; min-width: 0; }
+.msg.now .bubble { box-shadow: 0 0 0 2px var(--acc); }
+.head { font-size: 13px; color: var(--mut); white-space: pre-wrap; overflow-wrap: anywhere; }
+.head b { color: var(--fg); }
+.think, pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+.think { color: var(--mut); font-size: 14px; }
+details summary { cursor: pointer; color: var(--mut); overflow-wrap: anywhere; }
+.call { font: 13px ui-monospace, Menlo, monospace; background: var(--soft); padding: 2px 6px;
+  border-radius: 4px; overflow-wrap: anywhere; }
+.act { margin: 4px 0; overflow-wrap: anywhere; }
+.refused { border: 1px solid var(--bad); color: var(--bad); padding: 6px 10px; border-radius: 4px;
+  margin-top: 6px; font-size: 14px; }
+.refused pre { margin: 4px 0; font-size: 12px; color: var(--fg); }
+.note { font-size: 16px; font-weight: 600; color: var(--acc); margin: 6px 0;
+  white-space: pre-wrap; overflow-wrap: anywhere; }
+.saw { all: unset; cursor: pointer; color: var(--mut); font-size: 13px; text-decoration: underline; }
+.stub { display: none; font-size: 13px; }
+.msg.later .bubble, .msg.ghost .bubble { background: transparent; border-style: dashed;
+  color: var(--mut); padding: 6px 12px; }
+.msg.later .face, .msg.ghost .face { opacity: .35; filter: grayscale(1); }
+.msg.later .body { display: none; }
+.msg.later .stub, .msg.ghost .stub { display: block; }
+.msg.cave .bubble { border-style: solid; background: #f3e3b8; color: #3b2a14; }
+.msg.cave .face { opacity: 1; filter: none; }
+.msg.hidden { display: none; }
+.round.hidden { display: none; }
+#drawer { position: fixed; right: 0; top: 0; bottom: 0; width: min(560px, 100%);
+  background: var(--card); border-left: 1px solid var(--line); box-shadow: -8px 0 24px #0003;
+  transform: translateX(105%); transition: transform .2s; z-index: 10; overflow: auto;
+  padding: 16px 18px; }
+#drawer.open { transform: none; }
+#drawer pre { font: 13px/1.45 ui-monospace, Menlo, monospace; background: var(--soft);
   padding: .6em; border-radius: 4px; }
-.thinking { color: #9a9a9a; font-style: italic; }
-.refused { color: #e0a060; }
-.empty { color: #777; }
-details summary { cursor: pointer; color: #aaa; }
-#prompt { max-height: 40em; overflow: auto; }
-#turns { position: relative; list-style: none; padding: 0; max-height: 18em; overflow: auto; margin: .5em 0; }
-#turns button { all: unset; display: block; width: 100%; cursor: pointer;
-  padding: 2px 4px; overflow-wrap: anywhere; }
-#turns button.now { background: #3a3a5a; }
-#turns button:hover { background: #2c2c2c; }
-#scroll { padding-left: 0; list-style: none; max-height: 40em; overflow: auto; }
-#scroll li { padding: 2px 0; border-bottom: 1px solid #2a2a2a; }
+#drawer h3 { font-size: 12px; text-transform: uppercase; color: var(--mut); margin: 1em 0 .3em; }
+#close { float: right; }
 </style></head>
 <body>
 <header>
-<h1>Treasure Island</h1>
-<span id="status"></span>
+<h1 id="name"></h1><span class="mut" id="final"></span>
+<button id="prev" title="Previous turn (←)">←</button>
+<button id="next" title="Next turn (→)">→</button>
+<button id="play" title="Play (space)">▶</button>
+<select id="speed" title="Speed"><option value="2500">slow</option>
+<option value="1400" selected>normal</option><option value="600">fast</option></select>
+<span id="count"></span><input type="range" id="slider" min="0" value="0">
 <label>Show <select id="pirate"><option value="">every pirate</option></select></label>
-<span class="empty">← → step through turns · Home and End jump to the first and last</span>
 </header>
-<main class="page">
-<section>
-<img id="frame" alt="the board on the current turn">
-<p id="story"></p>
-<ol id="turns"></ol>
+<main class="feed">
+<section class="left">
+<img class="board" id="board" alt="the board on the current turn">
+<div class="mut" id="where"></div>
+<div class="mut" id="reasoned"></div>
+<div class="parchment"><div class="title">The scroll</div><div id="scroll"></div></div>
+<div class="ending" id="ending"></div>
 </section>
-<section id="record">
-<h2 id="who"></h2>
-<details><summary id="shown">What it was shown</summary><pre id="prompt"></pre></details>
-<h3>Its thinking</h3><pre id="thinking" class="thinking"></pre>
-<p id="reasoned"></p>
-<div id="refused"></div>
-<h3>What it did</h3><pre id="did"></pre>
-<h3>The result</h3><pre id="result"></pre>
-</section>
-<section>
-<h3>The scroll so far</h3>
-<ol id="scroll"></ol>
-</section>
+<section id="feed"></section>
 </main>
+<aside id="drawer"><button id="close">Close</button><div id="mind"></div></aside>
 <script>
+const GAME = @GAME@;
 const TURNS = @TURNS@;
+const N = TURNS.length, EACH = GAME.turns_each;
 const $ = (id) => document.getElementById(id);
-const filter = $("pirate"), list = $("turns");
-let shown = 0, visible = [];
-function text(id, words, none) {
-  $(id).textContent = words || none;
-  $(id).classList.toggle("empty", !words);
-}
-function call(action) {
-  const { action: name, ...rest } = action;
-  return Object.keys(rest).length ? name + " " + JSON.stringify(rest) : name;
-}
-for (const name of [...new Set(TURNS.map((t) => t.agent))]) {
-  const option = document.createElement("option");
-  option.value = option.textContent = name;
-  filter.appendChild(option);
-}
-function listTurns() {
-  visible = TURNS.map((t, i) => i).filter((i) => !filter.value || TURNS[i].agent === filter.value);
-  list.replaceChildren(...visible.map((i) => {
-    const item = document.createElement("li"), button = document.createElement("button");
-    button.dataset.turn = i;
-    button.textContent = "Turn " + TURNS[i].turn + " · " + TURNS[i].agent + " · " + TURNS[i].happened;
-    item.appendChild(button);
-    return item;
-  }));
-}
-function show(turn) {
-  shown = turn;
-  const t = TURNS[turn];
-  $("frame").src = "data:image/png;base64," + t.frame;
-  $("story").textContent = t.story;
-  $("status").textContent = "Turn " + t.turn + " (" + (turn + 1) + " of " + TURNS.length + ")";
-  $("who").textContent = "Turn " + t.turn + ": " + t.agent;
-  $("shown").textContent = "What it was shown (" + t.prompt.length + " characters)";
-  text("prompt", t.prompt, "No prompt recorded: a scripted pirate reads no words.");
-  text("thinking", t.thinking, "No thinking recorded.");
-  $("reasoned").textContent = t.reasoned;
-  $("refused").replaceChildren(...t.refused.map((bad) => {
-    const line = document.createElement("pre");
-    line.className = "refused";
-    line.textContent = "A reply that wasn't a tool call: " + bad.reply + "\\n(" + bad.why + ")";
-    return line;
-  }));
-  text("did", t.did.map(call).join("\\n"), "Nothing: the turn passed.");
-  text("result", t.result, "No result recorded.");
-  $("scroll").replaceChildren(...TURNS.slice(0, turn + 1).flatMap((each) => each.wrote).map((w) => {
-    const line = document.createElement("li");
-    line.textContent = w.line + " " + w.by + ": " + w.text;
-    return line;
-  }));
-  $("scroll").scrollTop = $("scroll").scrollHeight;  // the newest line in view
-  for (const button of list.querySelectorAll("button")) {
-    const now = Number(button.dataset.turn) === turn;
-    button.classList.toggle("now", now);
-    // Scroll the list alone, never the page, so the board stays where it is.
-    const top = button.offsetTop, bottom = top + button.offsetHeight;
-    if (now && (top < list.scrollTop || bottom > list.scrollTop + list.clientHeight)) {
-      list.scrollTop = top - list.clientHeight / 2;
+const png = (data) => "data:image/png;base64," + data;
+// Every word goes in as a text node, never as markup.
+function el(tag, attrs, ...kids) {
+  const made = document.createElement(tag);
+  for (const [key, value] of Object.entries(attrs || {})) {
+    if (key === "class") made.className = value;
+    else if (key === "style") made.style.cssText = value;
+    else made.setAttribute(key, value);
+  }
+  for (const kid of kids.flat()) {
+    if (kid !== null && kid !== undefined && kid !== false) {
+      made.append(kid instanceof Node ? kid : document.createTextNode(String(kid)));
     }
   }
+  return made;
+}
+const words = (text) => (text || "").trim().split(/\s+/).filter(Boolean).length;
+function lastSentence(text) {
+  const parts = (text || "").trim().split(/(?<=[.!?])\s+/);
+  return parts[parts.length - 1] || "";
+}
+const colour = (name) => (GAME.crew[name] || {}).colour || "inherit";
+const face = (name) => {
+  const img = el("img", { class: "face", alt: "" });
+  if (GAME.crew[name]) img.src = png(GAME.crew[name].face);
+  return img;
+};
+let at = 0, forward = false, only = "", timer = null, lock = 0, walking = null, typing = null;
+
+$("name").textContent = GAME.name;
+$("final").textContent = GAME.score === null ? "" : "Final score " + GAME.score;
+$("slider").max = Math.max(N - 1, 0);
+for (const name of Object.keys(GAME.crew)) $("pirate").append(el("option", { value: name }, name));
+
+// The feed: every planned turn, from the start, grouped into rounds.
+const entries = [], ghosts = [], rounds = [];
+let round = 0;
+for (const slot of GAME.slots) {
+  if (slot.round !== round) {
+    round = slot.round;
+    const heading = el("div", { class: "round" }, "Round " + round + " of " + EACH);
+    rounds.push(heading);
+    $("feed").append(heading);
+  }
+  const who = el("b", {}, slot.agent);
+  const stub = el("div", { class: "stub" }, who, " · turn " + slot.round + " of " + EACH + " · ");
+  const label = el("span", {}, "not yet");
+  stub.append(label);
+  const bubble = el("div", { class: "bubble", style: "border-left-color:" + colour(slot.agent) }, stub);
+  const entry = el("div", { class: "msg later" }, face(slot.agent), bubble);
+  entry.dataset.agent = slot.agent;
+  $("feed").append(entry);
+  if (slot.kind !== "played") {
+    entry.classList.add("ghost");
+    ghosts.push({ entry, label, slot });
+    continue;
+  }
+  const k = slot.turn, t = TURNS[k];
+  entry.id = "turn" + k;
+  entry.dataset.turn = k;
+  const body = el("div", { class: "body" },
+    el("div", { class: "head" }, el("b", {}, t.agent), " · turn " + t.own + " of " + EACH + " · game turn " + t.turn,
+      t.told ? " · " + t.told : " · a scripted pirate is told nothing in words"));
+  if (t.thinking) {
+    body.append(el("details", {},
+      el("summary", {}, "thought " + words(t.thinking) + " words: “" + lastSentence(t.thinking) + "”"),
+      el("div", { class: "think" }, t.thinking)));
+  }
+  if (t.reasoned) body.append(el("div", { class: "mut" }, t.reasoned));
+  for (const bad of t.refused) {
+    body.append(el("div", { class: "refused" }, "Reply rejected: " + bad.why, el("pre", {}, bad.reply || "(empty)")));
+  }
+  body.append(el("div", { class: "act" }, el("span", { class: "call" }, t.calls.join(" ") || "passed"), " ",
+    el("span", { class: "mut" }, t.result || t.happened)));
+  for (const line of t.wrote) body.append(el("div", { class: "note" }, "✎ “" + line.text + "”"));
+  const saw = el("button", { class: "saw" }, "see everything it saw");
+  saw.dataset.mind = k;
+  body.append(saw);
+  bubble.append(body);
+  entries.push(entry);
+}
+
+// The drawer: everything the pirate was shown that turn, its memory included.
+function mind() {
+  const t = TURNS[at];
+  $("mind").replaceChildren(
+    el("h2", {}, t.agent + ", turn " + t.own + " of " + EACH + " (game turn " + t.turn + ")"),
+    el("h3", {}, "Everything it was shown (" + t.prompt.length + " characters)"),
+    el("pre", {}, t.prompt || "No prompt recorded: a scripted pirate reads no words."),
+    el("h3", {}, "Its thinking (" + words(t.thinking) + " words)"),
+    el("pre", { class: "think" }, t.thinking || "No thinking recorded."),
+    ...t.refused.map((bad) => el("pre", { class: "refused" }, "A reply that wasn't a tool call: " + bad.reply + "\n(" + bad.why + ")")),
+    el("h3", {}, "What it did"), el("pre", {}, t.calls.join("\n") || "Nothing: the turn passed."),
+    el("h3", {}, "The result"), el("pre", {}, t.result || "No result recorded."));
+}
+function openMind() { mind(); $("drawer").classList.add("open"); }
+function closeMind() { $("drawer").classList.remove("open"); }
+
+// The board: a turn stepped onto plays its steps, a walk, a dig or a pirate going in.
+function showBoard(t, animate) {
+  clearInterval(walking);
+  walking = null;
+  if (!animate || !t.steps.length) { $("board").src = png(t.frame); return; }
+  let frame = 0;
+  $("board").src = png(t.steps[0]);
+  walking = setInterval(() => {
+    frame += 1;
+    if (frame < t.steps.length) { $("board").src = png(t.steps[frame]); return; }
+    $("board").src = png(t.frame);
+    clearInterval(walking);
+    walking = null;
+  }, stepMs(t.steps.length));
+}
+// Playing, a turn's steps fit inside its time on screen, so a dig or a pirate going
+// in always finishes before the next turn.
+function stepMs(steps) {
+  return timer ? Math.min(130, Number($("speed").value) / (steps + 2)) : 130;
+}
+
+// The scroll under the board: a turn that writes types its line out with a quill.
+function writeScroll(animate) {
+  clearInterval(typing);
+  typing = null;
+  const before = TURNS.slice(0, at).flatMap((t) => t.wrote), fresh = TURNS[at].wrote;
+  if (!before.length && !fresh.length) {
+    $("scroll").replaceChildren(el("p", { class: "none" }, "Nothing written yet."));
+    return;
+  }
+  const line = (w, cls) => el("li", cls ? { class: cls } : {}, el("b", { style: "color:" + colour(w.by) }, w.by + ": "));
+  const ink = fresh.map(() => el("span", {}));
+  const quills = fresh.map(() => el("span", { class: "quill" }, "✒️"));
+  $("scroll").replaceChildren(el("ol", {},
+    before.map((w) => { const item = line(w); item.append(w.text); return item; }),
+    fresh.map((w, n) => { const item = line(w, "new"); item.append(ink[n], quills[n]); return item; })));
+  const box = $("scroll").parentElement;
+  box.scrollTop = box.scrollHeight;
+  if (!animate) {
+    fresh.forEach((w, n) => { ink[n].textContent = w.text; quills[n].remove(); });
+    return;
+  }
+  let n = 0, c = 0;
+  typing = setInterval(() => {
+    if (n >= fresh.length) { clearInterval(typing); typing = null; return; }
+    c += 1;
+    ink[n].textContent = fresh[n].text.slice(0, c);
+    box.scrollTop = box.scrollHeight;
+    if (c >= fresh[n].text.length) { quills[n].remove(); n += 1; c = 0; }
+  }, 35);
+}
+
+function paint(scroll) {
+  if (!N) return;
+  const t = TURNS[at];
+  $("count").textContent = "Turn " + (at + 1) + " of " + N;
+  $("slider").value = at;
+  $("prev").disabled = at === 0;
+  $("next").disabled = at === N - 1;
+  $("where").textContent = "Turn " + (at + 1) + " of " + N + " played · " + t.agent + " · score " + t.score;
+  $("reasoned").textContent = t.reasoned;
+  showBoard(t, forward);
+  writeScroll(forward);
+  for (const entry of entries) {
+    const k = Number(entry.dataset.turn);
+    entry.classList.toggle("now", k === at);
+    entry.classList.toggle("later", k > at);
+  }
+  for (const { entry, label, slot } of ghosts) {
+    const reached = slot.after !== null && at >= slot.after;
+    entry.classList.toggle("cave", reached && slot.kind === "cave");
+    label.textContent = !reached ? "not yet" : slot.kind === "cave"
+      ? "in the cave: this turn earns the crew +" + GAME.per_turn_left
+      : "Not played: the game was over";
+  }
+  $("ending").textContent = at === N - 1 ? GAME.ending : "";
+  if ($("drawer").classList.contains("open")) mind();
+  try { history.replaceState(null, "", "#turn-" + at); } catch (e) { /* a file page may refuse */ }
+  if (scroll) {
+    lock = Date.now() + 1500;
+    $("turn" + at).scrollIntoView({ block: "center", behavior: timer ? "smooth" : "auto" });
+  }
+}
+const kept = (k) => !only || TURNS[k].agent === only;
+// The filter's nearest turn to `k`: itself, a later one if there is one, else earlier.
+function nearestKept(k) {
+  if (kept(k)) return k;
+  const later = TURNS.findIndex((t, n) => n > k && kept(n));
+  return later >= 0 ? later : TURNS.map((t, n) => n).filter((n) => n < k && kept(n)).pop();
+}
+function go(k, scroll = true) {
+  if (k < 0 || k >= N) return;
+  forward = k === at + 1;
+  at = k;
+  paint(scroll);
 }
 function step(by) {
-  const at = visible.indexOf(shown);
-  const next = at < 0 ? visible.find((i) => i > shown) ?? visible.at(-1) : visible[at + by];
-  if (next !== undefined) show(next);
+  let k = at + by;
+  while (k >= 0 && k < N && !kept(k)) k += by;
+  if (k >= 0 && k < N) go(k); else stop();
 }
-list.addEventListener("click", (click) => {
-  const button = click.target.closest("button");
-  if (button) show(Number(button.dataset.turn));
+function play() {
+  if (timer) { stop(); return; }
+  if (at === N - 1) { const first = nearestKept(0); if (first !== undefined) go(first); }
+  $("play").textContent = "❚❚";
+  timer = setInterval(() => step(1), Number($("speed").value));
+}
+function stop() { clearInterval(timer); timer = null; $("play").textContent = "▶"; }
+
+$("prev").addEventListener("click", () => step(-1));
+$("next").addEventListener("click", () => step(1));
+$("play").addEventListener("click", play);
+$("speed").addEventListener("change", () => { if (timer) { stop(); play(); } });
+$("slider").addEventListener("input", (e) => {
+  const k = nearestKept(Number(e.target.value));
+  if (k !== undefined) go(k);
 });
-filter.addEventListener("change", () => {
-  listTurns();
-  if (!visible.includes(shown) && visible.length) step(1); else show(shown);
+$("close").addEventListener("click", closeMind);
+$("feed").addEventListener("click", (e) => {
+  const saw = e.target.closest("[data-mind]");
+  if (saw) { go(Number(saw.dataset.mind), false); openMind(); }
+});
+$("pirate").addEventListener("change", () => {
+  only = $("pirate").value;
+  for (const entry of [...entries, ...ghosts.map((g) => g.entry)]) {
+    entry.classList.toggle("hidden", Boolean(only) && entry.dataset.agent !== only);
+  }
+  const k = nearestKept(at);
+  if (k !== at && k !== undefined) go(k); else paint(true);
 });
 document.addEventListener("keydown", (key) => {
-  if (key.target === filter) return;
-  if (key.key === "ArrowLeft") step(-1);
-  if (key.key === "ArrowRight") step(1);
-  if (key.key === "Home" && visible.length) show(visible[0]);
-  if (key.key === "End" && visible.length) show(visible.at(-1));
+  if (key.target.closest && key.target.closest("input, select, textarea")) return;
+  if (key.key === "ArrowRight") { key.preventDefault(); step(1); }
+  if (key.key === "ArrowLeft") { key.preventDefault(); step(-1); }
+  if (key.key === " ") { key.preventDefault(); play(); }
+  if (key.key === "Escape") closeMind();
 });
-listTurns();
-show(0);
+// Scrolling the feed moves the board to the entry in view.
+// A band across the middle of the window, in pixels from its height: percentages in
+// rootMargin can be taken from the width, which on a wide window leaves no band.
+function band() {
+  return -Math.round(innerHeight * 0.45) + "px 0px " + -Math.round(innerHeight * 0.5) + "px 0px";
+}
+function onScroll(seen) {
+  if (Date.now() < lock || timer) return;
+  for (const one of seen) {
+    const k = Number(one.target.dataset.turn);
+    if (one.isIntersecting && k !== at) { forward = k === at + 1; at = k; paint(false); }
+  }
+}
+let watcher = null;
+function watch() {
+  if (watcher) watcher.disconnect();
+  watcher = new IntersectionObserver(onScroll, { rootMargin: band() });
+  entries.forEach((entry) => watcher.observe(entry));
+}
+watch();
+addEventListener("resize", watch);
+
+const linked = location.hash.match(/^#turn-(\d+)$/);
+if (linked) at = Math.min(Number(linked[1]), Math.max(N - 1, 0));
+paint(true);
 </script>
 </body></html>
 """

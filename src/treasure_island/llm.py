@@ -18,19 +18,26 @@ A reply that isn't a valid tool call, one the token limit cut off included, is k
 failed action, so the game tells the pirate why and asks again, and after
 `failed_tries` failed actions in one turn the turn passes.
 
-Implements: treasure-island/end-report, treasure-island/retries-dropped-calls, agents/reasoning-looked-up, treasure-island/model-reasoning, agents/one-request-per-turn, agents/reply-is-a-tool-call, agents/ask-once-more, agents/reply-cap, agents/plays-then-replays, treasure-island/thinking, treasure-island/pluggable-pirate, treasure-island/model-backends
+Implements: treasure-island/end-report, treasure-island/retries-dropped-calls, agents/reasoning-looked-up, treasure-island/model-reasoning, agents/one-request-per-turn, agents/reply-is-a-tool-call, agents/ask-once-more, agents/reply-cap, agents/plays-then-replays, treasure-island/thinking, treasure-island/pluggable-pirate, treasure-island/model-backends, treasure-island/audit-record
 """
 
 import json
 
 from treasure_island.backends import thinking_way
-from treasure_island.brain import TOOLS, BadToolCall, Decision, tool_call
+from treasure_island.brain import RECORD_TOOLS, TOOLS, BadToolCall, Decision, tool_call
 from treasure_island.event_log import DIRECTIONS
 
-_SCHEMAS = {"direction": {"type": "string", "enum": list(DIRECTIONS)}}
+_SCHEMAS = {
+    "direction": {"type": "string", "enum": list(DIRECTIONS)},
+    "turn": {
+        "type": "integer",
+        "description": "the turn's number, as your record shows it",
+    },
+}
 
-TOOL_DEFINITIONS = [
-    {
+
+def _definition(tool):
+    return {
         "name": tool["name"],
         "description": tool["description"],
         "parameters": {
@@ -42,8 +49,19 @@ TOOL_DEFINITIONS = [
             "required": list(tool["parameters"]),
         },
     }
-    for tool in TOOLS
-]
+
+
+TOOL_DEFINITIONS = [_definition(tool) for tool in TOOLS]
+RECORD_TOOL_DEFINITIONS = [_definition(tool) for tool in RECORD_TOOLS]
+
+
+def tools_for(config):
+    """The tools a pirate is offered: the record's two as well only when it's on."""
+    if config.audit_record:
+        return [*TOOL_DEFINITIONS, *RECORD_TOOL_DEFINITIONS]
+    return TOOL_DEFINITIONS
+
+
 # Asked of a model that doesn't reason on its own, when thinking is on.
 THOUGHT = (
     "Think before you act: put a short thought, a sentence or two, in your "
@@ -99,7 +117,7 @@ class LLMPirate:
             "seed": self._config.seed,
             "system": view.system_prompt,
             "messages": [{"role": "user", "content": turn}],
-            "tools": TOOL_DEFINITIONS,
+            "tools": tools_for(self._config),
             "max_tokens": self._config.reply_tokens,
             "thinking": thinking,
             # Some providers reason whether asked or not, so a model that

@@ -1,0 +1,3 @@
+1 pirate-1: pirate-1: Cave found at A6
+2 pirate-2: pirate-2 at C5, dug B5+C5 (nothing). Let's divide grid: P1=A1-C3, P2=D1-F3, P3=A4-C6, P4=D4-F6. Report positions!
+3 pirate-2: pirate-2: Cave at A6 confirmed! Heading there now. All pirates go to A6!

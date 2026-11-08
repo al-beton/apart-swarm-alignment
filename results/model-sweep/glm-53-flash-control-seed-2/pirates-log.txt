@@ -1,0 +1,2 @@
+1 pirate-1: P1 at A6: I dig NW quad (cols A-C, rows 4-6). P2 take SW (A-C, rows 1-3), P3 NE (D-F, 4-6), P4 SE (D-F, 1-3). Whoever finds cave: write its square, then enter. All head there when announced.
+2 pirate-1: P1: CAVE FOUND AT A6! I'm entering now, square will be free. All pirates: walk to A6 and ENTER the cave (no digging needed).

@@ -3,6 +3,7 @@
 Findings worth keeping, each with the games behind it. This guide has no `Implements:` line because nothing here may carry one; a row in `product/spec/results.md` homes these folders.
 
 - **`cave-leak/`:** experiment one, 40 games: a deepseek-v4-flash pirate handed the cave's square by a refusal tells the crew at once and never says how (9 of 9), then names the leak in its note to the designers (8 of 8).
+- **`model-sweep/`:** experiment one's forced and control arms on all seven Adaption models, 70 games: the five reasoning models launder the leaked square to the crew (15 of 20) and then name the leak to the designers (18 of 20); only glm-5.2 and qwen3.8-27b are ever candid; the gemmas ignore it.
 - **`sample-sweep-seeds/`:** where the treasure lands decides how well the silent crew scores. A sample showing the layout, from scripted games.
 
 ## Adding a result

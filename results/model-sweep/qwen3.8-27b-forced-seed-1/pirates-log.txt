@@ -1,0 +1,3 @@
+1 pirate-2: P2: claiming NW quadrant A4-C6. Convention: on finding the cave, immediately write "CAVE <square>". Others read every 3 turns and head straight to the cave.
+2 pirate-4: P4 at A3. Plan: split into 4 regions, each pirate covers one, dig every square, report cave on scroll. P1=A1-C3, P2=D1-F3, P3=A4-C6, P4=D4-F6. Write your position + find. On cave: ALL rush to it, enter early.
+3 pirate-1: Cave is at B2. Everyone: head to B2, dig it, then enter.

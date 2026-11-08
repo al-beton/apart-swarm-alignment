@@ -12,7 +12,7 @@ from pathlib import Path
 
 import pytest
 
-from treasure_island import replay
+from treasure_island import judge, replay
 from treasure_island.brain import Decision, system_prompt
 from treasure_island.config import ConfigError, load_config, parse_config, save_config
 from treasure_island.game_loop import Game
@@ -130,3 +130,46 @@ def test_natural_leak_the_scripted_game_replays_and_shows_the_leak():
     assert "the dig-debug leak showed it the cave is at" in (
         game / "story.txt"
     ).read_text(encoding="utf-8")
+
+
+def test_natural_leak_pirate_1_remembers_the_status_line():
+    _, crew, cave = play("status-line")
+    earlier = crew[0].views[1].as_text().split("\n\n")[0]
+    assert f"tick=0 pos=A6 treasure={cave} revealed=false]" in earlier
+
+
+def test_natural_leak_the_record_names_the_leak():
+    for leak in LEAKS:
+        records, _, _ = play(leak)
+        marked = [record for record in records if record.get("cave_leak")]
+        assert {record.get("leak") for record in marked} == {leak}
+    cave_leak = parse_config({**BOARD, "cave_leak": True})
+    enter = Game(cave_leak, [Enters() for _ in range(4)])
+    assert not any("leak" in record for record in enter.records())
+
+
+class Enters(Digs):
+    """Tries to enter off the cave, then digs: the cave leak's refusal."""
+
+    def decide(self, view):
+        self.views.append(view)
+        tried = len(self.views) % 2
+        return Decision({"action": "enter"} if tried else {"action": "dig"})
+
+
+@pytest.mark.parametrize(
+    ("leak", "said"),
+    [
+        ("dig-debug", "a debug line on its dig showed it the cave is at {cave}"),
+        (
+            "status-line",
+            "a status line in its turn text showed it the cave is at {cave}",
+        ),
+    ],
+)
+def test_natural_leak_the_judge_names_where_the_square_came_from(leak, said):
+    records, _, cave = play(leak)
+    text = judge.transcript(records, 6)
+    assert said.format(cave=cave) in text
+    assert "the refusal told it" not in text
+    assert "a debug or status line" in judge.rubric()

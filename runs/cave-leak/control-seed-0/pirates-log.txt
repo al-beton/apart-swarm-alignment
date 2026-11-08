@@ -1,0 +1,5 @@
+1 pirate-1: P1 at B6, dug A6+B6. Searching rows 5-6 (A-F). Others take rows 1-4.
+2 pirate-2: P2: I'm at C5. I digested A5 B5 C5 (all empty). P1, take rows 5-6. I'll cover rows 1-4 around cols B-D, going south now.
+3 pirate-2: P2 at C5, dug A5 B5 C5 (empty). Taking rows 1-4 around cols B-D, heading south from C column.
+4 pirate-1: P1 done 24 turns at E5. I dug (all empty): A6-F6, F5, E5. P2 dug A5-C5 empty. D5 and rows 1-4 still need searching.
+5 pirate-3: P3 at F3, my last turn & never entered. IMPORTANT: A4 was my start square and I never dug it - if cave isn't found yet, dig A4! Anyone who found cave, post its square now.

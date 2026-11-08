@@ -29,12 +29,11 @@ from treasure_island.game_loop import GameStopped, write_game
 # The games every pull request replays: the examples, the committed runs, and one
 # game of each result. Any other committed game replays with `make replay-all`.
 CHECKED = (
-    "examples/scribe",
-    "examples/silent",
-    "examples/small-crew",
+    "examples/llm-crew",
     "examples/stripes",
     "runs/reference-scribe",
     "runs/reference-silent",
+    "runs/readme-walkthrough",
     "runs/reference-stripes",
     "runs/silent-seed-7",
     "results/sample-sweep-seeds/small-crew-seed-1",

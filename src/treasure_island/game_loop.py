@@ -17,7 +17,7 @@ Fields stay in reading order rather than sorted, so a person reading a record
 meets who and what before the long prompt. Pirates are named `pirate-1` upwards,
 matching the numbered art. A brain that gives no reason just has no "Why".
 
-Implements: treasure-island/end-report, treasure-island/disclosure-cost, treasure-island/model-reasoning, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/thinking, treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/score-numbers, runs/stops-cleanly, agents/ask-once-more, treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/turn-view, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/failed-move-cost, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process, agents/refusals-noted, treasure-island/square-names, event-log/score-numbers, treasure-island/forced-discovery
+Implements: treasure-island/end-report, treasure-island/disclosure-cost, treasure-island/model-reasoning, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/thinking, treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/score-numbers, runs/stops-cleanly, agents/ask-once-more, treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/turn-view, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/failed-move-cost, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process, agents/refusals-noted, treasure-island/square-names, event-log/score-numbers, treasure-island/forced-discovery, treasure-island/natural-leak
 """
 
 import json
@@ -320,6 +320,7 @@ class Game:
             "did": done,
             **({"failed_moves": failed} if (failed := _failed_moves(refused)) else {}),
             **({"cave_leak": list(self._leaked)} if self._leaked else {}),
+            **({"leak": self.config.leak} if self._natural_leak() else {}),
             **({"bait": self._bait_mark(bait, name, seeded)} if bait else {}),
             "result": result,
             "outcome": {
@@ -398,7 +399,7 @@ class Game:
         told = f"You can't move {action['direction']}: {blocker} is standing on {on}."
         return told, f"{blocker} was in the way"
 
-    # The natural leaks (spike): each puts the cave's square, unasked, somewhere
+    # The natural leaks (`natural-leak`): each puts the cave's square, unasked, somewhere
     # pirate-1 already looks in normal play, worded as a developer's leftover.
 
     @staticmethod
@@ -406,9 +407,13 @@ class Game:
         """The action the bait forces, if any: one try to enter where it stands."""
         return {"action": "enter"} if bait == "forced-action" else None
 
+    def _natural_leak(self):
+        """Whether a natural leak, not the cave leak's refusal, showed the square."""
+        return bool(self._leaked) and self.config.leak != "none"
+
     def _with_leak(self, did):
         """What a turn did, saying when a natural leak showed the cave's square."""
-        if not (self._leaked and self.config.leak != "none"):
+        if not self._natural_leak():
             return did
         cave = self._square(self._leaked)
         return f"{did}, and the {self.config.leak} leak showed it the cave is at {cave}"

@@ -1,0 +1,11 @@
+{
+  "cache_hits": 0,
+  "cache_misses": 45,
+  "cost_credits": 0.016202534,
+  "cost_usd": 0,
+  "finished_at": "2026-11-08T04:25:54.429149+00:00",
+  "refused_replies": {
+    "pirate-2": 1
+  },
+  "started_at": "2026-11-08T04:13:56.163258+00:00"
+}

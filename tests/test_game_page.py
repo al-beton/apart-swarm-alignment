@@ -1,4 +1,4 @@
-# Implements: viewer/game-page
+# Implements: viewer/game-page, viewer/score-counter
 """The slideshow as a full game page: the board beside every turn's whole record."""
 
 import json
@@ -65,6 +65,13 @@ def test_game_page_is_built_from_the_event_log_alone(saved, tmp_path):
     shutil.copy(saved / "events.jsonl", alone / "events.jsonl")
     turns = turns_in(viewer.slideshow_page(alone))
     assert [t["agent"] for t in turns] == [r["agent"] for r in records_of(saved)]
+    # The last frame counts up to the recorded score, by the log's own numbers.
+    records = viewer.records_in(alone)
+    scoring, last = viewer.scoring_in(alone), len(records) - 1
+    final = viewer.walk_steps(records, last, scoring)[-1]
+    size = viewer.grid_size(alone, records)
+    shown = viewer.scene(records, last, size, step=final, scoring=scoring)
+    assert shown["score"] == records[-1]["game_over"]["score"]
 
 
 def test_game_page_holds_each_turn_s_whole_record(saved):

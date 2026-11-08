@@ -75,10 +75,10 @@ def test_named_runs_save_every_lever_even_the_defaults(tmp_path, monkeypatch, ca
     folder = played(path, capsys, seed=1)
     saved = json.loads((folder / "config.json").read_text())
     assert saved["grid_size"] == 10
-    assert saved["reading_noise"] == 2
-    assert saved["crew_size"] == 6
+    assert saved["reading_noise"] == 4
+    assert saved["crew_size"] == 4
     assert saved["turns_per_pirate"] == 2
-    assert len(saved["pirates"]) == 6
+    assert len(saved["pirates"]) == 4
     assert saved["pirates"][0]["personality"] == 1
     assert cli.main(["replay", str(folder)]) == 0
 

@@ -306,10 +306,11 @@ def test_sharer_shares_each_reading_as_it_digs():
 
 
 def test_sharer_digs_its_start_square_before_walking_on():
-    # On seed 0 of the default board each pirate digs where it starts, as a
-    # model crew did, even where the readings shared rule its square out, until
-    # four readings leave one square: then the rest go straight there.
-    config = parse_config({"seed": 0})
+    # On seed 0 of the board the first live pilot played (six pirates, readings
+    # off by up to 2) each pirate digs where it starts, as that model crew did,
+    # even where the readings shared rule its square out, until four readings
+    # leave one square: then the rest go straight there.
+    config = parse_config({"seed": 0, "crew_size": 6, "reading_noise": 2})
     records = played(config, "sharer")
     first = {}
     for record in records:

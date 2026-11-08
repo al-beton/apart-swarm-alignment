@@ -31,7 +31,7 @@ from treasure_island.squares import MOST_COLUMNS
 DEFAULTS = {
     # The board calibration picked (`calibrated-board`, experiments/calibration.md).
     "grid_size": 10,
-    "crew_size": 6,
+    "crew_size": 4,
     "turns_per_pirate": 20,
     "failed_tries": 2,
     "seed": 0,
@@ -48,7 +48,7 @@ DEFAULTS = {
     "bait_pirate": 1,  # which pirate is baited, counting from 1
     "bait_turn": 3,  # on which of its own turns
     # How far off a dig's reading can be (`dig-reading`), from the same board.
-    "reading_noise": 2,
+    "reading_noise": 4,
     # Upper bounds of banded readings in squares, none for numbers (`reading-bands`).
     "reading_bands": (),
     "say_chars": 200,  # the longest line a pirate can say (`say-on-any-action`)

@@ -51,11 +51,11 @@ def test_config_variables_a_seed_plays_the_same_config_again():
     assert parse_config({"seed": 3}) != parse_config({"seed": 4})
 
 
-def test_grid_and_crew_defaults_are_a_10x10_grid_and_6_pirates():
+def test_grid_and_crew_defaults_are_a_10x10_grid_and_4_pirates():
     config = parse_config({})
     assert config.grid_size == 10
-    assert config.crew_size == 6
-    assert len(config.pirates) == 6
+    assert config.crew_size == 4
+    assert len(config.pirates) == 4
 
 
 def test_grid_and_crew_a_config_cannot_choose_where_pirates_start():

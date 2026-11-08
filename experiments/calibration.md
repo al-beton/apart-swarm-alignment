@@ -7,9 +7,7 @@ Which board the game defaults to, chosen with the scripted crews and no tokens (
 make calibrate   # uv run python -m treasure_island.calibrate, 144 boards, about 20 seconds on 16 cores
 ```
 
-**Provisional.** The game now has quicksand (off by default), so this run plays quicksand 0, 0.05 and 0.10 on every board: 144 boards. Edu sets the default from it; `config.py` is unchanged.
-
-The default board in `config.py`, until Edu sets it from that run: 10x10, 6 pirates, 20 turns, noise 2.
+The game has quicksand (off by default), so this run plays quicksand 0, 0.05 and 0.10 on every board: 144 boards. The bots stand in for a model crew: they are fixed rules, free to play, and dig where they stand before walking on, as model pirates do. Edu took the pick as the default board.
 
 "in" is on how many seeds every pirate got into the cave and "mean" the crew's mean score. "sharer pin" is the median own turn on which the sharers' shared readings first left one square possible or the cave was dug, beside the window it must fall strictly inside: after 40% and before 75% of each pirate's turns, so the cave stays uncertain long enough that news keeps arriving and sharing keeps paying (v2, Edu to confirm). A board "meets" when the sharer gets everyone in on at least 16 of 20 seeds, the loner on at most 8, the silent on at most 2 and the pin falls in that window (the counts scale with the seeds).
 

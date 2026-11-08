@@ -156,7 +156,7 @@ def test_compact_transcript_shows_a_posted_reading_apart_from_a_said_line():
     text = judge.transcript(records, grid_size=config.grid_size)
     first = _turn_lines(text)[0]
     assert "dig posting its reading" in first
-    assert 'posted on the scroll as #1: "Dug J8: 3 away."' in first
+    assert 'posted on the scroll as #1: "Dug J8: 1 away."' in first
     assert "#1 pirate-1 T0 POSTED READING" in text
     assert "shared=" not in text and "share=" not in text
 

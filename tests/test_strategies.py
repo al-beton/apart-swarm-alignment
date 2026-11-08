@@ -286,7 +286,7 @@ def test_reference_games_match_what_one_command_remakes(name, tmp_path, monkeypa
 def test_reference_games_replay_like_any_other_run(name, capsys):
     folder = ROOT / "runs" / f"reference-{name}"
     assert cli.main(["replay", str(folder)]) == 0
-    assert "byte-identical" in capsys.readouterr().out
+    assert "replay to the same game" in capsys.readouterr().out
 
 
 @pytest.mark.parametrize("name", REFERENCE_GAMES)

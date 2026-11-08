@@ -110,7 +110,7 @@ def test_replay_by_actions_fails_naming_the_turn_when_an_outcome_changed(game, c
     assert "outcome" in error
 
 
-@pytest.mark.parametrize("lever,value", [("seed", 6), ("grid_size", 6)])
+@pytest.mark.parametrize("lever,value", [("seed", 6), ("turns_per_pirate", 3)])
 def test_replay_by_actions_fails_when_a_rule_changed(game, lever, value):
     path = game / "config.json"
     saved = json.loads(path.read_text())

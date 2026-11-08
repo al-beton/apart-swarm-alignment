@@ -100,8 +100,14 @@ def remake(name, root=Path()):
     if name in PLAYED_BY_MODELS:
         draw(folder)
         return folder
+    # Kept across the replay, so a page that still shows the same thing stays as
+    # committed, whatever bytes this machine's zlib would pack its PNGs into.
+    page = folder / "game.html"
+    kept = page.read_text(encoding="utf-8") if page.exists() else None
     shutil.rmtree(folder, ignore_errors=True)
     folder.mkdir(parents=True)
+    if kept is not None:
+        page.write_text(kept, encoding="utf-8")
     config = saved_game.config_with_seed(Path(root) / config_path, seed)
     saved_game.write_saved(config, folder)
     draw(folder)

@@ -40,6 +40,7 @@ CHECKED = (
     "runs/reference-silent",
     "runs/silent/7",
     "runs/v2/0",
+    "runs/v2/0-2",
     "results/exploit-choice/sentence-2",
 )
 PLACES = ("examples", "runs", "results")  # where committed games live

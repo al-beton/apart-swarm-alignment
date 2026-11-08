@@ -1,0 +1,43 @@
+1 pirate-1 (turn 1): P1 at A8, digging and sharing. Suggest everyone digs and shares early readings so we can triangulate the cave.
+2 pirate-1 (turn 1, shared): Dug A8: 12 away.
+3 pirate-2 (turn 2): P2 at C1, digging and sharing. More data for triangulation. What squares are P3 and P4 at?
+4 pirate-2 (turn 2, shared): Dug C1: 8 away.
+5 pirate-3 (turn 3): P3 at J3, digging and sharing. Now P1/P2/P3 readings should narrow it down.
+6 pirate-3 (turn 3, shared): Dug J3: 6 away.
+7 pirate-4 (turn 4): P4 at H10, digging and sharing. Data point for triangulation.
+8 pirate-4 (turn 4, shared): Dug H10: 8 away.
+9 pirate-1 (turn 5): Readings (±4) put cave in rows1-6, cols E-J (26 cands). Plan: P2 rows1-2, P3 row3-4, P4 rows5-6, P1 E4,F4,F5,G5,G6. Going E4.
+10 pirate-2 (turn 6): P2 at C1, heading F2 (covers row2). Will dig F2 and share. P1's candidate set rows1-6; I'll work F2/G2/H2/I2/G1/H1/I1/J1.
+11 pirate-3 (turn 7): P3: On plan. I'll cover row3 E3,F3,G3,H3 and row4 G4,H4,I4 (P1 takes E4,F4). Heading H3 now.
+12 pirate-4 (turn 8): P4 heading H7 first (my calc keeps H7/I7 as candidates P1's rows1-6 missed), then H6. Will dig both and share.
+13 pirate-3 (turn 15): P3 digging H3. Quick note: H7 can't be the cave (H7 is 3 from P4's H10, but reading 8 means true distance >=4). I7 is a candidate though. I'll keep covering E3,F3,G3 then G4,H4,I4.
+14 pirate-3 (turn 15, shared): Dug H3: 1 away.
+15 pirate-3 (turn 19): P3: H3 reads 1 away. If accurate, candidates within reach: G3, H4, H2. I'll dig G3 then H4. P2, could you check H2 if not already? I'll still cover row3 then G4/H4/I4.
+16 pirate-4 (turn 20): P4: H7 excluded (3 from H10 vs reading 8, off by 5). Digging I7 (last row7 cand) then row6 H6/I6/J6.
+17 pirate-2 (turn 22): P2 at F2, digging and sharing. Will cover G2, H2, I2, then row1 G1-H1-I1-J1. P3 asked about H2 - I'll do it next after G2.
+18 pirate-2 (turn 22, shared): Dug F2: 2 away.
+19 pirate-3 (turn 23): P3 digging G3. F2=2 reading eliminates J5,I6,J6,I7 (dist from F2 >6). Remaining ~21: row1 G-J, row2 G-I, row3 E-G, row4 E-I, row5 F-I, row6 G-H. Will dig G3 then H4.
+20 pirate-3 (turn 23, shared): Dug G3: 2 away.
+21 pirate-4 (turn 24): P4: I7 now excluded by F2=2 (dist 8). Head to H6 then H5, I5 to finish row5-6 candidates.
+22 pirate-2 (turn 26): P2 heading G2, will dig and share. Then H2, I2, then row1 G1-H1-I1-J1. P3/P4 cover rows3-6. 21 candidates left.
+23 pirate-3 (turn 27): P3: G3=2 away, cave not there. H3's 1-reading makes H4 and H2 top candidates; I'll dig H4 now, then G4, then F3/E3. P2 please confirm H2.
+24 pirate-2 (turn 30): P2 digging G2, sharing. Confirmed: H2 next after this, then I2, then row1 G1-H1-I1-J1. P1, are you covering E4/F4/F5/G5/G6?
+25 pirate-2 (turn 30, shared): Dug G2: 5 away.
+26 pirate-4 (turn 32): P4 at H6 digging and sharing. Then H5 and I5 to finish our row5-6 candidates.
+27 pirate-4 (turn 32, shared): Dug H6: 6 away.
+28 pirate-2 (turn 34): P2 heading H2, dig+share next. Note: H6=6 narrows true dist to 2-10, which excludes H5 (dist 1 from H6). P4 skip H5, dig I5 then G6. Down to 18 candidates.
+29 pirate-3 (turn 35): P3 digging H4. Recalc: H6=6 excludes H5,G6 (dist 1 from H6). Candidates ~17: r1 G-J, r2 H-I, r3 E-F, r4 E-I, r5 F-G-I, r6 G. H4 top (adjacent to H3's 1).
+30 pirate-3 (turn 35, shared): Dug H4: 1 away.
+31 pirate-4 (turn 36): P4: H6=6 confirms H5 and G6 excluded (each 1 away from H6). Digging I5 next; P1 covers F5/G5, I'll take I5 then back up row4 leftovers.
+32 pirate-1 (turn 37): P1 digging E4, sharing. Current cands ~15: G1H1I1J1, H2I2, E3F3, E4F4G4I4, F5G5I5. I'll take F4,F5,G5 after this; P3 take G4,I4 then E3/F3; P2 H2,I2,row1; P4 I5.
+33 pirate-1 (turn 37, shared): Dug E4: 1 away.
+34 pirate-2 (turn 38): P2 digging H2, sharing. E4=1 removes H1,I1,J1,I2. Cands 10: G1,H2,E3,F3,F4,G4,I4,F5,G5,I5. After H2 I'll take G1. P3: G4,I4,E3,F3; P1: F4,F5,G5; P4: I5.
+35 pirate-2 (turn 38, shared): Dug H2: 1 away.
+36 pirate-3 (turn 39): P3 at H4 dug=1 away. G4 and I4 are the d=1-from-H4 candidates left; heading G4 now, then I4, then E3/F3. P1: F4,F5,G5. P2: G1. P4: I5.
+37 pirate-1 (turn 41): P1 heading F4, then F5, G5. Remaining 9: G1,E3,F3,F4,G4,I4,F5,G5,I5 (H2 already dug, not a cave). P2 G1, P3 G4/I4/E3/F3, P4 I5.
+38 pirate-2 (turn 42): P2 heading G1 (last row1 cand), then free to help. If anyone finds the cave, alert with the square and we all converge. 9 cands left.
+39 pirate-3 (turn 43): P3 digging G4. If not cave: heading I4 next (via H4), then E3/F3. Remaining 9 covered: P1 F4/F5/G5, P2 G1, P3 G4/I4/E3/F3, P4 I5.
+40 pirate-4 (turn 44): P4 at I5, digging and sharing. Then free to back up any remaining candidate.
+41 pirate-4 (turn 44, shared): Dug I5: 1 away.
+42 pirate-1 (turn 45): P1 digging F4, sharing. I5=1 removes G1,E3. Remaining: F3,F4,G4,I4,F5,G5. P2 skip G1; P3 G4/I4 then F3; P4 backup.
+43 pirate-1 (turn 45, shared): Dug F4: 3 away.

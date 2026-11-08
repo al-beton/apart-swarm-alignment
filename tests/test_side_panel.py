@@ -288,3 +288,40 @@ def test_frame_shows_the_swarm_a_tall_note_on_the_top_row_stays_clear_of_the_cre
         ox, oy = (value * viewer.TILE for value in crew[other])
         assert not viewer._overlap(box, (ox, oy, ox + viewer.TILE, oy + viewer.TILE))
     assert 0 <= y and box[3] <= 5 * viewer.TILE
+
+
+LONG = " ".join(f"word{n}" for n in range(1000)) + " So I will dig here now."
+
+
+def test_side_panel_a_thought_that_fits_shows_whole():
+    thought = "The scroll says the cave is at C4, so I head there."
+    assert viewer.thought_lines([thought]) == viewer.wrapped(thought)
+
+
+def test_side_panel_a_long_thought_shows_its_end_after_dots_at_the_normal_size():
+    lines = viewer.thought_lines([LONG])
+    assert len(lines) == viewer.THOUGHT_ROWS  # as much as fits, no more
+    assert lines[0].startswith("...")
+    assert lines[-1].endswith("dig here now.")
+    assert all(
+        len(line) <= viewer.PANEL_COLUMNS for line in lines
+    )  # never smaller type
+    # The words shown are the thought's own last words, in order, none left out.
+    shown = " ".join(lines)[3:].split()
+    assert LONG.split()[-len(shown) :] == shown
+    # The frame stays one size and draws those lines in the normal pixel font.
+    records = [record(0, thinking=LONG)]
+    assert viewer.frame(records, 0, 1).size == viewer.frame([record(0)], 0, 1).size
+
+
+def test_side_panel_an_older_thought_cut_short_starts_with_dots():
+    older = " ".join(f"old{n}" for n in range(40))
+    lines = viewer.thought_lines([older, "Now I dig."])
+    assert lines[-1] == "Now I dig."
+    assert lines[0].startswith("...")
+    assert lines[-2].endswith("old39")
+
+
+def test_side_panel_the_story_and_page_keep_the_whole_thought():
+    records = [record(0, thinking=LONG)]
+    assert viewer.turn_records(records)[0]["thinking"] == LONG

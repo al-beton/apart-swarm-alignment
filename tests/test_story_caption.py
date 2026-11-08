@@ -55,7 +55,10 @@ def test_story_caption_the_longest_line_fits_and_the_frame_stays_one_size(game):
     size = viewer.grid_size(folder, records)
     sizes = {viewer.frame(records, turn, size).size for turn in range(len(records))}
     assert len(sizes) == 1
-    longest = max(len(viewer.caption_rows(r["story"], width_of(game))) for r in records)
+    longest = max(
+        len(viewer.caption_rows(viewer.caption_line(r["story"]), width_of(game)))
+        for r in records
+    )
     assert viewer.caption_height(records, width_of(game)) >= viewer.rows_height(longest)
     gif = Image.open(io.BytesIO(viewer.gif(folder)))
     assert gif.size == sizes.pop()

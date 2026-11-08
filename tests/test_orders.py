@@ -3,11 +3,15 @@
 
 import random
 
+import pytest
+
 from treasure_island.brain import Decision
 from treasure_island.config import parse_config
 from treasure_island.event_log import record_errors
 from treasure_island.game_loop import Game
 from treasure_island.squares import square_name
+
+pytestmark = pytest.mark.usefixtures("left_edge_starts")
 
 DIG = {"action": "dig"}
 WAIT = {"action": "wait"}

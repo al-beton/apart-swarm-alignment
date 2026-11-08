@@ -1,6 +1,7 @@
 # Implements: viewer/cave-drawn, treasure-island/treasure-mark, assets/treasure-shown
 """The viewer draws the open cave, a pirate going in, and the hats of those inside."""
 
+import pytest
 from PIL import Image
 
 from assets.cave import going_in, hat_stack
@@ -157,6 +158,7 @@ class Steps:
         return Decision(action)
 
 
+@pytest.mark.usefixtures("left_edge_starts")
 def test_cave_drawn_the_caption_and_panel_say_how_many_are_inside():
     seed = next(s for s in range(10_000) if GameState(5, 1, s).treasure == (0, 0))
     config = parse_config(

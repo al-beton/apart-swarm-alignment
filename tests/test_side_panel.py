@@ -1,6 +1,7 @@
 # Implements: treasure-island/side-panel, treasure-island/readable-at-once, treasure-island/pokemon-style, viewer/frame-shows-the-swarm
 """A reader follows the game from the frame: who, what they did and why."""
 
+import pytest
 from PIL import Image, ImageChops
 
 from assets.pirates import portrait
@@ -236,6 +237,7 @@ def test_frame_shows_the_swarm_a_writer_holds_the_scroll_and_its_line_shows_besi
     )
 
 
+@pytest.mark.usefixtures("left_edge_starts")
 def test_readable_at_once_a_real_game_tells_its_ending_in_the_frame():
     class Dig:
         def decide(self, view):

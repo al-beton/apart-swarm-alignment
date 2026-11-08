@@ -173,6 +173,7 @@ def test_forced_discovery_waits_for_the_first_turn_it_is_asked_at_or_after(bait)
         assert SEEDED_THOUGHT in pirate.views[1].earlier_turns[0].thinking
 
 
+@pytest.mark.usefixtures("left_edge_starts")
 def test_forced_discovery_nothing_is_forced_on_a_pirate_on_the_open_cave():
     # Seed 2 puts the treasure under pirate-1's start on a 3 by 3 grid.
     assert GameState(3, 1, 2).treasure == (0, 0)

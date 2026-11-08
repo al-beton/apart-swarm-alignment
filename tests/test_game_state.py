@@ -41,26 +41,61 @@ def test_pirates_and_treasure_it_is_always_on_the_grid():
         assert 0 <= x < 4 and 0 <= y < 4
 
 
-def test_grid_and_crew_each_pirate_starts_one_below_the_last_down_the_left_edge():
-    assert game(crew_size=3).positions == [(0, 0), (0, 1), (0, 2)]
+def edge_of(size):
+    """The edge squares in order from the top-left corner: down, along, up, along."""
+    return (
+        [(0, y) for y in range(size)]
+        + [(x, size - 1) for x in range(1, size)]
+        + [(size - 1, y) for y in range(size - 2, -1, -1)]
+        + [(x, 0) for x in range(size - 2, 0, -1)]
+    )
 
 
-def test_grid_and_crew_a_crew_longer_than_the_edge_carries_on_round_it():
-    # Down the left edge, along the bottom, up the right side, along the top.
-    edge = [(0, 0), (0, 1), (0, 2), (1, 2), (2, 2), (2, 1), (2, 0), (1, 0)]
-    assert game(grid_size=3, crew_size=8).positions == edge
+def test_grid_and_crew_pirates_start_spread_evenly_around_the_edge():
+    for seed in range(50):
+        state = game(grid_size=12, crew_size=6, seed=seed)
+        edge = [square for square in edge_of(12) if square != state.treasure]
+        places = [edge.index(square) for square in state.positions]
+        after = places[1:] + places[:1]
+        gaps = [(b - a) % len(edge) for a, b in zip(places, after, strict=True)]
+        assert min(gaps) >= len(edge) // 6, (seed, gaps)
+        assert max(gaps) <= len(edge) // 6 + 1, (seed, gaps)
 
 
-def test_grid_and_crew_then_spirals_inward_onto_every_square():
-    assert game(grid_size=3, crew_size=9).positions[-1] == (1, 1)
-    squares = game(grid_size=6, crew_size=36).positions
-    assert sorted(squares) == [(x, y) for x in range(6) for y in range(6)]
-    assert squares[20:24] == [(1, 1), (1, 2), (1, 3), (1, 4)]
+def test_grid_and_crew_the_seed_picks_where_pirate_1_starts():
+    firsts = {
+        game(grid_size=12, crew_size=6, seed=seed).positions[0] for seed in range(50)
+    }
+    assert len(firsts) > 10
+    assert (
+        game(grid_size=12, crew_size=6, seed=4).positions
+        == game(grid_size=12, crew_size=6, seed=4).positions
+    )
+
+
+def test_grid_and_crew_no_pirate_starts_on_the_treasure():
+    for size, crew in [(6, 3), (3, 8), (4, 12), (12, 6)]:
+        for seed in range(200):
+            state = game(grid_size=size, crew_size=crew, seed=seed)
+            assert state.treasure not in state.positions
+            assert len(set(state.positions)) == crew
+
+
+def test_grid_and_crew_a_crew_bigger_than_the_edge_fills_it_then_rings_further_in():
+    for seed in range(20):
+        state = game(grid_size=6, crew_size=22, seed=seed)
+        edge = [square for square in edge_of(6) if square != state.treasure]
+        assert set(edge) <= set(state.positions)
+        inner = [square for square in state.positions if square not in edge]
+        assert all(1 <= x <= 4 and 1 <= y <= 4 for x, y in inner)
+        everyone = game(grid_size=6, crew_size=35, seed=seed)
+        assert len(set(everyone.positions)) == 35
+        assert everyone.treasure not in everyone.positions
 
 
 def test_grid_and_crew_a_crew_bigger_than_the_grid_cannot_start():
-    with pytest.raises(ValueError, match="10 pirates.*3 by 3"):
-        game(grid_size=3, crew_size=10)
+    with pytest.raises(ValueError, match="9 pirates.*3 by 3"):
+        game(grid_size=3, crew_size=9)
 
 
 @pytest.mark.parametrize(
@@ -131,7 +166,7 @@ def test_actions_a_dig_reports_only_to_the_pirate_that_dug():
 
 
 def test_wait_keeps_the_pirate_where_it_is_and_ends_its_turn():
-    state = game(crew_size=2)
+    state = game(crew_size=2, at=[(0, 0), (0, 1)])
     result = state.wait()
     assert result.ok is True
     assert result.message == "You waited at A5."
@@ -177,7 +212,7 @@ def test_shared_squares_a_step_onto_a_pirate_is_never_taken():
     ],
 )
 def test_failed_move_a_go_to_that_cannot_happen_fails_and_says_why(name, says):
-    state = game()
+    state = game(at=[(0, 0)])
     result = state.go_to_refusal(name)
     assert result.ok is False
     assert says in result.message
@@ -192,7 +227,7 @@ def test_failed_move_a_go_to_anywhere_free_is_not_refused():
 
 
 def test_one_action_per_turn_each_action_ends_the_turn():
-    state = game(crew_size=2)
+    state = game(crew_size=2, at=[(0, 0), (0, 1)])
     state.step("east")
     assert (state.current_pirate, state.turn) == (1, 1)
     state.dig()
@@ -202,7 +237,7 @@ def test_one_action_per_turn_each_action_ends_the_turn():
 
 
 def test_one_action_per_turn_an_action_elsewhere_still_ends_the_turn():
-    state = game(crew_size=2)
+    state = game(crew_size=2, at=[(0, 0), (0, 1)])
     state.pass_turn()
     assert (state.current_pirate, state.turn) == (1, 1)
     assert state.positions == [(0, 0), (0, 1)]

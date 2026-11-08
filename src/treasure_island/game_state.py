@@ -85,11 +85,11 @@ def first_step(here, there):
     return "south" if there[1] > here[1] else "north"
 
 
-def starting_squares(size):
-    """Every square, in the order pirates start on them.
+def rings(size):
+    """Every square, ring by ring from the edge inward.
 
-    Down the left edge from the top-left corner, along the bottom, up the right
-    side and along the top, then the same again one ring further in.
+    Each ring from its top-left corner: down the left side, along the bottom, up
+    the right side and along the top.
     """
     squares = []
     low, high = 0, size - 1
@@ -104,18 +104,43 @@ def starting_squares(size):
     return squares
 
 
+def edge_length(size):
+    """How many squares the edge of a `size` by `size` grid has."""
+    return max(1, 4 * (size - 1))
+
+
+def starting_squares(size, crew_size, treasure, offset):
+    """Where each pirate starts: spread evenly round the edge, never on the treasure.
+
+    The edge squares (the first ring), leaving out the treasure's, are shared out
+    evenly from the one at `offset`, so a crew covers the board from its first
+    dig. A crew bigger than the edge fills it, then the rings further in.
+    """
+    every = rings(size)
+    order = [square for square in every if square != treasure]
+    edge = [square for square in every[: edge_length(size)] if square != treasure]
+    on_edge = min(crew_size, len(edge))
+    picked = [
+        edge[(offset + pirate * len(edge) // on_edge) % len(edge)]
+        for pirate in range(on_edge)
+    ]
+    rest = [square for square in order if square not in picked]
+    return picked + rest[: crew_size - on_edge]
+
+
 class GameState:
     def __init__(self, grid_size, crew_size, seed, reading_noise=0):
-        if crew_size > grid_size * grid_size:
+        if crew_size >= grid_size * grid_size:
             raise ValueError(
-                f"{crew_size} pirates can't each have a square on a "
-                f"{grid_size} by {grid_size} grid."
+                f"{crew_size} pirates can't each have a square off the treasure's "
+                f"on a {grid_size} by {grid_size} grid."
             )
         rng = random.Random(seed)
         self.grid_size = grid_size
         self.seed, self.reading_noise = seed, reading_noise
         self.treasure = (rng.randrange(grid_size), rng.randrange(grid_size))
-        self.positions = starting_squares(grid_size)[:crew_size]
+        offset = rng.randrange(edge_length(grid_size))  # pirate 1's edge square
+        self.positions = starting_squares(grid_size, crew_size, self.treasure, offset)
         self.treasure_dug_up = False
         self.inside = []  # pirates in the cave, in the order they went in
         self.dug = set()  # every square anyone has dug

@@ -16,6 +16,8 @@ from treasure_island.game_state import GameState
 from treasure_island.squares import square_at
 from treasure_island.viewer import scene
 
+pytestmark = pytest.mark.usefixtures("left_edge_starts")
+
 DIG = {"action": "dig"}
 WAIT = {"action": "wait"}
 

@@ -144,6 +144,7 @@ def views(tmp_path, seed):
     return brain.texts, Game(config, [Quiet()]).state.treasure
 
 
+@pytest.mark.usefixtures("left_edge_starts")
 def test_treasure_mark_the_pirates_never_see_either_mark(tmp_path):
     first, treasure = views(tmp_path, 1)
     second, other = views(tmp_path, 2)

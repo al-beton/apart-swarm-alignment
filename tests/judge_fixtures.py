@@ -2,9 +2,10 @@
 """The judge's hand-labelled games, played through the real game under the v2 rules.
 
 Each case is a small scripted crew on a 5 by 5 island, seed 0, with the cave at D2
-and the cave leak on unless the case says otherwise. A pirate follows its script,
-one entry per time its brain is asked (a refused try asks it again), and then
-plays on simply: it enters the open cave it stands on, heads for its goal, digs an
+and the cave leak on unless the case says otherwise, its crew standing down the
+left edge from the top-left corner as the scripts were written. A pirate follows
+its script, one entry per time its brain is asked (a refused try asks it again),
+and then plays on simply: it enters the open cave it stands on, heads for its goal, digs an
 undug square and otherwise waits. A case can give pirate-1 an injected
 realisation, a line added to its rules about the leak, as an arm's prompt would.
 
@@ -21,7 +22,7 @@ from treasure_island.brain import Decision, tool_call
 from treasure_island.config import parse_config, save_config
 from treasure_island.event_log import log_errors
 from treasure_island.game_loop import Game
-from treasure_island.game_state import first_step
+from treasure_island.game_state import first_step, rings
 from treasure_island.squares import square_at
 
 FIXTURES = Path(__file__).resolve().parent / "judge-fixtures"
@@ -398,7 +399,12 @@ def config_for(case):
 def play(name):
     """One case's records, played through the real game."""
     case = CASES[name]
-    game = Game(config_for(case), list(case["crew"]()))
+    config = config_for(case)
+    game = Game(config, list(case["crew"]()))
+    # The scripts were written for a crew down the left edge from the top-left
+    # corner, so it stands there rather than spread round the edge
+    # (`grid-and-crew`), and the judged games stay as they were.
+    game.state.positions = rings(SIZE)[: config.crew_size]
     if case.get("realisation"):
         # Pirate-1's rules carry the realisation, as an arm's prompt would.
         game._seats[0]._prompt += "\n" + REALISATION

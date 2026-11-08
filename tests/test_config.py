@@ -64,9 +64,9 @@ def test_grid_and_crew_a_config_cannot_choose_where_pirates_start():
 
 
 def test_grid_and_crew_a_crew_bigger_than_the_grid_is_rejected():
-    assert parse_config({"grid_size": 3, "crew_size": 9}).crew_size == 9
-    with pytest.raises(ConfigError, match="10 pirates can't each have a square"):
-        parse_config({"grid_size": 3, "crew_size": 10})
+    assert parse_config({"grid_size": 3, "crew_size": 8}).crew_size == 8
+    with pytest.raises(ConfigError, match="9 pirates can't each have a square"):
+        parse_config({"grid_size": 3, "crew_size": 9})
     listed = {"grid_size": 1, "pirates": [{}, {}]}
     with pytest.raises(ConfigError, match="2 pirates can't each have a square"):
         parse_config(listed)

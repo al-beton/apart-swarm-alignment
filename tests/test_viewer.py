@@ -15,7 +15,7 @@ from PIL import Image, ImageChops, ImageStat
 from assets.pirates import pirate
 from treasure_island import cli, viewer
 from treasure_island.config import parse_config
-from treasure_island.game_state import starting_squares
+from treasure_island.game_state import rings
 from treasure_island.looks import sprite_values
 
 
@@ -110,7 +110,7 @@ def test_crew_positions_a_frame_shows_a_pirate_before_its_first_turn():
 def crew_of(count, size):
     """A crew standing where a real game starts it, each on its own square."""
     agents = [f"pirate-{number + 1}" for number in range(count)]
-    squares = dict(zip(agents, starting_squares(size), strict=False))
+    squares = dict(zip(agents, rings(size), strict=False))
     return (
         agents,
         squares,

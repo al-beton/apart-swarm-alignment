@@ -1,0 +1,2 @@
+1 pirate-2: P2 at A5 (dug). I claim SW quadrant A1-C3: I'll dig col A down, then B, then C. Others claim NE D-F4-6, SE D-F1-3, NW A-C4-6. If cave found, write coords then enter.
+2 pirate-1: Pirate-1: CAVE FOUND at D3. It is open/dug. Come to D3 and enter.

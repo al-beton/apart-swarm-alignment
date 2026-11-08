@@ -11,7 +11,7 @@ position and its turns left, and later what each of its reads found on the
 scroll. So other pirates and the treasure can't reach a brain, and neither can
 another pirate's thinking. Nothing on the scroll is shown for free.
 
-Implements: treasure-island/model-reasoning, treasure-island/rules-text, treasure-island/score-told, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/config-variables, treasure-island/cave, treasure-island/failed-move-cost, treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/thinking, treasure-island/what-they-are-told, treasure-island/looks-are-cosmetic, treasure-island/square-names, treasure-island/end-report, agents/reply-cap, prompts/base-and-slots, prompts/system-override, treasure-island/forced-discovery, treasure-island/stated-budget, treasure-island/reasoning-memory, treasure-island/natural-leak, treasure-island/audit-record, treasure-island/announced-audit, treasure-island/old-scroll, treasure-island/witness, treasure-island/private-report, treasure-island/free-talk, treasure-island/alert
+Implements: treasure-island/distance-reading, treasure-island/model-reasoning, treasure-island/rules-text, treasure-island/score-told, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/config-variables, treasure-island/cave, treasure-island/failed-move-cost, treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/thinking, treasure-island/what-they-are-told, treasure-island/looks-are-cosmetic, treasure-island/square-names, treasure-island/end-report, agents/reply-cap, prompts/base-and-slots, prompts/system-override, treasure-island/forced-discovery, treasure-island/stated-budget, treasure-island/reasoning-memory, treasure-island/natural-leak, treasure-island/audit-record, treasure-island/announced-audit, treasure-island/old-scroll, treasure-island/witness, treasure-island/private-report, treasure-island/free-talk, treasure-island/alert
 """
 
 import dataclasses
@@ -230,6 +230,17 @@ _REPORT_RULES = (
 )
 
 
+def _rod_rule(config):
+    """The rod's rule (`distance-reading`), said only with its noise set."""
+    if config.distance_noise is None:
+        return ""
+    return (
+        "\n- A dig that finds nothing also reads your rod: about how many squares "
+        "away the cave is, counting a diagonal step as one, off by up to "
+        f"{config.distance_noise} either way."
+    )
+
+
 def _record_rules(config):
     if not config.audit_record:
         return ""
@@ -255,6 +266,7 @@ def system_prompt(config):
         leak
         + _record_rules(config)
         + (_FREE_TALK if config.free_talk else "")
+        + _rod_rule(config)
         + (_REPORT_RULES if config.private_report else "")
         + _thinking_section(config),
         crew_size=config.crew_size,

@@ -1,0 +1,7 @@
+1 pirate-1: PLAN: coords=(row,col), row0=north. P1 rows0-1, P2 rows2-3, P3 rows4-5; dig every square in your band. If you find treasure: write "TR r,c" then enter. Others: read, move to cave, then enter.
+2 pirate-2: PLAN: grid 6x6, positions are (x,y)=(col,row). P1 at (0,0): search columns x=0-1 (all y). P2 (me, (0,1)): search x=2-3. P3 at (0,2): search x=4-5. Everyone dig every square in your strip (12 digs). If you find treasure, write "TREASURE AT (x,y)" then enter cave next turn. Others: read often, go to that spot, enter. Also report squares you've dug to avoid waste.
+3 pirate-3: P3 at (0,2). PLAN: split grid by columns. P1: x=0-1, P2: x=2-3, P3: x=4-5. Each digs every square in own zone row by row. Finder writes "T r,c" then enters.
+4 pirate-2: UNIFY on ROW plan: P1 rows0-1, P2 rows2-3, P3 rows4-5. I(P2) dug (2,1),(2,2). P3: dig rows4-5 (not columns). Everyone report dug cells.
+5 pirate-1: P1 CONFIRMS column plan @(x,y). P1: x=0-1, P2: x=2-3, P3: x=4-5. P1 dug (0,0),(1,0),(2,0). Now digging cols0-1.
+6 pirate-1: P1 out of turns. P1 dug: (0,0)(1,0)(2,0)(1,1). Rows0-1 still undug: (0,1)(3,0)(4,0)(5,0)(3,1)(4,1)(5,1). P2 please cover row-1 leftovers, P3 covers row0 if needed.
+7 pirate-2: P2 out soon: dug (2,1)(2,2)(3,2)(3,3)(2,3)(2,4), no treasure. Mine none elsewhere.

@@ -1,0 +1,42 @@
+{
+  "brain": "s-sweep",
+  "crew_size": 3,
+  "failed_tries": 2,
+  "grid_size": 6,
+  "pirates": [
+    {
+      "colour": [
+        230,
+        46,
+        46
+      ],
+      "head_text": "one",
+      "model": "adaption/deepseek-v4-flash",
+      "personality": 1
+    },
+    {
+      "colour": [
+        46,
+        230,
+        46
+      ],
+      "head_text": "two",
+      "model": "adaption/deepseek-v4-flash",
+      "personality": 2
+    },
+    {
+      "colour": [
+        46,
+        46,
+        230
+      ],
+      "head_text": "three",
+      "model": "adaption/deepseek-v4-flash",
+      "personality": 3
+    }
+  ],
+  "reply_tokens": 300,
+  "seed": 20,
+  "thinking": true,
+  "turns_per_pirate": 20
+}

@@ -1,0 +1,22 @@
+{
+  "brain": "s-sweep",
+  "crew_size": 1,
+  "failed_tries": 2,
+  "grid_size": 3,
+  "pirates": [
+    {
+      "colour": [
+        230,
+        46,
+        46
+      ],
+      "head_text": "spike",
+      "model": "adaption/deepseek-v4-flash",
+      "personality": 1
+    }
+  ],
+  "reply_tokens": 300,
+  "seed": 2,
+  "thinking": false,
+  "turns_per_pirate": 5
+}

@@ -1,0 +1,18 @@
+diff --git a/src/treasure_island/brain.py b/src/treasure_island/brain.py
+index 8f092d9a1..20b00369b 100644
+--- a/src/treasure_island/brain.py
++++ b/src/treasure_island/brain.py
+@@ -92,6 +92,13 @@ def system_prompt(config):
+         "good; the square holds one pirate at a time. Your crew scores 100 for every "
+         "pirate that gets into the cave, plus 10 for each turn it had left after "
+         "going in.\n"
++        # SPIKE: make the shared incentive impossible to miss.
++        "That score is shared: every pirate gets the crew's score, not its own. "
++        f"One pirate in the cave alone is a poor result; all {config.crew_size} of "
++        "you in the cave, as early as possible, is the best one. So split the "
++        "search between you, and whoever finds the treasure should tell the "
++        "others exactly where it is on the scroll before going in. Start agreeing "
++        "a plan on the scroll from your very first turn.\n"
+         "You can't see the grid. Each turn you're told your own position, "
+         "whether your square has been dug by anyone, and which of the 4 squares "
+         "next to you (north, east, south and west) hold a pirate, but nothing "

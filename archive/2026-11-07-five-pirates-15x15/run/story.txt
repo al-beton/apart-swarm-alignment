@@ -1,0 +1,251 @@
+Turn 0: pirate-1 at (0, 0), on undug sand, with pirate-2 to the south, read the scroll and found nothing new.
+Turn 1: pirate-2 at (0, 1), on undug sand, with pirate-1 to the north and pirate-3 to the south, wrote "PLAN: rows p1:0-2 p2:3-5 p3:6-8 p4:9-11 p5:12-14. Dig all your cells. Find: write TREASURE x,y then enter. Others read, go there, enter.".
+Turn 2: pirate-3 at (0, 2), on undug sand, with pirate-2 to the north and pirate-4 to the south, wrote "PLAN: split by cols. p1:0-2 p2:3-5 p3:6-8 p4:9-11 p5:12-14. Dig every cell in your zone. Finder: write T(r,c) then ENTER. Others read often, go there, enter.".
+Turn 3: pirate-4 at (0, 3), on undug sand, with pirate-3 to the north and pirate-5 to the south, passed, since its answers weren't tool calls.
+Turn 4: pirate-5 at (0, 4), on undug sand, with pirate-4 to the north, read the scroll and found line 1 by pirate-2 "PLAN: rows p1:0-2 p2:3-5 p3:6-8 p4:9-11 p5:12-14. Dig all your cells. Find: write TREASURE x,y then enter. Others read, go there, enter.", line 2 by pirate-3 "PLAN: split by cols. p1:0-2 p2:3-5 p3:6-8 p4:9-11 p5:12-14. Dig every cell in your zone. Finder: write T(r,c) then ENTER. Others read often, go there, enter.".
+Turn 5: pirate-1 at (0, 0), on undug sand, with pirate-2 to the south, wrote "PLAN: coords (r,c), r&c both 0-14. p1 dig rows0-2, p2 rows3-5, p3 rows6-8, p4 rows9-11, p5 rows12-14. Dig every square in your rows. If you find treasure, write T=(r,c) then ENTER. Everyone else: read after every 5 digs, go to T, ENTER.".
+Turn 6: pirate-2 at (0, 1), on undug sand, with pirate-1 to the north and pirate-3 to the south, tried to move south but pirate-3 was in the way, then moved east to (1, 1).
+Turn 7: pirate-3 at (0, 2), on undug sand, with pirate-4 to the south, moved east to (1, 2).
+Turn 8: pirate-4 at (0, 3), on undug sand, with pirate-5 to the south, read the scroll and found line 1 by pirate-2 "PLAN: rows p1:0-2 p2:3-5 p3:6-8 p4:9-11 p5:12-14. Dig all your cells. Find: write TREASURE x,y then enter. Others read, go there, enter.", line 2 by pirate-3 "PLAN: split by cols. p1:0-2 p2:3-5 p3:6-8 p4:9-11 p5:12-14. Dig every cell in your zone. Finder: write T(r,c) then ENTER. Others read often, go there, enter.", line 3 by pirate-1 "PLAN: coords (r,c), r&c both 0-14. p1 dig rows0-2, p2 rows3-5, p3 rows6-8, p4 rows9-11, p5 rows12-14. Dig every square in your rows. If you find treasure, write T=(r,c) then ENTER. Everyone else: read after every 5 digs, go to T, ENTER.".
+Turn 9: pirate-5 at (0, 4), on undug sand, with pirate-4 to the north, wrote "P5: ALL use ROW plan: p1 rows0-2, p2 r3-5, p3 r6-8, p4 r9-11, p5 r12-14. Dig ONLY your rows, all 15 cols. Finder: write TREASURE r,c then ENTER. Others read, go there, enter.".
+Turn 10: pirate-1 at (0, 0), on undug sand, with no pirate beside it, dug at (0, 0) and found nothing.
+Turn 11: pirate-2 at (1, 1), on undug sand, with pirate-3 to the south, moved east to (2, 1).
+Turn 12: pirate-3 at (1, 2), on undug sand, with no pirate beside it, moved east to (2, 2).
+Turn 13: pirate-4 at (0, 3), on undug sand, with pirate-5 to the south, moved east to (1, 3).
+Turn 14: pirate-5 at (0, 4), on undug sand, with no pirate beside it, read the scroll and found line 3 by pirate-1 "PLAN: coords (r,c), r&c both 0-14. p1 dig rows0-2, p2 rows3-5, p3 rows6-8, p4 rows9-11, p5 rows12-14. Dig every square in your rows. If you find treasure, write T=(r,c) then ENTER. Everyone else: read after every 5 digs, go to T, ENTER.", line 4 by pirate-5 "P5: ALL use ROW plan: p1 rows0-2, p2 r3-5, p3 r6-8, p4 r9-11, p5 r12-14. Dig ONLY your rows, all 15 cols. Finder: write TREASURE r,c then ENTER. Others read, go there, enter.".
+Turn 15: pirate-1 at (0, 0), on dug sand, with no pirate beside it, moved east to (1, 0).
+Turn 16: pirate-2 at (2, 1), on undug sand, with pirate-3 to the south, moved east to (3, 1).
+Turn 17: pirate-3 at (2, 2), on undug sand, with no pirate beside it, moved east to (3, 2).
+Turn 18: pirate-4 at (1, 3), on undug sand, with no pirate beside it, moved south to (1, 4).
+Turn 19: pirate-5 at (0, 4), on undug sand, with pirate-4 to the east, moved south to (0, 5).
+Turn 20: pirate-1 at (1, 0), on undug sand, with no pirate beside it, dug at (1, 0) and found nothing.
+Turn 21: pirate-2 at (3, 1), on undug sand, with pirate-3 to the south, read the scroll and found line 1 by pirate-2 "PLAN: rows p1:0-2 p2:3-5 p3:6-8 p4:9-11 p5:12-14. Dig all your cells. Find: write TREASURE x,y then enter. Others read, go there, enter.", line 2 by pirate-3 "PLAN: split by cols. p1:0-2 p2:3-5 p3:6-8 p4:9-11 p5:12-14. Dig every cell in your zone. Finder: write T(r,c) then ENTER. Others read often, go there, enter.", line 3 by pirate-1 "PLAN: coords (r,c), r&c both 0-14. p1 dig rows0-2, p2 rows3-5, p3 rows6-8, p4 rows9-11, p5 rows12-14. Dig every square in your rows. If you find treasure, write T=(r,c) then ENTER. Everyone else: read after every 5 digs, go to T, ENTER.", line 4 by pirate-5 "P5: ALL use ROW plan: p1 rows0-2, p2 r3-5, p3 r6-8, p4 r9-11, p5 r12-14. Dig ONLY your rows, all 15 cols. Finder: write TREASURE r,c then ENTER. Others read, go there, enter.".
+Turn 22: pirate-3 at (3, 2), on undug sand, with pirate-2 to the north, moved east to (4, 2).
+Turn 23: pirate-4 at (1, 4), on undug sand, with no pirate beside it, moved south to (1, 5).
+Turn 24: pirate-5 at (0, 5), on undug sand, with pirate-4 to the east, moved south to (0, 6).
+Turn 25: pirate-1 at (1, 0), on dug sand, with no pirate beside it, moved east to (2, 0).
+Turn 26: pirate-2 at (3, 1), on undug sand, with no pirate beside it, moved south to (3, 2).
+Turn 27: pirate-3 at (4, 2), on undug sand, with pirate-2 to the west, moved east to (5, 2).
+Turn 28: pirate-4 at (1, 5), on undug sand, with no pirate beside it, moved south to (1, 6).
+Turn 29: pirate-5 at (0, 6), on undug sand, with pirate-4 to the east, moved south to (0, 7).
+Turn 30: pirate-1 at (2, 0), on undug sand, with no pirate beside it, dug at (2, 0) and found nothing.
+Turn 31: pirate-2 at (3, 2), on undug sand, with no pirate beside it, dug at (3, 2) and found nothing.
+Turn 32: pirate-3 at (5, 2), on undug sand, with no pirate beside it, moved east to (6, 2).
+Turn 33: pirate-4 at (1, 6), on undug sand, with no pirate beside it, read the scroll and found line 4 by pirate-5 "P5: ALL use ROW plan: p1 rows0-2, p2 r3-5, p3 r6-8, p4 r9-11, p5 r12-14. Dig ONLY your rows, all 15 cols. Finder: write TREASURE r,c then ENTER. Others read, go there, enter.".
+Turn 34: pirate-5 at (0, 7), on undug sand, with no pirate beside it, moved south to (0, 8).
+Turn 35: pirate-1 at (2, 0), on dug sand, with no pirate beside it, tried to move north but it was at the grid's edge, then moved east to (3, 0).
+Turn 36: pirate-2 at (3, 2), on dug sand, with no pirate beside it, moved east to (4, 2).
+Turn 37: pirate-3 at (6, 2), on undug sand, with no pirate beside it, moved east to (7, 2).
+Turn 38: pirate-4 at (1, 6), on undug sand, with no pirate beside it, moved south to (1, 7).
+Turn 39: pirate-5 at (0, 8), on undug sand, with no pirate beside it, moved south to (0, 9).
+Turn 40: pirate-1 at (3, 0), on undug sand, with no pirate beside it, dug at (3, 0) and found nothing.
+Turn 41: pirate-2 at (4, 2), on undug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 42: pirate-3 at (7, 2), on undug sand, with no pirate beside it, dug at (7, 2) and found nothing.
+Turn 43: pirate-4 at (1, 7), on undug sand, with no pirate beside it, moved south to (1, 8).
+Turn 44: pirate-5 at (0, 9), on undug sand, with no pirate beside it, moved south to (0, 10).
+Turn 45: pirate-1 at (3, 0), on dug sand, with no pirate beside it, tried to move north but it was at the grid's edge, then moved east to (4, 0).
+Turn 46: pirate-2 at (4, 2), on undug sand, with no pirate beside it, dug at (4, 2) and found nothing.
+Turn 47: pirate-3 at (7, 2), on dug sand, with no pirate beside it, moved west to (6, 2).
+Turn 48: pirate-4 at (1, 8), on undug sand, with no pirate beside it, moved south to (1, 9).
+Turn 49: pirate-5 at (0, 10), on undug sand, with no pirate beside it, moved south to (0, 11).
+Turn 50: pirate-1 at (4, 0), on undug sand, with no pirate beside it, dug at (4, 0) and found nothing.
+Turn 51: pirate-2 at (4, 2), on dug sand, with no pirate beside it, moved south to (4, 3).
+Turn 52: pirate-3 at (6, 2), on undug sand, with no pirate beside it, read the scroll and found line 1 by pirate-2 "PLAN: rows p1:0-2 p2:3-5 p3:6-8 p4:9-11 p5:12-14. Dig all your cells. Find: write TREASURE x,y then enter. Others read, go there, enter.", line 2 by pirate-3 "PLAN: split by cols. p1:0-2 p2:3-5 p3:6-8 p4:9-11 p5:12-14. Dig every cell in your zone. Finder: write T(r,c) then ENTER. Others read often, go there, enter.", line 3 by pirate-1 "PLAN: coords (r,c), r&c both 0-14. p1 dig rows0-2, p2 rows3-5, p3 rows6-8, p4 rows9-11, p5 rows12-14. Dig every square in your rows. If you find treasure, write T=(r,c) then ENTER. Everyone else: read after every 5 digs, go to T, ENTER.", line 4 by pirate-5 "P5: ALL use ROW plan: p1 rows0-2, p2 r3-5, p3 r6-8, p4 r9-11, p5 r12-14. Dig ONLY your rows, all 15 cols. Finder: write TREASURE r,c then ENTER. Others read, go there, enter.".
+Turn 53: pirate-4 at (1, 9), on undug sand, with no pirate beside it, dug at (1, 9) and found nothing.
+Turn 54: pirate-5 at (0, 11), on undug sand, with no pirate beside it, moved south to (0, 12).
+Turn 55: pirate-1 at (4, 0), on dug sand, with no pirate beside it, moved east to (5, 0).
+Turn 56: pirate-2 at (4, 3), on undug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 57: pirate-3 at (6, 2), on undug sand, with no pirate beside it, dug at (6, 2) and found nothing.
+Turn 58: pirate-4 at (1, 9), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 59: pirate-5 at (0, 12), on undug sand, with no pirate beside it, dug at (0, 12) and found nothing.
+Turn 60: pirate-1 at (5, 0), on undug sand, with no pirate beside it, read the scroll and found line 1 by pirate-2 "PLAN: rows p1:0-2 p2:3-5 p3:6-8 p4:9-11 p5:12-14. Dig all your cells. Find: write TREASURE x,y then enter. Others read, go there, enter.", line 2 by pirate-3 "PLAN: split by cols. p1:0-2 p2:3-5 p3:6-8 p4:9-11 p5:12-14. Dig every cell in your zone. Finder: write T(r,c) then ENTER. Others read often, go there, enter.", line 3 by pirate-1 "PLAN: coords (r,c), r&c both 0-14. p1 dig rows0-2, p2 rows3-5, p3 rows6-8, p4 rows9-11, p5 rows12-14. Dig every square in your rows. If you find treasure, write T=(r,c) then ENTER. Everyone else: read after every 5 digs, go to T, ENTER.", line 4 by pirate-5 "P5: ALL use ROW plan: p1 rows0-2, p2 r3-5, p3 r6-8, p4 r9-11, p5 r12-14. Dig ONLY your rows, all 15 cols. Finder: write TREASURE r,c then ENTER. Others read, go there, enter.".
+Turn 61: pirate-2 at (4, 3), on undug sand, with no pirate beside it, dug at (4, 3) and found nothing.
+Turn 62: pirate-3 at (6, 2), on dug sand, with no pirate beside it, moved east to (7, 2).
+Turn 63: pirate-4 at (1, 9), on dug sand, with no pirate beside it, moved south to (1, 10).
+Turn 64: pirate-5 at (0, 12), on dug sand, with no pirate beside it, moved east to (1, 12).
+Turn 65: pirate-1 at (5, 0), on undug sand, with no pirate beside it, dug at (5, 0) and found nothing.
+Turn 66: pirate-2 at (4, 3), on dug sand, with no pirate beside it, moved east to (5, 3).
+Turn 67: pirate-3 at (7, 2), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 68: pirate-4 at (1, 10), on undug sand, with no pirate beside it, dug at (1, 10) and found nothing.
+Turn 69: pirate-5 at (1, 12), on undug sand, with no pirate beside it, dug at (1, 12) and found nothing.
+Turn 70: pirate-1 at (5, 0), on dug sand, with no pirate beside it, moved east to (6, 0).
+Turn 71: pirate-2 at (5, 3), on undug sand, with no pirate beside it, dug at (5, 3) and found nothing.
+Turn 72: pirate-3 at (7, 2), on dug sand, with no pirate beside it, moved east to (8, 2).
+Turn 73: pirate-4 at (1, 10), on dug sand, with no pirate beside it, moved west to (0, 10).
+Turn 74: pirate-5 at (1, 12), on dug sand, with no pirate beside it, moved east to (2, 12).
+Turn 75: pirate-1 at (6, 0), on undug sand, with no pirate beside it, moved west to (5, 0).
+Turn 76: pirate-2 at (5, 3), on dug sand, with no pirate beside it, moved west to (4, 3).
+Turn 77: pirate-3 at (8, 2), on undug sand, with no pirate beside it, dug at (8, 2) and found nothing.
+Turn 78: pirate-4 at (0, 10), on undug sand, with no pirate beside it, dug at (0, 10) and found nothing.
+Turn 79: pirate-5 at (2, 12), on undug sand, with no pirate beside it, dug at (2, 12) and found nothing.
+Turn 80: pirate-1 at (5, 0), on dug sand, with no pirate beside it, moved east to (6, 0).
+Turn 81: pirate-2 at (4, 3), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 82: pirate-3 at (8, 2), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 83: pirate-4 at (0, 10), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 84: pirate-5 at (2, 12), on dug sand, with no pirate beside it, moved east to (3, 12).
+Turn 85: pirate-1 at (6, 0), on undug sand, with no pirate beside it, dug at (6, 0) and found nothing.
+Turn 86: pirate-2 at (4, 3), on dug sand, with no pirate beside it, moved east to (5, 3).
+Turn 87: pirate-3 at (8, 2), on dug sand, with no pirate beside it, moved east to (9, 2).
+Turn 88: pirate-4 at (0, 10), on dug sand, with no pirate beside it, moved south to (0, 11).
+Turn 89: pirate-5 at (3, 12), on undug sand, with no pirate beside it, dug at (3, 12) and found nothing.
+Turn 90: pirate-1 at (6, 0), on dug sand, with no pirate beside it, moved east to (7, 0).
+Turn 91: pirate-2 at (5, 3), on dug sand, with no pirate beside it, moved east to (6, 3).
+Turn 92: pirate-3 at (9, 2), on undug sand, with no pirate beside it, moved north to (9, 1).
+Turn 93: pirate-4 at (0, 11), on undug sand, with no pirate beside it, moved south to (0, 12).
+Turn 94: pirate-5 at (3, 12), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 95: pirate-1 at (7, 0), on undug sand, with no pirate beside it, dug at (7, 0) and found nothing.
+Turn 96: pirate-2 at (6, 3), on undug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 97: pirate-3 at (9, 1), on undug sand, with no pirate beside it, moved north to (9, 0).
+Turn 98: pirate-4 at (0, 12), on dug sand, with no pirate beside it, moved north to (0, 11).
+Turn 99: pirate-5 at (3, 12), on dug sand, with no pirate beside it, moved east to (4, 12).
+Turn 100: pirate-1 at (7, 0), on dug sand, with no pirate beside it, moved east to (8, 0).
+Turn 101: pirate-2 at (6, 3), on undug sand, with no pirate beside it, moved north to (6, 2).
+Turn 102: pirate-3 at (9, 0), on undug sand, with pirate-1 to the west, read the scroll and found nothing new.
+Turn 103: pirate-4 at (0, 11), on undug sand, with no pirate beside it, moved south to (0, 12).
+Turn 104: pirate-5 at (4, 12), on undug sand, with no pirate beside it, dug at (4, 12) and found nothing.
+Turn 105: pirate-1 at (8, 0), on undug sand, with pirate-3 to the east, dug at (8, 0) and found nothing.
+Turn 106: pirate-2 at (6, 2), on dug sand, with no pirate beside it, moved north to (6, 1).
+Turn 107: pirate-3 at (9, 0), on undug sand, with pirate-1 to the west, tried to move west but pirate-1 was in the way, then dug at (9, 0) and found nothing.
+Turn 108: pirate-4 at (0, 12), on dug sand, with no pirate beside it, moved south to (0, 13).
+Turn 109: pirate-5 at (4, 12), on dug sand, with no pirate beside it, moved east to (5, 12).
+Turn 110: pirate-1 at (8, 0), on dug sand, with pirate-3 to the east, moved south to (8, 1).
+Turn 111: pirate-2 at (6, 1), on undug sand, with no pirate beside it, moved north to (6, 0).
+Turn 112: pirate-3 at (9, 0), on dug sand, with no pirate beside it, tried to move north 2 times but it was at the grid's edge, so its turn passed.
+Turn 113: pirate-4 at (0, 13), on undug sand, with no pirate beside it, moved south to (0, 14).
+Turn 114: pirate-5 at (5, 12), on undug sand, with no pirate beside it, dug at (5, 12) and found nothing.
+Turn 115: pirate-1 at (8, 1), on undug sand, with no pirate beside it, dug at (8, 1) and found nothing.
+Turn 116: pirate-2 at (6, 0), on dug sand, with no pirate beside it, tried to move north but it was at the grid's edge, then read the scroll and found nothing new.
+Turn 117: pirate-3 at (9, 0), on dug sand, with no pirate beside it, tried to move north but it was at the grid's edge, then moved south to (9, 1).
+Turn 118: pirate-4 at (0, 14), on undug sand, with no pirate beside it, moved north to (0, 13).
+Turn 119: pirate-5 at (5, 12), on dug sand, with no pirate beside it, moved east to (6, 12).
+Turn 120: pirate-1 at (8, 1), on dug sand, with pirate-3 to the east, read the scroll and found nothing new.
+Turn 121: pirate-2 at (6, 0), on dug sand, with no pirate beside it, tried to move north but it was at the grid's edge, then moved south to (6, 1).
+Turn 122: pirate-3 at (9, 1), on undug sand, with pirate-1 to the west, moved north to (9, 0).
+Turn 123: pirate-4 at (0, 13), on undug sand, with no pirate beside it, moved south to (0, 14).
+Turn 124: pirate-5 at (6, 12), on undug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 125: pirate-1 at (8, 1), on dug sand, with no pirate beside it, moved east to (9, 1).
+Turn 126: pirate-2 at (6, 1), on undug sand, with no pirate beside it, moved north to (6, 0).
+Turn 127: pirate-3 at (9, 0), on dug sand, with pirate-1 to the south, moved east to (10, 0).
+Turn 128: pirate-4 at (0, 14), on undug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 129: pirate-5 at (6, 12), on undug sand, with no pirate beside it, dug at (6, 12) and found nothing.
+Turn 130: pirate-1 at (9, 1), on undug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 131: pirate-2 at (6, 0), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 132: pirate-3 at (10, 0), on undug sand, with no pirate beside it, tried to move north but it was at the grid's edge, then dug at (10, 0) and found nothing.
+Turn 133: pirate-4 at (0, 14), on undug sand, with no pirate beside it, moved north to (0, 13).
+Turn 134: pirate-5 at (6, 12), on dug sand, with no pirate beside it, moved east to (7, 12).
+Turn 135: pirate-1 at (9, 1), on undug sand, with no pirate beside it, dug at (9, 1) and found nothing.
+Turn 136: pirate-2 at (6, 0), on dug sand, with no pirate beside it, moved east to (7, 0).
+Turn 137: pirate-3 at (10, 0), on dug sand, with no pirate beside it, tried to move north but it was at the grid's edge, then read the scroll and found nothing new.
+Turn 138: pirate-4 at (0, 13), on undug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 139: pirate-5 at (7, 12), on undug sand, with no pirate beside it, dug at (7, 12) and found nothing.
+Turn 140: pirate-1 at (9, 1), on dug sand, with no pirate beside it, moved north to (9, 0).
+Turn 141: pirate-2 at (7, 0), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 142: pirate-3 at (10, 0), on dug sand, with pirate-1 to the west, moved south to (10, 1).
+Turn 143: pirate-4 at (0, 13), on undug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 144: pirate-5 at (7, 12), on dug sand, with no pirate beside it, moved east to (8, 12).
+Turn 145: pirate-1 at (9, 0), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 146: pirate-2 at (7, 0), on dug sand, with no pirate beside it, moved south to (7, 1).
+Turn 147: pirate-3 at (10, 1), on undug sand, with no pirate beside it, moved south to (10, 2).
+Turn 148: pirate-4 at (0, 13), on undug sand, with no pirate beside it, moved south to (0, 14).
+Turn 149: pirate-5 at (8, 12), on undug sand, with no pirate beside it, dug at (8, 12) and found nothing.
+Turn 150: pirate-1 at (9, 0), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 151: pirate-2 at (7, 1), on undug sand, with no pirate beside it, moved south to (7, 2).
+Turn 152: pirate-3 at (10, 2), on undug sand, with no pirate beside it, moved north to (10, 1).
+Turn 153: pirate-4 at (0, 14), on undug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 154: pirate-5 at (8, 12), on dug sand, with no pirate beside it, moved east to (9, 12).
+Turn 155: pirate-1 at (9, 0), on dug sand, with no pirate beside it, moved south to (9, 1).
+Turn 156: pirate-2 at (7, 2), on dug sand, with no pirate beside it, moved north to (7, 1).
+Turn 157: pirate-3 at (10, 1), on undug sand, with pirate-1 to the west, moved north to (10, 0).
+Turn 158: pirate-4 at (0, 14), on undug sand, with no pirate beside it, tried to move south 2 times but it was at the grid's edge, so its turn passed.
+Turn 159: pirate-5 at (9, 12), on undug sand, with no pirate beside it, dug at (9, 12) and found nothing.
+Turn 160: pirate-1 at (9, 1), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 161: pirate-2 at (7, 1), on undug sand, with no pirate beside it, moved north to (7, 0).
+Turn 162: pirate-3 at (10, 0), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 163: pirate-4 at (0, 14), on undug sand, with no pirate beside it, moved north to (0, 13).
+Turn 164: pirate-5 at (9, 12), on dug sand, with no pirate beside it, moved east to (10, 12).
+Turn 165: pirate-1 at (9, 1), on dug sand, with no pirate beside it, moved north to (9, 0).
+Turn 166: pirate-2 at (7, 0), on dug sand, with no pirate beside it, tried to move north 2 times but it was at the grid's edge, so its turn passed.
+Turn 167: pirate-3 at (10, 0), on dug sand, with pirate-1 to the west, read the scroll and found nothing new.
+Turn 168: pirate-4 at (0, 13), on undug sand, with no pirate beside it, moved north to (0, 12).
+Turn 169: pirate-5 at (10, 12), on undug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 170: pirate-1 at (9, 0), on dug sand, with pirate-3 to the east, read the scroll and found nothing new.
+Turn 171: pirate-2 at (7, 0), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 172: pirate-3 at (10, 0), on dug sand, with pirate-1 to the west, read the scroll and found nothing new.
+Turn 173: pirate-4 at (0, 12), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 174: pirate-5 at (10, 12), on undug sand, with no pirate beside it, moved east to (11, 12).
+Turn 175: pirate-1 at (9, 0), on dug sand, with pirate-3 to the east, tried to move north but it was at the grid's edge, then moved west to (8, 0).
+Turn 176: pirate-2 at (7, 0), on dug sand, with pirate-1 to the east, tried to move north but it was at the grid's edge, then read the scroll and found nothing new.
+Turn 177: pirate-3 at (10, 0), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 178: pirate-4 at (0, 12), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 179: pirate-5 at (11, 12), on undug sand, with no pirate beside it, dug at (11, 12) and found nothing.
+Turn 180: pirate-1 at (8, 0), on dug sand, with pirate-2 to the west, moved east to (9, 0).
+Turn 181: pirate-2 at (7, 0), on dug sand, with no pirate beside it, moved south to (7, 1).
+Turn 182: pirate-3 at (10, 0), on dug sand, with pirate-1 to the west, tried to move north but it was at the grid's edge, then moved east to (11, 0).
+Turn 183: pirate-4 at (0, 12), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 184: pirate-5 at (11, 12), on dug sand, with no pirate beside it, moved east to (12, 12).
+Turn 185: pirate-1 at (9, 0), on dug sand, with no pirate beside it, moved south to (9, 1).
+Turn 186: pirate-2 at (7, 1), on undug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 187: pirate-3 at (11, 0), on undug sand, with no pirate beside it, moved south to (11, 1).
+Turn 188: pirate-4 at (0, 12), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 189: pirate-5 at (12, 12), on undug sand, with no pirate beside it, dug at (12, 12) and found nothing.
+Turn 190: pirate-1 at (9, 1), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 191: pirate-2 at (7, 1), on undug sand, with no pirate beside it, moved north to (7, 0).
+Turn 192: pirate-3 at (11, 1), on undug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 193: pirate-4 at (0, 12), on dug sand, with no pirate beside it, moved south to (0, 13).
+Turn 194: pirate-5 at (12, 12), on dug sand, with no pirate beside it, moved east to (13, 12).
+Turn 195: pirate-1 at (9, 1), on dug sand, with no pirate beside it, moved east to (10, 1).
+Turn 196: pirate-2 at (7, 0), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 197: pirate-3 at (11, 1), on undug sand, with pirate-1 to the west, moved north to (11, 0).
+Turn 198: pirate-4 at (0, 13), on undug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 199: pirate-5 at (13, 12), on undug sand, with no pirate beside it, dug at (13, 12) and found nothing.
+Turn 200: pirate-1 at (10, 1), on undug sand, with no pirate beside it, moved north to (10, 0).
+Turn 201: pirate-2 at (7, 0), on dug sand, with no pirate beside it, tried to move north but it was at the grid's edge, then read the scroll and found nothing new.
+Turn 202: pirate-3 at (11, 0), on undug sand, with pirate-1 to the west, dug at (11, 0) and found nothing.
+Turn 203: pirate-4 at (0, 13), on undug sand, with no pirate beside it, moved south to (0, 14).
+Turn 204: pirate-5 at (13, 12), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 205: pirate-1 at (10, 0), on dug sand, with pirate-3 to the east, moved south to (10, 1).
+Turn 206: pirate-2 at (7, 0), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 207: pirate-3 at (11, 0), on dug sand, with no pirate beside it, moved south to (11, 1).
+Turn 208: pirate-4 at (0, 14), on undug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 209: pirate-5 at (13, 12), on dug sand, with no pirate beside it, moved east to (14, 12).
+Turn 210: pirate-1 at (10, 1), on undug sand, with pirate-3 to the east, read the scroll and found nothing new.
+Turn 211: pirate-2 at (7, 0), on dug sand, with no pirate beside it, tried to move north but it was at the grid's edge, then read the scroll and found nothing new.
+Turn 212: pirate-3 at (11, 1), on undug sand, with pirate-1 to the west, moved north to (11, 0).
+Turn 213: pirate-4 at (0, 14), on undug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 214: pirate-5 at (14, 12), on undug sand, with no pirate beside it, dug at (14, 12) and found nothing.
+Turn 215: pirate-1 at (10, 1), on undug sand, with no pirate beside it, dug at (10, 1) and found nothing.
+Turn 216: pirate-2 at (7, 0), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 217: pirate-3 at (11, 0), on dug sand, with no pirate beside it, moved south to (11, 1).
+Turn 218: pirate-4 at (0, 14), on undug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 219: pirate-5 at (14, 12), on dug sand, with no pirate beside it, moved west to (13, 12).
+Turn 220: pirate-1 at (10, 1), on dug sand, with pirate-3 to the east, read the scroll and found nothing new.
+Turn 221: pirate-2 at (7, 0), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 222: pirate-3 at (11, 1), on undug sand, with pirate-1 to the west, dug at (11, 1) and found nothing.
+Turn 223: pirate-4 at (0, 14), on undug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 224: pirate-5 at (13, 12), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 225: pirate-1 at (10, 1), on dug sand, with pirate-3 to the east, moved south to (10, 2).
+Turn 226: pirate-2 at (7, 0), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 227: pirate-3 at (11, 1), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 228: pirate-4 at (0, 14), on undug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 229: pirate-5 at (13, 12), on dug sand, with no pirate beside it, moved south to (13, 13).
+Turn 230: pirate-1 at (10, 2), on undug sand, with no pirate beside it, dug at (10, 2) and found nothing.
+Turn 231: pirate-2 at (7, 0), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 232: pirate-3 at (11, 1), on dug sand, with no pirate beside it, moved north to (11, 0).
+Turn 233: pirate-4 at (0, 14), on undug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 234: pirate-5 at (13, 13), on undug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 235: pirate-1 at (10, 2), on dug sand, with no pirate beside it, moved west to (9, 2).
+Turn 236: pirate-2 at (7, 0), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 237: pirate-3 at (11, 0), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 238: pirate-4 at (0, 14), on undug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 239: pirate-5 at (13, 13), on undug sand, with no pirate beside it, dug at (13, 13) and found nothing.
+Turn 240: pirate-1 at (9, 2), on undug sand, with no pirate beside it, dug at (9, 2) and found nothing.
+Turn 241: pirate-2 at (7, 0), on dug sand, with no pirate beside it, moved south to (7, 1).
+Turn 242: pirate-3 at (11, 0), on dug sand, with no pirate beside it, moved east to (12, 0).
+Turn 243: pirate-4 at (0, 14), on undug sand, with no pirate beside it, dug at (0, 14) and found nothing.
+Turn 244: pirate-5 at (13, 13), on dug sand, with no pirate beside it, moved east to (14, 13).
+Turn 245: pirate-1 at (9, 2), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 246: pirate-2 at (7, 1), on undug sand, with no pirate beside it, dug at (7, 1) and found nothing.
+Turn 247: pirate-3 at (12, 0), on undug sand, with no pirate beside it, dug at (12, 0) and found nothing.
+Turn 248: pirate-4 at (0, 14), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 249: pirate-5 at (14, 13), on undug sand, with no pirate beside it, dug at (14, 13) and found nothing.
+Game over: the turns ran out. The treasure at (12, 9) was never dug up, and 0 of 5 pirates got into the cave. Score 0.

@@ -1,10 +1,10 @@
 # Results
 
-- **examples-folder:** `examples/` holds at least three committed games that look different, each a run folder plus its GIF and its `transcript.md`, so there's a fixed set to look at after every change and something for a new reader to open straight away.
-- **examples-listed:** `examples/README.md` says in one line what each game shows, so a reader can pick one.
+- **examples-folder:** `examples/` holds two committed games on the same island (Al, 2026-11-08): `llm-crew`, three real LLM pirates, and `stripes`, the striping scripted pirates, a good strategy to compare them with. Each is a run folder plus its GIF, its `transcript.md` and its game page `game.html`, so there's a fixed pair to look at after every change and something for a new reader to open straight away.
+- **examples-listed:** `examples/README.md` says in one line what each game shows, in the order they're shown, the LLM game first, so a reader can pick one.
 - **examples-small:** Each example's GIF is under 2 MB, so a clone stays small and the GIF opens at once.
-- **examples-stay-true:** CI replays every example and fails if its logs, its GIF or its transcript differ, and says which command remakes them, so an example always shows what the code does today.
-- **examples-on-every-pr:** Every pull request's one game comment shows each example's GIF inline, with its name and how it ended, from that pull request's latest commit, so a change to the games can be seen without running anything.
+- **examples-stay-true:** CI replays every example offline from its stored replies and fails if its logs, its GIF, its transcript or its game page differ, and says which command remakes them, so an example always shows what the code does today. Remaking the LLM example plays real models, so `make examples` remakes only the scripted ones and the LLM one takes a key and a yes.
+- **examples-on-every-pr:** Every pull request's one game comment shows each example's GIF inline, in the guide's order, with its name, how it ended, and links to its game page, opened as a web page, and its transcript on GitHub, from that pull request's latest commit, so a change to the games can be seen, and every turn read in full, without running anything.
 - **result-folder:** Each result is `results/<name>/`, holding its run folders and a short `README.md` that says the question, what was run, what it shows and what it cost, so a finding can be kept and shared with its evidence beside it.
 - **results-are-runs:** A result's run folders use the same format as `runs/` and `examples/`, so the same commands work on them.
 - **results-listed:** `results/README.md` lists every result, so a reader can see at once what's been found.

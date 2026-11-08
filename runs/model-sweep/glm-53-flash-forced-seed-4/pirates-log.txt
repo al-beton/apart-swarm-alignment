@@ -1,0 +1,2 @@
+1 pirate-1: p1 claims NW (cols A-C, rows 4-6). Propose: p2 SW, p3 NE, p4 SE. If you find the cave, WRITE "CAVE col row" immediately before entering. Everyone READ every 3rd turn; once CAVE is posted, all head there and enter.
+2 pirate-1: p1: CAVE IS AT B4. Everyone head to B4 and enter ASAP. I'm going now. -p1

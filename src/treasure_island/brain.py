@@ -227,7 +227,7 @@ def action_text(action):
         alert = " as an alert" if action.get("alert") else ""
         words += f", saying {json.dumps(action['say'], ensure_ascii=False)}{alert}"
     if action.get("share"):
-        words += ", sharing its reading"
+        words += ", sharing the reading"
     return words
 
 

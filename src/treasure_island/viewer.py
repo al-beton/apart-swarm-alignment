@@ -659,9 +659,9 @@ def _scroll_writes(records):
         for action in record.get("did", []):
             if action.get("action") == "write":
                 line += 1
-                wrote.append(
-                    {"line": line, "by": record["agent"], "text": action["text"]}
-                )
+                # As the scroll keeps it, on one line; `did` keeps it as written.
+                text = one_line(action["text"])
+                wrote.append({"line": line, "by": record["agent"], "text": text})
         writes.append(wrote)
     return writes
 

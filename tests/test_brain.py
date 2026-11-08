@@ -405,6 +405,64 @@ def test_agent_memory_is_per_pirate():
     assert second.views[0].earlier_turns == ()
 
 
+class Thinks:
+    """Digs every turn, thinking "thought N" on its Nth time asked."""
+
+    def __init__(self):
+        self.views = []
+
+    def decide(self, view):
+        self.views.append(view)
+        return Decision({"action": "dig"}, f"thought {len(self.views)}")
+
+
+def _asked_turns(a_seat, count):
+    for number in range(count):
+        a_seat.take_turn((2, 3), 20 - number, game_turn=number + 1)
+        a_seat.remember(f"result {number + 1}")
+
+
+def test_agent_memory_keeps_thinking_only_for_its_last_full_turns():
+    brain = Thinks()
+    a_seat = PirateSeat("pirate-a", brain, parse_config({"memory_full_turns": 2}))
+    _asked_turns(a_seat, 4)
+    a_seat.take_turn((2, 3), 16, game_turn=5)
+    earlier = brain.views[4].earlier_turns
+    assert [turn.thinking for turn in earlier] == [None, None, "thought 3", "thought 4"]
+    assert [turn.result for turn in earlier] == [f"result {n}" for n in (1, 2, 3, 4)]
+    assert all(turn.action == {"action": "dig"} for turn in earlier)
+    text = brain.views[4].as_text()
+    assert "thought 2" not in text and "You were thinking: thought 3" in text
+    assert "You did: dig. result 1" in text
+
+
+def test_agent_memory_a_failed_try_counts_with_its_turn():
+    brain = Thinks()
+    a_seat = PirateSeat("pirate-a", brain, parse_config({"memory_full_turns": 1}))
+    a_seat.take_turn((2, 3), 20, game_turn=1)
+    a_seat.remember("result 1")
+    a_seat.take_turn((2, 3), 19, game_turn=2)
+    a_seat.remember("You can't. That didn't use your turn: choose again.", True)
+    a_seat.take_turn((2, 3), 19, game_turn=2)
+    a_seat.remember("result 2")
+    a_seat.take_turn((2, 3), 18, game_turn=3)
+    a_seat.remember("You can't. That didn't use your turn: choose again.", True)
+    a_seat.take_turn((2, 3), 18, game_turn=3)
+    thoughts = [turn.thinking for turn in brain.views[-1].earlier_turns]
+    # The last whole turn, both its tries, and this turn's failed try keep theirs.
+    assert thoughts == [None, "thought 2", "thought 3", "thought 4"]
+
+
+def test_agent_memory_keeps_the_last_two_thoughts_by_default_and_zero_keeps_all():
+    assert parse_config({}).memory_full_turns == 2
+    brain = Thinks()
+    a_seat = PirateSeat("pirate-a", brain, parse_config({"memory_full_turns": 0}))
+    _asked_turns(a_seat, 4)
+    a_seat.take_turn((2, 3), 16, game_turn=5)
+    thoughts = [turn.thinking for turn in brain.views[4].earlier_turns]
+    assert thoughts == ["thought 1", "thought 2", "thought 3", "thought 4"]
+
+
 def test_thinking_is_optional():
     assert take_turn(seat(Scripted())).thinking is None
 

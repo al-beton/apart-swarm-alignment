@@ -270,6 +270,7 @@ class EarlierTurn:
     game_turn: int = 0  # which turn of the game it was, from 1
     order_ended: OrderEnd | None = None
     order_went: str | None = None
+    failed: bool = False  # a failed try, which belongs to the asked turn after it
 
     def as_text(self):
         ground = "on a dug square" if self.square_dug else "on an undug square"
@@ -415,12 +416,29 @@ class PirateSeat:
         self._brain = brain
         self._prompt = system_prompt(config)
         self._grid_size, self._turns_each = config.grid_size, config.turns_per_pirate
+        self._full_turns = config.memory_full_turns
         self._earlier = ()
         self._pending = None
 
     @property
     def earlier_turns(self):
         return self._earlier
+
+    def _remembered(self):
+        """Its earlier turns as it is shown them: thinking only for the last few.
+
+        The last `memory_full_turns` asked turns keep their thinking, each with
+        its failed tries, as do this turn's failed tries; older turns keep
+        everything else (`agent-memory`). 0 keeps every thought.
+        """
+        if not self._full_turns:
+            return self._earlier
+        kept, whole = [], 0  # whole: asked turns from here to the end
+        for turn in reversed(self._earlier):
+            whole += not turn.failed
+            old = whole > self._full_turns and turn.thinking
+            kept.append(dataclasses.replace(turn, thinking=None) if old else turn)
+        return tuple(reversed(kept))
 
     def take_turn(  # noqa: PLR0913 (each is one thing the pirate is told)
         self,
@@ -445,7 +463,7 @@ class PirateSeat:
             self._prompt,
             position,
             turns_left,
-            self._earlier,
+            self._remembered(),
             neighbours,
             square_dug,
             on_cave,
@@ -485,6 +503,7 @@ class PirateSeat:
             view.square,
             view.game_turn,
             None if failed else view.order_ended,
+            failed=failed,
         )
         self._earlier = (*self._earlier, earlier)
 

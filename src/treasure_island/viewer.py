@@ -33,7 +33,7 @@ with no note, and the scroll as parchment; on the right one entry for every turn
 `planned_turns` lists, each played turn's steps drawn ahead so stepping onto it
 plays them.
 
-Implements: viewer/planned-turns, viewer/game-page-steps, viewer/scroll-written-live, viewer/cave-drawn, treasure-island/cave, viewer/turn-marked, viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/walks-between-squares, treasure-island/pokemon-style, viewer/slideshow-file, viewer/game-page, viewer/score-counter, viewer/transcript, viewer/board-framed, viewer/dig-steps, viewer/enter-steps, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process, treasure-island/square-names
+Implements: viewer/planned-turns, viewer/game-page-steps, viewer/scroll-written-live, viewer/cave-drawn, treasure-island/cave, viewer/turn-marked, viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/walks-between-squares, treasure-island/pokemon-style, viewer/slideshow-file, viewer/game-page, viewer/scroll-steps, viewer/score-counter, viewer/transcript, viewer/board-framed, viewer/dig-steps, viewer/enter-steps, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process, treasure-island/square-names
 """
 
 import base64
@@ -45,7 +45,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import NamedTuple
 
-from PIL import Image, ImageChops
+from PIL import Image, ImageChops, ImageDraw
 
 import assets
 from assets.board import EDGE_BOTTOM, EDGE_LEFT, board_edges
@@ -54,7 +54,7 @@ from assets.dig import DIG_STEPS, dig_ground, digging
 from assets.font import draw_text, text_width, wrap
 from assets.pirates import pirate, portrait
 from assets.pixels import DARK
-from assets.ui import open_scroll, panel, scroll_note
+from assets.ui import panel, scroll_note
 from treasure_island.config import DEFAULTS, parse_config
 from treasure_island.game_state import GameState
 from treasure_island.looks import sprite_values
@@ -65,10 +65,8 @@ SAND_TILES = ("sand", "sand-2", "sand-3")
 TILE = 48
 # Where a label sits on a sprite: (left, top, right, bottom).
 _LABEL_BOX = (14, 2, 34, 16)
-# The turn arrow floats this far above the acting pirate's hat, centred, as on the
-# art sheet, so it never covers the label; a note goes above the arrow.
+# The gap a note keeps above a pirate's hat, so it never covers the label.
 ARROW_ROOM = 14
-_ARROW_LEFT = 16
 _FACING = {"north": "up", "south": "down", "east": "right", "west": "left"}
 PANEL = 260
 PANEL_COLUMNS = 38
@@ -259,6 +257,9 @@ def _walk(record):
     return (start, end) if moved and list(start) != list(end) else None
 
 
+SCROLL_STEPS = {"read": 2, "write": 3}  # frames of the reading and writing poses
+
+
 def _motion(record):
     """What a turn plays out and in how many steps: a walk, a dig, going in, or none."""
     if _walk(record):
@@ -267,11 +268,14 @@ def _motion(record):
         return "enter", ENTER_STEPS
     if any(action["action"] == "dig" for action in record["did"]):
         return "dig", DIG_STEPS
+    for kind, steps in SCROLL_STEPS.items():  # the held scroll's frames (assets)
+        if any(action["action"] == kind for action in record["did"]):
+            return kind, steps
     return None, 1
 
 
 def turn_steps(records, turn, scoring=None):
-    """The steps a turn is drawn in: 1 to N for a walk, dig or going in, else [None].
+    """The steps a turn is drawn in: 1 to N for a walk, dig, read, write or going in.
 
     The last turn of a finished game that still owes pirates inside their turns
     plays them out first: after its own steps, one step per round, then its own frame.
@@ -441,6 +445,9 @@ def scene(records, turn, size, treasure=None, step=None, scoring=None):  # noqa:
         shown["digging"] = (step - 1, before)
         if current["outcome"]["found_treasure"]:  # the cave opens on the last step
             shown["mark"] = _mark(records, treasure, None)
+    if kind in SCROLL_STEPS:  # the scroll held in front, its last frame the turn's own
+        frame = step - 1 if between else steps - 1
+        shown["poses"][current["agent"]] = (kind, frame)
     if kind == "walk" and between:
         return _walking(shown, current, step)
     return shown
@@ -539,7 +546,7 @@ def _draw_pirates(image, shown, pirates):
 
 
 def _draw_labels(image, shown, pirates):
-    """Labels go over the pirates and the arrow, so every pirate can be told apart."""
+    """Labels go over the pirates and the outline, so every pirate can be told apart."""
     for agent, spot in _placed(shown):
         if agent == shown["going_in"]:
             continue  # its back is turned as it goes in
@@ -550,12 +557,12 @@ def _draw_labels(image, shown, pirates):
 
 
 def note_box(position, note_size, size):
-    """Where a note goes: above the pirate's arrow, or below it if there's no room."""
+    """Where a note goes: above the pirate, or below it if there's no room."""
     x, y = position
     width, height = note_size
     left = min(x * TILE + 6, max(0, size * TILE - width))
     above = y * TILE - ARROW_ROOM - height
-    # With no room above, the arrow goes under the feet and the note under that.
+    # With no room above, it goes below the pirate's feet.
     return left, above if above >= 0 else y * TILE + TILE + ARROW_ROOM + 2
 
 
@@ -563,42 +570,29 @@ def _overlap(a, b):
     return a[0] < b[2] and b[0] < a[2] and a[1] < b[3] and b[1] < a[3]
 
 
-def turn_arrow(shown):
-    """The turn arrow and where it goes: over the acting pirate's hat.
-
-    Where that's off the board or on another pirate's label, it goes under the
-    feet instead, pointing up (default, Al to confirm). Each place must be on
-    the board.
-    """
-    placed = _placed(shown)
-    x, y = dict(placed)[shown["acting"]]
-    labels = [
-        (lx + _LABEL_BOX[0], ly + _LABEL_BOX[1], lx + _LABEL_BOX[2], ly + _LABEL_BOX[3])
-        for agent, (lx, ly) in placed
-        if agent != shown["acting"]
-    ]
-    down = _art("ui/turn-arrow")
-    up = down.transpose(Image.FLIP_TOP_BOTTOM)
-    left = x + _ARROW_LEFT
-    candidates = [
-        (down, (left, y - ARROW_ROOM)),
-        (up, (left, y + TILE + 2)),
-    ]
-    bottom = shown["size"] * TILE
-    for arrow, (ax, ay) in candidates:
-        box = (ax, ay, ax + arrow.width, ay + arrow.height)
-        on_board = ay >= 0 and box[3] <= bottom
-        if on_board and not any(_overlap(box, label) for label in labels):
-            return arrow, (ax, ay)
-    return candidates[1]
+OUTLINE = "#ffd23f"  # the acting pirate's square, in the score's gold (Al, 2026-11-08)
 
 
-def note_spot(shown, note_size, arrow_box):
+def outline(image, spot):
+    """Three 1-pixel yellow rectangles round the tile whose top left is at `spot`."""
+    x, y = spot
+    draw = ImageDraw.Draw(image)
+    for inset in range(3):
+        box = (x + inset, y + inset, x + TILE - 1 - inset, y + TILE - 1 - inset)
+        draw.rectangle(box, outline=OUTLINE)
+
+
+def _draw_outline(image, shown):
+    """The acting pirate's square, outlined; during a walk it moves with the pirate."""
+    outline(image, dict(_placed(shown))[shown["acting"]])
+
+
+def note_spot(shown, note_size):
     """Where the writer's note goes: beside the writer, clear of every other pirate.
 
     It tries above, then right, then left, then below, and takes the first spot
-    on the board that covers no other pirate and not the turn arrow, so the note
-    reads as the writer's own. With none, it falls back on `note_box`.
+    on the board that covers no other pirate, so the note reads as the writer's
+    own. With none, it falls back on `note_box`.
     """
     size = shown["size"]
     x, y = shown["positions"][shown["acting"]]
@@ -620,27 +614,21 @@ def note_spot(shown, note_size, arrow_box):
     for left, top in candidates:
         box = (left, top, left + width, top + height)
         on_board = left >= 0 and top >= 0 and box[2] <= edge and box[3] <= edge
-        clear = not any(_overlap(box, other) for other in [*others, arrow_box])
+        clear = not any(_overlap(box, other) for other in others)
         if on_board and clear:
             return left, top
-    left, top = note_box((x, y), note_size, size)
-    if _overlap((left, top, left + width, top + height), arrow_box):
-        top = arrow_box[3] + 2  # an arrow under the feet: the note goes below it
-    return left, top
+    return note_box((x, y), note_size, size)
 
 
-def _draw_note(image, shown, arrow_box):
+def _draw_note(image, shown):
+    """The line a writer wrote, on a small scroll beside it."""
     text = shown["note"]
     if text is None:
-        if shown["reading"]:
-            # A reader holds the scroll open, with none of its words on it.
-            held = open_scroll()
-            image.paste(held, note_spot(shown, held.size, arrow_box), held)
         return
     if len(text) > _NOTE_CHARACTERS:
         text = text[: _NOTE_CHARACTERS - 3] + "..."
     note = scroll_note(text)
-    image.paste(note, note_spot(shown, note.size, arrow_box), note)
+    image.paste(note, note_spot(shown, note.size), note)
 
 
 def wrapped(text):
@@ -774,7 +762,7 @@ def _draw_gains(image, shown):
     words = " ".join(shown["gains"])
     room = shown["size"] * TILE - text_width(words)
     left = min(max(x * TILE + (TILE - text_width(words)) // 2, 0), max(room, 0))
-    above = y * TILE - ARROW_ROOM - LINE  # clear of the turn arrow over the cave
+    above = y * TILE - ARROW_ROOM - LINE  # clear of the label of a pirate on the cave
     top = above if above >= 0 else (y + 1) * TILE + 2
     draw_text(image, (left + 1, top + 1), words)  # a dark edge, so it reads on sand
     draw_text(image, (left, top), words, SCORE_INK)
@@ -787,15 +775,13 @@ def _draw_score(image, shown, grid):
 
 
 def _draw_sand(sand, shown, pirates, note=True):
-    """The board's squares: ground, pirates, turn arrow, labels, the note and gains."""
+    """The board's squares: ground, outline, pirates, labels, the note and gains."""
     _draw_ground(sand, shown["size"], shown, pirates)
+    _draw_outline(sand, shown)  # under the pirates: a pirate is exactly its sprite
     _draw_pirates(sand, shown, pirates)
-    arrow, at = turn_arrow(shown)
-    sand.paste(arrow, at, arrow)  # before the note and labels, so it covers neither
-    arrow_box = (*at, at[0] + arrow.width, at[1] + arrow.height)
     _draw_labels(sand, shown, pirates)
     if note:  # the note goes over the labels, so what was written shows in full
-        _draw_note(sand, shown, arrow_box)
+        _draw_note(sand, shown)
     _draw_gains(sand, shown)
 
 
@@ -820,7 +806,7 @@ def board(records, turn, size, pirates=None, treasure=None, step=None, scoring=N
 
 # Two arguments over the limit: `step` and `scoring` sit beside the others callers pass.
 def frame(records, turn, size, pirates=None, treasure=None, step=None, scoring=None):  # noqa: PLR0913
-    """The image for one turn: ground, pirates, turn arrow, note, panel, caption, log."""
+    """The image for one turn: ground, outline, pirates, note, panel, caption, log."""
     pirates = pirates or _default_pirates(crew_names(records))
     shown = scene(records, turn, size, treasure, step, scoring)
     grid = max(size, 1) * TILE

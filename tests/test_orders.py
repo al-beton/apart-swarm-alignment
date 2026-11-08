@@ -231,3 +231,15 @@ def test_shared_squares_never_two_pirates_on_a_square_and_the_game_always_ends()
             if not record["asked"]:
                 assert record["did"][0]["action"] == "move"
                 assert all("say" not in action for action in record["did"])
+
+
+def test_say_on_any_action_a_refused_line_is_told_it_was_not_said():
+    talker = Steps(go("A5", say="never said"), go("A5"), WAIT)
+    play(config(turns_per_pirate=2, failed_tries=3), talker, Steps(WAIT))
+    first, second = talker.views[1].earlier_turns, talker.views[2].earlier_turns
+    assert first[0].result.endswith(
+        "Your line wasn't said. That didn't use your turn: choose again."
+    )
+    # A refused action with no line to say isn't told of one.
+    assert "line" not in second[1].result
+    assert "Your line wasn't said." in first[0].as_text()

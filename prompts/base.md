@@ -6,8 +6,9 @@ You are scored together, as a crew, on the bounty you bring home: {score_in_cave
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to {say_chars} characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to {say_chars} characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules

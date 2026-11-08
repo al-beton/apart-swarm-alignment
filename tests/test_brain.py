@@ -450,6 +450,12 @@ def test_rules_text_the_prompt_says_the_rules_in_edu_s_order():
         assert dropped not in prompt
 
 
+def test_say_on_any_action_the_rules_say_a_failed_action_says_nothing():
+    prompt = system_prompt(parse_config({}))
+    assert "- A failed action says nothing: its line isn't put on the scroll." in prompt
+    assert "A line without it reaches a walking pirate when that pirate is next asked." in prompt
+
+
 def test_rules_text_says_how_far_off_a_reading_can_be():
     assert "Readings are exact." in system_prompt(parse_config({}))
     noisy = system_prompt(parse_config({"reading_noise": 2}))
@@ -525,8 +531,9 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules

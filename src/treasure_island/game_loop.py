@@ -448,6 +448,8 @@ class Game:
                 did += self._say(decision.action, pirate, game_turn)
                 return decision, result, did, done
             told, why = refusal
+            if decision.action and "say" in decision.action:
+                told += " Your line wasn't said."  # a failed action says nothing
             tried.refused.append((decision.action, why))
             if len(tried.refused) - free < self.config.failed_tries:
                 seat.remember(f"{told} That didn't use your turn: choose again.", True)

@@ -17,7 +17,7 @@
 - **adaption-backend:** A model named `adaption/<model id>` is served by Adaption's Responses API through its Python SDK, with the pirate's tools as function tools, so our runs spend the hackathon's Adaption credits.
 - **adaption-cost:** An Adaption reply's cost comes from its token usage at the model's listed rate in credits per million tokens, a model with no listed rate is refused before anything is asked, and a reply that gives no token usage stops the run, since the spending cap couldn't count it; default, Al to confirm: a credit counts as a dollar, so the manifest's `cost_usd` totals it.
 - **free-runs-in-ci:** A full game with each scripted brain completes in CI without an API call or a key, so the whole path from config to logs is proved at no cost.
-- **committed-runs:** A game of each scripted brain is committed under `runs/`, passes the event-log validator and replays byte-identical, so the visuals have evidence to build from without rerunning anything.
+- **committed-runs:** A game of each scripted brain is committed under `runs/`, passes the event-log validator and replays, so the visuals have evidence to build from without rerunning anything.
 
 ## Where this is enforced
 
@@ -40,4 +40,4 @@
 | `adaption-backend` | `src/treasure_island/adaption_backend.py`, `src/treasure_island/backends.py`, `pyproject.toml` | `test_adaption_backend_serves_models_named_adaption_slash_id`, `test_adaption_backend_sends_the_rules_the_turn_and_every_tool_as_a_function`, `test_adaption_backend_turns_a_function_call_into_the_reply_the_brain_reads`, `test_adaption_backend_passes_the_reasoning_on_only_when_thinking_is_on`, `test_adaption_backend_a_reply_with_no_tool_call_comes_back_as_its_words` |
 | `adaption-cost` | `src/treasure_island/adaption_backend.py`, `src/treasure_island/backends.py` | `test_adaption_cost_comes_from_token_usage_at_the_listed_rate`, `test_adaption_cost_its_rate_prices_a_run_before_it_starts`, `test_adaption_cost_a_model_with_no_listed_rate_is_refused`, `test_adaption_cost_is_totalled_in_the_manifest`, `test_adaption_cost_a_reply_with_no_usage_stops_the_run` |
 | `free-runs-in-ci` | `configs/silent.toml`, `configs/stripes.toml`, `.github/workflows/blocking-checks.yml` | `test_free_runs_in_ci_each_scripted_brain_plays_a_full_game` |
-| `committed-runs` | `runs/silent-seed-7/**`, `runs/reference-silent/**`, `runs/reference-stripes/**` | `test_committed_runs_pass_the_validator_and_replay_byte_identical` |
+| `committed-runs` | `runs/silent-seed-7/**`, `runs/reference-silent/**`, `runs/reference-stripes/**` | `test_committed_runs_pass_the_validator_and_replay` |

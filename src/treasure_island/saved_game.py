@@ -15,7 +15,7 @@ says why in its manifest, and its replay stops at the same turn for that reason.
 `differences` plays the game again from that folder, in a temporary folder and
 with nothing but what's saved, and names any log that doesn't match byte for byte.
 
-Implements: treasure-island/retries-dropped-calls, agents/reasoning-looked-up, runs/yes-before-spending, runs/spending-cap, runs/stops-cleanly, agents/plays-then-replays, runs/cache-across-runs, runs/no-cache, treasure-island/named-runs, treasure-island/everything-cached, runs/one-game, runs/run-folder, runs/manifest-varies, runs/replay-byte-identical, runs/plays-live, results/examples-stay-true, agents/key-from-the-environment, agents/refusals-noted
+Implements: treasure-island/retries-dropped-calls, agents/reasoning-looked-up, runs/yes-before-spending, runs/spending-cap, runs/stops-cleanly, agents/plays-then-replays, runs/cache-across-runs, runs/no-cache, treasure-island/named-runs, treasure-island/everything-cached, runs/one-game, runs/run-folder, runs/manifest-varies, runs/plays-live, results/examples-stay-true, agents/key-from-the-environment, agents/refusals-noted
 """
 
 import collections

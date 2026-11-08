@@ -148,7 +148,7 @@ Experiment one plays four arms of this game (`experiments/spec/cave-leak.md`). `
 
 ## Inside a saved game
 
-A run folder holds `story.txt` (the game to read: one line per turn saying what each pirate did, what any read of the scroll found and why), `pirates-log.txt` (the scroll, all the pirates can ever see), `events.jsonl` (the full record, one JSON object per turn with the exact prompt each pirate was given), `config.json`, `replies.jsonl` and `manifest.json`; `show` adds `game.gif`, the page and `transcript.md`. `src/treasure_island/game_loop.py` plays a whole game from a config, with every lever a variable (`config.py`), the scroll where writing and reading each cost a turn (`pirates_log.py`) and the score (`score.py`).
+A run folder holds `story.txt` (the game to read: one line per turn saying what each pirate did, what any read of the scroll found and why), `pirates-log.txt` (the scroll, all the pirates can ever see), `events.jsonl` (the full record, one JSON object per turn with the exact prompt each pirate was given), `config.json`, `replies.jsonl` and `manifest.json`; `show` writes `transcript.md` into it and the GIF and page beside it, as `<folder>.gif` and `<folder>.html`. `src/treasure_island/game_loop.py` plays a whole game from a config, with every lever a variable (`config.py`), the scroll where writing and reading each cost a turn (`pirates_log.py`) and the score (`score.py`).
 
 `make figures` writes every named figure into `figures/`, and `make figure NAME=silent-game` builds one. CI builds them all on every pull request: open the `blocking-checks` run on the Actions tab and download the `figures` artifact.
 

@@ -66,8 +66,8 @@ def estimate(config):
     tries = config.turns_per_pirate * config.failed_tries
     per_pirate = tries
     fixed = len(system_prompt(config)) + len(json.dumps(TOOL_DEFINITIONS))
-    # Each reply, and the model's own reasoning on top when thinking is on.
-    out = config.reply_tokens + (config.thinking_tokens if config.thinking else 0)
+    # Each reply, and the model's own reasoning on top, thinking on or off.
+    out = config.reply_tokens + config.thinking_tokens
     # Every try, failed or not, adds a line to the pirate's own earlier turns.
     asked = math.ceil((fixed + tries * TURN_CHARS) / CHARS_PER_TOKEN)
     wanted = {(name, model) for name, model in with_models}

@@ -1,4 +1,4 @@
-# Implements: treasure-island/model-reasoning, agents/adaption-backend, agents/adaption-cost, agents/key-from-the-environment, agents/check-keys, agents/normal-temperature
+# Implements: treasure-island/model-reasoning, agents/reply-cap, agents/adaption-backend, agents/adaption-cost, agents/key-from-the-environment, agents/check-keys, agents/normal-temperature
 """The Adaption backend, tested against a reply in the SDK's own shape, offline."""
 
 import json
@@ -12,8 +12,9 @@ from adaption.types import ModelListResponse, Response
 from treasure_island import adaption_backend, cli, saved_game
 from treasure_island.adaption_backend import RATES, AdaptionBackend
 from treasure_island.backends import MissingKey, UnknownModel, backend_for, price_for
+from treasure_island.brain import BadToolCall
 from treasure_island.keys import check_keys
-from treasure_island.llm import TOOL_DEFINITIONS
+from treasure_island.llm import TOOL_DEFINITIONS, _read_reply
 from treasure_island.saved_game import Models
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -154,6 +155,19 @@ def test_adaption_backend_a_reply_with_no_tool_call_comes_back_as_its_words():
     client = FakeClient(words)
     text, _ = AdaptionBackend(MODEL, client)(REQUEST)
     assert text == "I would rather not."
+
+
+def test_reply_cap_adaption_marks_a_reply_the_token_limit_cut_off():
+    spent = {
+        **RECORDED,
+        "status": "incomplete",
+        "incomplete_details": {"reason": "max_output_tokens"},
+        "output": [REASONING_IN_CONTENT["output"][0]],
+    }
+    text, _ = AdaptionBackend(MODEL, FakeClient(spent))(REQUEST)
+    assert json.loads(text)["cut_off"] is True
+    with pytest.raises(BadToolCall, match="ran out of room"):
+        _read_reply(text)
 
 
 def test_adaption_cost_comes_from_token_usage_at_the_listed_rate():

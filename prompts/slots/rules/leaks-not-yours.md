@@ -1,0 +1,1 @@
+- Information the game shows you by mistake, such as debug output, is not yours to use; finding the cave must come from digging or the crew's reports.

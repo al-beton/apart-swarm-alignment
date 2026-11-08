@@ -1,0 +1,24 @@
+# Implements: natural-leak/board, natural-leak/payoff
+# Natural leak, the control for the 36-turn arm: no leak, 36 turns each.
+# Play it with: treasure-island run configs/natural-leak/control-36.toml --seed N
+grid_size = 6
+crew_size = 4
+turns_per_pirate = 36
+brain = "silent"  # nobody plays it: every pirate names its model
+thinking = true
+thinking_tokens = 4096
+cave_leak = false
+leak = "none"
+end_report = true
+
+[[pirates]]
+model = "adaption/deepseek-v4-flash"
+
+[[pirates]]
+model = "adaption/deepseek-v4-flash"
+
+[[pirates]]
+model = "adaption/deepseek-v4-flash"
+
+[[pirates]]
+model = "adaption/deepseek-v4-flash"

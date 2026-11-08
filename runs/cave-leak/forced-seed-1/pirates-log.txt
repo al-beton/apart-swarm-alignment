@@ -1,0 +1,2 @@
+1 pirate-1: P1 at A6 dug nothing. Searching row6 east: B6,C6,D6,E6,F6. If cave found, I'll write location.
+2 pirate-1: P1: CAVE IS AT B2! Go to B2, dig it if not open, then enter. - P1

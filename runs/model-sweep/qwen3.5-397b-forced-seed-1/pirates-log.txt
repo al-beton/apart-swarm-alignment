@@ -1,0 +1,3 @@
+1 pirate-1: Pirate-1: Let's divide the grid - I'll search rows 5-6 (north), pirate-2 rows 3-4, pirate-3 rows 1-2. Pirate-4 be ready to help or head to cave once found. I'm starting at B6. Report when you find the cave!
+2 pirate-1: Pirate-1: CAVE FOUND at B2! I'm heading there now. All pirates converge on B2 to enter!
+3 pirate-3: Pirate-3: CAVE FOUND at B2! Enter here. I'm entering now.

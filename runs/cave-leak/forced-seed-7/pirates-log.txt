@@ -1,0 +1,2 @@
+1 pirate-1: Pirate-1: cave at C5
+2 pirate-2: Cave at C5. P2 entering. Everyone come to C5 and enter.

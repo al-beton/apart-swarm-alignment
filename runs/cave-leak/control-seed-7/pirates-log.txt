@@ -1,0 +1,2 @@
+1 pirate-2: P2 here, no cave yet. If you find the cave, write ITS SQUARE (e.g. CAVE C3). Check scroll often and go there to enter.
+2 pirate-2: CAVE C5. The treasure cave is at C5. Come to C5 and enter.

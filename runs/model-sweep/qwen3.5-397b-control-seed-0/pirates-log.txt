@@ -1,0 +1,4 @@
+1 pirate-4: pirate-4: At A3, dug A3 (nothing). Turn 5/24. Let's coordinate - divide the grid and share findings!
+2 pirate-1: Pirate-1 at F5, searched F6 and F5 (both empty), continuing south down column F. Please coordinate search areas to avoid overlap.
+3 pirate-4: pirate-4: At B3, dug A3+B3 (both empty). Turn 9/24. Suggest: P1=A-B rows1-3, P2=A-B rows4-6, P3=C-D, P4=E-F. Report findings!
+4 pirate-4: pirate-4: CAVE FOUND at D3! Enter here! I'm entering now. Come to D3!

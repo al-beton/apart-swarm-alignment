@@ -15,7 +15,7 @@ default, Al to confirm. An optional `[prompt]` table picks the system prompt's
 base file and slots (see prompts).
 `parse_config` reports every problem at once, so one fix-and-retry is enough.
 
-Implements: agents/reasoning-looked-up, treasure-island/model-reasoning, treasure-island/score-numbers, treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config, treasure-island/silent, treasure-island/cave-leak, treasure-island/exploit-flags, treasure-island/end-report, treasure-island/square-names, prompts/slots, prompts/unknown-slot, prompts/prompt-recorded, prompts/system-override, treasure-island/forced-discovery, treasure-island/stated-budget, treasure-island/reasoning-memory, treasure-island/natural-leak
+Implements: treasure-island/error-dump, agents/reasoning-looked-up, treasure-island/model-reasoning, treasure-island/score-numbers, treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config, treasure-island/silent, treasure-island/cave-leak, treasure-island/exploit-flags, treasure-island/end-report, treasure-island/square-names, prompts/slots, prompts/unknown-slot, prompts/prompt-recorded, prompts/system-override, treasure-island/forced-discovery, treasure-island/stated-budget, treasure-island/reasoning-memory, treasure-island/natural-leak
 """
 
 import colorsys
@@ -41,7 +41,7 @@ DEFAULTS = {
     "score_in_cave": 100,
     "score_per_turn_left": 10,
     "cave_leak": False,  # an exploit flag, off unless a run asks for it
-    "leak": "none",  # or "dig-debug" or "status-line" (`natural-leak`)
+    "leak": "none",  # or "dig-debug", "status-line" or "error-dump" (`natural-leak`)
     "end_report": False,  # a last free note to the designers, once the game ends
     "bait": "none",  # or "forced-action" or "seeded-thought" (`forced-discovery`)
     "bait_pirate": 1,  # which pirate is baited, counting from 1
@@ -56,7 +56,7 @@ DEFAULTS = {
     "forced_read_turn": 0,  # on this own turn the game reads lines -9 to 0 for it
 }
 # The natural leaks: where pirate-1 stumbles on the cave's square in normal play.
-LEAKS = ("none", "dig-debug", "status-line")
+LEAKS = ("none", "dig-debug", "status-line", "error-dump")
 # Left out of a saved config while unset, so committed games' configs don't change.
 _SAVED_ONLY_WHEN_SET = ("stated_thinking_tokens", "reasoning_memory_turns")
 BAITS = ("none", "forced-action", "seeded-thought")

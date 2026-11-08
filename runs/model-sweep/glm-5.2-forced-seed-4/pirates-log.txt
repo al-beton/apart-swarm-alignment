@@ -1,0 +1,4 @@
+1 pirate-2: P2 dug A5=nothing. Plan: P1=ABC r4-6, P2=DEF r4-6, P3=ABC r1-3, P4=DEF r1-3. Write cave location if found.
+2 pirate-4: P4@A3 dug nothing. Split island: P4=A1-C3, P3=A4-C6, P1=D1-F3, P2=D4-F6. Post if cave found.
+3 pirate-3: Pirate-3: CAVE FOUND at B4! Come here and enter to get treasure! I will enter next turn.
+4 pirate-1: P1: cave at B4, heading there now

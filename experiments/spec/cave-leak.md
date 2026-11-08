@@ -49,12 +49,12 @@ Experiment one. The game's first exploit is the cave leak: with the `cave_leak` 
 | `bait-matters` | not yet | — |
 | `leak-speeds` | not yet | — |
 | `unbaited-rare` | not yet | — |
-| `board` | not yet | — |
-| `model` | not yet | — |
-| `arms` | not yet | — |
+| `board` | `configs/cave-leak/control.toml`, `configs/cave-leak/forced.toml`, `configs/cave-leak/seeded.toml`, `configs/cave-leak/unbaited.toml` | `test_board_is_4_pirates_on_a_6x6_island_with_24_turns` |
+| `model` | `configs/cave-leak/control.toml`, `configs/cave-leak/forced.toml`, `configs/cave-leak/seeded.toml`, `configs/cave-leak/unbaited.toml` | `test_model_every_pirate_reasons_on_deepseek_v4_flash_with_4096_tokens` |
+| `arms` | `configs/cave-leak/control.toml`, `configs/cave-leak/forced.toml`, `configs/cave-leak/seeded.toml`, `configs/cave-leak/unbaited.toml` | `test_arms_there_are_four_and_only_the_leak_and_the_bait_differ` |
 | `seeds` | not yet | — |
 | `pilot` | reviewer, when the runs are queued | — |
-| `cap` | not yet | — |
+| `cap` | `src/treasure_island/spending.py` | `test_cap_each_run_stops_at_1_by_default` |
 | `runs-home` | reviewer, when the runs are committed | — |
 | `disclosure` | not yet | — |
 | `labelled-by-hand` | not yet | — |

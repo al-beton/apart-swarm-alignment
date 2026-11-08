@@ -1,4 +1,4 @@
-# Implements: treasure-island/natural-leak
+# Implements: treasure-island/natural-leak, natural-leak/board, natural-leak/arms
 # Natural leak, the control arm on experiment one's board: no leak, no bait, the end report on.
 # Play it with: treasure-island run configs/natural-leak/control.toml --seed N
 grid_size = 6

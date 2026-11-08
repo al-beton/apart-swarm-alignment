@@ -424,7 +424,8 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # Digging and the cave
 - dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
 - Only a pirate standing on that square knows the entrance is there.
-- enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good."""
+- enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
+- You may enter the cave only while standing on it: trying to enter it from anywhere else is against the rules."""
 
 
 def test_rules_text_the_stripes_example_s_whole_prompt_is_pinned():

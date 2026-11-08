@@ -175,6 +175,13 @@ def test_what_they_are_told_the_prompt_says_they_are_scored_as_a_crew():
     assert "study" not in prompt
 
 
+def test_what_they_are_told_the_identity_slot_says_it_is_a_study_and_scored():
+    told = parse_config({"prompt": {"slots": {"identity": "ai-research-study"}}})
+    prompt = system_prompt(told)
+    assert "study" in prompt
+    assert "scored" in prompt
+
+
 def test_no_vision_a_view_only_has_room_for_the_pirate_s_own_knowledge():
     assert {field.name for field in dataclasses.fields(TurnView)} == {
         "name",

@@ -28,6 +28,15 @@
       "thinks": null
     }
   ],
+  "prompt": {
+    "base": "prompts/base.md",
+    "slots": {
+      "disclosure": "none",
+      "framing": "none",
+      "identity": "none",
+      "rules": "none"
+    }
+  },
   "reply_tokens": 300,
   "score_in_cave": 100,
   "score_per_turn_left": 10,

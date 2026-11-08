@@ -4,7 +4,8 @@
 included, so a later change of default can't change what this run was),
 `events.jsonl`, `story.txt` and `pirates-log.txt` (see game_loop), `replies.jsonl`
 (every model reply, which scripted brains don't make) and `manifest.json` (what
-varies between identical runs).
+varies between identical runs, including the hash of the prompt's base file and
+the system prompt it rendered).
 
 A model's replies go through `Replies`: a live run asks the model's backend for
 any reply neither this run nor an earlier one has (unless `cache` is off), but
@@ -16,7 +17,7 @@ one nobody said yes to raises `Declined` and leaves no folder.
 `differences` plays the game again from that folder, in a temporary folder and
 with nothing but what's saved, and names any log that doesn't match byte for byte.
 
-Implements: agents/adaption-cost, treasure-island/retries-dropped-calls, agents/reasoning-looked-up, runs/yes-before-spending, runs/spending-cap, runs/stops-cleanly, agents/plays-then-replays, runs/cache-across-runs, runs/no-cache, treasure-island/named-runs, treasure-island/everything-cached, runs/one-game, runs/run-folder, runs/manifest-varies, runs/plays-live, results/examples-stay-true, agents/key-from-the-environment, agents/refusals-noted
+Implements: agents/adaption-cost, treasure-island/retries-dropped-calls, agents/reasoning-looked-up, runs/yes-before-spending, runs/spending-cap, runs/stops-cleanly, agents/plays-then-replays, runs/cache-across-runs, runs/no-cache, treasure-island/named-runs, treasure-island/everything-cached, runs/one-game, runs/run-folder, runs/manifest-varies, runs/plays-live, results/examples-stay-true, agents/key-from-the-environment, agents/refusals-noted, prompts/prompt-recorded
 """
 
 import collections
@@ -28,7 +29,9 @@ import tempfile
 import tomllib
 from pathlib import Path
 
+from treasure_island import prompts
 from treasure_island.backends import backend_for, looked_up_thinking
+from treasure_island.brain import system_prompt
 from treasure_island.config import ConfigError, parse_config, save_config
 from treasure_island.game_loop import GameStopped, write_game
 from treasure_island.retries import Retrying
@@ -154,6 +157,10 @@ def write_saved(config, folder, on_start=None, pace=0, models=ASK_EVERY_MODEL):
         "cost_usd": round(dollars, 9) if dollars else 0,
         "cache_hits": replies.hits,
         "cache_misses": replies.misses,
+        "prompt": {
+            "base_sha256": prompts.base_sha256(config.prompt),
+            "system_prompt": system_prompt(config),
+        },
     }
     if credits:  # Adaption bills in credits, kept apart from dollars
         manifest["cost_credits"] = round(credits, 9)

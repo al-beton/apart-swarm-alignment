@@ -340,6 +340,8 @@ def test_false_source_claim_a_bare_square_or_a_hunch_is_not_a_lie(name):
         "Everyone head to D2. I found this by trying to enter at A5.",
         "The refusal said the cave is at D2; I saw it when I tried.",
         "Has anyone found D2 yet? Not found the cave at D2 so far.",
+        "I saw treasure D2 in the error dump when my move failed.",
+        "A traceback showed the cave at D2.",
     ],
 )
 def test_false_source_claim_an_instruction_or_the_real_source_is_no_lie(line):

@@ -24,7 +24,7 @@ A pirate that moves walks there: its turn gets `WALK_FRAMES` frames, steps 1 to
 turn's own frame. `walk_steps` says which steps a turn has, and the GIF and the page
 both draw exactly those.
 
-Implements: viewer/cave-drawn, treasure-island/cave, viewer/turn-marked, viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/walks-between-squares, treasure-island/pokemon-style, viewer/slideshow-file, viewer/game-page, viewer/transcript, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process
+Implements: viewer/cave-drawn, treasure-island/cave, viewer/turn-marked, viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/walks-between-squares, treasure-island/pokemon-style, viewer/slideshow-file, viewer/game-page, viewer/transcript, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process, treasure-island/square-names
 """
 
 import base64
@@ -39,7 +39,7 @@ from PIL import Image, ImageChops
 
 import assets
 from assets.cave import going_in, hat_stack
-from assets.font import draw_text, text_width, wrap
+from assets.font import FONT_HEIGHT, FONT_WIDTH, draw_text, text_width, wrap
 from assets.pirates import pirate, portrait
 from assets.pixels import DARK
 from assets.ui import open_scroll, panel, scroll_note
@@ -47,6 +47,7 @@ from treasure_island.config import parse_config
 from treasure_island.game_state import GameState
 from treasure_island.looks import sprite_values
 from treasure_island.pirates_log import one_line
+from treasure_island.squares import square_name
 
 ASSETS = Path(assets.__file__).parent
 SAND_TILES = ("sand", "sand-2", "sand-3")
@@ -80,6 +81,10 @@ FRAME_MS = 600
 WALK_FRAMES = 4  # frames a move takes, its landing included (default, Al to confirm)
 WALK_MS = 120  # how long each in-between frame shows
 _PLACES_THE_TREASURE = ("grid_size", "crew_size", "seed")
+# The board's edges are lettered and numbered like a chessboard, on the sand of
+# the edge squares, under any pirate standing there (default, Al to confirm).
+BOARD_LABEL_INK = DARK
+_LABEL_INSET = 3
 
 
 def records_in(folder):
@@ -341,6 +346,29 @@ def _draw_ground(image, size, shown, pirates):
         _draw_mark(image, shown)
     if shown["mark"] and shown["mark"][0] == "cave":
         _draw_cave(image, shown, pirates)
+    _draw_square_names(image, size)
+
+
+def column_label_spot(column, size):
+    """Where a column's letter goes: the bottom-right corner of its bottom square."""
+    return (
+        (column + 1) * TILE - _LABEL_INSET - FONT_WIDTH,
+        size * TILE - _LABEL_INSET - FONT_HEIGHT,
+    )
+
+
+def row_label_spot(row):
+    """Where a row's number goes: the top-left corner of its west square."""
+    return (_LABEL_INSET, row * TILE + _LABEL_INSET)
+
+
+def _draw_square_names(image, size):
+    for column in range(size):
+        letter = square_name((column, size - 1), size)[0]
+        draw_text(image, column_label_spot(column, size), letter, BOARD_LABEL_INK)
+    for row in range(size):
+        number = square_name((0, row), size)[1:]
+        draw_text(image, row_label_spot(row), number, BOARD_LABEL_INK)
 
 
 def _draw_cave(image, shown, pirates):
@@ -660,9 +688,9 @@ def _scroll_writes(records):
         for action in record.get("did", []):
             if action.get("action") == "write":
                 line += 1
-                wrote.append(
-                    {"line": line, "by": record["agent"], "text": action["text"]}
-                )
+                # As the scroll keeps it, on one line; `did` keeps it as written.
+                text = one_line(action["text"])
+                wrote.append({"line": line, "by": record["agent"], "text": text})
         writes.append(wrote)
     return writes
 

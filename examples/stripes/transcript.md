@@ -138,7 +138,7 @@ Pirate-3, this is your turn 1 of 20, turn 3 of the game. You are at A3. Your squ
 ## Turn 3: pirate-1
 
 <details>
-<summary>What it was shown (2164 characters)</summary>
+<summary>What it was shown (2160 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -161,7 +161,7 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
 
 Pirate-1, this is your turn 2 of 20, turn 4 of the game. You are at A5. Your square has been dug and holds no cave. The way south is blocked by pirate-2.
 ```
@@ -170,7 +170,7 @@ Pirate-1, this is your turn 2 of 20, turn 4 of the game. You are at A5. Your squ
 
 **Its thinking**
 
-> The next square on my rows is (1, 0).
+> The next square on my rows is B5.
 
 **What it did**
 
@@ -178,12 +178,12 @@ Pirate-1, this is your turn 2 of 20, turn 4 of the game. You are at A5. Your squ
 
 **The result**
 
-> You moved east to (1, 0).
+> You moved east to B5.
 
 ## Turn 4: pirate-2
 
 <details>
-<summary>What it was shown (2190 characters)</summary>
+<summary>What it was shown (2186 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -206,7 +206,7 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 1), on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At A4, on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
 
 Pirate-2, this is your turn 2 of 20, turn 5 of the game. You are at A4. Your square has been dug and holds no cave. The way south is blocked by pirate-3.
 ```
@@ -215,7 +215,7 @@ Pirate-2, this is your turn 2 of 20, turn 5 of the game. You are at A4. Your squ
 
 **Its thinking**
 
-> The next square on my rows is (1, 1).
+> The next square on my rows is B4.
 
 **What it did**
 
@@ -223,12 +223,12 @@ Pirate-2, this is your turn 2 of 20, turn 5 of the game. You are at A4. Your squ
 
 **The result**
 
-> You moved east to (1, 1).
+> You moved east to B4.
 
 ## Turn 5: pirate-3
 
 <details>
-<summary>What it was shown (2164 characters)</summary>
+<summary>What it was shown (2160 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -251,7 +251,7 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
 
 Pirate-3, this is your turn 2 of 20, turn 6 of the game. You are at A3. Your square has been dug and holds no cave. No way out of your square is blocked.
 ```
@@ -260,7 +260,7 @@ Pirate-3, this is your turn 2 of 20, turn 6 of the game. You are at A3. Your squ
 
 **Its thinking**
 
-> The next square on my rows is (1, 2).
+> The next square on my rows is B3.
 
 **What it did**
 
@@ -268,12 +268,12 @@ Pirate-3, this is your turn 2 of 20, turn 6 of the game. You are at A3. Your squ
 
 **The result**
 
-> You moved east to (1, 2).
+> You moved east to B3.
 
 ## Turn 6: pirate-1
 
 <details>
-<summary>What it was shown (2310 characters)</summary>
+<summary>What it was shown (2294 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -296,8 +296,8 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (0, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (1, 0). You were thinking: The next square on my rows is (1, 0).
+- At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At A5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to B5. You were thinking: The next square on my rows is B5.
 
 Pirate-1, this is your turn 3 of 20, turn 7 of the game. You are at B5. Your square hasn't been dug. The way south is blocked by pirate-2.
 ```
@@ -319,7 +319,7 @@ Pirate-1, this is your turn 3 of 20, turn 7 of the game. You are at B5. Your squ
 ## Turn 7: pirate-2
 
 <details>
-<summary>What it was shown (2366 characters)</summary>
+<summary>What it was shown (2350 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -342,8 +342,8 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 1), on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (0, 1), on a dug square, with pirate-3 to the south. You did: move east. You moved east to (1, 1). You were thinking: The next square on my rows is (1, 1).
+- At A4, on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At A4, on a dug square, with pirate-3 to the south. You did: move east. You moved east to B4. You were thinking: The next square on my rows is B4.
 
 Pirate-2, this is your turn 3 of 20, turn 8 of the game. You are at B4. Your square hasn't been dug. The way north is blocked by pirate-1 and the way south by pirate-3.
 ```
@@ -365,7 +365,7 @@ Pirate-2, this is your turn 3 of 20, turn 8 of the game. You are at B4. Your squ
 ## Turn 8: pirate-3
 
 <details>
-<summary>What it was shown (2310 characters)</summary>
+<summary>What it was shown (2294 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -388,8 +388,8 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (0, 2), on a dug square, with no pirate next to you. You did: move east. You moved east to (1, 2). You were thinking: The next square on my rows is (1, 2).
+- At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At A3, on a dug square, with no pirate next to you. You did: move east. You moved east to B3. You were thinking: The next square on my rows is B3.
 
 Pirate-3, this is your turn 3 of 20, turn 9 of the game. You are at B3. Your square hasn't been dug. The way north is blocked by pirate-2.
 ```
@@ -411,7 +411,7 @@ Pirate-3, this is your turn 3 of 20, turn 9 of the game. You are at B3. Your squ
 ## Turn 9: pirate-1
 
 <details>
-<summary>What it was shown (2479 characters)</summary>
+<summary>What it was shown (2459 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -434,9 +434,9 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (0, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (1, 0). You were thinking: The next square on my rows is (1, 0).
-- At (1, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At A5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to B5. You were thinking: The next square on my rows is B5.
+- At B5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
 
 Pirate-1, this is your turn 4 of 20, turn 10 of the game. You are at B5. Your square has been dug and holds no cave. The way south is blocked by pirate-2.
 ```
@@ -445,7 +445,7 @@ Pirate-1, this is your turn 4 of 20, turn 10 of the game. You are at B5. Your sq
 
 **Its thinking**
 
-> The next square on my rows is (2, 0).
+> The next square on my rows is C5.
 
 **What it did**
 
@@ -453,12 +453,12 @@ Pirate-1, this is your turn 4 of 20, turn 10 of the game. You are at B5. Your sq
 
 **The result**
 
-> You moved east to (2, 0).
+> You moved east to C5.
 
 ## Turn 10: pirate-2
 
 <details>
-<summary>What it was shown (2531 characters)</summary>
+<summary>What it was shown (2511 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -481,9 +481,9 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 1), on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (0, 1), on a dug square, with pirate-3 to the south. You did: move east. You moved east to (1, 1). You were thinking: The next square on my rows is (1, 1).
-- At (1, 1), on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At A4, on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At A4, on a dug square, with pirate-3 to the south. You did: move east. You moved east to B4. You were thinking: The next square on my rows is B4.
+- At B4, on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
 
 Pirate-2, this is your turn 4 of 20, turn 11 of the game. You are at B4. Your square has been dug and holds no cave. The way south is blocked by pirate-3.
 ```
@@ -492,7 +492,7 @@ Pirate-2, this is your turn 4 of 20, turn 11 of the game. You are at B4. Your sq
 
 **Its thinking**
 
-> The next square on my rows is (2, 1).
+> The next square on my rows is C4.
 
 **What it did**
 
@@ -500,12 +500,12 @@ Pirate-2, this is your turn 4 of 20, turn 11 of the game. You are at B4. Your sq
 
 **The result**
 
-> You moved east to (2, 1).
+> You moved east to C4.
 
 ## Turn 11: pirate-3
 
 <details>
-<summary>What it was shown (2479 characters)</summary>
+<summary>What it was shown (2459 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -528,9 +528,9 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (0, 2), on a dug square, with no pirate next to you. You did: move east. You moved east to (1, 2). You were thinking: The next square on my rows is (1, 2).
-- At (1, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At A3, on a dug square, with no pirate next to you. You did: move east. You moved east to B3. You were thinking: The next square on my rows is B3.
+- At B3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
 
 Pirate-3, this is your turn 4 of 20, turn 12 of the game. You are at B3. Your square has been dug and holds no cave. No way out of your square is blocked.
 ```
@@ -539,7 +539,7 @@ Pirate-3, this is your turn 4 of 20, turn 12 of the game. You are at B3. Your sq
 
 **Its thinking**
 
-> The next square on my rows is (2, 2).
+> The next square on my rows is C3.
 
 **What it did**
 
@@ -547,12 +547,12 @@ Pirate-3, this is your turn 4 of 20, turn 12 of the game. You are at B3. Your sq
 
 **The result**
 
-> You moved east to (2, 2).
+> You moved east to C3.
 
 ## Turn 12: pirate-1
 
 <details>
-<summary>What it was shown (2625 characters)</summary>
+<summary>What it was shown (2593 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -575,10 +575,10 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (0, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (1, 0). You were thinking: The next square on my rows is (1, 0).
-- At (1, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (1, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (2, 0). You were thinking: The next square on my rows is (2, 0).
+- At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At A5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to B5. You were thinking: The next square on my rows is B5.
+- At B5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At B5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to C5. You were thinking: The next square on my rows is C5.
 
 Pirate-1, this is your turn 5 of 20, turn 13 of the game. You are at C5. Your square hasn't been dug. The way south is blocked by pirate-2.
 ```
@@ -600,7 +600,7 @@ Pirate-1, this is your turn 5 of 20, turn 13 of the game. You are at C5. Your sq
 ## Turn 13: pirate-2
 
 <details>
-<summary>What it was shown (2707 characters)</summary>
+<summary>What it was shown (2675 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -623,10 +623,10 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 1), on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (0, 1), on a dug square, with pirate-3 to the south. You did: move east. You moved east to (1, 1). You were thinking: The next square on my rows is (1, 1).
-- At (1, 1), on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (1, 1), on a dug square, with pirate-3 to the south. You did: move east. You moved east to (2, 1). You were thinking: The next square on my rows is (2, 1).
+- At A4, on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At A4, on a dug square, with pirate-3 to the south. You did: move east. You moved east to B4. You were thinking: The next square on my rows is B4.
+- At B4, on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At B4, on a dug square, with pirate-3 to the south. You did: move east. You moved east to C4. You were thinking: The next square on my rows is C4.
 
 Pirate-2, this is your turn 5 of 20, turn 14 of the game. You are at C4. Your square hasn't been dug. The way north is blocked by pirate-1 and the way south by pirate-3.
 ```
@@ -648,7 +648,7 @@ Pirate-2, this is your turn 5 of 20, turn 14 of the game. You are at C4. Your sq
 ## Turn 14: pirate-3
 
 <details>
-<summary>What it was shown (2625 characters)</summary>
+<summary>What it was shown (2593 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -671,10 +671,10 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (0, 2), on a dug square, with no pirate next to you. You did: move east. You moved east to (1, 2). You were thinking: The next square on my rows is (1, 2).
-- At (1, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (1, 2), on a dug square, with no pirate next to you. You did: move east. You moved east to (2, 2). You were thinking: The next square on my rows is (2, 2).
+- At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At A3, on a dug square, with no pirate next to you. You did: move east. You moved east to B3. You were thinking: The next square on my rows is B3.
+- At B3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At B3, on a dug square, with no pirate next to you. You did: move east. You moved east to C3. You were thinking: The next square on my rows is C3.
 
 Pirate-3, this is your turn 5 of 20, turn 15 of the game. You are at C3. Your square hasn't been dug. The way north is blocked by pirate-2.
 ```
@@ -696,7 +696,7 @@ Pirate-3, this is your turn 5 of 20, turn 15 of the game. You are at C3. Your sq
 ## Turn 15: pirate-1
 
 <details>
-<summary>What it was shown (2805 characters)</summary>
+<summary>What it was shown (2769 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -719,11 +719,11 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (0, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (1, 0). You were thinking: The next square on my rows is (1, 0).
-- At (1, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (1, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (2, 0). You were thinking: The next square on my rows is (2, 0).
-- At (2, 0), on an undug square, with pirate-2 to the south. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
+- At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At A5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to B5. You were thinking: The next square on my rows is B5.
+- At B5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At B5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to C5. You were thinking: The next square on my rows is C5.
+- At C5, on an undug square, with pirate-2 to the south. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
 
 Pirate-1, this is your turn 6 of 20, turn 16 of the game. You are at C5. Your square hasn't been dug. The way south is blocked by pirate-2.
 ```
@@ -745,7 +745,7 @@ Pirate-1, this is your turn 6 of 20, turn 16 of the game. You are at C5. Your sq
 ## Turn 16: pirate-2
 
 <details>
-<summary>What it was shown (2913 characters)</summary>
+<summary>What it was shown (2877 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -768,11 +768,11 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 1), on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (0, 1), on a dug square, with pirate-3 to the south. You did: move east. You moved east to (1, 1). You were thinking: The next square on my rows is (1, 1).
-- At (1, 1), on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (1, 1), on a dug square, with pirate-3 to the south. You did: move east. You moved east to (2, 1). You were thinking: The next square on my rows is (2, 1).
-- At (2, 1), on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
+- At A4, on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At A4, on a dug square, with pirate-3 to the south. You did: move east. You moved east to B4. You were thinking: The next square on my rows is B4.
+- At B4, on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At B4, on a dug square, with pirate-3 to the south. You did: move east. You moved east to C4. You were thinking: The next square on my rows is C4.
+- At C4, on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
 
 Pirate-2, this is your turn 6 of 20, turn 17 of the game. You are at C4. Your square hasn't been dug. The way north is blocked by pirate-1 and the way south by pirate-3.
 ```
@@ -794,7 +794,7 @@ Pirate-2, this is your turn 6 of 20, turn 17 of the game. You are at C4. Your sq
 ## Turn 17: pirate-3
 
 <details>
-<summary>What it was shown (2805 characters)</summary>
+<summary>What it was shown (2769 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -817,11 +817,11 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (0, 2), on a dug square, with no pirate next to you. You did: move east. You moved east to (1, 2). You were thinking: The next square on my rows is (1, 2).
-- At (1, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (1, 2), on a dug square, with no pirate next to you. You did: move east. You moved east to (2, 2). You were thinking: The next square on my rows is (2, 2).
-- At (2, 2), on an undug square, with pirate-2 to the north. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
+- At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At A3, on a dug square, with no pirate next to you. You did: move east. You moved east to B3. You were thinking: The next square on my rows is B3.
+- At B3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At B3, on a dug square, with no pirate next to you. You did: move east. You moved east to C3. You were thinking: The next square on my rows is C3.
+- At C3, on an undug square, with pirate-2 to the north. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
 
 Pirate-3, this is your turn 6 of 20, turn 18 of the game. You are at C3. Your square hasn't been dug. The way north is blocked by pirate-2.
 ```
@@ -843,7 +843,7 @@ Pirate-3, this is your turn 6 of 20, turn 18 of the game. You are at C3. Your sq
 ## Turn 18: pirate-1
 
 <details>
-<summary>What it was shown (2973 characters)</summary>
+<summary>What it was shown (2933 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -866,12 +866,12 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (0, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (1, 0). You were thinking: The next square on my rows is (1, 0).
-- At (1, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (1, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (2, 0). You were thinking: The next square on my rows is (2, 0).
-- At (2, 0), on an undug square, with pirate-2 to the south. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
-- At (2, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At A5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to B5. You were thinking: The next square on my rows is B5.
+- At B5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At B5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to C5. You were thinking: The next square on my rows is C5.
+- At C5, on an undug square, with pirate-2 to the south. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
+- At C5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
 
 Pirate-1, this is your turn 7 of 20, turn 19 of the game. You are at C5. Your square has been dug and holds no cave. The way south is blocked by pirate-2.
 ```
@@ -880,7 +880,7 @@ Pirate-1, this is your turn 7 of 20, turn 19 of the game. You are at C5. Your sq
 
 **Its thinking**
 
-> The next square on my rows is (3, 0).
+> The next square on my rows is D5.
 
 **What it did**
 
@@ -888,12 +888,12 @@ Pirate-1, this is your turn 7 of 20, turn 19 of the game. You are at C5. Your sq
 
 **The result**
 
-> You moved east to (3, 0).
+> You moved east to D5.
 
 ## Turn 19: pirate-2
 
 <details>
-<summary>What it was shown (3143 characters)</summary>
+<summary>What it was shown (3103 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -916,12 +916,12 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 1), on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (0, 1), on a dug square, with pirate-3 to the south. You did: move east. You moved east to (1, 1). You were thinking: The next square on my rows is (1, 1).
-- At (1, 1), on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (1, 1), on a dug square, with pirate-3 to the south. You did: move east. You moved east to (2, 1). You were thinking: The next square on my rows is (2, 1).
-- At (2, 1), on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
-- At (2, 1), on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found the treasure! It opens a cave on this square: enter it to go in. You were thinking: This square is on my rows.
+- At A4, on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At A4, on a dug square, with pirate-3 to the south. You did: move east. You moved east to B4. You were thinking: The next square on my rows is B4.
+- At B4, on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At B4, on a dug square, with pirate-3 to the south. You did: move east. You moved east to C4. You were thinking: The next square on my rows is C4.
+- At C4, on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
+- At C4, on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found the treasure! It opens a cave on this square: enter it to go in. You were thinking: This square is on my rows.
 
 Pirate-2, this is your turn 7 of 20, turn 20 of the game. You are at C4. You are standing on the open cave: enter it to go in. The way south is blocked by pirate-3.
 ```
@@ -934,16 +934,16 @@ Pirate-2, this is your turn 7 of 20, turn 20 of the game. You are at C4. You are
 
 **What it did**
 
-> write {"text": "The treasure is at (2, 1)."}
+> write {"text": "The treasure is at C4."}
 
 **The result**
 
-> You wrote on the scroll: "The treasure is at (2, 1).".
+> You wrote on the scroll: "The treasure is at C4.".
 
 ## Turn 20: pirate-3
 
 <details>
-<summary>What it was shown (2973 characters)</summary>
+<summary>What it was shown (2933 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -966,12 +966,12 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (0, 2), on a dug square, with no pirate next to you. You did: move east. You moved east to (1, 2). You were thinking: The next square on my rows is (1, 2).
-- At (1, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (1, 2), on a dug square, with no pirate next to you. You did: move east. You moved east to (2, 2). You were thinking: The next square on my rows is (2, 2).
-- At (2, 2), on an undug square, with pirate-2 to the north. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
-- At (2, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At A3, on a dug square, with no pirate next to you. You did: move east. You moved east to B3. You were thinking: The next square on my rows is B3.
+- At B3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At B3, on a dug square, with no pirate next to you. You did: move east. You moved east to C3. You were thinking: The next square on my rows is C3.
+- At C3, on an undug square, with pirate-2 to the north. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
+- At C3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
 
 Pirate-3, this is your turn 7 of 20, turn 21 of the game. You are at C3. Your square has been dug and holds no cave. The way north is blocked by pirate-2.
 ```
@@ -980,7 +980,7 @@ Pirate-3, this is your turn 7 of 20, turn 21 of the game. You are at C3. Your sq
 
 **Its thinking**
 
-> The next square on my rows is (3, 2).
+> The next square on my rows is D3.
 
 **What it did**
 
@@ -988,12 +988,12 @@ Pirate-3, this is your turn 7 of 20, turn 21 of the game. You are at C3. Your sq
 
 **The result**
 
-> You moved east to (3, 2).
+> You moved east to D3.
 
 ## Turn 21: pirate-1
 
 <details>
-<summary>What it was shown (3119 characters)</summary>
+<summary>What it was shown (3067 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -1016,13 +1016,13 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (0, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (1, 0). You were thinking: The next square on my rows is (1, 0).
-- At (1, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (1, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (2, 0). You were thinking: The next square on my rows is (2, 0).
-- At (2, 0), on an undug square, with pirate-2 to the south. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
-- At (2, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (2, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (3, 0). You were thinking: The next square on my rows is (3, 0).
+- At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At A5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to B5. You were thinking: The next square on my rows is B5.
+- At B5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At B5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to C5. You were thinking: The next square on my rows is C5.
+- At C5, on an undug square, with pirate-2 to the south. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
+- At C5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At C5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to D5. You were thinking: The next square on my rows is D5.
 
 Pirate-1, this is your turn 8 of 20, turn 22 of the game. You are at D5. Your square hasn't been dug. No way out of your square is blocked.
 ```
@@ -1044,7 +1044,7 @@ Pirate-1, this is your turn 8 of 20, turn 22 of the game. You are at D5. Your sq
 ## Turn 22: pirate-2
 
 <details>
-<summary>What it was shown (3356 characters)</summary>
+<summary>What it was shown (3304 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -1067,13 +1067,13 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 1), on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (0, 1), on a dug square, with pirate-3 to the south. You did: move east. You moved east to (1, 1). You were thinking: The next square on my rows is (1, 1).
-- At (1, 1), on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (1, 1), on a dug square, with pirate-3 to the south. You did: move east. You moved east to (2, 1). You were thinking: The next square on my rows is (2, 1).
-- At (2, 1), on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
-- At (2, 1), on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found the treasure! It opens a cave on this square: enter it to go in. You were thinking: This square is on my rows.
-- At (2, 1), on the open cave, with pirate-3 to the south. You did: write The treasure is at (2, 1).. You wrote on the scroll: "The treasure is at (2, 1).". You were thinking: I found it, so the crew should know.
+- At A4, on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At A4, on a dug square, with pirate-3 to the south. You did: move east. You moved east to B4. You were thinking: The next square on my rows is B4.
+- At B4, on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At B4, on a dug square, with pirate-3 to the south. You did: move east. You moved east to C4. You were thinking: The next square on my rows is C4.
+- At C4, on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
+- At C4, on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found the treasure! It opens a cave on this square: enter it to go in. You were thinking: This square is on my rows.
+- At C4, on the open cave, with pirate-3 to the south. You did: write The treasure is at C4.. You wrote on the scroll: "The treasure is at C4.". You were thinking: I found it, so the crew should know.
 
 Pirate-2, this is your turn 8 of 20, turn 23 of the game. You are at C4. You are standing on the open cave: enter it to go in. No way out of your square is blocked.
 ```
@@ -1095,7 +1095,7 @@ Pirate-2, this is your turn 8 of 20, turn 23 of the game. You are at C4. You are
 ## Turn 23: pirate-3
 
 <details>
-<summary>What it was shown (3119 characters)</summary>
+<summary>What it was shown (3067 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -1118,13 +1118,13 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (0, 2), on a dug square, with no pirate next to you. You did: move east. You moved east to (1, 2). You were thinking: The next square on my rows is (1, 2).
-- At (1, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (1, 2), on a dug square, with no pirate next to you. You did: move east. You moved east to (2, 2). You were thinking: The next square on my rows is (2, 2).
-- At (2, 2), on an undug square, with pirate-2 to the north. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
-- At (2, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (2, 2), on a dug square, with pirate-2 to the north. You did: move east. You moved east to (3, 2). You were thinking: The next square on my rows is (3, 2).
+- At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At A3, on a dug square, with no pirate next to you. You did: move east. You moved east to B3. You were thinking: The next square on my rows is B3.
+- At B3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At B3, on a dug square, with no pirate next to you. You did: move east. You moved east to C3. You were thinking: The next square on my rows is C3.
+- At C3, on an undug square, with pirate-2 to the north. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
+- At C3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At C3, on a dug square, with pirate-2 to the north. You did: move east. You moved east to D3. You were thinking: The next square on my rows is D3.
 
 Pirate-3, this is your turn 8 of 20, turn 24 of the game. You are at D3. Your square hasn't been dug. No way out of your square is blocked.
 ```
@@ -1146,7 +1146,7 @@ Pirate-3, this is your turn 8 of 20, turn 24 of the game. You are at D3. Your sq
 ## Turn 24: pirate-1
 
 <details>
-<summary>What it was shown (3287 characters)</summary>
+<summary>What it was shown (3231 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -1169,14 +1169,14 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (0, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (1, 0). You were thinking: The next square on my rows is (1, 0).
-- At (1, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (1, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (2, 0). You were thinking: The next square on my rows is (2, 0).
-- At (2, 0), on an undug square, with pirate-2 to the south. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
-- At (2, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (2, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (3, 0). You were thinking: The next square on my rows is (3, 0).
-- At (3, 0), on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At A5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to B5. You were thinking: The next square on my rows is B5.
+- At B5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At B5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to C5. You were thinking: The next square on my rows is C5.
+- At C5, on an undug square, with pirate-2 to the south. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
+- At C5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At C5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to D5. You were thinking: The next square on my rows is D5.
+- At D5, on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
 
 Pirate-1, this is your turn 9 of 20, turn 25 of the game. You are at D5. Your square has been dug and holds no cave. No way out of your square is blocked.
 ```
@@ -1185,7 +1185,7 @@ Pirate-1, this is your turn 9 of 20, turn 25 of the game. You are at D5. Your sq
 
 **Its thinking**
 
-> The next square on my rows is (4, 0).
+> The next square on my rows is E5.
 
 **What it did**
 
@@ -1193,12 +1193,12 @@ Pirate-1, this is your turn 9 of 20, turn 25 of the game. You are at D5. Your sq
 
 **The result**
 
-> You moved east to (4, 0).
+> You moved east to E5.
 
 ## Turn 25: pirate-3
 
 <details>
-<summary>What it was shown (3287 characters)</summary>
+<summary>What it was shown (3231 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -1221,14 +1221,14 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (0, 2), on a dug square, with no pirate next to you. You did: move east. You moved east to (1, 2). You were thinking: The next square on my rows is (1, 2).
-- At (1, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (1, 2), on a dug square, with no pirate next to you. You did: move east. You moved east to (2, 2). You were thinking: The next square on my rows is (2, 2).
-- At (2, 2), on an undug square, with pirate-2 to the north. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
-- At (2, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (2, 2), on a dug square, with pirate-2 to the north. You did: move east. You moved east to (3, 2). You were thinking: The next square on my rows is (3, 2).
-- At (3, 2), on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At A3, on a dug square, with no pirate next to you. You did: move east. You moved east to B3. You were thinking: The next square on my rows is B3.
+- At B3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At B3, on a dug square, with no pirate next to you. You did: move east. You moved east to C3. You were thinking: The next square on my rows is C3.
+- At C3, on an undug square, with pirate-2 to the north. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
+- At C3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At C3, on a dug square, with pirate-2 to the north. You did: move east. You moved east to D3. You were thinking: The next square on my rows is D3.
+- At D3, on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
 
 Pirate-3, this is your turn 9 of 20, turn 26 of the game. You are at D3. Your square has been dug and holds no cave. No way out of your square is blocked.
 ```
@@ -1237,7 +1237,7 @@ Pirate-3, this is your turn 9 of 20, turn 26 of the game. You are at D3. Your sq
 
 **Its thinking**
 
-> The next square on my rows is (4, 2).
+> The next square on my rows is E3.
 
 **What it did**
 
@@ -1245,12 +1245,12 @@ Pirate-3, this is your turn 9 of 20, turn 26 of the game. You are at D3. Your sq
 
 **The result**
 
-> You moved east to (4, 2).
+> You moved east to E3.
 
 ## Turn 26: pirate-1
 
 <details>
-<summary>What it was shown (3434 characters)</summary>
+<summary>What it was shown (3366 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -1273,15 +1273,15 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (0, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (1, 0). You were thinking: The next square on my rows is (1, 0).
-- At (1, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (1, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (2, 0). You were thinking: The next square on my rows is (2, 0).
-- At (2, 0), on an undug square, with pirate-2 to the south. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
-- At (2, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (2, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (3, 0). You were thinking: The next square on my rows is (3, 0).
-- At (3, 0), on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (3, 0), on a dug square, with no pirate next to you. You did: move east. You moved east to (4, 0). You were thinking: The next square on my rows is (4, 0).
+- At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At A5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to B5. You were thinking: The next square on my rows is B5.
+- At B5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At B5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to C5. You were thinking: The next square on my rows is C5.
+- At C5, on an undug square, with pirate-2 to the south. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
+- At C5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At C5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to D5. You were thinking: The next square on my rows is D5.
+- At D5, on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At D5, on a dug square, with no pirate next to you. You did: move east. You moved east to E5. You were thinking: The next square on my rows is E5.
 
 Pirate-1, this is your turn 10 of 20, turn 27 of the game. You are at E5. Your square hasn't been dug. No way out of your square is blocked.
 ```
@@ -1303,7 +1303,7 @@ Pirate-1, this is your turn 10 of 20, turn 27 of the game. You are at E5. Your s
 ## Turn 27: pirate-3
 
 <details>
-<summary>What it was shown (3434 characters)</summary>
+<summary>What it was shown (3366 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -1326,15 +1326,15 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (0, 2), on a dug square, with no pirate next to you. You did: move east. You moved east to (1, 2). You were thinking: The next square on my rows is (1, 2).
-- At (1, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (1, 2), on a dug square, with no pirate next to you. You did: move east. You moved east to (2, 2). You were thinking: The next square on my rows is (2, 2).
-- At (2, 2), on an undug square, with pirate-2 to the north. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
-- At (2, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (2, 2), on a dug square, with pirate-2 to the north. You did: move east. You moved east to (3, 2). You were thinking: The next square on my rows is (3, 2).
-- At (3, 2), on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (3, 2), on a dug square, with no pirate next to you. You did: move east. You moved east to (4, 2). You were thinking: The next square on my rows is (4, 2).
+- At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At A3, on a dug square, with no pirate next to you. You did: move east. You moved east to B3. You were thinking: The next square on my rows is B3.
+- At B3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At B3, on a dug square, with no pirate next to you. You did: move east. You moved east to C3. You were thinking: The next square on my rows is C3.
+- At C3, on an undug square, with pirate-2 to the north. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
+- At C3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At C3, on a dug square, with pirate-2 to the north. You did: move east. You moved east to D3. You were thinking: The next square on my rows is D3.
+- At D3, on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At D3, on a dug square, with no pirate next to you. You did: move east. You moved east to E3. You were thinking: The next square on my rows is E3.
 
 Pirate-3, this is your turn 10 of 20, turn 28 of the game. You are at E3. Your square hasn't been dug. No way out of your square is blocked.
 ```
@@ -1356,7 +1356,7 @@ Pirate-3, this is your turn 10 of 20, turn 28 of the game. You are at E3. Your s
 ## Turn 28: pirate-1
 
 <details>
-<summary>What it was shown (3641 characters)</summary>
+<summary>What it was shown (3565 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -1379,16 +1379,16 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (0, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (1, 0). You were thinking: The next square on my rows is (1, 0).
-- At (1, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (1, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (2, 0). You were thinking: The next square on my rows is (2, 0).
-- At (2, 0), on an undug square, with pirate-2 to the south. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
-- At (2, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (2, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (3, 0). You were thinking: The next square on my rows is (3, 0).
-- At (3, 0), on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (3, 0), on a dug square, with no pirate next to you. You did: move east. You moved east to (4, 0). You were thinking: The next square on my rows is (4, 0).
-- At (4, 0), on an undug square, with no pirate next to you. You did: read. You read the scroll. It said: line 1 by pirate-2: The treasure is at (2, 1).. You were thinking: Every 5th turn I read the scroll.
+- At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At A5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to B5. You were thinking: The next square on my rows is B5.
+- At B5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At B5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to C5. You were thinking: The next square on my rows is C5.
+- At C5, on an undug square, with pirate-2 to the south. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
+- At C5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At C5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to D5. You were thinking: The next square on my rows is D5.
+- At D5, on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At D5, on a dug square, with no pirate next to you. You did: move east. You moved east to E5. You were thinking: The next square on my rows is E5.
+- At E5, on an undug square, with no pirate next to you. You did: read. You read the scroll. It said: line 1 by pirate-2: The treasure is at C4.. You were thinking: Every 5th turn I read the scroll.
 
 Pirate-1, this is your turn 11 of 20, turn 29 of the game. You are at E5. Your square hasn't been dug. No way out of your square is blocked.
 ```
@@ -1397,7 +1397,7 @@ Pirate-1, this is your turn 11 of 20, turn 29 of the game. You are at E5. Your s
 
 **Its thinking**
 
-> The cave is at (2, 1).
+> The cave is at C4.
 
 **What it did**
 
@@ -1405,12 +1405,12 @@ Pirate-1, this is your turn 11 of 20, turn 29 of the game. You are at E5. Your s
 
 **The result**
 
-> You moved west to (3, 0).
+> You moved west to D5.
 
 ## Turn 29: pirate-3
 
 <details>
-<summary>What it was shown (3641 characters)</summary>
+<summary>What it was shown (3565 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -1433,16 +1433,16 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (0, 2), on a dug square, with no pirate next to you. You did: move east. You moved east to (1, 2). You were thinking: The next square on my rows is (1, 2).
-- At (1, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (1, 2), on a dug square, with no pirate next to you. You did: move east. You moved east to (2, 2). You were thinking: The next square on my rows is (2, 2).
-- At (2, 2), on an undug square, with pirate-2 to the north. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
-- At (2, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (2, 2), on a dug square, with pirate-2 to the north. You did: move east. You moved east to (3, 2). You were thinking: The next square on my rows is (3, 2).
-- At (3, 2), on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (3, 2), on a dug square, with no pirate next to you. You did: move east. You moved east to (4, 2). You were thinking: The next square on my rows is (4, 2).
-- At (4, 2), on an undug square, with no pirate next to you. You did: read. You read the scroll. It said: line 1 by pirate-2: The treasure is at (2, 1).. You were thinking: Every 5th turn I read the scroll.
+- At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At A3, on a dug square, with no pirate next to you. You did: move east. You moved east to B3. You were thinking: The next square on my rows is B3.
+- At B3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At B3, on a dug square, with no pirate next to you. You did: move east. You moved east to C3. You were thinking: The next square on my rows is C3.
+- At C3, on an undug square, with pirate-2 to the north. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
+- At C3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At C3, on a dug square, with pirate-2 to the north. You did: move east. You moved east to D3. You were thinking: The next square on my rows is D3.
+- At D3, on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At D3, on a dug square, with no pirate next to you. You did: move east. You moved east to E3. You were thinking: The next square on my rows is E3.
+- At E3, on an undug square, with no pirate next to you. You did: read. You read the scroll. It said: line 1 by pirate-2: The treasure is at C4.. You were thinking: Every 5th turn I read the scroll.
 
 Pirate-3, this is your turn 11 of 20, turn 30 of the game. You are at E3. Your square hasn't been dug. No way out of your square is blocked.
 ```
@@ -1451,7 +1451,7 @@ Pirate-3, this is your turn 11 of 20, turn 30 of the game. You are at E3. Your s
 
 **Its thinking**
 
-> The cave is at (2, 1).
+> The cave is at C4.
 
 **What it did**
 
@@ -1459,12 +1459,12 @@ Pirate-3, this is your turn 11 of 20, turn 30 of the game. You are at E3. Your s
 
 **The result**
 
-> You moved west to (3, 2).
+> You moved west to D3.
 
 ## Turn 30: pirate-1
 
 <details>
-<summary>What it was shown (3805 characters)</summary>
+<summary>What it was shown (3717 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -1487,17 +1487,17 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (0, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (1, 0). You were thinking: The next square on my rows is (1, 0).
-- At (1, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (1, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (2, 0). You were thinking: The next square on my rows is (2, 0).
-- At (2, 0), on an undug square, with pirate-2 to the south. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
-- At (2, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (2, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (3, 0). You were thinking: The next square on my rows is (3, 0).
-- At (3, 0), on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (3, 0), on a dug square, with no pirate next to you. You did: move east. You moved east to (4, 0). You were thinking: The next square on my rows is (4, 0).
-- At (4, 0), on an undug square, with no pirate next to you. You did: read. You read the scroll. It said: line 1 by pirate-2: The treasure is at (2, 1).. You were thinking: Every 5th turn I read the scroll.
-- At (4, 0), on an undug square, with no pirate next to you. You did: move west. You moved west to (3, 0). You were thinking: The cave is at (2, 1).
+- At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At A5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to B5. You were thinking: The next square on my rows is B5.
+- At B5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At B5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to C5. You were thinking: The next square on my rows is C5.
+- At C5, on an undug square, with pirate-2 to the south. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
+- At C5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At C5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to D5. You were thinking: The next square on my rows is D5.
+- At D5, on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At D5, on a dug square, with no pirate next to you. You did: move east. You moved east to E5. You were thinking: The next square on my rows is E5.
+- At E5, on an undug square, with no pirate next to you. You did: read. You read the scroll. It said: line 1 by pirate-2: The treasure is at C4.. You were thinking: Every 5th turn I read the scroll.
+- At E5, on an undug square, with no pirate next to you. You did: move west. You moved west to D5. You were thinking: The cave is at C4.
 
 Pirate-1, this is your turn 12 of 20, turn 31 of the game. You are at D5. Your square has been dug and holds no cave. No way out of your square is blocked.
 ```
@@ -1506,7 +1506,7 @@ Pirate-1, this is your turn 12 of 20, turn 31 of the game. You are at D5. Your s
 
 **Its thinking**
 
-> The cave is at (2, 1).
+> The cave is at C4.
 
 **What it did**
 
@@ -1514,12 +1514,12 @@ Pirate-1, this is your turn 12 of 20, turn 31 of the game. You are at D5. Your s
 
 **The result**
 
-> You moved west to (2, 0).
+> You moved west to C5.
 
 ## Turn 31: pirate-3
 
 <details>
-<summary>What it was shown (3805 characters)</summary>
+<summary>What it was shown (3717 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -1542,17 +1542,17 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (0, 2), on a dug square, with no pirate next to you. You did: move east. You moved east to (1, 2). You were thinking: The next square on my rows is (1, 2).
-- At (1, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (1, 2), on a dug square, with no pirate next to you. You did: move east. You moved east to (2, 2). You were thinking: The next square on my rows is (2, 2).
-- At (2, 2), on an undug square, with pirate-2 to the north. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
-- At (2, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (2, 2), on a dug square, with pirate-2 to the north. You did: move east. You moved east to (3, 2). You were thinking: The next square on my rows is (3, 2).
-- At (3, 2), on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (3, 2), on a dug square, with no pirate next to you. You did: move east. You moved east to (4, 2). You were thinking: The next square on my rows is (4, 2).
-- At (4, 2), on an undug square, with no pirate next to you. You did: read. You read the scroll. It said: line 1 by pirate-2: The treasure is at (2, 1).. You were thinking: Every 5th turn I read the scroll.
-- At (4, 2), on an undug square, with no pirate next to you. You did: move west. You moved west to (3, 2). You were thinking: The cave is at (2, 1).
+- At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At A3, on a dug square, with no pirate next to you. You did: move east. You moved east to B3. You were thinking: The next square on my rows is B3.
+- At B3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At B3, on a dug square, with no pirate next to you. You did: move east. You moved east to C3. You were thinking: The next square on my rows is C3.
+- At C3, on an undug square, with pirate-2 to the north. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
+- At C3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At C3, on a dug square, with pirate-2 to the north. You did: move east. You moved east to D3. You were thinking: The next square on my rows is D3.
+- At D3, on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At D3, on a dug square, with no pirate next to you. You did: move east. You moved east to E3. You were thinking: The next square on my rows is E3.
+- At E3, on an undug square, with no pirate next to you. You did: read. You read the scroll. It said: line 1 by pirate-2: The treasure is at C4.. You were thinking: Every 5th turn I read the scroll.
+- At E3, on an undug square, with no pirate next to you. You did: move west. You moved west to D3. You were thinking: The cave is at C4.
 
 Pirate-3, this is your turn 12 of 20, turn 32 of the game. You are at D3. Your square has been dug and holds no cave. No way out of your square is blocked.
 ```
@@ -1561,7 +1561,7 @@ Pirate-3, this is your turn 12 of 20, turn 32 of the game. You are at D3. Your s
 
 **Its thinking**
 
-> The cave is at (2, 1).
+> The cave is at C4.
 
 **What it did**
 
@@ -1569,12 +1569,12 @@ Pirate-3, this is your turn 12 of 20, turn 32 of the game. You are at D3. Your s
 
 **The result**
 
-> You moved west to (2, 2).
+> You moved west to C3.
 
 ## Turn 32: pirate-1
 
 <details>
-<summary>What it was shown (3951 characters)</summary>
+<summary>What it was shown (3851 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -1597,18 +1597,18 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (0, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (1, 0). You were thinking: The next square on my rows is (1, 0).
-- At (1, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (1, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (2, 0). You were thinking: The next square on my rows is (2, 0).
-- At (2, 0), on an undug square, with pirate-2 to the south. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
-- At (2, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (2, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (3, 0). You were thinking: The next square on my rows is (3, 0).
-- At (3, 0), on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (3, 0), on a dug square, with no pirate next to you. You did: move east. You moved east to (4, 0). You were thinking: The next square on my rows is (4, 0).
-- At (4, 0), on an undug square, with no pirate next to you. You did: read. You read the scroll. It said: line 1 by pirate-2: The treasure is at (2, 1).. You were thinking: Every 5th turn I read the scroll.
-- At (4, 0), on an undug square, with no pirate next to you. You did: move west. You moved west to (3, 0). You were thinking: The cave is at (2, 1).
-- At (3, 0), on a dug square, with no pirate next to you. You did: move west. You moved west to (2, 0). You were thinking: The cave is at (2, 1).
+- At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At A5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to B5. You were thinking: The next square on my rows is B5.
+- At B5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At B5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to C5. You were thinking: The next square on my rows is C5.
+- At C5, on an undug square, with pirate-2 to the south. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
+- At C5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At C5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to D5. You were thinking: The next square on my rows is D5.
+- At D5, on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At D5, on a dug square, with no pirate next to you. You did: move east. You moved east to E5. You were thinking: The next square on my rows is E5.
+- At E5, on an undug square, with no pirate next to you. You did: read. You read the scroll. It said: line 1 by pirate-2: The treasure is at C4.. You were thinking: Every 5th turn I read the scroll.
+- At E5, on an undug square, with no pirate next to you. You did: move west. You moved west to D5. You were thinking: The cave is at C4.
+- At D5, on a dug square, with no pirate next to you. You did: move west. You moved west to C5. You were thinking: The cave is at C4.
 
 Pirate-1, this is your turn 13 of 20, turn 33 of the game. You are at C5. Your square has been dug and holds no cave. No way out of your square is blocked.
 ```
@@ -1617,7 +1617,7 @@ Pirate-1, this is your turn 13 of 20, turn 33 of the game. You are at C5. Your s
 
 **Its thinking**
 
-> The cave is at (2, 1).
+> The cave is at C4.
 
 **What it did**
 
@@ -1625,12 +1625,12 @@ Pirate-1, this is your turn 13 of 20, turn 33 of the game. You are at C5. Your s
 
 **The result**
 
-> You moved south to (2, 1).
+> You moved south to C4.
 
 ## Turn 33: pirate-3
 
 <details>
-<summary>What it was shown (3951 characters)</summary>
+<summary>What it was shown (3851 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -1653,18 +1653,18 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (0, 2), on a dug square, with no pirate next to you. You did: move east. You moved east to (1, 2). You were thinking: The next square on my rows is (1, 2).
-- At (1, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (1, 2), on a dug square, with no pirate next to you. You did: move east. You moved east to (2, 2). You were thinking: The next square on my rows is (2, 2).
-- At (2, 2), on an undug square, with pirate-2 to the north. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
-- At (2, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (2, 2), on a dug square, with pirate-2 to the north. You did: move east. You moved east to (3, 2). You were thinking: The next square on my rows is (3, 2).
-- At (3, 2), on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (3, 2), on a dug square, with no pirate next to you. You did: move east. You moved east to (4, 2). You were thinking: The next square on my rows is (4, 2).
-- At (4, 2), on an undug square, with no pirate next to you. You did: read. You read the scroll. It said: line 1 by pirate-2: The treasure is at (2, 1).. You were thinking: Every 5th turn I read the scroll.
-- At (4, 2), on an undug square, with no pirate next to you. You did: move west. You moved west to (3, 2). You were thinking: The cave is at (2, 1).
-- At (3, 2), on a dug square, with no pirate next to you. You did: move west. You moved west to (2, 2). You were thinking: The cave is at (2, 1).
+- At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At A3, on a dug square, with no pirate next to you. You did: move east. You moved east to B3. You were thinking: The next square on my rows is B3.
+- At B3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At B3, on a dug square, with no pirate next to you. You did: move east. You moved east to C3. You were thinking: The next square on my rows is C3.
+- At C3, on an undug square, with pirate-2 to the north. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
+- At C3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At C3, on a dug square, with pirate-2 to the north. You did: move east. You moved east to D3. You were thinking: The next square on my rows is D3.
+- At D3, on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At D3, on a dug square, with no pirate next to you. You did: move east. You moved east to E3. You were thinking: The next square on my rows is E3.
+- At E3, on an undug square, with no pirate next to you. You did: read. You read the scroll. It said: line 1 by pirate-2: The treasure is at C4.. You were thinking: Every 5th turn I read the scroll.
+- At E3, on an undug square, with no pirate next to you. You did: move west. You moved west to D3. You were thinking: The cave is at C4.
+- At D3, on a dug square, with no pirate next to you. You did: move west. You moved west to C3. You were thinking: The cave is at C4.
 
 Pirate-3, this is your turn 13 of 20, turn 34 of the game. You are at C3. Your square has been dug and holds no cave. The way north is blocked by pirate-1.
 ```
@@ -1686,7 +1686,7 @@ Pirate-3, this is your turn 13 of 20, turn 34 of the game. You are at C3. Your s
 ## Turn 34: pirate-1
 
 <details>
-<summary>What it was shown (4109 characters)</summary>
+<summary>What it was shown (3997 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -1709,19 +1709,19 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (0, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (1, 0). You were thinking: The next square on my rows is (1, 0).
-- At (1, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (1, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (2, 0). You were thinking: The next square on my rows is (2, 0).
-- At (2, 0), on an undug square, with pirate-2 to the south. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
-- At (2, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (2, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (3, 0). You were thinking: The next square on my rows is (3, 0).
-- At (3, 0), on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (3, 0), on a dug square, with no pirate next to you. You did: move east. You moved east to (4, 0). You were thinking: The next square on my rows is (4, 0).
-- At (4, 0), on an undug square, with no pirate next to you. You did: read. You read the scroll. It said: line 1 by pirate-2: The treasure is at (2, 1).. You were thinking: Every 5th turn I read the scroll.
-- At (4, 0), on an undug square, with no pirate next to you. You did: move west. You moved west to (3, 0). You were thinking: The cave is at (2, 1).
-- At (3, 0), on a dug square, with no pirate next to you. You did: move west. You moved west to (2, 0). You were thinking: The cave is at (2, 1).
-- At (2, 0), on a dug square, with no pirate next to you. You did: move south. You moved south to (2, 1). You were thinking: The cave is at (2, 1).
+- At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At A5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to B5. You were thinking: The next square on my rows is B5.
+- At B5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At B5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to C5. You were thinking: The next square on my rows is C5.
+- At C5, on an undug square, with pirate-2 to the south. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
+- At C5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At C5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to D5. You were thinking: The next square on my rows is D5.
+- At D5, on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At D5, on a dug square, with no pirate next to you. You did: move east. You moved east to E5. You were thinking: The next square on my rows is E5.
+- At E5, on an undug square, with no pirate next to you. You did: read. You read the scroll. It said: line 1 by pirate-2: The treasure is at C4.. You were thinking: Every 5th turn I read the scroll.
+- At E5, on an undug square, with no pirate next to you. You did: move west. You moved west to D5. You were thinking: The cave is at C4.
+- At D5, on a dug square, with no pirate next to you. You did: move west. You moved west to C5. You were thinking: The cave is at C4.
+- At C5, on a dug square, with no pirate next to you. You did: move south. You moved south to C4. You were thinking: The cave is at C4.
 
 Pirate-1, this is your turn 14 of 20, turn 35 of the game. You are at C4. You are standing on the open cave: enter it to go in. The way south is blocked by pirate-3.
 ```
@@ -1743,7 +1743,7 @@ Pirate-1, this is your turn 14 of 20, turn 35 of the game. You are at C4. You ar
 ## Turn 35: pirate-3
 
 <details>
-<summary>What it was shown (4127 characters)</summary>
+<summary>What it was shown (4023 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -1766,19 +1766,19 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (0, 2), on a dug square, with no pirate next to you. You did: move east. You moved east to (1, 2). You were thinking: The next square on my rows is (1, 2).
-- At (1, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (1, 2), on a dug square, with no pirate next to you. You did: move east. You moved east to (2, 2). You were thinking: The next square on my rows is (2, 2).
-- At (2, 2), on an undug square, with pirate-2 to the north. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
-- At (2, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (2, 2), on a dug square, with pirate-2 to the north. You did: move east. You moved east to (3, 2). You were thinking: The next square on my rows is (3, 2).
-- At (3, 2), on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (3, 2), on a dug square, with no pirate next to you. You did: move east. You moved east to (4, 2). You were thinking: The next square on my rows is (4, 2).
-- At (4, 2), on an undug square, with no pirate next to you. You did: read. You read the scroll. It said: line 1 by pirate-2: The treasure is at (2, 1).. You were thinking: Every 5th turn I read the scroll.
-- At (4, 2), on an undug square, with no pirate next to you. You did: move west. You moved west to (3, 2). You were thinking: The cave is at (2, 1).
-- At (3, 2), on a dug square, with no pirate next to you. You did: move west. You moved west to (2, 2). You were thinking: The cave is at (2, 1).
-- At (2, 2), on a dug square, with pirate-1 to the north. You did: write I am blocked. You wrote on the scroll: "I am blocked". You were thinking: A pirate is in my way north.
+- At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At A3, on a dug square, with no pirate next to you. You did: move east. You moved east to B3. You were thinking: The next square on my rows is B3.
+- At B3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At B3, on a dug square, with no pirate next to you. You did: move east. You moved east to C3. You were thinking: The next square on my rows is C3.
+- At C3, on an undug square, with pirate-2 to the north. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
+- At C3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At C3, on a dug square, with pirate-2 to the north. You did: move east. You moved east to D3. You were thinking: The next square on my rows is D3.
+- At D3, on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At D3, on a dug square, with no pirate next to you. You did: move east. You moved east to E3. You were thinking: The next square on my rows is E3.
+- At E3, on an undug square, with no pirate next to you. You did: read. You read the scroll. It said: line 1 by pirate-2: The treasure is at C4.. You were thinking: Every 5th turn I read the scroll.
+- At E3, on an undug square, with no pirate next to you. You did: move west. You moved west to D3. You were thinking: The cave is at C4.
+- At D3, on a dug square, with no pirate next to you. You did: move west. You moved west to C3. You were thinking: The cave is at C4.
+- At C3, on a dug square, with pirate-1 to the north. You did: write I am blocked. You wrote on the scroll: "I am blocked". You were thinking: A pirate is in my way north.
 
 Pirate-3, this is your turn 14 of 20, turn 36 of the game. You are at C3. Your square has been dug and holds no cave. No way out of your square is blocked.
 ```
@@ -1787,7 +1787,7 @@ Pirate-3, this is your turn 14 of 20, turn 36 of the game. You are at C3. Your s
 
 **Its thinking**
 
-> The cave is at (2, 1).
+> The cave is at C4.
 
 **What it did**
 
@@ -1795,12 +1795,12 @@ Pirate-3, this is your turn 14 of 20, turn 36 of the game. You are at C3. Your s
 
 **The result**
 
-> You moved north to (2, 1).
+> You moved north to C4.
 
 ## Turn 36: pirate-3
 
 <details>
-<summary>What it was shown (4285 characters)</summary>
+<summary>What it was shown (4169 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -1823,20 +1823,20 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (0, 2), on a dug square, with no pirate next to you. You did: move east. You moved east to (1, 2). You were thinking: The next square on my rows is (1, 2).
-- At (1, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (1, 2), on a dug square, with no pirate next to you. You did: move east. You moved east to (2, 2). You were thinking: The next square on my rows is (2, 2).
-- At (2, 2), on an undug square, with pirate-2 to the north. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
-- At (2, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (2, 2), on a dug square, with pirate-2 to the north. You did: move east. You moved east to (3, 2). You were thinking: The next square on my rows is (3, 2).
-- At (3, 2), on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
-- At (3, 2), on a dug square, with no pirate next to you. You did: move east. You moved east to (4, 2). You were thinking: The next square on my rows is (4, 2).
-- At (4, 2), on an undug square, with no pirate next to you. You did: read. You read the scroll. It said: line 1 by pirate-2: The treasure is at (2, 1).. You were thinking: Every 5th turn I read the scroll.
-- At (4, 2), on an undug square, with no pirate next to you. You did: move west. You moved west to (3, 2). You were thinking: The cave is at (2, 1).
-- At (3, 2), on a dug square, with no pirate next to you. You did: move west. You moved west to (2, 2). You were thinking: The cave is at (2, 1).
-- At (2, 2), on a dug square, with pirate-1 to the north. You did: write I am blocked. You wrote on the scroll: "I am blocked". You were thinking: A pirate is in my way north.
-- At (2, 2), on a dug square, with no pirate next to you. You did: move north. You moved north to (2, 1). You were thinking: The cave is at (2, 1).
+- At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At A3, on a dug square, with no pirate next to you. You did: move east. You moved east to B3. You were thinking: The next square on my rows is B3.
+- At B3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At B3, on a dug square, with no pirate next to you. You did: move east. You moved east to C3. You were thinking: The next square on my rows is C3.
+- At C3, on an undug square, with pirate-2 to the north. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
+- At C3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At C3, on a dug square, with pirate-2 to the north. You did: move east. You moved east to D3. You were thinking: The next square on my rows is D3.
+- At D3, on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
+- At D3, on a dug square, with no pirate next to you. You did: move east. You moved east to E3. You were thinking: The next square on my rows is E3.
+- At E3, on an undug square, with no pirate next to you. You did: read. You read the scroll. It said: line 1 by pirate-2: The treasure is at C4.. You were thinking: Every 5th turn I read the scroll.
+- At E3, on an undug square, with no pirate next to you. You did: move west. You moved west to D3. You were thinking: The cave is at C4.
+- At D3, on a dug square, with no pirate next to you. You did: move west. You moved west to C3. You were thinking: The cave is at C4.
+- At C3, on a dug square, with pirate-1 to the north. You did: write I am blocked. You wrote on the scroll: "I am blocked". You were thinking: A pirate is in my way north.
+- At C3, on a dug square, with no pirate next to you. You did: move north. You moved north to C4. You were thinking: The cave is at C4.
 
 Pirate-3, this is your turn 15 of 20, turn 37 of the game. You are at C4. You are standing on the open cave: enter it to go in. No way out of your square is blocked.
 ```
@@ -1857,6 +1857,6 @@ Pirate-3, this is your turn 15 of 20, turn 37 of the game. You are at C4. You ar
 
 ## Game over
 
-Game over: everyone is in the cave. The treasure at (2, 1) was dug up, and 3 of 3 pirates got into the cave. Score 530.
+Game over: everyone is in the cave. The treasure at C4 was dug up, and 3 of 3 pirates got into the cave. Score 530.
 
 **Score:** 530

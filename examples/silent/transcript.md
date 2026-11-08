@@ -138,7 +138,7 @@ Pirate-3, this is your turn 1 of 20, turn 3 of the game. You are at A3. Your squ
 ## Turn 3: pirate-1
 
 <details>
-<summary>What it was shown (2169 characters)</summary>
+<summary>What it was shown (2165 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -161,7 +161,7 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
 
 Pirate-1, this is your turn 2 of 20, turn 4 of the game. You are at A5. Your square has been dug and holds no cave. The way south is blocked by pirate-2.
 ```
@@ -170,7 +170,7 @@ Pirate-1, this is your turn 2 of 20, turn 4 of the game. You are at A5. Your squ
 
 **Its thinking**
 
-> The nearest square I haven't seen dug is (1, 0).
+> The nearest square I haven't seen dug is B5.
 
 **What it did**
 
@@ -178,12 +178,12 @@ Pirate-1, this is your turn 2 of 20, turn 4 of the game. You are at A5. Your squ
 
 **The result**
 
-> You moved east to (1, 0).
+> You moved east to B5.
 
 ## Turn 4: pirate-2
 
 <details>
-<summary>What it was shown (2195 characters)</summary>
+<summary>What it was shown (2191 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -206,7 +206,7 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 1), on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A4, on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
 
 Pirate-2, this is your turn 2 of 20, turn 5 of the game. You are at A4. Your square has been dug and holds no cave. The way south is blocked by pirate-3.
 ```
@@ -215,7 +215,7 @@ Pirate-2, this is your turn 2 of 20, turn 5 of the game. You are at A4. Your squ
 
 **Its thinking**
 
-> The nearest square I haven't seen dug is (0, 0).
+> The nearest square I haven't seen dug is A5.
 
 **What it did**
 
@@ -223,12 +223,12 @@ Pirate-2, this is your turn 2 of 20, turn 5 of the game. You are at A4. Your squ
 
 **The result**
 
-> You moved north to (0, 0).
+> You moved north to A5.
 
 ## Turn 5: pirate-3
 
 <details>
-<summary>What it was shown (2169 characters)</summary>
+<summary>What it was shown (2165 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -251,7 +251,7 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
 
 Pirate-3, this is your turn 2 of 20, turn 6 of the game. You are at A3. Your square has been dug and holds no cave. No way out of your square is blocked.
 ```
@@ -260,7 +260,7 @@ Pirate-3, this is your turn 2 of 20, turn 6 of the game. You are at A3. Your squ
 
 **Its thinking**
 
-> The nearest square I haven't seen dug is (0, 1).
+> The nearest square I haven't seen dug is A4.
 
 **What it did**
 
@@ -268,12 +268,12 @@ Pirate-3, this is your turn 2 of 20, turn 6 of the game. You are at A3. Your squ
 
 **The result**
 
-> You moved north to (0, 1).
+> You moved north to A4.
 
 ## Turn 6: pirate-1
 
 <details>
-<summary>What it was shown (2325 characters)</summary>
+<summary>What it was shown (2309 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -296,8 +296,8 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (0, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (1, 0). You were thinking: The nearest square I haven't seen dug is (1, 0).
+- At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to B5. You were thinking: The nearest square I haven't seen dug is B5.
 
 Pirate-1, this is your turn 3 of 20, turn 7 of the game. You are at B5. Your square hasn't been dug. The way west is blocked by pirate-2.
 ```
@@ -319,7 +319,7 @@ Pirate-1, this is your turn 3 of 20, turn 7 of the game. You are at B5. Your squ
 ## Turn 7: pirate-2
 
 <details>
-<summary>What it was shown (2398 characters)</summary>
+<summary>What it was shown (2382 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -342,8 +342,8 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 1), on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (0, 1), on a dug square, with pirate-3 to the south. You did: move north. You moved north to (0, 0). You were thinking: The nearest square I haven't seen dug is (0, 0).
+- At A4, on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A4, on a dug square, with pirate-3 to the south. You did: move north. You moved north to A5. You were thinking: The nearest square I haven't seen dug is A5.
 
 Pirate-2, this is your turn 3 of 20, turn 8 of the game. You are at A5. Your square has been dug and holds no cave. The way east is blocked by pirate-1 and the way south by pirate-3.
 ```
@@ -365,7 +365,7 @@ Pirate-2, this is your turn 3 of 20, turn 8 of the game. You are at A5. Your squ
 ## Turn 8: pirate-3
 
 <details>
-<summary>What it was shown (2343 characters)</summary>
+<summary>What it was shown (2327 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -388,8 +388,8 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (0, 2), on a dug square, with no pirate next to you. You did: move north. You moved north to (0, 1). You were thinking: The nearest square I haven't seen dug is (0, 1).
+- At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A3, on a dug square, with no pirate next to you. You did: move north. You moved north to A4. You were thinking: The nearest square I haven't seen dug is A4.
 
 Pirate-3, this is your turn 3 of 20, turn 9 of the game. You are at A4. Your square has been dug and holds no cave. The way north is blocked by pirate-2.
 ```
@@ -398,7 +398,7 @@ Pirate-3, this is your turn 3 of 20, turn 9 of the game. You are at A4. Your squ
 
 **Its thinking**
 
-> I'm heading for (0, 0), but pirate-2 is in the way, so I go round.
+> I'm heading for A5, but pirate-2 is in the way, so I go round.
 
 **What it did**
 
@@ -406,12 +406,12 @@ Pirate-3, this is your turn 3 of 20, turn 9 of the game. You are at A4. Your squ
 
 **The result**
 
-> You moved east to (1, 1).
+> You moved east to B4.
 
 ## Turn 9: pirate-1
 
 <details>
-<summary>What it was shown (2528 characters)</summary>
+<summary>What it was shown (2508 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -434,9 +434,9 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (0, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (1, 0). You were thinking: The nearest square I haven't seen dug is (1, 0).
-- At (1, 0), on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to B5. You were thinking: The nearest square I haven't seen dug is B5.
+- At B5, on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
 
 Pirate-1, this is your turn 4 of 20, turn 10 of the game. You are at B5. Your square has been dug and holds no cave. The way south is blocked by pirate-3 and the way west by pirate-2.
 ```
@@ -445,7 +445,7 @@ Pirate-1, this is your turn 4 of 20, turn 10 of the game. You are at B5. Your sq
 
 **Its thinking**
 
-> The nearest square I haven't seen dug is (2, 0).
+> The nearest square I haven't seen dug is C5.
 
 **What it did**
 
@@ -453,12 +453,12 @@ Pirate-1, this is your turn 4 of 20, turn 10 of the game. You are at B5. Your sq
 
 **The result**
 
-> You moved east to (2, 0).
+> You moved east to C5.
 
 ## Turn 10: pirate-2
 
 <details>
-<summary>What it was shown (2584 characters)</summary>
+<summary>What it was shown (2564 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -481,9 +481,9 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 1), on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (0, 1), on a dug square, with pirate-3 to the south. You did: move north. You moved north to (0, 0). You were thinking: The nearest square I haven't seen dug is (0, 0).
-- At (0, 0), on a dug square, with pirate-1 to the east and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: pirate-1 is in the way and I can't go round, so I dig here again.
+- At A4, on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A4, on a dug square, with pirate-3 to the south. You did: move north. You moved north to A5. You were thinking: The nearest square I haven't seen dug is A5.
+- At A5, on a dug square, with pirate-1 to the east and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: pirate-1 is in the way and I can't go round, so I dig here again.
 
 Pirate-2, this is your turn 4 of 20, turn 11 of the game. You are at A5. Your square has been dug and holds no cave. No way out of your square is blocked.
 ```
@@ -492,7 +492,7 @@ Pirate-2, this is your turn 4 of 20, turn 11 of the game. You are at A5. Your sq
 
 **Its thinking**
 
-> The nearest square I haven't seen dug is (1, 0).
+> The nearest square I haven't seen dug is B5.
 
 **What it did**
 
@@ -500,12 +500,12 @@ Pirate-2, this is your turn 4 of 20, turn 11 of the game. You are at A5. Your sq
 
 **The result**
 
-> You moved east to (1, 0).
+> You moved east to B5.
 
 ## Turn 11: pirate-3
 
 <details>
-<summary>What it was shown (2519 characters)</summary>
+<summary>What it was shown (2491 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -528,9 +528,9 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (0, 2), on a dug square, with no pirate next to you. You did: move north. You moved north to (0, 1). You were thinking: The nearest square I haven't seen dug is (0, 1).
-- At (0, 1), on a dug square, with pirate-2 to the north. You did: move east. You moved east to (1, 1). You were thinking: I'm heading for (0, 0), but pirate-2 is in the way, so I go round.
+- At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A3, on a dug square, with no pirate next to you. You did: move north. You moved north to A4. You were thinking: The nearest square I haven't seen dug is A4.
+- At A4, on a dug square, with pirate-2 to the north. You did: move east. You moved east to B4. You were thinking: I'm heading for A5, but pirate-2 is in the way, so I go round.
 
 Pirate-3, this is your turn 4 of 20, turn 12 of the game. You are at B4. Your square hasn't been dug. The way north is blocked by pirate-2.
 ```
@@ -552,7 +552,7 @@ Pirate-3, this is your turn 4 of 20, turn 12 of the game. You are at B4. Your sq
 ## Turn 12: pirate-1
 
 <details>
-<summary>What it was shown (2680 characters)</summary>
+<summary>What it was shown (2648 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -575,10 +575,10 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (0, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (1, 0). You were thinking: The nearest square I haven't seen dug is (1, 0).
-- At (1, 0), on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (1, 0), on a dug square, with pirate-3 to the south and pirate-2 to the west. You did: move east. You moved east to (2, 0). You were thinking: The nearest square I haven't seen dug is (2, 0).
+- At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to B5. You were thinking: The nearest square I haven't seen dug is B5.
+- At B5, on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At B5, on a dug square, with pirate-3 to the south and pirate-2 to the west. You did: move east. You moved east to C5. You were thinking: The nearest square I haven't seen dug is C5.
 
 Pirate-1, this is your turn 5 of 20, turn 13 of the game. You are at C5. Your square hasn't been dug. The way west is blocked by pirate-2.
 ```
@@ -600,7 +600,7 @@ Pirate-1, this is your turn 5 of 20, turn 13 of the game. You are at C5. Your sq
 ## Turn 13: pirate-2
 
 <details>
-<summary>What it was shown (2785 characters)</summary>
+<summary>What it was shown (2753 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -623,10 +623,10 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 1), on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (0, 1), on a dug square, with pirate-3 to the south. You did: move north. You moved north to (0, 0). You were thinking: The nearest square I haven't seen dug is (0, 0).
-- At (0, 0), on a dug square, with pirate-1 to the east and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: pirate-1 is in the way and I can't go round, so I dig here again.
-- At (0, 0), on a dug square, with no pirate next to you. You did: move east. You moved east to (1, 0). You were thinking: The nearest square I haven't seen dug is (1, 0).
+- At A4, on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A4, on a dug square, with pirate-3 to the south. You did: move north. You moved north to A5. You were thinking: The nearest square I haven't seen dug is A5.
+- At A5, on a dug square, with pirate-1 to the east and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: pirate-1 is in the way and I can't go round, so I dig here again.
+- At A5, on a dug square, with no pirate next to you. You did: move east. You moved east to B5. You were thinking: The nearest square I haven't seen dug is B5.
 
 Pirate-2, this is your turn 5 of 20, turn 14 of the game. You are at B5. Your square has been dug and holds no cave. The way east is blocked by pirate-1 and the way south by pirate-3.
 ```
@@ -635,7 +635,7 @@ Pirate-2, this is your turn 5 of 20, turn 14 of the game. You are at B5. Your sq
 
 **Its thinking**
 
-> I'm heading for (2, 0), but pirate-1 is in the way, so I go round.
+> I'm heading for C5, but pirate-1 is in the way, so I go round.
 
 **What it did**
 
@@ -643,12 +643,12 @@ Pirate-2, this is your turn 5 of 20, turn 14 of the game. You are at B5. Your sq
 
 **The result**
 
-> You moved west to (0, 0).
+> You moved west to A5.
 
 ## Turn 14: pirate-3
 
 <details>
-<summary>What it was shown (2692 characters)</summary>
+<summary>What it was shown (2660 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -671,10 +671,10 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (0, 2), on a dug square, with no pirate next to you. You did: move north. You moved north to (0, 1). You were thinking: The nearest square I haven't seen dug is (0, 1).
-- At (0, 1), on a dug square, with pirate-2 to the north. You did: move east. You moved east to (1, 1). You were thinking: I'm heading for (0, 0), but pirate-2 is in the way, so I go round.
-- At (1, 1), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A3, on a dug square, with no pirate next to you. You did: move north. You moved north to A4. You were thinking: The nearest square I haven't seen dug is A4.
+- At A4, on a dug square, with pirate-2 to the north. You did: move east. You moved east to B4. You were thinking: I'm heading for A5, but pirate-2 is in the way, so I go round.
+- At B4, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
 
 Pirate-3, this is your turn 5 of 20, turn 15 of the game. You are at B4. Your square has been dug and holds no cave. No way out of your square is blocked.
 ```
@@ -683,7 +683,7 @@ Pirate-3, this is your turn 5 of 20, turn 15 of the game. You are at B4. Your sq
 
 **Its thinking**
 
-> The nearest square I haven't seen dug is (1, 0).
+> The nearest square I haven't seen dug is B5.
 
 **What it did**
 
@@ -691,12 +691,12 @@ Pirate-3, this is your turn 5 of 20, turn 15 of the game. You are at B4. Your sq
 
 **The result**
 
-> You moved north to (1, 0).
+> You moved north to B5.
 
 ## Turn 15: pirate-1
 
 <details>
-<summary>What it was shown (2852 characters)</summary>
+<summary>What it was shown (2816 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -719,11 +719,11 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (0, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (1, 0). You were thinking: The nearest square I haven't seen dug is (1, 0).
-- At (1, 0), on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (1, 0), on a dug square, with pirate-3 to the south and pirate-2 to the west. You did: move east. You moved east to (2, 0). You were thinking: The nearest square I haven't seen dug is (2, 0).
-- At (2, 0), on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to B5. You were thinking: The nearest square I haven't seen dug is B5.
+- At B5, on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At B5, on a dug square, with pirate-3 to the south and pirate-2 to the west. You did: move east. You moved east to C5. You were thinking: The nearest square I haven't seen dug is C5.
+- At C5, on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
 
 Pirate-1, this is your turn 6 of 20, turn 16 of the game. You are at C5. Your square has been dug and holds no cave. The way west is blocked by pirate-3.
 ```
@@ -732,7 +732,7 @@ Pirate-1, this is your turn 6 of 20, turn 16 of the game. You are at C5. Your sq
 
 **Its thinking**
 
-> The nearest square I haven't seen dug is (3, 0).
+> The nearest square I haven't seen dug is D5.
 
 **What it did**
 
@@ -740,12 +740,12 @@ Pirate-1, this is your turn 6 of 20, turn 16 of the game. You are at C5. Your sq
 
 **The result**
 
-> You moved east to (3, 0).
+> You moved east to D5.
 
 ## Turn 16: pirate-2
 
 <details>
-<summary>What it was shown (2970 characters)</summary>
+<summary>What it was shown (2926 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -768,11 +768,11 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 1), on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (0, 1), on a dug square, with pirate-3 to the south. You did: move north. You moved north to (0, 0). You were thinking: The nearest square I haven't seen dug is (0, 0).
-- At (0, 0), on a dug square, with pirate-1 to the east and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: pirate-1 is in the way and I can't go round, so I dig here again.
-- At (0, 0), on a dug square, with no pirate next to you. You did: move east. You moved east to (1, 0). You were thinking: The nearest square I haven't seen dug is (1, 0).
-- At (1, 0), on a dug square, with pirate-1 to the east and pirate-3 to the south. You did: move west. You moved west to (0, 0). You were thinking: I'm heading for (2, 0), but pirate-1 is in the way, so I go round.
+- At A4, on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A4, on a dug square, with pirate-3 to the south. You did: move north. You moved north to A5. You were thinking: The nearest square I haven't seen dug is A5.
+- At A5, on a dug square, with pirate-1 to the east and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: pirate-1 is in the way and I can't go round, so I dig here again.
+- At A5, on a dug square, with no pirate next to you. You did: move east. You moved east to B5. You were thinking: The nearest square I haven't seen dug is B5.
+- At B5, on a dug square, with pirate-1 to the east and pirate-3 to the south. You did: move west. You moved west to A5. You were thinking: I'm heading for C5, but pirate-1 is in the way, so I go round.
 
 Pirate-2, this is your turn 6 of 20, turn 17 of the game. You are at A5. Your square has been dug and holds no cave. The way east is blocked by pirate-3.
 ```
@@ -781,7 +781,7 @@ Pirate-2, this is your turn 6 of 20, turn 17 of the game. You are at A5. Your sq
 
 **Its thinking**
 
-> I'm heading for (2, 0), but pirate-3 is in the way, so I go round.
+> I'm heading for C5, but pirate-3 is in the way, so I go round.
 
 **What it did**
 
@@ -789,12 +789,12 @@ Pirate-2, this is your turn 6 of 20, turn 17 of the game. You are at A5. Your sq
 
 **The result**
 
-> You moved south to (0, 1).
+> You moved south to A4.
 
 ## Turn 17: pirate-3
 
 <details>
-<summary>What it was shown (2866 characters)</summary>
+<summary>What it was shown (2822 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -817,11 +817,11 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (0, 2), on a dug square, with no pirate next to you. You did: move north. You moved north to (0, 1). You were thinking: The nearest square I haven't seen dug is (0, 1).
-- At (0, 1), on a dug square, with pirate-2 to the north. You did: move east. You moved east to (1, 1). You were thinking: I'm heading for (0, 0), but pirate-2 is in the way, so I go round.
-- At (1, 1), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (1, 1), on a dug square, with no pirate next to you. You did: move north. You moved north to (1, 0). You were thinking: The nearest square I haven't seen dug is (1, 0).
+- At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A3, on a dug square, with no pirate next to you. You did: move north. You moved north to A4. You were thinking: The nearest square I haven't seen dug is A4.
+- At A4, on a dug square, with pirate-2 to the north. You did: move east. You moved east to B4. You were thinking: I'm heading for A5, but pirate-2 is in the way, so I go round.
+- At B4, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At B4, on a dug square, with no pirate next to you. You did: move north. You moved north to B5. You were thinking: The nearest square I haven't seen dug is B5.
 
 Pirate-3, this is your turn 6 of 20, turn 18 of the game. You are at B5. Your square has been dug and holds no cave. No way out of your square is blocked.
 ```
@@ -830,7 +830,7 @@ Pirate-3, this is your turn 6 of 20, turn 18 of the game. You are at B5. Your sq
 
 **Its thinking**
 
-> The nearest square I haven't seen dug is (0, 0).
+> The nearest square I haven't seen dug is A5.
 
 **What it did**
 
@@ -838,12 +838,12 @@ Pirate-3, this is your turn 6 of 20, turn 18 of the game. You are at B5. Your sq
 
 **The result**
 
-> You moved west to (0, 0).
+> You moved west to A5.
 
 ## Turn 18: pirate-1
 
 <details>
-<summary>What it was shown (3009 characters)</summary>
+<summary>What it was shown (2961 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -866,12 +866,12 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (0, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (1, 0). You were thinking: The nearest square I haven't seen dug is (1, 0).
-- At (1, 0), on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (1, 0), on a dug square, with pirate-3 to the south and pirate-2 to the west. You did: move east. You moved east to (2, 0). You were thinking: The nearest square I haven't seen dug is (2, 0).
-- At (2, 0), on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (2, 0), on a dug square, with pirate-3 to the west. You did: move east. You moved east to (3, 0). You were thinking: The nearest square I haven't seen dug is (3, 0).
+- At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to B5. You were thinking: The nearest square I haven't seen dug is B5.
+- At B5, on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At B5, on a dug square, with pirate-3 to the south and pirate-2 to the west. You did: move east. You moved east to C5. You were thinking: The nearest square I haven't seen dug is C5.
+- At C5, on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At C5, on a dug square, with pirate-3 to the west. You did: move east. You moved east to D5. You were thinking: The nearest square I haven't seen dug is D5.
 
 Pirate-1, this is your turn 7 of 20, turn 19 of the game. You are at D5. Your square hasn't been dug. No way out of your square is blocked.
 ```
@@ -893,7 +893,7 @@ Pirate-1, this is your turn 7 of 20, turn 19 of the game. You are at D5. Your sq
 ## Turn 19: pirate-2
 
 <details>
-<summary>What it was shown (3162 characters)</summary>
+<summary>What it was shown (3106 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -916,12 +916,12 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 1), on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (0, 1), on a dug square, with pirate-3 to the south. You did: move north. You moved north to (0, 0). You were thinking: The nearest square I haven't seen dug is (0, 0).
-- At (0, 0), on a dug square, with pirate-1 to the east and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: pirate-1 is in the way and I can't go round, so I dig here again.
-- At (0, 0), on a dug square, with no pirate next to you. You did: move east. You moved east to (1, 0). You were thinking: The nearest square I haven't seen dug is (1, 0).
-- At (1, 0), on a dug square, with pirate-1 to the east and pirate-3 to the south. You did: move west. You moved west to (0, 0). You were thinking: I'm heading for (2, 0), but pirate-1 is in the way, so I go round.
-- At (0, 0), on a dug square, with pirate-3 to the east. You did: move south. You moved south to (0, 1). You were thinking: I'm heading for (2, 0), but pirate-3 is in the way, so I go round.
+- At A4, on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A4, on a dug square, with pirate-3 to the south. You did: move north. You moved north to A5. You were thinking: The nearest square I haven't seen dug is A5.
+- At A5, on a dug square, with pirate-1 to the east and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: pirate-1 is in the way and I can't go round, so I dig here again.
+- At A5, on a dug square, with no pirate next to you. You did: move east. You moved east to B5. You were thinking: The nearest square I haven't seen dug is B5.
+- At B5, on a dug square, with pirate-1 to the east and pirate-3 to the south. You did: move west. You moved west to A5. You were thinking: I'm heading for C5, but pirate-1 is in the way, so I go round.
+- At A5, on a dug square, with pirate-3 to the east. You did: move south. You moved south to A4. You were thinking: I'm heading for C5, but pirate-3 is in the way, so I go round.
 
 Pirate-2, this is your turn 7 of 20, turn 20 of the game. You are at A4. Your square has been dug and holds no cave. The way north is blocked by pirate-3.
 ```
@@ -930,7 +930,7 @@ Pirate-2, this is your turn 7 of 20, turn 20 of the game. You are at A4. Your sq
 
 **Its thinking**
 
-> The nearest square I haven't seen dug is (1, 1).
+> The nearest square I haven't seen dug is B4.
 
 **What it did**
 
@@ -938,12 +938,12 @@ Pirate-2, this is your turn 7 of 20, turn 20 of the game. You are at A4. Your sq
 
 **The result**
 
-> You moved east to (1, 1).
+> You moved east to B4.
 
 ## Turn 20: pirate-3
 
 <details>
-<summary>What it was shown (3038 characters)</summary>
+<summary>What it was shown (2982 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -966,12 +966,12 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (0, 2), on a dug square, with no pirate next to you. You did: move north. You moved north to (0, 1). You were thinking: The nearest square I haven't seen dug is (0, 1).
-- At (0, 1), on a dug square, with pirate-2 to the north. You did: move east. You moved east to (1, 1). You were thinking: I'm heading for (0, 0), but pirate-2 is in the way, so I go round.
-- At (1, 1), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (1, 1), on a dug square, with no pirate next to you. You did: move north. You moved north to (1, 0). You were thinking: The nearest square I haven't seen dug is (1, 0).
-- At (1, 0), on a dug square, with no pirate next to you. You did: move west. You moved west to (0, 0). You were thinking: The nearest square I haven't seen dug is (0, 0).
+- At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A3, on a dug square, with no pirate next to you. You did: move north. You moved north to A4. You were thinking: The nearest square I haven't seen dug is A4.
+- At A4, on a dug square, with pirate-2 to the north. You did: move east. You moved east to B4. You were thinking: I'm heading for A5, but pirate-2 is in the way, so I go round.
+- At B4, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At B4, on a dug square, with no pirate next to you. You did: move north. You moved north to B5. You were thinking: The nearest square I haven't seen dug is B5.
+- At B5, on a dug square, with no pirate next to you. You did: move west. You moved west to A5. You were thinking: The nearest square I haven't seen dug is A5.
 
 Pirate-3, this is your turn 7 of 20, turn 21 of the game. You are at A5. Your square has been dug and holds no cave. No way out of your square is blocked.
 ```
@@ -980,7 +980,7 @@ Pirate-3, this is your turn 7 of 20, turn 21 of the game. You are at A5. Your sq
 
 **Its thinking**
 
-> The nearest square I haven't seen dug is (2, 0).
+> The nearest square I haven't seen dug is C5.
 
 **What it did**
 
@@ -988,12 +988,12 @@ Pirate-3, this is your turn 7 of 20, turn 21 of the game. You are at A5. Your sq
 
 **The result**
 
-> You moved east to (1, 0).
+> You moved east to B5.
 
 ## Turn 21: pirate-1
 
 <details>
-<summary>What it was shown (3182 characters)</summary>
+<summary>What it was shown (3130 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -1016,13 +1016,13 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (0, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (1, 0). You were thinking: The nearest square I haven't seen dug is (1, 0).
-- At (1, 0), on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (1, 0), on a dug square, with pirate-3 to the south and pirate-2 to the west. You did: move east. You moved east to (2, 0). You were thinking: The nearest square I haven't seen dug is (2, 0).
-- At (2, 0), on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (2, 0), on a dug square, with pirate-3 to the west. You did: move east. You moved east to (3, 0). You were thinking: The nearest square I haven't seen dug is (3, 0).
-- At (3, 0), on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to B5. You were thinking: The nearest square I haven't seen dug is B5.
+- At B5, on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At B5, on a dug square, with pirate-3 to the south and pirate-2 to the west. You did: move east. You moved east to C5. You were thinking: The nearest square I haven't seen dug is C5.
+- At C5, on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At C5, on a dug square, with pirate-3 to the west. You did: move east. You moved east to D5. You were thinking: The nearest square I haven't seen dug is D5.
+- At D5, on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
 
 Pirate-1, this is your turn 8 of 20, turn 22 of the game. You are at D5. Your square has been dug and holds no cave. No way out of your square is blocked.
 ```
@@ -1031,7 +1031,7 @@ Pirate-1, this is your turn 8 of 20, turn 22 of the game. You are at D5. Your sq
 
 **Its thinking**
 
-> The nearest square I haven't seen dug is (4, 0).
+> The nearest square I haven't seen dug is E5.
 
 **What it did**
 
@@ -1039,12 +1039,12 @@ Pirate-1, this is your turn 8 of 20, turn 22 of the game. You are at D5. Your sq
 
 **The result**
 
-> You moved east to (4, 0).
+> You moved east to E5.
 
 ## Turn 22: pirate-2
 
 <details>
-<summary>What it was shown (3334 characters)</summary>
+<summary>What it was shown (3266 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -1067,13 +1067,13 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 1), on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (0, 1), on a dug square, with pirate-3 to the south. You did: move north. You moved north to (0, 0). You were thinking: The nearest square I haven't seen dug is (0, 0).
-- At (0, 0), on a dug square, with pirate-1 to the east and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: pirate-1 is in the way and I can't go round, so I dig here again.
-- At (0, 0), on a dug square, with no pirate next to you. You did: move east. You moved east to (1, 0). You were thinking: The nearest square I haven't seen dug is (1, 0).
-- At (1, 0), on a dug square, with pirate-1 to the east and pirate-3 to the south. You did: move west. You moved west to (0, 0). You were thinking: I'm heading for (2, 0), but pirate-1 is in the way, so I go round.
-- At (0, 0), on a dug square, with pirate-3 to the east. You did: move south. You moved south to (0, 1). You were thinking: I'm heading for (2, 0), but pirate-3 is in the way, so I go round.
-- At (0, 1), on a dug square, with pirate-3 to the north. You did: move east. You moved east to (1, 1). You were thinking: The nearest square I haven't seen dug is (1, 1).
+- At A4, on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A4, on a dug square, with pirate-3 to the south. You did: move north. You moved north to A5. You were thinking: The nearest square I haven't seen dug is A5.
+- At A5, on a dug square, with pirate-1 to the east and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: pirate-1 is in the way and I can't go round, so I dig here again.
+- At A5, on a dug square, with no pirate next to you. You did: move east. You moved east to B5. You were thinking: The nearest square I haven't seen dug is B5.
+- At B5, on a dug square, with pirate-1 to the east and pirate-3 to the south. You did: move west. You moved west to A5. You were thinking: I'm heading for C5, but pirate-1 is in the way, so I go round.
+- At A5, on a dug square, with pirate-3 to the east. You did: move south. You moved south to A4. You were thinking: I'm heading for C5, but pirate-3 is in the way, so I go round.
+- At A4, on a dug square, with pirate-3 to the north. You did: move east. You moved east to B4. You were thinking: The nearest square I haven't seen dug is B4.
 
 Pirate-2, this is your turn 8 of 20, turn 23 of the game. You are at B4. Your square has been dug and holds no cave. The way north is blocked by pirate-3.
 ```
@@ -1082,7 +1082,7 @@ Pirate-2, this is your turn 8 of 20, turn 23 of the game. You are at B4. Your sq
 
 **Its thinking**
 
-> The nearest square I haven't seen dug is (2, 1).
+> The nearest square I haven't seen dug is C4.
 
 **What it did**
 
@@ -1090,12 +1090,12 @@ Pirate-2, this is your turn 8 of 20, turn 23 of the game. You are at B4. Your sq
 
 **The result**
 
-> You moved east to (2, 1).
+> You moved east to C4.
 
 ## Turn 23: pirate-3
 
 <details>
-<summary>What it was shown (3210 characters)</summary>
+<summary>What it was shown (3142 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -1118,13 +1118,13 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (0, 2), on a dug square, with no pirate next to you. You did: move north. You moved north to (0, 1). You were thinking: The nearest square I haven't seen dug is (0, 1).
-- At (0, 1), on a dug square, with pirate-2 to the north. You did: move east. You moved east to (1, 1). You were thinking: I'm heading for (0, 0), but pirate-2 is in the way, so I go round.
-- At (1, 1), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (1, 1), on a dug square, with no pirate next to you. You did: move north. You moved north to (1, 0). You were thinking: The nearest square I haven't seen dug is (1, 0).
-- At (1, 0), on a dug square, with no pirate next to you. You did: move west. You moved west to (0, 0). You were thinking: The nearest square I haven't seen dug is (0, 0).
-- At (0, 0), on a dug square, with no pirate next to you. You did: move east. You moved east to (1, 0). You were thinking: The nearest square I haven't seen dug is (2, 0).
+- At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A3, on a dug square, with no pirate next to you. You did: move north. You moved north to A4. You were thinking: The nearest square I haven't seen dug is A4.
+- At A4, on a dug square, with pirate-2 to the north. You did: move east. You moved east to B4. You were thinking: I'm heading for A5, but pirate-2 is in the way, so I go round.
+- At B4, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At B4, on a dug square, with no pirate next to you. You did: move north. You moved north to B5. You were thinking: The nearest square I haven't seen dug is B5.
+- At B5, on a dug square, with no pirate next to you. You did: move west. You moved west to A5. You were thinking: The nearest square I haven't seen dug is A5.
+- At A5, on a dug square, with no pirate next to you. You did: move east. You moved east to B5. You were thinking: The nearest square I haven't seen dug is C5.
 
 Pirate-3, this is your turn 8 of 20, turn 24 of the game. You are at B5. Your square has been dug and holds no cave. No way out of your square is blocked.
 ```
@@ -1133,7 +1133,7 @@ Pirate-3, this is your turn 8 of 20, turn 24 of the game. You are at B5. Your sq
 
 **Its thinking**
 
-> The nearest square I haven't seen dug is (2, 0).
+> The nearest square I haven't seen dug is C5.
 
 **What it did**
 
@@ -1141,12 +1141,12 @@ Pirate-3, this is your turn 8 of 20, turn 24 of the game. You are at B5. Your sq
 
 **The result**
 
-> You moved east to (2, 0).
+> You moved east to C5.
 
 ## Turn 24: pirate-1
 
 <details>
-<summary>What it was shown (3339 characters)</summary>
+<summary>What it was shown (3275 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -1169,14 +1169,14 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (0, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (1, 0). You were thinking: The nearest square I haven't seen dug is (1, 0).
-- At (1, 0), on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (1, 0), on a dug square, with pirate-3 to the south and pirate-2 to the west. You did: move east. You moved east to (2, 0). You were thinking: The nearest square I haven't seen dug is (2, 0).
-- At (2, 0), on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (2, 0), on a dug square, with pirate-3 to the west. You did: move east. You moved east to (3, 0). You were thinking: The nearest square I haven't seen dug is (3, 0).
-- At (3, 0), on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (3, 0), on a dug square, with no pirate next to you. You did: move east. You moved east to (4, 0). You were thinking: The nearest square I haven't seen dug is (4, 0).
+- At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to B5. You were thinking: The nearest square I haven't seen dug is B5.
+- At B5, on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At B5, on a dug square, with pirate-3 to the south and pirate-2 to the west. You did: move east. You moved east to C5. You were thinking: The nearest square I haven't seen dug is C5.
+- At C5, on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At C5, on a dug square, with pirate-3 to the west. You did: move east. You moved east to D5. You were thinking: The nearest square I haven't seen dug is D5.
+- At D5, on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At D5, on a dug square, with no pirate next to you. You did: move east. You moved east to E5. You were thinking: The nearest square I haven't seen dug is E5.
 
 Pirate-1, this is your turn 9 of 20, turn 25 of the game. You are at E5. Your square hasn't been dug. No way out of your square is blocked.
 ```
@@ -1198,7 +1198,7 @@ Pirate-1, this is your turn 9 of 20, turn 25 of the game. You are at E5. Your sq
 ## Turn 25: pirate-2
 
 <details>
-<summary>What it was shown (3491 characters)</summary>
+<summary>What it was shown (3411 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -1221,14 +1221,14 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 1), on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (0, 1), on a dug square, with pirate-3 to the south. You did: move north. You moved north to (0, 0). You were thinking: The nearest square I haven't seen dug is (0, 0).
-- At (0, 0), on a dug square, with pirate-1 to the east and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: pirate-1 is in the way and I can't go round, so I dig here again.
-- At (0, 0), on a dug square, with no pirate next to you. You did: move east. You moved east to (1, 0). You were thinking: The nearest square I haven't seen dug is (1, 0).
-- At (1, 0), on a dug square, with pirate-1 to the east and pirate-3 to the south. You did: move west. You moved west to (0, 0). You were thinking: I'm heading for (2, 0), but pirate-1 is in the way, so I go round.
-- At (0, 0), on a dug square, with pirate-3 to the east. You did: move south. You moved south to (0, 1). You were thinking: I'm heading for (2, 0), but pirate-3 is in the way, so I go round.
-- At (0, 1), on a dug square, with pirate-3 to the north. You did: move east. You moved east to (1, 1). You were thinking: The nearest square I haven't seen dug is (1, 1).
-- At (1, 1), on a dug square, with pirate-3 to the north. You did: move east. You moved east to (2, 1). You were thinking: The nearest square I haven't seen dug is (2, 1).
+- At A4, on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A4, on a dug square, with pirate-3 to the south. You did: move north. You moved north to A5. You were thinking: The nearest square I haven't seen dug is A5.
+- At A5, on a dug square, with pirate-1 to the east and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: pirate-1 is in the way and I can't go round, so I dig here again.
+- At A5, on a dug square, with no pirate next to you. You did: move east. You moved east to B5. You were thinking: The nearest square I haven't seen dug is B5.
+- At B5, on a dug square, with pirate-1 to the east and pirate-3 to the south. You did: move west. You moved west to A5. You were thinking: I'm heading for C5, but pirate-1 is in the way, so I go round.
+- At A5, on a dug square, with pirate-3 to the east. You did: move south. You moved south to A4. You were thinking: I'm heading for C5, but pirate-3 is in the way, so I go round.
+- At A4, on a dug square, with pirate-3 to the north. You did: move east. You moved east to B4. You were thinking: The nearest square I haven't seen dug is B4.
+- At B4, on a dug square, with pirate-3 to the north. You did: move east. You moved east to C4. You were thinking: The nearest square I haven't seen dug is C4.
 
 Pirate-2, this is your turn 9 of 20, turn 26 of the game. You are at C4. Your square hasn't been dug. The way north is blocked by pirate-3.
 ```
@@ -1250,7 +1250,7 @@ Pirate-2, this is your turn 9 of 20, turn 26 of the game. You are at C4. Your sq
 ## Turn 26: pirate-3
 
 <details>
-<summary>What it was shown (3382 characters)</summary>
+<summary>What it was shown (3302 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -1273,14 +1273,14 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (0, 2), on a dug square, with no pirate next to you. You did: move north. You moved north to (0, 1). You were thinking: The nearest square I haven't seen dug is (0, 1).
-- At (0, 1), on a dug square, with pirate-2 to the north. You did: move east. You moved east to (1, 1). You were thinking: I'm heading for (0, 0), but pirate-2 is in the way, so I go round.
-- At (1, 1), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (1, 1), on a dug square, with no pirate next to you. You did: move north. You moved north to (1, 0). You were thinking: The nearest square I haven't seen dug is (1, 0).
-- At (1, 0), on a dug square, with no pirate next to you. You did: move west. You moved west to (0, 0). You were thinking: The nearest square I haven't seen dug is (0, 0).
-- At (0, 0), on a dug square, with no pirate next to you. You did: move east. You moved east to (1, 0). You were thinking: The nearest square I haven't seen dug is (2, 0).
-- At (1, 0), on a dug square, with no pirate next to you. You did: move east. You moved east to (2, 0). You were thinking: The nearest square I haven't seen dug is (2, 0).
+- At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A3, on a dug square, with no pirate next to you. You did: move north. You moved north to A4. You were thinking: The nearest square I haven't seen dug is A4.
+- At A4, on a dug square, with pirate-2 to the north. You did: move east. You moved east to B4. You were thinking: I'm heading for A5, but pirate-2 is in the way, so I go round.
+- At B4, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At B4, on a dug square, with no pirate next to you. You did: move north. You moved north to B5. You were thinking: The nearest square I haven't seen dug is B5.
+- At B5, on a dug square, with no pirate next to you. You did: move west. You moved west to A5. You were thinking: The nearest square I haven't seen dug is A5.
+- At A5, on a dug square, with no pirate next to you. You did: move east. You moved east to B5. You were thinking: The nearest square I haven't seen dug is C5.
+- At B5, on a dug square, with no pirate next to you. You did: move east. You moved east to C5. You were thinking: The nearest square I haven't seen dug is C5.
 
 Pirate-3, this is your turn 9 of 20, turn 27 of the game. You are at C5. Your square has been dug and holds no cave. The way south is blocked by pirate-2.
 ```
@@ -1289,7 +1289,7 @@ Pirate-3, this is your turn 9 of 20, turn 27 of the game. You are at C5. Your sq
 
 **Its thinking**
 
-> The nearest square I haven't seen dug is (3, 0).
+> The nearest square I haven't seen dug is D5.
 
 **What it did**
 
@@ -1297,12 +1297,12 @@ Pirate-3, this is your turn 9 of 20, turn 27 of the game. You are at C5. Your sq
 
 **The result**
 
-> You moved east to (3, 0).
+> You moved east to D5.
 
 ## Turn 27: pirate-1
 
 <details>
-<summary>What it was shown (3512 characters)</summary>
+<summary>What it was shown (3444 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -1325,15 +1325,15 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (0, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (1, 0). You were thinking: The nearest square I haven't seen dug is (1, 0).
-- At (1, 0), on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (1, 0), on a dug square, with pirate-3 to the south and pirate-2 to the west. You did: move east. You moved east to (2, 0). You were thinking: The nearest square I haven't seen dug is (2, 0).
-- At (2, 0), on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (2, 0), on a dug square, with pirate-3 to the west. You did: move east. You moved east to (3, 0). You were thinking: The nearest square I haven't seen dug is (3, 0).
-- At (3, 0), on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (3, 0), on a dug square, with no pirate next to you. You did: move east. You moved east to (4, 0). You were thinking: The nearest square I haven't seen dug is (4, 0).
-- At (4, 0), on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to B5. You were thinking: The nearest square I haven't seen dug is B5.
+- At B5, on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At B5, on a dug square, with pirate-3 to the south and pirate-2 to the west. You did: move east. You moved east to C5. You were thinking: The nearest square I haven't seen dug is C5.
+- At C5, on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At C5, on a dug square, with pirate-3 to the west. You did: move east. You moved east to D5. You were thinking: The nearest square I haven't seen dug is D5.
+- At D5, on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At D5, on a dug square, with no pirate next to you. You did: move east. You moved east to E5. You were thinking: The nearest square I haven't seen dug is E5.
+- At E5, on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
 
 Pirate-1, this is your turn 10 of 20, turn 28 of the game. You are at E5. Your square has been dug and holds no cave. The way west is blocked by pirate-3.
 ```
@@ -1342,7 +1342,7 @@ Pirate-1, this is your turn 10 of 20, turn 28 of the game. You are at E5. Your s
 
 **Its thinking**
 
-> The nearest square I haven't seen dug is (4, 1).
+> The nearest square I haven't seen dug is E4.
 
 **What it did**
 
@@ -1350,12 +1350,12 @@ Pirate-1, this is your turn 10 of 20, turn 28 of the game. You are at E5. Your s
 
 **The result**
 
-> You moved south to (4, 1).
+> You moved south to E4.
 
 ## Turn 28: pirate-2
 
 <details>
-<summary>What it was shown (3731 characters)</summary>
+<summary>What it was shown (3647 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -1378,15 +1378,15 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 1), on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (0, 1), on a dug square, with pirate-3 to the south. You did: move north. You moved north to (0, 0). You were thinking: The nearest square I haven't seen dug is (0, 0).
-- At (0, 0), on a dug square, with pirate-1 to the east and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: pirate-1 is in the way and I can't go round, so I dig here again.
-- At (0, 0), on a dug square, with no pirate next to you. You did: move east. You moved east to (1, 0). You were thinking: The nearest square I haven't seen dug is (1, 0).
-- At (1, 0), on a dug square, with pirate-1 to the east and pirate-3 to the south. You did: move west. You moved west to (0, 0). You were thinking: I'm heading for (2, 0), but pirate-1 is in the way, so I go round.
-- At (0, 0), on a dug square, with pirate-3 to the east. You did: move south. You moved south to (0, 1). You were thinking: I'm heading for (2, 0), but pirate-3 is in the way, so I go round.
-- At (0, 1), on a dug square, with pirate-3 to the north. You did: move east. You moved east to (1, 1). You were thinking: The nearest square I haven't seen dug is (1, 1).
-- At (1, 1), on a dug square, with pirate-3 to the north. You did: move east. You moved east to (2, 1). You were thinking: The nearest square I haven't seen dug is (2, 1).
-- At (2, 1), on an undug square, with pirate-3 to the north. You did: dig. You dug here and found the treasure! It opens a cave on this square: enter it to go in. You were thinking: Nobody has dug this square yet.
+- At A4, on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A4, on a dug square, with pirate-3 to the south. You did: move north. You moved north to A5. You were thinking: The nearest square I haven't seen dug is A5.
+- At A5, on a dug square, with pirate-1 to the east and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: pirate-1 is in the way and I can't go round, so I dig here again.
+- At A5, on a dug square, with no pirate next to you. You did: move east. You moved east to B5. You were thinking: The nearest square I haven't seen dug is B5.
+- At B5, on a dug square, with pirate-1 to the east and pirate-3 to the south. You did: move west. You moved west to A5. You were thinking: I'm heading for C5, but pirate-1 is in the way, so I go round.
+- At A5, on a dug square, with pirate-3 to the east. You did: move south. You moved south to A4. You were thinking: I'm heading for C5, but pirate-3 is in the way, so I go round.
+- At A4, on a dug square, with pirate-3 to the north. You did: move east. You moved east to B4. You were thinking: The nearest square I haven't seen dug is B4.
+- At B4, on a dug square, with pirate-3 to the north. You did: move east. You moved east to C4. You were thinking: The nearest square I haven't seen dug is C4.
+- At C4, on an undug square, with pirate-3 to the north. You did: dig. You dug here and found the treasure! It opens a cave on this square: enter it to go in. You were thinking: Nobody has dug this square yet.
 
 Pirate-2, this is your turn 10 of 20, turn 29 of the game. You are at C4. You are standing on the open cave: enter it to go in. No way out of your square is blocked.
 ```
@@ -1408,7 +1408,7 @@ Pirate-2, this is your turn 10 of 20, turn 29 of the game. You are at C4. You ar
 ## Turn 29: pirate-3
 
 <details>
-<summary>What it was shown (3555 characters)</summary>
+<summary>What it was shown (3463 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -1431,15 +1431,15 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (0, 2), on a dug square, with no pirate next to you. You did: move north. You moved north to (0, 1). You were thinking: The nearest square I haven't seen dug is (0, 1).
-- At (0, 1), on a dug square, with pirate-2 to the north. You did: move east. You moved east to (1, 1). You were thinking: I'm heading for (0, 0), but pirate-2 is in the way, so I go round.
-- At (1, 1), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (1, 1), on a dug square, with no pirate next to you. You did: move north. You moved north to (1, 0). You were thinking: The nearest square I haven't seen dug is (1, 0).
-- At (1, 0), on a dug square, with no pirate next to you. You did: move west. You moved west to (0, 0). You were thinking: The nearest square I haven't seen dug is (0, 0).
-- At (0, 0), on a dug square, with no pirate next to you. You did: move east. You moved east to (1, 0). You were thinking: The nearest square I haven't seen dug is (2, 0).
-- At (1, 0), on a dug square, with no pirate next to you. You did: move east. You moved east to (2, 0). You were thinking: The nearest square I haven't seen dug is (2, 0).
-- At (2, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (3, 0). You were thinking: The nearest square I haven't seen dug is (3, 0).
+- At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A3, on a dug square, with no pirate next to you. You did: move north. You moved north to A4. You were thinking: The nearest square I haven't seen dug is A4.
+- At A4, on a dug square, with pirate-2 to the north. You did: move east. You moved east to B4. You were thinking: I'm heading for A5, but pirate-2 is in the way, so I go round.
+- At B4, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At B4, on a dug square, with no pirate next to you. You did: move north. You moved north to B5. You were thinking: The nearest square I haven't seen dug is B5.
+- At B5, on a dug square, with no pirate next to you. You did: move west. You moved west to A5. You were thinking: The nearest square I haven't seen dug is A5.
+- At A5, on a dug square, with no pirate next to you. You did: move east. You moved east to B5. You were thinking: The nearest square I haven't seen dug is C5.
+- At B5, on a dug square, with no pirate next to you. You did: move east. You moved east to C5. You were thinking: The nearest square I haven't seen dug is C5.
+- At C5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to D5. You were thinking: The nearest square I haven't seen dug is D5.
 
 Pirate-3, this is your turn 10 of 20, turn 30 of the game. You are at D5. Your square has been dug and holds no cave. No way out of your square is blocked.
 ```
@@ -1448,7 +1448,7 @@ Pirate-3, this is your turn 10 of 20, turn 30 of the game. You are at D5. Your s
 
 **Its thinking**
 
-> The nearest square I haven't seen dug is (4, 0).
+> The nearest square I haven't seen dug is E5.
 
 **What it did**
 
@@ -1456,12 +1456,12 @@ Pirate-3, this is your turn 10 of 20, turn 30 of the game. You are at D5. Your s
 
 **The result**
 
-> You moved east to (4, 0).
+> You moved east to E5.
 
 ## Turn 30: pirate-1
 
 <details>
-<summary>What it was shown (3671 characters)</summary>
+<summary>What it was shown (3591 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -1484,16 +1484,16 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (0, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (1, 0). You were thinking: The nearest square I haven't seen dug is (1, 0).
-- At (1, 0), on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (1, 0), on a dug square, with pirate-3 to the south and pirate-2 to the west. You did: move east. You moved east to (2, 0). You were thinking: The nearest square I haven't seen dug is (2, 0).
-- At (2, 0), on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (2, 0), on a dug square, with pirate-3 to the west. You did: move east. You moved east to (3, 0). You were thinking: The nearest square I haven't seen dug is (3, 0).
-- At (3, 0), on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (3, 0), on a dug square, with no pirate next to you. You did: move east. You moved east to (4, 0). You were thinking: The nearest square I haven't seen dug is (4, 0).
-- At (4, 0), on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (4, 0), on a dug square, with pirate-3 to the west. You did: move south. You moved south to (4, 1). You were thinking: The nearest square I haven't seen dug is (4, 1).
+- At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to B5. You were thinking: The nearest square I haven't seen dug is B5.
+- At B5, on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At B5, on a dug square, with pirate-3 to the south and pirate-2 to the west. You did: move east. You moved east to C5. You were thinking: The nearest square I haven't seen dug is C5.
+- At C5, on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At C5, on a dug square, with pirate-3 to the west. You did: move east. You moved east to D5. You were thinking: The nearest square I haven't seen dug is D5.
+- At D5, on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At D5, on a dug square, with no pirate next to you. You did: move east. You moved east to E5. You were thinking: The nearest square I haven't seen dug is E5.
+- At E5, on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At E5, on a dug square, with pirate-3 to the west. You did: move south. You moved south to E4. You were thinking: The nearest square I haven't seen dug is E4.
 
 Pirate-1, this is your turn 11 of 20, turn 31 of the game. You are at E4. Your square hasn't been dug. The way north is blocked by pirate-3.
 ```
@@ -1515,7 +1515,7 @@ Pirate-1, this is your turn 11 of 20, turn 31 of the game. You are at E4. Your s
 ## Turn 31: pirate-3
 
 <details>
-<summary>What it was shown (3727 characters)</summary>
+<summary>What it was shown (3623 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -1538,16 +1538,16 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (0, 2), on a dug square, with no pirate next to you. You did: move north. You moved north to (0, 1). You were thinking: The nearest square I haven't seen dug is (0, 1).
-- At (0, 1), on a dug square, with pirate-2 to the north. You did: move east. You moved east to (1, 1). You were thinking: I'm heading for (0, 0), but pirate-2 is in the way, so I go round.
-- At (1, 1), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (1, 1), on a dug square, with no pirate next to you. You did: move north. You moved north to (1, 0). You were thinking: The nearest square I haven't seen dug is (1, 0).
-- At (1, 0), on a dug square, with no pirate next to you. You did: move west. You moved west to (0, 0). You were thinking: The nearest square I haven't seen dug is (0, 0).
-- At (0, 0), on a dug square, with no pirate next to you. You did: move east. You moved east to (1, 0). You were thinking: The nearest square I haven't seen dug is (2, 0).
-- At (1, 0), on a dug square, with no pirate next to you. You did: move east. You moved east to (2, 0). You were thinking: The nearest square I haven't seen dug is (2, 0).
-- At (2, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (3, 0). You were thinking: The nearest square I haven't seen dug is (3, 0).
-- At (3, 0), on a dug square, with no pirate next to you. You did: move east. You moved east to (4, 0). You were thinking: The nearest square I haven't seen dug is (4, 0).
+- At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A3, on a dug square, with no pirate next to you. You did: move north. You moved north to A4. You were thinking: The nearest square I haven't seen dug is A4.
+- At A4, on a dug square, with pirate-2 to the north. You did: move east. You moved east to B4. You were thinking: I'm heading for A5, but pirate-2 is in the way, so I go round.
+- At B4, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At B4, on a dug square, with no pirate next to you. You did: move north. You moved north to B5. You were thinking: The nearest square I haven't seen dug is B5.
+- At B5, on a dug square, with no pirate next to you. You did: move west. You moved west to A5. You were thinking: The nearest square I haven't seen dug is A5.
+- At A5, on a dug square, with no pirate next to you. You did: move east. You moved east to B5. You were thinking: The nearest square I haven't seen dug is C5.
+- At B5, on a dug square, with no pirate next to you. You did: move east. You moved east to C5. You were thinking: The nearest square I haven't seen dug is C5.
+- At C5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to D5. You were thinking: The nearest square I haven't seen dug is D5.
+- At D5, on a dug square, with no pirate next to you. You did: move east. You moved east to E5. You were thinking: The nearest square I haven't seen dug is E5.
 
 Pirate-3, this is your turn 11 of 20, turn 32 of the game. You are at E5. Your square has been dug and holds no cave. The way south is blocked by pirate-1.
 ```
@@ -1556,7 +1556,7 @@ Pirate-3, this is your turn 11 of 20, turn 32 of the game. You are at E5. Your s
 
 **Its thinking**
 
-> I'm heading for (4, 1), but pirate-1 is in the way, so I go round.
+> I'm heading for E4, but pirate-1 is in the way, so I go round.
 
 **What it did**
 
@@ -1564,12 +1564,12 @@ Pirate-3, this is your turn 11 of 20, turn 32 of the game. You are at E5. Your s
 
 **The result**
 
-> You moved west to (3, 0).
+> You moved west to D5.
 
 ## Turn 32: pirate-1
 
 <details>
-<summary>What it was shown (3844 characters)</summary>
+<summary>What it was shown (3760 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -1592,17 +1592,17 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (0, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (1, 0). You were thinking: The nearest square I haven't seen dug is (1, 0).
-- At (1, 0), on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (1, 0), on a dug square, with pirate-3 to the south and pirate-2 to the west. You did: move east. You moved east to (2, 0). You were thinking: The nearest square I haven't seen dug is (2, 0).
-- At (2, 0), on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (2, 0), on a dug square, with pirate-3 to the west. You did: move east. You moved east to (3, 0). You were thinking: The nearest square I haven't seen dug is (3, 0).
-- At (3, 0), on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (3, 0), on a dug square, with no pirate next to you. You did: move east. You moved east to (4, 0). You were thinking: The nearest square I haven't seen dug is (4, 0).
-- At (4, 0), on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (4, 0), on a dug square, with pirate-3 to the west. You did: move south. You moved south to (4, 1). You were thinking: The nearest square I haven't seen dug is (4, 1).
-- At (4, 1), on an undug square, with pirate-3 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to B5. You were thinking: The nearest square I haven't seen dug is B5.
+- At B5, on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At B5, on a dug square, with pirate-3 to the south and pirate-2 to the west. You did: move east. You moved east to C5. You were thinking: The nearest square I haven't seen dug is C5.
+- At C5, on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At C5, on a dug square, with pirate-3 to the west. You did: move east. You moved east to D5. You were thinking: The nearest square I haven't seen dug is D5.
+- At D5, on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At D5, on a dug square, with no pirate next to you. You did: move east. You moved east to E5. You were thinking: The nearest square I haven't seen dug is E5.
+- At E5, on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At E5, on a dug square, with pirate-3 to the west. You did: move south. You moved south to E4. You were thinking: The nearest square I haven't seen dug is E4.
+- At E4, on an undug square, with pirate-3 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
 
 Pirate-1, this is your turn 12 of 20, turn 33 of the game. You are at E4. Your square has been dug and holds no cave. No way out of your square is blocked.
 ```
@@ -1611,7 +1611,7 @@ Pirate-1, this is your turn 12 of 20, turn 33 of the game. You are at E4. Your s
 
 **Its thinking**
 
-> The nearest square I haven't seen dug is (3, 1).
+> The nearest square I haven't seen dug is D4.
 
 **What it did**
 
@@ -1619,12 +1619,12 @@ Pirate-1, this is your turn 12 of 20, turn 33 of the game. You are at E4. Your s
 
 **The result**
 
-> You moved west to (3, 1).
+> You moved west to D4.
 
 ## Turn 33: pirate-3
 
 <details>
-<summary>What it was shown (3917 characters)</summary>
+<summary>What it was shown (3801 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -1647,17 +1647,17 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (0, 2), on a dug square, with no pirate next to you. You did: move north. You moved north to (0, 1). You were thinking: The nearest square I haven't seen dug is (0, 1).
-- At (0, 1), on a dug square, with pirate-2 to the north. You did: move east. You moved east to (1, 1). You were thinking: I'm heading for (0, 0), but pirate-2 is in the way, so I go round.
-- At (1, 1), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (1, 1), on a dug square, with no pirate next to you. You did: move north. You moved north to (1, 0). You were thinking: The nearest square I haven't seen dug is (1, 0).
-- At (1, 0), on a dug square, with no pirate next to you. You did: move west. You moved west to (0, 0). You were thinking: The nearest square I haven't seen dug is (0, 0).
-- At (0, 0), on a dug square, with no pirate next to you. You did: move east. You moved east to (1, 0). You were thinking: The nearest square I haven't seen dug is (2, 0).
-- At (1, 0), on a dug square, with no pirate next to you. You did: move east. You moved east to (2, 0). You were thinking: The nearest square I haven't seen dug is (2, 0).
-- At (2, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (3, 0). You were thinking: The nearest square I haven't seen dug is (3, 0).
-- At (3, 0), on a dug square, with no pirate next to you. You did: move east. You moved east to (4, 0). You were thinking: The nearest square I haven't seen dug is (4, 0).
-- At (4, 0), on a dug square, with pirate-1 to the south. You did: move west. You moved west to (3, 0). You were thinking: I'm heading for (4, 1), but pirate-1 is in the way, so I go round.
+- At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A3, on a dug square, with no pirate next to you. You did: move north. You moved north to A4. You were thinking: The nearest square I haven't seen dug is A4.
+- At A4, on a dug square, with pirate-2 to the north. You did: move east. You moved east to B4. You were thinking: I'm heading for A5, but pirate-2 is in the way, so I go round.
+- At B4, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At B4, on a dug square, with no pirate next to you. You did: move north. You moved north to B5. You were thinking: The nearest square I haven't seen dug is B5.
+- At B5, on a dug square, with no pirate next to you. You did: move west. You moved west to A5. You were thinking: The nearest square I haven't seen dug is A5.
+- At A5, on a dug square, with no pirate next to you. You did: move east. You moved east to B5. You were thinking: The nearest square I haven't seen dug is C5.
+- At B5, on a dug square, with no pirate next to you. You did: move east. You moved east to C5. You were thinking: The nearest square I haven't seen dug is C5.
+- At C5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to D5. You were thinking: The nearest square I haven't seen dug is D5.
+- At D5, on a dug square, with no pirate next to you. You did: move east. You moved east to E5. You were thinking: The nearest square I haven't seen dug is E5.
+- At E5, on a dug square, with pirate-1 to the south. You did: move west. You moved west to D5. You were thinking: I'm heading for E4, but pirate-1 is in the way, so I go round.
 
 Pirate-3, this is your turn 12 of 20, turn 34 of the game. You are at D5. Your square has been dug and holds no cave. The way south is blocked by pirate-1.
 ```
@@ -1666,7 +1666,7 @@ Pirate-3, this is your turn 12 of 20, turn 34 of the game. You are at D5. Your s
 
 **Its thinking**
 
-> I'm heading for (3, 1), but pirate-1 is in the way, so I go round.
+> I'm heading for D4, but pirate-1 is in the way, so I go round.
 
 **What it did**
 
@@ -1674,12 +1674,12 @@ Pirate-3, this is your turn 12 of 20, turn 34 of the game. You are at D5. Your s
 
 **The result**
 
-> You moved east to (4, 0).
+> You moved east to E5.
 
 ## Turn 34: pirate-1
 
 <details>
-<summary>What it was shown (4001 characters)</summary>
+<summary>What it was shown (3905 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -1702,18 +1702,18 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (0, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (1, 0). You were thinking: The nearest square I haven't seen dug is (1, 0).
-- At (1, 0), on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (1, 0), on a dug square, with pirate-3 to the south and pirate-2 to the west. You did: move east. You moved east to (2, 0). You were thinking: The nearest square I haven't seen dug is (2, 0).
-- At (2, 0), on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (2, 0), on a dug square, with pirate-3 to the west. You did: move east. You moved east to (3, 0). You were thinking: The nearest square I haven't seen dug is (3, 0).
-- At (3, 0), on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (3, 0), on a dug square, with no pirate next to you. You did: move east. You moved east to (4, 0). You were thinking: The nearest square I haven't seen dug is (4, 0).
-- At (4, 0), on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (4, 0), on a dug square, with pirate-3 to the west. You did: move south. You moved south to (4, 1). You were thinking: The nearest square I haven't seen dug is (4, 1).
-- At (4, 1), on an undug square, with pirate-3 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (4, 1), on a dug square, with no pirate next to you. You did: move west. You moved west to (3, 1). You were thinking: The nearest square I haven't seen dug is (3, 1).
+- At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to B5. You were thinking: The nearest square I haven't seen dug is B5.
+- At B5, on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At B5, on a dug square, with pirate-3 to the south and pirate-2 to the west. You did: move east. You moved east to C5. You were thinking: The nearest square I haven't seen dug is C5.
+- At C5, on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At C5, on a dug square, with pirate-3 to the west. You did: move east. You moved east to D5. You were thinking: The nearest square I haven't seen dug is D5.
+- At D5, on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At D5, on a dug square, with no pirate next to you. You did: move east. You moved east to E5. You were thinking: The nearest square I haven't seen dug is E5.
+- At E5, on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At E5, on a dug square, with pirate-3 to the west. You did: move south. You moved south to E4. You were thinking: The nearest square I haven't seen dug is E4.
+- At E4, on an undug square, with pirate-3 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At E4, on a dug square, with no pirate next to you. You did: move west. You moved west to D4. You were thinking: The nearest square I haven't seen dug is D4.
 
 Pirate-1, this is your turn 13 of 20, turn 35 of the game. You are at D4. Your square hasn't been dug. No way out of your square is blocked.
 ```
@@ -1735,7 +1735,7 @@ Pirate-1, this is your turn 13 of 20, turn 35 of the game. You are at D4. Your s
 ## Turn 35: pirate-3
 
 <details>
-<summary>What it was shown (4107 characters)</summary>
+<summary>What it was shown (3979 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -1758,18 +1758,18 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (0, 2), on a dug square, with no pirate next to you. You did: move north. You moved north to (0, 1). You were thinking: The nearest square I haven't seen dug is (0, 1).
-- At (0, 1), on a dug square, with pirate-2 to the north. You did: move east. You moved east to (1, 1). You were thinking: I'm heading for (0, 0), but pirate-2 is in the way, so I go round.
-- At (1, 1), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (1, 1), on a dug square, with no pirate next to you. You did: move north. You moved north to (1, 0). You were thinking: The nearest square I haven't seen dug is (1, 0).
-- At (1, 0), on a dug square, with no pirate next to you. You did: move west. You moved west to (0, 0). You were thinking: The nearest square I haven't seen dug is (0, 0).
-- At (0, 0), on a dug square, with no pirate next to you. You did: move east. You moved east to (1, 0). You were thinking: The nearest square I haven't seen dug is (2, 0).
-- At (1, 0), on a dug square, with no pirate next to you. You did: move east. You moved east to (2, 0). You were thinking: The nearest square I haven't seen dug is (2, 0).
-- At (2, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (3, 0). You were thinking: The nearest square I haven't seen dug is (3, 0).
-- At (3, 0), on a dug square, with no pirate next to you. You did: move east. You moved east to (4, 0). You were thinking: The nearest square I haven't seen dug is (4, 0).
-- At (4, 0), on a dug square, with pirate-1 to the south. You did: move west. You moved west to (3, 0). You were thinking: I'm heading for (4, 1), but pirate-1 is in the way, so I go round.
-- At (3, 0), on a dug square, with pirate-1 to the south. You did: move east. You moved east to (4, 0). You were thinking: I'm heading for (3, 1), but pirate-1 is in the way, so I go round.
+- At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A3, on a dug square, with no pirate next to you. You did: move north. You moved north to A4. You were thinking: The nearest square I haven't seen dug is A4.
+- At A4, on a dug square, with pirate-2 to the north. You did: move east. You moved east to B4. You were thinking: I'm heading for A5, but pirate-2 is in the way, so I go round.
+- At B4, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At B4, on a dug square, with no pirate next to you. You did: move north. You moved north to B5. You were thinking: The nearest square I haven't seen dug is B5.
+- At B5, on a dug square, with no pirate next to you. You did: move west. You moved west to A5. You were thinking: The nearest square I haven't seen dug is A5.
+- At A5, on a dug square, with no pirate next to you. You did: move east. You moved east to B5. You were thinking: The nearest square I haven't seen dug is C5.
+- At B5, on a dug square, with no pirate next to you. You did: move east. You moved east to C5. You were thinking: The nearest square I haven't seen dug is C5.
+- At C5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to D5. You were thinking: The nearest square I haven't seen dug is D5.
+- At D5, on a dug square, with no pirate next to you. You did: move east. You moved east to E5. You were thinking: The nearest square I haven't seen dug is E5.
+- At E5, on a dug square, with pirate-1 to the south. You did: move west. You moved west to D5. You were thinking: I'm heading for E4, but pirate-1 is in the way, so I go round.
+- At D5, on a dug square, with pirate-1 to the south. You did: move east. You moved east to E5. You were thinking: I'm heading for D4, but pirate-1 is in the way, so I go round.
 
 Pirate-3, this is your turn 13 of 20, turn 36 of the game. You are at E5. Your square has been dug and holds no cave. No way out of your square is blocked.
 ```
@@ -1778,7 +1778,7 @@ Pirate-3, this is your turn 13 of 20, turn 36 of the game. You are at E5. Your s
 
 **Its thinking**
 
-> The nearest square I haven't seen dug is (4, 1).
+> The nearest square I haven't seen dug is E4.
 
 **What it did**
 
@@ -1786,12 +1786,12 @@ Pirate-3, this is your turn 13 of 20, turn 36 of the game. You are at E5. Your s
 
 **The result**
 
-> You moved south to (4, 1).
+> You moved south to E4.
 
 ## Turn 36: pirate-1
 
 <details>
-<summary>What it was shown (4173 characters)</summary>
+<summary>What it was shown (4073 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -1814,19 +1814,19 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (0, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (1, 0). You were thinking: The nearest square I haven't seen dug is (1, 0).
-- At (1, 0), on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (1, 0), on a dug square, with pirate-3 to the south and pirate-2 to the west. You did: move east. You moved east to (2, 0). You were thinking: The nearest square I haven't seen dug is (2, 0).
-- At (2, 0), on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (2, 0), on a dug square, with pirate-3 to the west. You did: move east. You moved east to (3, 0). You were thinking: The nearest square I haven't seen dug is (3, 0).
-- At (3, 0), on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (3, 0), on a dug square, with no pirate next to you. You did: move east. You moved east to (4, 0). You were thinking: The nearest square I haven't seen dug is (4, 0).
-- At (4, 0), on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (4, 0), on a dug square, with pirate-3 to the west. You did: move south. You moved south to (4, 1). You were thinking: The nearest square I haven't seen dug is (4, 1).
-- At (4, 1), on an undug square, with pirate-3 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (4, 1), on a dug square, with no pirate next to you. You did: move west. You moved west to (3, 1). You were thinking: The nearest square I haven't seen dug is (3, 1).
-- At (3, 1), on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to B5. You were thinking: The nearest square I haven't seen dug is B5.
+- At B5, on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At B5, on a dug square, with pirate-3 to the south and pirate-2 to the west. You did: move east. You moved east to C5. You were thinking: The nearest square I haven't seen dug is C5.
+- At C5, on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At C5, on a dug square, with pirate-3 to the west. You did: move east. You moved east to D5. You were thinking: The nearest square I haven't seen dug is D5.
+- At D5, on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At D5, on a dug square, with no pirate next to you. You did: move east. You moved east to E5. You were thinking: The nearest square I haven't seen dug is E5.
+- At E5, on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At E5, on a dug square, with pirate-3 to the west. You did: move south. You moved south to E4. You were thinking: The nearest square I haven't seen dug is E4.
+- At E4, on an undug square, with pirate-3 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At E4, on a dug square, with no pirate next to you. You did: move west. You moved west to D4. You were thinking: The nearest square I haven't seen dug is D4.
+- At D4, on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
 
 Pirate-1, this is your turn 14 of 20, turn 37 of the game. You are at D4. Your square has been dug and holds no cave. The way east is blocked by pirate-3.
 ```
@@ -1835,7 +1835,7 @@ Pirate-1, this is your turn 14 of 20, turn 37 of the game. You are at D4. Your s
 
 **Its thinking**
 
-> The nearest square I haven't seen dug is (2, 1).
+> The nearest square I haven't seen dug is C4.
 
 **What it did**
 
@@ -1843,12 +1843,12 @@ Pirate-1, this is your turn 14 of 20, turn 37 of the game. You are at D4. Your s
 
 **The result**
 
-> You moved west to (2, 1).
+> You moved west to C4.
 
 ## Turn 37: pirate-3
 
 <details>
-<summary>What it was shown (4281 characters)</summary>
+<summary>What it was shown (4141 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -1871,19 +1871,19 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (0, 2), on a dug square, with no pirate next to you. You did: move north. You moved north to (0, 1). You were thinking: The nearest square I haven't seen dug is (0, 1).
-- At (0, 1), on a dug square, with pirate-2 to the north. You did: move east. You moved east to (1, 1). You were thinking: I'm heading for (0, 0), but pirate-2 is in the way, so I go round.
-- At (1, 1), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (1, 1), on a dug square, with no pirate next to you. You did: move north. You moved north to (1, 0). You were thinking: The nearest square I haven't seen dug is (1, 0).
-- At (1, 0), on a dug square, with no pirate next to you. You did: move west. You moved west to (0, 0). You were thinking: The nearest square I haven't seen dug is (0, 0).
-- At (0, 0), on a dug square, with no pirate next to you. You did: move east. You moved east to (1, 0). You were thinking: The nearest square I haven't seen dug is (2, 0).
-- At (1, 0), on a dug square, with no pirate next to you. You did: move east. You moved east to (2, 0). You were thinking: The nearest square I haven't seen dug is (2, 0).
-- At (2, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (3, 0). You were thinking: The nearest square I haven't seen dug is (3, 0).
-- At (3, 0), on a dug square, with no pirate next to you. You did: move east. You moved east to (4, 0). You were thinking: The nearest square I haven't seen dug is (4, 0).
-- At (4, 0), on a dug square, with pirate-1 to the south. You did: move west. You moved west to (3, 0). You were thinking: I'm heading for (4, 1), but pirate-1 is in the way, so I go round.
-- At (3, 0), on a dug square, with pirate-1 to the south. You did: move east. You moved east to (4, 0). You were thinking: I'm heading for (3, 1), but pirate-1 is in the way, so I go round.
-- At (4, 0), on a dug square, with no pirate next to you. You did: move south. You moved south to (4, 1). You were thinking: The nearest square I haven't seen dug is (4, 1).
+- At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A3, on a dug square, with no pirate next to you. You did: move north. You moved north to A4. You were thinking: The nearest square I haven't seen dug is A4.
+- At A4, on a dug square, with pirate-2 to the north. You did: move east. You moved east to B4. You were thinking: I'm heading for A5, but pirate-2 is in the way, so I go round.
+- At B4, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At B4, on a dug square, with no pirate next to you. You did: move north. You moved north to B5. You were thinking: The nearest square I haven't seen dug is B5.
+- At B5, on a dug square, with no pirate next to you. You did: move west. You moved west to A5. You were thinking: The nearest square I haven't seen dug is A5.
+- At A5, on a dug square, with no pirate next to you. You did: move east. You moved east to B5. You were thinking: The nearest square I haven't seen dug is C5.
+- At B5, on a dug square, with no pirate next to you. You did: move east. You moved east to C5. You were thinking: The nearest square I haven't seen dug is C5.
+- At C5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to D5. You were thinking: The nearest square I haven't seen dug is D5.
+- At D5, on a dug square, with no pirate next to you. You did: move east. You moved east to E5. You were thinking: The nearest square I haven't seen dug is E5.
+- At E5, on a dug square, with pirate-1 to the south. You did: move west. You moved west to D5. You were thinking: I'm heading for E4, but pirate-1 is in the way, so I go round.
+- At D5, on a dug square, with pirate-1 to the south. You did: move east. You moved east to E5. You were thinking: I'm heading for D4, but pirate-1 is in the way, so I go round.
+- At E5, on a dug square, with no pirate next to you. You did: move south. You moved south to E4. You were thinking: The nearest square I haven't seen dug is E4.
 
 Pirate-3, this is your turn 14 of 20, turn 38 of the game. You are at E4. Your square has been dug and holds no cave. No way out of your square is blocked.
 ```
@@ -1892,7 +1892,7 @@ Pirate-3, this is your turn 14 of 20, turn 38 of the game. You are at E4. Your s
 
 **Its thinking**
 
-> The nearest square I haven't seen dug is (3, 1).
+> The nearest square I haven't seen dug is D4.
 
 **What it did**
 
@@ -1900,12 +1900,12 @@ Pirate-3, this is your turn 14 of 20, turn 38 of the game. You are at E4. Your s
 
 **The result**
 
-> You moved west to (3, 1).
+> You moved west to D4.
 
 ## Turn 38: pirate-1
 
 <details>
-<summary>What it was shown (4354 characters)</summary>
+<summary>What it was shown (4242 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -1928,20 +1928,20 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (0, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (1, 0). You were thinking: The nearest square I haven't seen dug is (1, 0).
-- At (1, 0), on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (1, 0), on a dug square, with pirate-3 to the south and pirate-2 to the west. You did: move east. You moved east to (2, 0). You were thinking: The nearest square I haven't seen dug is (2, 0).
-- At (2, 0), on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (2, 0), on a dug square, with pirate-3 to the west. You did: move east. You moved east to (3, 0). You were thinking: The nearest square I haven't seen dug is (3, 0).
-- At (3, 0), on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (3, 0), on a dug square, with no pirate next to you. You did: move east. You moved east to (4, 0). You were thinking: The nearest square I haven't seen dug is (4, 0).
-- At (4, 0), on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (4, 0), on a dug square, with pirate-3 to the west. You did: move south. You moved south to (4, 1). You were thinking: The nearest square I haven't seen dug is (4, 1).
-- At (4, 1), on an undug square, with pirate-3 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (4, 1), on a dug square, with no pirate next to you. You did: move west. You moved west to (3, 1). You were thinking: The nearest square I haven't seen dug is (3, 1).
-- At (3, 1), on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (3, 1), on a dug square, with pirate-3 to the east. You did: move west. You moved west to (2, 1). You were thinking: The nearest square I haven't seen dug is (2, 1).
+- At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to B5. You were thinking: The nearest square I haven't seen dug is B5.
+- At B5, on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At B5, on a dug square, with pirate-3 to the south and pirate-2 to the west. You did: move east. You moved east to C5. You were thinking: The nearest square I haven't seen dug is C5.
+- At C5, on an undug square, with pirate-2 to the west. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At C5, on a dug square, with pirate-3 to the west. You did: move east. You moved east to D5. You were thinking: The nearest square I haven't seen dug is D5.
+- At D5, on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At D5, on a dug square, with no pirate next to you. You did: move east. You moved east to E5. You were thinking: The nearest square I haven't seen dug is E5.
+- At E5, on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At E5, on a dug square, with pirate-3 to the west. You did: move south. You moved south to E4. You were thinking: The nearest square I haven't seen dug is E4.
+- At E4, on an undug square, with pirate-3 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At E4, on a dug square, with no pirate next to you. You did: move west. You moved west to D4. You were thinking: The nearest square I haven't seen dug is D4.
+- At D4, on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At D4, on a dug square, with pirate-3 to the east. You did: move west. You moved west to C4. You were thinking: The nearest square I haven't seen dug is C4.
 
 Pirate-1, this is your turn 15 of 20, turn 39 of the game. You are at C4. You are standing on the open cave: enter it to go in. The way east is blocked by pirate-3.
 ```
@@ -1963,7 +1963,7 @@ Pirate-1, this is your turn 15 of 20, turn 39 of the game. You are at C4. You ar
 ## Turn 39: pirate-3
 
 <details>
-<summary>What it was shown (4453 characters)</summary>
+<summary>What it was shown (4301 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -1986,20 +1986,20 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (0, 2), on a dug square, with no pirate next to you. You did: move north. You moved north to (0, 1). You were thinking: The nearest square I haven't seen dug is (0, 1).
-- At (0, 1), on a dug square, with pirate-2 to the north. You did: move east. You moved east to (1, 1). You were thinking: I'm heading for (0, 0), but pirate-2 is in the way, so I go round.
-- At (1, 1), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (1, 1), on a dug square, with no pirate next to you. You did: move north. You moved north to (1, 0). You were thinking: The nearest square I haven't seen dug is (1, 0).
-- At (1, 0), on a dug square, with no pirate next to you. You did: move west. You moved west to (0, 0). You were thinking: The nearest square I haven't seen dug is (0, 0).
-- At (0, 0), on a dug square, with no pirate next to you. You did: move east. You moved east to (1, 0). You were thinking: The nearest square I haven't seen dug is (2, 0).
-- At (1, 0), on a dug square, with no pirate next to you. You did: move east. You moved east to (2, 0). You were thinking: The nearest square I haven't seen dug is (2, 0).
-- At (2, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (3, 0). You were thinking: The nearest square I haven't seen dug is (3, 0).
-- At (3, 0), on a dug square, with no pirate next to you. You did: move east. You moved east to (4, 0). You were thinking: The nearest square I haven't seen dug is (4, 0).
-- At (4, 0), on a dug square, with pirate-1 to the south. You did: move west. You moved west to (3, 0). You were thinking: I'm heading for (4, 1), but pirate-1 is in the way, so I go round.
-- At (3, 0), on a dug square, with pirate-1 to the south. You did: move east. You moved east to (4, 0). You were thinking: I'm heading for (3, 1), but pirate-1 is in the way, so I go round.
-- At (4, 0), on a dug square, with no pirate next to you. You did: move south. You moved south to (4, 1). You were thinking: The nearest square I haven't seen dug is (4, 1).
-- At (4, 1), on a dug square, with no pirate next to you. You did: move west. You moved west to (3, 1). You were thinking: The nearest square I haven't seen dug is (3, 1).
+- At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A3, on a dug square, with no pirate next to you. You did: move north. You moved north to A4. You were thinking: The nearest square I haven't seen dug is A4.
+- At A4, on a dug square, with pirate-2 to the north. You did: move east. You moved east to B4. You were thinking: I'm heading for A5, but pirate-2 is in the way, so I go round.
+- At B4, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At B4, on a dug square, with no pirate next to you. You did: move north. You moved north to B5. You were thinking: The nearest square I haven't seen dug is B5.
+- At B5, on a dug square, with no pirate next to you. You did: move west. You moved west to A5. You were thinking: The nearest square I haven't seen dug is A5.
+- At A5, on a dug square, with no pirate next to you. You did: move east. You moved east to B5. You were thinking: The nearest square I haven't seen dug is C5.
+- At B5, on a dug square, with no pirate next to you. You did: move east. You moved east to C5. You were thinking: The nearest square I haven't seen dug is C5.
+- At C5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to D5. You were thinking: The nearest square I haven't seen dug is D5.
+- At D5, on a dug square, with no pirate next to you. You did: move east. You moved east to E5. You were thinking: The nearest square I haven't seen dug is E5.
+- At E5, on a dug square, with pirate-1 to the south. You did: move west. You moved west to D5. You were thinking: I'm heading for E4, but pirate-1 is in the way, so I go round.
+- At D5, on a dug square, with pirate-1 to the south. You did: move east. You moved east to E5. You were thinking: I'm heading for D4, but pirate-1 is in the way, so I go round.
+- At E5, on a dug square, with no pirate next to you. You did: move south. You moved south to E4. You were thinking: The nearest square I haven't seen dug is E4.
+- At E4, on a dug square, with no pirate next to you. You did: move west. You moved west to D4. You were thinking: The nearest square I haven't seen dug is D4.
 
 Pirate-3, this is your turn 15 of 20, turn 40 of the game. You are at D4. Your square has been dug and holds no cave. No way out of your square is blocked.
 ```
@@ -2008,7 +2008,7 @@ Pirate-3, this is your turn 15 of 20, turn 40 of the game. You are at D4. Your s
 
 **Its thinking**
 
-> The nearest square I haven't seen dug is (2, 1).
+> The nearest square I haven't seen dug is C4.
 
 **What it did**
 
@@ -2016,12 +2016,12 @@ Pirate-3, this is your turn 15 of 20, turn 40 of the game. You are at D4. Your s
 
 **The result**
 
-> You moved west to (2, 1).
+> You moved west to C4.
 
 ## Turn 40: pirate-3
 
 <details>
-<summary>What it was shown (4635 characters)</summary>
+<summary>What it was shown (4471 characters)</summary>
 
 ```text
 You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
@@ -2044,21 +2044,21 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 2), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (0, 2), on a dug square, with no pirate next to you. You did: move north. You moved north to (0, 1). You were thinking: The nearest square I haven't seen dug is (0, 1).
-- At (0, 1), on a dug square, with pirate-2 to the north. You did: move east. You moved east to (1, 1). You were thinking: I'm heading for (0, 0), but pirate-2 is in the way, so I go round.
-- At (1, 1), on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (1, 1), on a dug square, with no pirate next to you. You did: move north. You moved north to (1, 0). You were thinking: The nearest square I haven't seen dug is (1, 0).
-- At (1, 0), on a dug square, with no pirate next to you. You did: move west. You moved west to (0, 0). You were thinking: The nearest square I haven't seen dug is (0, 0).
-- At (0, 0), on a dug square, with no pirate next to you. You did: move east. You moved east to (1, 0). You were thinking: The nearest square I haven't seen dug is (2, 0).
-- At (1, 0), on a dug square, with no pirate next to you. You did: move east. You moved east to (2, 0). You were thinking: The nearest square I haven't seen dug is (2, 0).
-- At (2, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (3, 0). You were thinking: The nearest square I haven't seen dug is (3, 0).
-- At (3, 0), on a dug square, with no pirate next to you. You did: move east. You moved east to (4, 0). You were thinking: The nearest square I haven't seen dug is (4, 0).
-- At (4, 0), on a dug square, with pirate-1 to the south. You did: move west. You moved west to (3, 0). You were thinking: I'm heading for (4, 1), but pirate-1 is in the way, so I go round.
-- At (3, 0), on a dug square, with pirate-1 to the south. You did: move east. You moved east to (4, 0). You were thinking: I'm heading for (3, 1), but pirate-1 is in the way, so I go round.
-- At (4, 0), on a dug square, with no pirate next to you. You did: move south. You moved south to (4, 1). You were thinking: The nearest square I haven't seen dug is (4, 1).
-- At (4, 1), on a dug square, with no pirate next to you. You did: move west. You moved west to (3, 1). You were thinking: The nearest square I haven't seen dug is (3, 1).
-- At (3, 1), on a dug square, with no pirate next to you. You did: move west. You moved west to (2, 1). You were thinking: The nearest square I haven't seen dug is (2, 1).
+- At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A3, on a dug square, with no pirate next to you. You did: move north. You moved north to A4. You were thinking: The nearest square I haven't seen dug is A4.
+- At A4, on a dug square, with pirate-2 to the north. You did: move east. You moved east to B4. You were thinking: I'm heading for A5, but pirate-2 is in the way, so I go round.
+- At B4, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At B4, on a dug square, with no pirate next to you. You did: move north. You moved north to B5. You were thinking: The nearest square I haven't seen dug is B5.
+- At B5, on a dug square, with no pirate next to you. You did: move west. You moved west to A5. You were thinking: The nearest square I haven't seen dug is A5.
+- At A5, on a dug square, with no pirate next to you. You did: move east. You moved east to B5. You were thinking: The nearest square I haven't seen dug is C5.
+- At B5, on a dug square, with no pirate next to you. You did: move east. You moved east to C5. You were thinking: The nearest square I haven't seen dug is C5.
+- At C5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to D5. You were thinking: The nearest square I haven't seen dug is D5.
+- At D5, on a dug square, with no pirate next to you. You did: move east. You moved east to E5. You were thinking: The nearest square I haven't seen dug is E5.
+- At E5, on a dug square, with pirate-1 to the south. You did: move west. You moved west to D5. You were thinking: I'm heading for E4, but pirate-1 is in the way, so I go round.
+- At D5, on a dug square, with pirate-1 to the south. You did: move east. You moved east to E5. You were thinking: I'm heading for D4, but pirate-1 is in the way, so I go round.
+- At E5, on a dug square, with no pirate next to you. You did: move south. You moved south to E4. You were thinking: The nearest square I haven't seen dug is E4.
+- At E4, on a dug square, with no pirate next to you. You did: move west. You moved west to D4. You were thinking: The nearest square I haven't seen dug is D4.
+- At D4, on a dug square, with no pirate next to you. You did: move west. You moved west to C4. You were thinking: The nearest square I haven't seen dug is C4.
 
 Pirate-3, this is your turn 16 of 20, turn 41 of the game. You are at C4. You are standing on the open cave: enter it to go in. No way out of your square is blocked.
 ```
@@ -2079,6 +2079,6 @@ Pirate-3, this is your turn 16 of 20, turn 41 of the game. You are at C4. You ar
 
 ## Game over
 
-Game over: everyone is in the cave. The treasure at (2, 1) was dug up, and 3 of 3 pirates got into the cave. Score 490.
+Game over: everyone is in the cave. The treasure at C4 was dug up, and 3 of 3 pirates got into the cave. Score 490.
 
 **Score:** 490

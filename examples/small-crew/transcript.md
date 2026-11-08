@@ -93,7 +93,7 @@ Pirate-2, this is your turn 1 of 4, turn 2 of the game. You are at A2. Your squa
 ## Turn 2: pirate-1
 
 <details>
-<summary>What it was shown (2167 characters)</summary>
+<summary>What it was shown (2163 characters)</summary>
 
 ```text
 You are one of 2 pirates digging for one buried treasure on an island, a 3 by 3 grid of squares. The crew is pirate-1 to pirate-2 and takes turns in that order; each pirate gets 4 turns.
@@ -116,7 +116,7 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A3, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
 
 Pirate-1, this is your turn 2 of 4, turn 3 of the game. You are at A3. Your square has been dug and holds no cave. The way south is blocked by pirate-2.
 ```
@@ -125,7 +125,7 @@ Pirate-1, this is your turn 2 of 4, turn 3 of the game. You are at A3. Your squa
 
 **Its thinking**
 
-> The nearest square I haven't seen dug is (1, 0).
+> The nearest square I haven't seen dug is B3.
 
 **What it did**
 
@@ -133,12 +133,12 @@ Pirate-1, this is your turn 2 of 4, turn 3 of the game. You are at A3. Your squa
 
 **The result**
 
-> You moved east to (1, 0).
+> You moved east to B3.
 
 ## Turn 3: pirate-2
 
 <details>
-<summary>What it was shown (2167 characters)</summary>
+<summary>What it was shown (2163 characters)</summary>
 
 ```text
 You are one of 2 pirates digging for one buried treasure on an island, a 3 by 3 grid of squares. The crew is pirate-1 to pirate-2 and takes turns in that order; each pirate gets 4 turns.
@@ -161,7 +161,7 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 1), on an undug square, with pirate-1 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A2, on an undug square, with pirate-1 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
 
 Pirate-2, this is your turn 2 of 4, turn 4 of the game. You are at A2. Your square has been dug and holds no cave. No way out of your square is blocked.
 ```
@@ -170,7 +170,7 @@ Pirate-2, this is your turn 2 of 4, turn 4 of the game. You are at A2. Your squa
 
 **Its thinking**
 
-> The nearest square I haven't seen dug is (0, 0).
+> The nearest square I haven't seen dug is A3.
 
 **What it did**
 
@@ -178,12 +178,12 @@ Pirate-2, this is your turn 2 of 4, turn 4 of the game. You are at A2. Your squa
 
 **The result**
 
-> You moved north to (0, 0).
+> You moved north to A3.
 
 ## Turn 4: pirate-1
 
 <details>
-<summary>What it was shown (2323 characters)</summary>
+<summary>What it was shown (2307 characters)</summary>
 
 ```text
 You are one of 2 pirates digging for one buried treasure on an island, a 3 by 3 grid of squares. The crew is pirate-1 to pirate-2 and takes turns in that order; each pirate gets 4 turns.
@@ -206,8 +206,8 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (0, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (1, 0). You were thinking: The nearest square I haven't seen dug is (1, 0).
+- At A3, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A3, on a dug square, with pirate-2 to the south. You did: move east. You moved east to B3. You were thinking: The nearest square I haven't seen dug is B3.
 
 Pirate-1, this is your turn 3 of 4, turn 5 of the game. You are at B3. Your square hasn't been dug. The way west is blocked by pirate-2.
 ```
@@ -229,7 +229,7 @@ Pirate-1, this is your turn 3 of 4, turn 5 of the game. You are at B3. Your squa
 ## Turn 5: pirate-2
 
 <details>
-<summary>What it was shown (2340 characters)</summary>
+<summary>What it was shown (2324 characters)</summary>
 
 ```text
 You are one of 2 pirates digging for one buried treasure on an island, a 3 by 3 grid of squares. The crew is pirate-1 to pirate-2 and takes turns in that order; each pirate gets 4 turns.
@@ -252,8 +252,8 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 1), on an undug square, with pirate-1 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (0, 1), on a dug square, with no pirate next to you. You did: move north. You moved north to (0, 0). You were thinking: The nearest square I haven't seen dug is (0, 0).
+- At A2, on an undug square, with pirate-1 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A2, on a dug square, with no pirate next to you. You did: move north. You moved north to A3. You were thinking: The nearest square I haven't seen dug is A3.
 
 Pirate-2, this is your turn 3 of 4, turn 6 of the game. You are at A3. Your square has been dug and holds no cave. The way east is blocked by pirate-1.
 ```
@@ -262,7 +262,7 @@ Pirate-2, this is your turn 3 of 4, turn 6 of the game. You are at A3. Your squa
 
 **Its thinking**
 
-> I'm heading for (1, 0), but pirate-1 is in the way, so I go round.
+> I'm heading for B3, but pirate-1 is in the way, so I go round.
 
 **What it did**
 
@@ -270,12 +270,12 @@ Pirate-2, this is your turn 3 of 4, turn 6 of the game. You are at A3. Your squa
 
 **The result**
 
-> You moved south to (0, 1).
+> You moved south to A2.
 
 ## Turn 6: pirate-1
 
 <details>
-<summary>What it was shown (2562 characters)</summary>
+<summary>What it was shown (2542 characters)</summary>
 
 ```text
 You are one of 2 pirates digging for one buried treasure on an island, a 3 by 3 grid of squares. The crew is pirate-1 to pirate-2 and takes turns in that order; each pirate gets 4 turns.
@@ -298,9 +298,9 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 0), on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (0, 0), on a dug square, with pirate-2 to the south. You did: move east. You moved east to (1, 0). You were thinking: The nearest square I haven't seen dug is (1, 0).
-- At (1, 0), on an undug square, with pirate-2 to the west. You did: dig. You dug here and found the treasure! It opens a cave on this square: enter it to go in. You were thinking: Nobody has dug this square yet.
+- At A3, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A3, on a dug square, with pirate-2 to the south. You did: move east. You moved east to B3. You were thinking: The nearest square I haven't seen dug is B3.
+- At B3, on an undug square, with pirate-2 to the west. You did: dig. You dug here and found the treasure! It opens a cave on this square: enter it to go in. You were thinking: Nobody has dug this square yet.
 
 Pirate-1, this is your turn 4 of 4, turn 7 of the game. You are at B3. You are standing on the open cave: enter it to go in. No way out of your square is blocked.
 ```
@@ -322,7 +322,7 @@ Pirate-1, this is your turn 4 of 4, turn 7 of the game. You are at B3. You are s
 ## Turn 7: pirate-2
 
 <details>
-<summary>What it was shown (2532 characters)</summary>
+<summary>What it was shown (2504 characters)</summary>
 
 ```text
 You are one of 2 pirates digging for one buried treasure on an island, a 3 by 3 grid of squares. The crew is pirate-1 to pirate-2 and takes turns in that order; each pirate gets 4 turns.
@@ -345,9 +345,9 @@ Each turn is exactly one action, made as a tool call:
 The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 Your earlier turns:
-- At (0, 1), on an undug square, with pirate-1 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
-- At (0, 1), on a dug square, with no pirate next to you. You did: move north. You moved north to (0, 0). You were thinking: The nearest square I haven't seen dug is (0, 0).
-- At (0, 0), on a dug square, with pirate-1 to the east. You did: move south. You moved south to (0, 1). You were thinking: I'm heading for (1, 0), but pirate-1 is in the way, so I go round.
+- At A2, on an undug square, with pirate-1 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
+- At A2, on a dug square, with no pirate next to you. You did: move north. You moved north to A3. You were thinking: The nearest square I haven't seen dug is A3.
+- At A3, on a dug square, with pirate-1 to the east. You did: move south. You moved south to A2. You were thinking: I'm heading for B3, but pirate-1 is in the way, so I go round.
 
 Pirate-2, this is your turn 4 of 4, turn 8 of the game. You are at A2. Your square has been dug and holds no cave. No way out of your square is blocked.
 ```
@@ -356,7 +356,7 @@ Pirate-2, this is your turn 4 of 4, turn 8 of the game. You are at A2. Your squa
 
 **Its thinking**
 
-> The nearest square I haven't seen dug is (1, 1).
+> The nearest square I haven't seen dug is B2.
 
 **What it did**
 
@@ -364,10 +364,10 @@ Pirate-2, this is your turn 4 of 4, turn 8 of the game. You are at A2. Your squa
 
 **The result**
 
-> You moved east to (1, 1).
+> You moved east to B2.
 
 ## Game over
 
-Game over: the turns ran out. The treasure at (1, 0) was dug up, and 1 of 2 pirates got into the cave. Score 100.
+Game over: the turns ran out. The treasure at B3 was dug up, and 1 of 2 pirates got into the cave. Score 100.
 
 **Score:** 100

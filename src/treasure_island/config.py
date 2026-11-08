@@ -10,7 +10,7 @@ thought inside `reply_tokens`, which caps each reply. `score_in_cave` and
 default, Al to confirm.
 `parse_config` reports every problem at once, so one fix-and-retry is enough.
 
-Implements: agents/reasoning-looked-up, treasure-island/model-reasoning, treasure-island/score-numbers, treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config, treasure-island/silent, treasure-island/cave-leak, treasure-island/exploit-flags
+Implements: agents/reasoning-looked-up, treasure-island/model-reasoning, treasure-island/score-numbers, treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config, treasure-island/silent, treasure-island/cave-leak, treasure-island/exploit-flags, treasure-island/square-names
 """
 
 import colorsys
@@ -18,6 +18,8 @@ import dataclasses
 import json
 import tomllib
 from pathlib import Path
+
+from treasure_island.squares import MOST_COLUMNS
 
 DEFAULTS = {
     "grid_size": 10,
@@ -153,8 +155,11 @@ def _number_errors(data):
 
 
 def _fit_errors(data):
-    """A crew needs a square each, since no two pirates share one."""
+    """A crew needs a square each, and every column needs a letter from A to Z."""
     size = data.get("grid_size", DEFAULTS["grid_size"])
+    if _is_int(size) and size > MOST_COLUMNS:
+        why = "since columns are lettered A to Z"
+        return [f"grid_size can be at most {MOST_COLUMNS}, {why}"]
     pirates = data.get("pirates")
     crew = (
         len(pirates)

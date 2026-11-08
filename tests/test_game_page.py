@@ -110,6 +110,23 @@ def test_game_page_the_scroll_so_far_is_rebuilt_newest_last(saved):
         assert [w["text"] for w in turn["wrote"]] == writes
 
 
+def test_game_page_a_note_written_over_lines_shows_on_one_as_the_scroll_keeps_it(saved):
+    # A pirate writes its first note across two lines; the scroll joins them.
+    records = records_of(saved)
+    turn = next(r for r in records if any(a["action"] == "write" for a in r["did"]))
+    note = next(a for a in turn["did"] if a["action"] == "write")
+    note["text"] = note["text"].replace(" ", "\n", 1)
+    assert "\n" in note["text"]
+    rewrite(saved, records)
+    turns = turns_in(viewer.slideshow_page(saved))
+    written = [line for shown in turns for line in shown["wrote"]]
+    as_saved = (saved / "pirates-log.txt").read_text().splitlines()
+    assert [f"{w['line']} {w['by']}: {w['text']}" for w in written] == as_saved
+    # What the pirate did stays exactly as it wrote it.
+    first = next(shown for shown in turns if shown["wrote"])
+    assert "\n" in next(a["text"] for a in first["did"] if a["action"] == "write")
+
+
 def test_game_page_a_click_or_the_arrow_keys_step_through_the_turn_list(saved):
     page = viewer.slideshow_page(saved)
     assert 'id="turns"' in page

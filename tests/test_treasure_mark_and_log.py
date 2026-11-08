@@ -6,6 +6,7 @@ import shutil
 from pathlib import Path
 
 import pytest
+import talking
 from PIL import Image
 
 from treasure_island import viewer
@@ -215,3 +216,13 @@ def test_long_log_lines_keep_the_newest_in_view():
 
 def test_log_at_bottom_is_titled_the_scroll():
     assert viewer.STRIP_TITLE == "The scroll"
+
+
+def test_log_at_bottom_marks_each_said_line_s_turn_and_alert(tmp_path):
+    # A v2 game whose pirates say readings and raise alerts.
+    folder = talking.write(tmp_path / "talking")
+    file = (folder / "pirates-log.txt").read_text().splitlines()
+    records = records_of(folder)
+    lines = viewer.scene(records, len(records) - 1, 5)["log_so_far"]
+    assert [f"{n} {text}" for n, text in lines] == file
+    assert any("(turn " in text and ", alert)" in text for _, text in lines)

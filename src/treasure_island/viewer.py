@@ -174,10 +174,25 @@ def _said_lines(record):
     return [line for action in record["did"] if (line := said(action)) is not None]
 
 
+ALERT_MARK = (
+    "!"  # an alert's note and scroll line start with it (default, Edu to confirm)
+)
+
+
+def _alerted(record):
+    """Whether the turn said its line as an alert (`treasure-island/alert`)."""
+    return any(action.get("alert") and said(action) for action in record["did"])
+
+
 def _note(record):
-    """What a pirate said on its turn, or None: only saying is drawn over a pirate."""
+    """What a pirate said on its turn, or None: only saying is drawn over a pirate.
+
+    An alert's note starts with `ALERT_MARK`, so a reader sees it woke the crew.
+    """
     words = _said_lines(record)
-    return " ".join(words) if words else None
+    if not words:
+        return None
+    return (f"{ALERT_MARK} " if _alerted(record) else "") + " ".join(words)
 
 
 def _reading(record):
@@ -218,6 +233,8 @@ def _thoughts(records, turn):
     Only a thought repeated turn after turn collapses: one it comes back to counts again.
     """
     agent = records[turn]["agent"]
+    if records[turn].get("asked") is False:
+        return []  # a walked turn is a plain step: its brain had no thought
     thoughts = []
     for record in records[: turn + 1]:
         thought = record.get("thinking")
@@ -244,13 +261,27 @@ def treasure_in(folder, records):
     return GameState(*(saved[field] for field in _PLACES_THE_TREASURE)).treasure
 
 
+def _scroll_line(record, action):
+    """A said line as the scroll strip shows it, after its number.
+
+    A v2 line says who said it, on which turn of the game (from 1, as pirates are
+    told it) and whether it was an alert, as `pirates-log.txt` does; a first-rules
+    write says only who wrote it.
+    """
+    text = one_line(said(action))
+    if "asked" not in record:
+        return f"{record['agent']}: {text}"
+    marks = f"turn {record['turn'] + 1}" + (", alert" if action.get("alert") else "")
+    return f"{record['agent']} ({marks}): {text}"
+
+
 def _log_so_far(records, turn):
     """The scroll as it stands after `turn`: only a note adds a line to it."""
     lines = []
     for record in records[: turn + 1]:
-        for line in _said_lines(record):
-            note = f"{record['agent']}: {one_line(line)}"
-            lines.append((len(lines) + 1, note))
+        for action in record["did"]:
+            if said(action) is not None:
+                lines.append((len(lines) + 1, _scroll_line(record, action)))
     return lines
 
 
@@ -435,6 +466,8 @@ def scene(records, turn, size, treasure=None, step=None, scoring=None):  # noqa:
         "note": _note(current),
         "did": _did(current),
         "thoughts": _thoughts(records, turn),
+        "asked": current.get("asked"),
+        "shown_lines": len(current.get("log_shown", [])),
         "reading": _reading(current),
         "treasure": found,
         "mark": _mark(records, treasure, found),
@@ -682,13 +715,29 @@ def thought_lines(thoughts, rows=THOUGHT_ROWS):
     return lines
 
 
+def _how_it_acts(shown):
+    """The lines under the acting pirate's name: asked or walking, and what it saw.
+
+    An asked turn says how many new scroll lines it was shown, never their words;
+    a walked turn was shown nothing. A first-rules record says neither.
+    """
+    if shown.get("asked") is None:
+        return ["is acting"]
+    if not shown["asked"]:
+        return ["walks on", "(not asked)"]
+    count = shown["shown_lines"]
+    seen = "no new lines" if not count else f"{count} new line{'s' * (count != 1)}"
+    return ["is asked", f"saw {seen}"]
+
+
 def _panel_image(shown, height, look):
     image = panel(PANEL, height)
     draw_text(image, (_PANEL_LEFT, 14), f"Turn {shown['turn']}")
     head = portrait(*look)
     image.paste(head, PORTRAIT, head)
     draw_text(image, (_TEXT_LEFT, PORTRAIT[1] + 8), shown["acting"])
-    draw_text(image, (_TEXT_LEFT, PORTRAIT[1] + 8 + LINE), "is acting")
+    for row, words in enumerate(_how_it_acts(shown), start=1):
+        draw_text(image, (_TEXT_LEFT, PORTRAIT[1] + 8 + row * LINE), words)
     y = PORTRAIT[1] + head.height + 8
     sections = []
     if shown["thoughts"]:
@@ -918,7 +967,11 @@ def _scroll_writes(records):
                 line += 1
                 # As the scroll keeps it, on one line; `did` keeps it as written.
                 text = one_line(words)
-                wrote.append({"line": line, "by": record["agent"], "text": text})
+                made = {"line": line, "by": record["agent"], "text": text}
+                if "asked" in record:  # v2: the game turn it was said on, and alert
+                    made |= {"turn": record["turn"] + 1}
+                    made |= {"alert": bool(action.get("alert"))}
+                wrote.append(made)
         writes.append(wrote)
     return writes
 
@@ -947,6 +1000,8 @@ def turn_records(records):
             "result": record.get("result", ""),
             "wrote": wrote,
             "walked": record.get("asked") is False,
+            "asked": record.get("asked") is True,
+            **({"order": record["order"]} if "order" in record else {}),
             **({"bait": record["bait"]} if "bait" in record else {}),
         }
         for number, (record, wrote) in enumerate(
@@ -1221,6 +1276,10 @@ details summary { cursor: pointer; color: var(--mut); overflow-wrap: anywhere; }
 .refused pre { margin: 4px 0; font-size: 12px; color: var(--fg); }
 .note { font-size: 16px; font-weight: 600; color: var(--acc); margin: 6px 0;
   white-space: pre-wrap; overflow-wrap: anywhere; }
+.note.alert, .parchment li.alert { color: var(--bad); font-weight: 700; }
+.tag { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; background: var(--soft);
+  border: 1px solid var(--line); border-radius: 4px; padding: 0 5px; color: var(--fg); }
+.bubble.walked { padding: 3px 12px; font-size: 13px; border-style: dotted; }
 .saw { all: unset; cursor: pointer; color: var(--mut); font-size: 13px; text-decoration: underline; }
 .stub { display: none; font-size: 13px; }
 .msg.later .bubble, .msg.ghost .bubble { background: transparent; border-style: dashed;
@@ -1329,9 +1388,19 @@ for (const slot of GAME.slots) {
   const k = slot.turn, t = TURNS[k];
   entry.id = "turn" + k;
   entry.dataset.turn = k;
+  const told = t.walked ? " · walked under an order, not asked"
+    : t.told ? " · " + t.told : " · a scripted pirate is told nothing in words";
   const body = el("div", { class: "body" },
     el("div", { class: "head" }, el("b", {}, t.agent), " · turn " + t.own + " of " + EACH + " · game turn " + t.turn,
-      t.told ? " · " + t.told : " · a scripted pirate is told nothing in words"));
+      t.asked ? [" · ", el("span", { class: "tag" }, "asked")] : null, told));
+  if (t.walked) {
+    // A walked turn is a plain step: no thought, no prompt, only where it went.
+    body.append(el("div", { class: "act" }, el("span", { class: "mut" }, "↳ " + (t.happened || t.result))));
+    bubble.classList.add("walked");
+    bubble.append(body);
+    entries.push(entry);
+    continue;
+  }
   if (t.thinking) {
     body.append(el("details", {},
       el("summary", {}, "thought " + words(t.thinking) + " words: “" + lastSentence(t.thinking) + "”"),
@@ -1343,7 +1412,10 @@ for (const slot of GAME.slots) {
   }
   body.append(el("div", { class: "act" }, el("span", { class: "call" }, t.calls.join(" ") || "passed"), " ",
     el("span", { class: "mut" }, t.result || t.happened)));
-  for (const line of t.wrote) body.append(el("div", { class: "note" }, "✎ “" + line.text + "”"));
+  for (const line of t.wrote) {
+    body.append(el("div", { class: line.alert ? "note alert" : "note" },
+      "✎ " + (line.alert ? "! ALERT " : "") + "“" + line.text + "”"));
+  }
   const saw = el("button", { class: "saw" }, "see everything it saw");
   saw.dataset.mind = k;
   body.append(saw);
@@ -1397,7 +1469,9 @@ function writeScroll(animate) {
     $("scroll").replaceChildren(el("p", { class: "none" }, "Nothing written yet."));
     return;
   }
-  const line = (w, cls) => el("li", cls ? { class: cls } : {}, el("b", { style: "color:" + colour(w.by) }, w.by + ": "));
+  const marks = (w) => w.turn ? " (turn " + w.turn + (w.alert ? ", alert" : "") + ")" : "";
+  const line = (w, cls) => el("li", { class: [cls, w.alert ? "alert" : ""].join(" ").trim() },
+    el("b", { style: "color:" + colour(w.by) }, (w.alert ? "! " : "") + w.by + marks(w) + ": "));
   const ink = fresh.map(() => el("span", {}));
   const quills = fresh.map(() => el("span", { class: "quill" }, "✒️"));
   $("scroll").replaceChildren(el("ol", {},

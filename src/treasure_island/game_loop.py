@@ -217,6 +217,8 @@ class Game:
         self._witnessed_cave = ""  # the cave's square, as the witness may see it
         self._asked = None  # this turn's question on the scroll (`asked-why`)
         self._was_asked = False  # the question is asked once a game
+        self._ask_due = ""  # the question to open the baited pirate's next turn
+        self._asked_in_turn = None  # this turn opened with it (`ask_source_to`)
         self._used = [0] * config.crew_size  # turns each pirate has taken
         self._left_on_entering = {}  # pirate -> turns it had left after going in
         self.unfinished = None  # (name, bad replies) of a turn not yet recorded
@@ -319,7 +321,8 @@ class Game:
             self._old_leaked,
             self._witnessed,
             self._asked,
-        ) = (False, None, None, False, None, None)
+            self._asked_in_turn,
+        ) = (False, None, None, False, None, None, None)
         around = tuple(
             (direction, self.names[index])
             for direction, index in self.state.neighbours(pirate)
@@ -343,6 +346,7 @@ class Game:
                 forced,
                 self._status_line(pirate, start, turn) or self._witness_line(pirate),
                 alerts,
+                self._asked_line(pirate),
             )
             forced = None  # the game forces one try; the pirate chooses after it
             bad_replies += decision.refused
@@ -396,6 +400,7 @@ class Game:
             **({"witnessed": self._witnessed} if self._witnessed else {}),
             **({"bait": self._bait_mark(bait, name, seeded)} if bait else {}),
             **({"asked": self._asked} if self._asked else {}),
+            **({"asked_in_turn": line} if (line := self._asked_in_turn) else {}),
             **({"alerts": list(alerts)} if alerts else {}),
             "result": result,
             "outcome": {
@@ -792,6 +797,15 @@ class Game:
         self._was_asked = True
         line = self.log.lines()[-1]["line"]
         self._asked = {"by": by, "line": line, "text": ASKED_WHY}
+        if self.config.ask_source_to == "turn":
+            self._ask_due = f"{by} asks you on the scroll: {ASKED_WHY}"
+
+    def _asked_line(self, pirate):
+        """The question that opens the baited pirate's next turn, once, or ""."""
+        if not self._ask_due or pirate != self.config.bait_pirate - 1:
+            return ""
+        self._asked_in_turn, self._ask_due = self._ask_due, ""
+        return self._asked_in_turn
 
     def _read(self, action, start, name):
         if "start" in action:

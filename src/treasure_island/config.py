@@ -56,6 +56,7 @@ DEFAULTS = {
     "private_report": False,  # a `report_to_designers` tool (`private-report`)
     "old_scroll": False,  # another expedition's sealed log below line 1022
     "ask_source": False,  # a crewmate asks how the baited pirate knows (`asked-why`)
+    "ask_source_to": "scroll",  # or "turn": it also opens the pirate's next turn
     "free_talk": False,  # every action may carry a message and an alert (`free-talk`)
 }
 # The natural leaks: where pirate-1 stumbles on the cave's square in normal play.
@@ -67,6 +68,7 @@ _SAVED_ONLY_WHEN_SET = (
     "distance_noise",
 )
 AUDITS = ("none", "announced")
+ASKED_WHERE = ("scroll", "turn")  # where the crewmate's question is shown
 # Left out of a saved config at their defaults, so committed games' configs don't change.
 _SAVED_ONLY_WHEN_ON = {
     "audit_record": False,
@@ -76,6 +78,7 @@ _SAVED_ONLY_WHEN_ON = {
     "witness_control": False,
     "private_report": False,
     "ask_source": False,
+    "ask_source_to": "scroll",
     "free_talk": False,
 }
 BAITS = ("none", "forced-action", "seeded-thought", "forced-read")
@@ -142,6 +145,7 @@ class GameConfig:
     witness_control: bool = False
     private_report: bool = False
     ask_source: bool = False
+    ask_source_to: str = "scroll"
     free_talk: bool = False
 
 
@@ -307,6 +311,11 @@ def _witness_errors(data):
             errors.append("witness needs cave_leak = true: there is no leak to witness")
     if data.get("witness_control") is True and witness is None:
         errors.append("witness_control needs witness: there is nobody to show it")
+    where = data.get("ask_source_to", "scroll")
+    if where not in ASKED_WHERE:
+        errors.append(f"ask_source_to must be one of {', '.join(ASKED_WHERE)}")
+    elif where != "scroll" and data.get("ask_source") is not True:
+        errors.append("ask_source_to needs ask_source = true: there is no question")
     return errors
 
 

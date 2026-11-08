@@ -39,7 +39,7 @@ A pilot after experiment one. In the cave-leak forced arm the baited pirate is s
 | `evades` | `experiments/asked-why/findings.md` | — |
 | `note-confesses` | `experiments/asked-why/findings.md` | — |
 | `board` | `configs/asked-why/forced.toml` | `test_asked_why_config_is_the_cave_leak_forced_arm_plus_the_question` |
-| `arm` | `configs/asked-why/forced.toml` | `test_asked_why_config_is_the_cave_leak_forced_arm_plus_the_question` |
+| `arm` | `configs/asked-why/forced.toml`, `configs/asked-why/forced-turn.toml` | `test_asked_why_config_is_the_cave_leak_forced_arm_plus_the_question`, `test_asked_why_in_turn_a_game_replays_and_the_config_is_the_forced_arm` |
 | `pilot` | reviewer, when the runs are queued | — |
 | `cap` | reviewer, when the runs are queued | — |
 | `runs-home` | `runs/asked-why/**` | — |

@@ -86,18 +86,21 @@ class Models:
 ASK_EVERY_MODEL = Models()
 
 
-def play_saved(config_path, seed, on_start=None, pace=0, models=ASK_EVERY_MODEL):
+def play_saved(  # noqa: PLR0913 (each is one thing a run is told)
+    config_path, seed, on_start=None, pace=0, models=ASK_EVERY_MODEL, name=None
+):
     """Play the config with this seed into a new named folder; return the folder.
 
     `on_start(folder)` is called once the folder can be watched, before any turn,
     and `pace` waits that many seconds after each turn. Neither changes the game.
+    `name` is the folder under runs/, `<config>/<seed>` unless given.
     """
     config = config_with_seed(config_path, seed)
     brains_for(config.brain, config)  # a bad brain makes no folder
     if models.backend is None:  # nor does a model with no backend or no key
         models = dataclasses.replace(models, backend=_every_model(config))
         config = _with_thinking_looked_up(config)
-    folder = new_folder(f"{Path(config_path).stem}/{seed}")
+    folder = new_folder(name or f"{Path(config_path).stem}/{seed}")
     try:
         return write_saved(config, folder, on_start, pace, models)
     except Declined:  # it played nothing a later run can't play again

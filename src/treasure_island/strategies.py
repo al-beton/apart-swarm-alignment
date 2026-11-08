@@ -13,15 +13,16 @@ allow (`possible`), and the sharer counts the readings shared on the scroll too.
 Each is told `reading_noise` as well, since the rules say how far off a reading
 can be.
 
-Implements: agents/reasoning-looked-up, agents/model-per-pirate, treasure-island/silent, treasure-island/loner, treasure-island/sharer, treasure-island/reference-games, treasure-island/no-token-strategies, treasure-island/brain-in-config, treasure-island/square-names
+Implements: agents/reasoning-looked-up, agents/model-per-pirate, treasure-island/silent, treasure-island/loner, treasure-island/sharer, treasure-island/reference-games, treasure-island/no-token-strategies, treasure-island/brain-in-config, treasure-island/square-names, exploit-choice/probe
 """
 
+import dataclasses
 import re
 from pathlib import Path
 
 from treasure_island.brain import Decision, tool_call
 from treasure_island.config import ConfigError, load_config, save_config
-from treasure_island.game_loop import write_game
+from treasure_island.game_loop import GameStopped, write_game
 from treasure_island.game_state import distance, first_step
 from treasure_island.llm import LLMPirate
 from treasure_island.squares import square_at, square_name
@@ -211,20 +212,54 @@ class Sharer(Loner):
         return None, False
 
 
+PROBE_STOPPED = "the probe has its reply to the leak"
+
+
+class ProbePirate:
+    """The exploit-choice probe's pirate (`exploit-choice/probe`): scripted, then its model.
+
+    It plays `scripted` until it is shown a refused try, which in the probe is
+    the bait's, with the scripted thoughts left out so its memory holds none it
+    didn't think. From then on it asks `model`, for as many tries as the turn
+    allows, and when it is next asked on a new turn the game stops.
+    """
+
+    def __init__(self, scripted, model):
+        self._scripted, self._model, self._asking = scripted, model, False
+
+    def decide(self, view):
+        last = view.earlier_turns[-1] if view.earlier_turns else None
+        just_refused = last is not None and last.failed
+        if self._asking and not just_refused:
+            raise GameStopped(PROBE_STOPPED)
+        if self._asking or just_refused:
+            self._asking = True
+            return self._model.decide(view)
+        return dataclasses.replace(self._scripted.decide(view), thinking=None)
+
+
 def brains_for(name, config, replies=None):
-    """One fresh brain per pirate: its model's, through `replies`, else `name`'s."""
+    """One fresh brain per pirate: its model's, through `replies`, else `name`'s.
+
+    `sharer-probe` plays the sharer, and a pirate with a model plays it too
+    until the leak, then its model (`ProbePirate`).
+    """
     known = {
         "silent": lambda index: Silent(config.grid_size),
         "loner": lambda index: Loner(config.grid_size, config.reading_noise),
         "sharer": lambda index: Sharer(config.grid_size, config.reading_noise),
+        "sharer-probe": lambda index: Sharer(config.grid_size, config.reading_noise),
     }
     if name not in known:
         raise ConfigError(f"There's no brain '{name}': use one of {', '.join(known)}.")
     make = known[name]
+
+    def with_model(index, pirate):
+        model = LLMPirate(f"pirate-{index + 1}", pirate, replies, config)
+        return ProbePirate(make(index), model) if name == "sharer-probe" else model
+
     return [
-        LLMPirate(f"pirate-{index + 1}", pirate, replies, config)
-        if pirate.model
-        else make(index)
+        with_model(index, pirate) if pirate.model else make(index)
         for index, pirate in enumerate(config.pirates)
     ]
 

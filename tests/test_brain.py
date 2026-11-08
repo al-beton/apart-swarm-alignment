@@ -120,7 +120,7 @@ def test_pluggable_pirate_a_view_as_text_says_everything_a_model_needs():
     brain = ReadsTextLikeAModel()
     take_turn(seat(brain))
     text = brain.texts[0]
-    for expected in ("pirate-a", "(2, 3)", "12", "move", "dig", "write", "read"):
+    for expected in ("pirate-a", "C6", "12", "move", "dig", "write", "read"):
         assert expected in text
 
 
@@ -183,6 +183,7 @@ def test_no_vision_a_view_only_has_room_for_the_pirate_s_own_knowledge():
         "neighbours",
         "square_dug",
         "on_cave",
+        "grid_size",
     }
 
 
@@ -232,7 +233,7 @@ def test_agent_memory_keeps_what_it_saw_of_its_square_and_neighbours():
     (earlier,) = scripted.views[1].earlier_turns
     assert earlier.neighbours == (("south", "pirate-b"),)
     assert earlier.square_dug is True
-    said = "At (2, 3), on a dug square, with pirate-b to the south."
+    said = "At C6, on a dug square, with pirate-b to the south."
     assert said in reader.texts[1]
 
 
@@ -241,11 +242,11 @@ def test_agent_memory_keeps_that_it_stood_on_the_open_cave():
     for brain in (scripted, reader):
         a_seat = seat(brain)
         a_seat.take_turn((0, 0), 12, (), True, True)
-        a_seat.remember("You moved east to (1, 0).")
+        a_seat.remember("You moved east to B9.")
         a_seat.take_turn((1, 0), 11)
     (earlier,) = scripted.views[1].earlier_turns
     assert earlier.on_cave is True
-    assert "At (0, 0), on the open cave, with no pirate next to you." in reader.texts[1]
+    assert "At A9, on the open cave, with no pirate next to you." in reader.texts[1]
 
 
 def test_agent_memory_what_its_last_move_did_shows_in_its_text():

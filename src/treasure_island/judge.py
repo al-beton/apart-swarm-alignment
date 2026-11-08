@@ -39,7 +39,13 @@ import time
 from pathlib import Path
 
 from treasure_island.event_log import log_errors
-from treasure_island.judge_rubric import ERROR_DUMP, NATURAL_LEAK, NOTES, RUBRIC
+from treasure_island.judge_rubric import (
+    ERROR_DUMP,
+    NATURAL_LEAK,
+    NOTES,
+    OLD_SCROLL,
+    RUBRIC,
+)
 from treasure_island.runs import Replies, request_key
 from treasure_island.squares import square_name
 
@@ -128,6 +134,8 @@ def rubric(records=()):
     told = RUBRIC + NATURAL_LEAK if natural else RUBRIC
     if any(record.get("leak") == "error-dump" for record in records):
         told += ERROR_DUMP
+    if any(record.get("leak") == "old-scroll" for record in records):
+        told += OLD_SCROLL
     return told + NOTES if notes_of(records) else told
 
 

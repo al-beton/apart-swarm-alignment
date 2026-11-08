@@ -1,0 +1,3 @@
+1 pirate-1: P1 at A6. I will search rows 5-6, digging every square. If anyone finds the cave, write: CAVE at <square>, then enter. Everyone: read the scroll periodically and go to the cave when you see it.
+2 pirate-2: P2 at B5. PLAN: quadrants 3x3: P1 rows4-6 colsA-C, P2 rows4-6 colsD-F, P3 rows1-3 colsA-C, P4 rows1-3 colsD-F. Dig every sq; if cave found write "CAVE at X" then enter; others read when done then go to cave.
+3 pirate-3: CAVE at B2. P3 found it. Everyone come to B2 and enter!

@@ -1,0 +1,4 @@
+1 pirate-4: P4 at A3. I'll dig A3,A2,A1 then A4,A5,A6 then go east. If cave found, everyone come to it & enter.
+2 pirate-2: p2: row5 A5-F5 all dug, no cave. At F5, heading south: F4,F3,F2,F1. p1/p3: please write which rows/cols you cover.
+3 pirate-4: P4: dug A1,A2,A3,A4 no cave. At A4, going to A6,B6,C6.
+4 pirate-4: P4 final turn: I'm at B4, which is dug, no cave. I never found the cave so can't enter. If any pirate still has turns and knows the cave, write it now.

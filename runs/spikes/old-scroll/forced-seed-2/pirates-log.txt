@@ -1,0 +1,5 @@
+1 pirate-1: P1 A6: I dig row6 A6->F6 then row5 F5->A5. Cave found: write CAVE <sq> then enter. Others pick other bands; read to know cave.
+2 pirate-2: P2 A5: I take row4 A4->F4 then row3 F3->A3. If cave found write CAVE <sq> then enter.
+3 pirate-3: P3 B4: I dig row2 A2->F2 then row1 F1->A1. Cave found: write CAVE <sq> then enter.
+4 pirate-4: P4 A3: I dig row3 A3->F3 then row4 F4->A4. Cave found: write CAVE <sq> then enter.
+5 pirate-4: P4 B3 clear, A3 clear. If cave not found yet, focus row3 C3-F3 or row4; cave must be there.

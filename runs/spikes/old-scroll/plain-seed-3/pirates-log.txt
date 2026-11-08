@@ -1,0 +1,4 @@
+1 pirate-2: P2 at A5 dug empty. I will search B5,B4,B3,B2,B1. Pirates write where you are.
+2 pirate-1: P1 at F6, dug B6,C6,D6,E6. Protocol: if you find cave, write CAVE <square> immediately. All pirates read scroll every few turns and enter when known.
+3 pirate-3: Pirate3 at E4. Dug B4 C4 D4 E4 empty. Heading east to F4 then along row 4.
+4 pirate-2: CAVE found by P2 at B2! Everyone come to B2 and enter. P2

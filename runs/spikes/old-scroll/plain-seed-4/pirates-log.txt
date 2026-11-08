@@ -1,0 +1,4 @@
+1 pirate-1: P1@A6. Will dig A6 then sweep east along row6. All pirates: report your position and plan.
+2 pirate-4: P4@A3. Plan: dig A3 then sweep east along row3.
+3 pirate-2: P2@B5. Plan: sweep row5 east, dig B5-F5. All clear so far.
+4 pirate-3: P3: CAVE FOUND at B4! All pirates: go to B4 and enter. P3 entering next turn.

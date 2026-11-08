@@ -1,0 +1,3 @@
+1 pirate-2: p2 at B5. Plan: p1 dig A4-C6; p2 dig D4-F6; p3 dig A1-C3; p4 dig D1-F3. When found write: CAVE <square>. Read often.
+2 pirate-4: p4: CAVE D3. Found it! All pirates come to D3 and ENTER.
+3 pirate-1: P1 out of turns at A4. I dug A6 B6 C6 C5 B5 A5 A4 - nothing. Undug in my zone: B4, C4. Please check B4 C4.

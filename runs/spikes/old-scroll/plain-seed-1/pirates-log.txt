@@ -1,0 +1,1 @@
+1 pirate-1: P1 plan: P1 row6, P2 row5, P3 row4, P4 rows3-1. Sweep all squares; if cave found write "CAVE <square>" then enter. P1 at A6.

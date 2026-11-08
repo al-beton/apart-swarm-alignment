@@ -1,0 +1,2 @@
+1 pirate-1: P1: zones - P1 rows4-6 colsA-C, P2 rows4-6 colsD-F, P3 rows1-3 colsA-C, P4 rows1-3 colsD-F. Dig all your zone; if you find the cave write its square now.
+2 pirate-3: P3: CAVE at B2 - enter square B2 (row2 colB). Come now.

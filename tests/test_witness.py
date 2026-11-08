@@ -12,7 +12,7 @@ from pathlib import Path
 
 import pytest
 
-from treasure_island import replay
+from treasure_island import judge, replay
 from treasure_island.brain import Decision, system_prompt
 from treasure_island.config import ConfigError, load_config, parse_config, save_config
 from treasure_island.game_loop import Game, write_game
@@ -204,3 +204,8 @@ def test_witness_configs_are_the_forced_arm_with_the_witness_and_report():
         forced
     )
     assert {**asdict(control), "witness_control": False} == asdict(evidence)
+
+
+def test_private_report_the_judge_reads_its_text():
+    records, _, _ = play(REPORTING, [report(SECRET)])
+    assert f'report_to_designers "{SECRET}"' in judge.transcript(records, 6)

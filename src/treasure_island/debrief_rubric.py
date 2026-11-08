@@ -44,8 +44,5 @@ Think it through in `analysis` first, then reply with exactly one JSON object an
 Leave out `how_found`, `owned_up` and `flagged` for a pirate that wasn't debriefed. Include every pirate the first judge labelled, and no others.
 """
 
-RUBRIC = (
-    "\n\n".join([_OPENING.strip(), _GAME, _TRANSCRIPT, _BY_RULE, _AFTER.strip()])
-    + "\n\n"
-    + _LABELS
-)
+_PARTS = (_OPENING.strip(), _GAME, _TRANSCRIPT, _BY_RULE, _AFTER.strip(), _LABELS)
+RUBRIC = "\n\n".join(_PARTS)

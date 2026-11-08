@@ -33,7 +33,7 @@ with no note, and the scroll as parchment; on the right one entry for every turn
 `planned_turns` lists, each played turn's steps drawn ahead so stepping onto it
 plays them.
 
-Implements: treasure-island/asked-why, treasure-island/old-scroll, treasure-island/end-report, viewer/planned-turns, viewer/game-page-steps, viewer/scroll-written-live, viewer/cave-drawn, treasure-island/cave, viewer/turn-marked, viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/walks-between-squares, treasure-island/pokemon-style, viewer/slideshow-file, viewer/game-page, viewer/scroll-steps, viewer/score-counter, viewer/transcript, viewer/board-framed, viewer/dig-steps, viewer/enter-steps, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process, treasure-island/square-names, treasure-island/forced-discovery, treasure-island/free-talk
+Implements: viewer/scroll-numbers, treasure-island/asked-why, treasure-island/old-scroll, treasure-island/end-report, viewer/planned-turns, viewer/game-page-steps, viewer/scroll-written-live, viewer/cave-drawn, treasure-island/cave, viewer/turn-marked, viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/walks-between-squares, treasure-island/pokemon-style, viewer/slideshow-file, viewer/game-page, viewer/scroll-steps, viewer/score-counter, viewer/transcript, viewer/board-framed, viewer/dig-steps, viewer/enter-steps, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process, treasure-island/square-names, treasure-island/forced-discovery, treasure-island/free-talk
 """
 
 import base64
@@ -58,7 +58,7 @@ from assets.ui import panel, scroll_note
 from treasure_island.config import DEFAULTS, parse_config
 from treasure_island.game_state import GameState
 from treasure_island.looks import sprite_values
-from treasure_island.old_scroll import FORCED_READ
+from treasure_island.old_scroll import FORCED_READ, OFFSET
 from treasure_island.pirates_log import one_line, written
 
 ASSETS = Path(assets.__file__).parent
@@ -230,16 +230,13 @@ def treasure_in(folder, records):
     return GameState(*(saved[field] for field in _PLACES_THE_TREASURE)).treasure
 
 
-def _log_so_far(records, turn):
+def _log_so_far(records, turn, first=1):
     """The scroll as it stands after `turn`: only a note adds a line to it."""
-    lines = []
-    for record in records[: turn + 1]:
-        for action in record["did"]:
-            for text in written(action):
-                lines.append((len(lines) + 1, f"{record['agent']}: {one_line(text)}"))
-        if asked := record.get("asked"):  # a crewmate's question (`asked-why`)
-            lines.append((len(lines) + 1, f"{asked['by']}: {asked['text']}"))
-    return lines
+    return [
+        (line["line"], f"{line['by']}: {line['text']}")
+        for wrote in _scroll_writes(records[: turn + 1], first)
+        for line in wrote
+    ]
 
 
 def _mark(records, treasure, found):
@@ -302,11 +299,13 @@ def _walking(shown, record, step):
 
 
 class Scoring(NamedTuple):
-    """The run's score numbers, as the counter needs them."""
+    """The run's numbers from its config: the score's, as the counter needs them,
+    and the scroll's first line number (`scroll-numbers`)."""
 
     turns_per_pirate: int
     in_cave: int
     per_turn_left: int
+    first_line: int = 1
 
 
 _DEFAULT_SCORING = Scoring(
@@ -330,11 +329,12 @@ def scoring_in(folder):
     recorded = (
         records[-1].get("game_over", {}).get("score_numbers") if records else None
     )
-    if recorded:
-        return Scoring(*(recorded[field] for field in fields))
     path = Path(folder) / "config.json"
     saved = json.loads(path.read_text()) if path.exists() else {}
-    return Scoring(*(saved.get(field, DEFAULTS[field]) for field in fields))
+    first = OFFSET if saved.get("old_scroll") else 1
+    if recorded:
+        return Scoring(*(recorded[field] for field in fields), first)
+    return Scoring(*(saved.get(field, DEFAULTS[field]) for field in fields), first)
 
 
 def _passed(seat, before, now, crew):
@@ -425,7 +425,7 @@ def scene(records, turn, size, treasure=None, step=None, scoring=None):  # noqa:
         "reading": _reading(current),
         "treasure": found,
         "mark": _mark(records, treasure, found),
-        "log_so_far": _log_so_far(records, turn),
+        "log_so_far": _log_so_far(records, turn, scoring.first_line if scoring else 1),
         "poses": _poses(records, turn),
         "dug": _dug(records, turn),
         "inside": inside,
@@ -893,9 +893,10 @@ def render(folder, out=None):
     return out
 
 
-def _scroll_writes(records):
-    """The lines each turn added to the scroll, numbered as the scroll numbers them."""
-    line, writes = 0, []
+def _scroll_writes(records, first=1):
+    """The lines each turn added to the scroll, numbered as the scroll numbers them,
+    from `first` (`scroll-numbers`)."""
+    line, writes = first - 1, []
     for record in records:
         wrote = []
         for action in record.get("did", []):
@@ -920,7 +921,7 @@ def reasoned_text(record):
     return f"Its model spent {spent} tokens reasoning."
 
 
-def turn_records(records):
+def turn_records(records, first=1):
     """Each turn's whole record as the game page and the transcript both show it."""
     return [
         {
@@ -938,7 +939,7 @@ def turn_records(records):
             **({"bait": record["bait"]} if "bait" in record else {}),
         }
         for number, (record, wrote) in enumerate(
-            zip(records, _scroll_writes(records), strict=True)
+            zip(records, _scroll_writes(records, first), strict=True)
         )
     ]
 
@@ -1013,7 +1014,7 @@ def slideshow_page(folder):
     treasure = treasure_in(folder, records)
     scoring = scoring_in(folder)
     own, turns = {}, []
-    for number, turn in enumerate(turn_records(records)):
+    for number, turn in enumerate(turn_records(records, scoring.first_line)):
         own[turn["agent"]] = own.get(turn["agent"], 0) + 1
         steps = turn_steps(records, number, scoring)
         drawn = [
@@ -1127,7 +1128,8 @@ def transcript(folder):
     """The game's transcript as Markdown: every turn in full, then how it ended."""
     records = records_in(folder)
     parts = [f"# Transcript: {Path(folder).name}"]
-    parts += [_transcript_turn(turn) for turn in turn_records(records)]
+    first = scoring_in(folder).first_line
+    parts += [_transcript_turn(turn) for turn in turn_records(records, first)]
     game_over = records[-1].get("game_over") if records else None
     if game_over:
         ending = (
@@ -1395,7 +1397,7 @@ function writeScroll(animate) {
   const line = (w, cls) => el("li", cls ? { class: cls } : {}, el("b", { style: "color:" + colour(w.by) }, w.by + ": "));
   const ink = fresh.map(() => el("span", {}));
   const quills = fresh.map(() => el("span", { class: "quill" }, "✒️"));
-  $("scroll").replaceChildren(el("ol", {},
+  $("scroll").replaceChildren(el("ol", { start: (before[0] || fresh[0]).line },
     before.map((w) => { const item = line(w); item.append(w.text); return item; }),
     fresh.map((w, n) => { const item = line(w, "new"); item.append(ink[n], quills[n]); return item; })));
   const box = $("scroll").parentElement;

@@ -1,4 +1,4 @@
-# Implements: assets/treasure-cave, assets/hat-stack, assets/going-in, assets/original-art
+# Implements: assets/treasure-cave, assets/hat-stack, assets/going-in, assets/enter-motion, assets/original-art
 """The treasure cave, the hats piled by its door, and a pirate going in.
 
 Once the treasure is dug up its square becomes a cave, and a pirate that reaches
@@ -7,6 +7,7 @@ hat on a stack by the entrance, so the square shows who has gone in, and in what
 order, first at the bottom.
 """
 
+import math
 from itertools import pairwise
 
 from PIL import Image, ImageDraw
@@ -123,4 +124,46 @@ def going_in(personality, colour, label, step):
     image.alpha_composite(sprite.crop((0, 0, SIZE, SIZE - sink)), (-6, sink))
     if step:  # the gold heap in the mouth hides its legs
         ImageDraw.Draw(image).rectangle([0, 40 - sink // 3, SIZE, SIZE], fill=_CLEAR)
+    return image
+
+
+ENTER_STEPS = 9
+_HAT_FLIGHT = (0.3, 0.65, 1.0)  # how far along its arc the hat is, steps 4 to 6
+_HAT_FROM = (12, 28)  # the cave's mouth
+
+
+def _sparkle(draw, x, y, arms):
+    for dx, dy in ((0, 0), (1, 0), (-1, 0), (0, 1), (0, -1))[: 1 + arms * 2]:
+        draw.point((x + dx, y + dy), fill="#fffbe0")
+
+
+def entering(personality, colour, label, hats, step):
+    """48x48 over tiles/dug.png: the cave square on the turn this pirate goes in.
+
+    hats are those already inside, as for hat_stack. Steps 0 to 3 it sinks into
+    the mouth (going_in); 4 to 6 its hat flies out in an arc onto the top of the
+    stack; at 7 the hat lands with a sparkle; 8 is the square as the next turn
+    draws it, with the new hat on the stack.
+    """
+    if not 0 <= step < ENTER_STEPS:
+        raise ValueError(f"step must be 0 to {ENTER_STEPS - 1}: {step}")
+    after = [*hats, (colour, label)]
+    image = cave(step // 2 % 2)
+    image.alpha_composite(hat_stack(after if step >= len(_HAT_FLIGHT) + 4 else hats))
+    if step < GOING_IN_STEPS:
+        image.alpha_composite(going_in(personality, colour, label, step))
+        return image
+    x, y = hat_place(len(hats), len(after))
+    if step < GOING_IN_STEPS + len(_HAT_FLIGHT) - 1:
+        part = _HAT_FLIGHT[step - GOING_IN_STEPS]
+        fx = _HAT_FROM[0] + (x - _HAT_FROM[0]) * part
+        fy = _HAT_FROM[1] + (y - _HAT_FROM[1]) * part - 14 * math.sin(math.pi * part)
+        image.alpha_composite(mini_hat(colour, label), (round(fx), round(fy)))
+    elif step == GOING_IN_STEPS + len(_HAT_FLIGHT) - 1:
+        image.alpha_composite(mini_hat(colour, label), (x, y))
+    if step == ENTER_STEPS - 2:  # just landed
+        draw = ImageDraw.Draw(image)
+        _sparkle(draw, x - 2, y + 2, 2)
+        _sparkle(draw, x + HAT_SIZE[0] - 1, y + 4, 1)
+        _sparkle(draw, x + 10, max(y - 3, 1), 2)
     return image

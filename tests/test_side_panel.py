@@ -204,22 +204,32 @@ def test_side_panel_says_how_many_lines_a_read_got_and_never_their_words():
     assert one.tobytes() == other.tobytes()
 
 
-def test_frame_shows_the_swarm_a_reader_holds_an_open_scroll_clear_of_the_crew():
+def held_spot(position):
+    """Where a pirate on board `position` holds the open scroll: over its lower half."""
+    held = open_scroll()
+    x, y = (value * viewer.TILE for value in position)
+    return x + (viewer.TILE - held.width) // 2, y + viewer.TILE - held.height - 2
+
+
+def test_frame_shows_the_swarm_a_reader_holds_the_scroll_in_front_of_it():
     crew = {"pirate-1": [0, 0], "pirate-2": [0, 1]}
-    for reader, other in (("pirate-1", "pirate-2"), ("pirate-2", "pirate-1")):
+    for reader in ("pirate-1", "pirate-2"):
         made = record(0, agent=reader, did=[{"action": "read"}], at=crew[reader])
         records = [{**made, "crew": crew}]
-        seen = viewer.scene(records, 0, 4)
-        assert seen["reading"] is True
-        arrow, spot = viewer.turn_arrow(seen)
-        arrow_box = (*spot, spot[0] + arrow.width, spot[1] + arrow.height)
-        held = open_scroll()
-        x, y = viewer.note_spot(seen, held.size, arrow_box)
-        assert drawn_at(viewer.frame(records, 0, 4), held, (x, y))
-        ox, oy = (value * viewer.TILE for value in crew[other])
-        box = (x, y, x + held.width, y + held.height)
-        assert not viewer._overlap(box, (ox, oy, ox + viewer.TILE, oy + viewer.TILE))
+        assert viewer.scene(records, 0, 4)["reading"] is True
+        image = viewer.frame(records, 0, 4)
+        assert drawn_at(image, open_scroll(), held_spot(crew[reader]))
     assert shown([record(0)])["reading"] is False
+
+
+def test_frame_shows_the_swarm_a_writer_holds_the_scroll_and_its_line_shows_beside_it():
+    records, crew = stacked("pirate-2")
+    image = viewer.frame(records, 0, 4)
+    assert drawn_at(image, open_scroll(), held_spot(crew["pirate-2"]))
+    note = scroll_note("Over here, crew!")
+    assert drawn_at(
+        image, note, viewer.note_spot(viewer.scene(records, 0, 4), note.size)
+    )
 
 
 def test_readable_at_once_a_real_game_tells_its_ending_in_the_frame():
@@ -249,14 +259,11 @@ def test_frame_shows_the_swarm_a_note_never_covers_another_pirate():
     for writer, other in (("pirate-1", "pirate-2"), ("pirate-2", "pirate-1")):
         records, crew = stacked(writer)
         shown = viewer.scene(records, 0, 4)
-        arrow, spot = viewer.turn_arrow(shown)
-        arrow_box = (*spot, spot[0] + arrow.width, spot[1] + arrow.height)
         note = scroll_note("Over here, crew!")
-        x, y = viewer.note_spot(shown, note.size, arrow_box)
+        x, y = viewer.note_spot(shown, note.size)
         ox, oy = (value * viewer.TILE for value in crew[other])
         box = (x, y, x + note.width, y + note.height)
         assert not viewer._overlap(box, (ox, oy, ox + viewer.TILE, oy + viewer.TILE))
-        assert not viewer._overlap(box, arrow_box)
         assert 0 <= x and box[2] <= 4 * viewer.TILE and 0 <= y
 
 
@@ -265,10 +272,8 @@ def test_frame_shows_the_swarm_what_was_written_shows_in_full():
         records, _ = stacked(writer)
         image = viewer.frame(records, 0, 4)
         shown = viewer.scene(records, 0, 4)
-        arrow, spot = viewer.turn_arrow(shown)
-        arrow_box = (*spot, spot[0] + arrow.width, spot[1] + arrow.height)
         note = scroll_note("Over here, crew!")
-        assert drawn_at(image, note, viewer.note_spot(shown, note.size, arrow_box))
+        assert drawn_at(image, note, viewer.note_spot(shown, note.size))
 
 
 def test_frame_shows_the_swarm_a_tall_note_on_the_top_row_stays_clear_of_the_crew():
@@ -278,13 +283,11 @@ def test_frame_shows_the_swarm_a_tall_note_on_the_top_row_stays_clear_of_the_cre
     text = "I'll search row 1, then row 2, then we check in."
     made = record(0, did=[{"action": "write", "text": text}], at=[0, 0])
     shown = viewer.scene([{**made, "crew": crew}], 0, 5)
-    arrow, spot = viewer.turn_arrow(shown)
-    arrow_box = (*spot, spot[0] + arrow.width, spot[1] + arrow.height)
     note = scroll_note(text)
     assert (
         note.height > viewer.TILE // 2
     )  # three lines: taller than a centred spot allows
-    x, y = viewer.note_spot(shown, note.size, arrow_box)
+    x, y = viewer.note_spot(shown, note.size)
     box = (x, y, x + note.width, y + note.height)
     for other in ("pirate-2", "pirate-3"):
         ox, oy = (value * viewer.TILE for value in crew[other])

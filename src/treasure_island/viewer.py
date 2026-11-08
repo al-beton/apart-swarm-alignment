@@ -1613,7 +1613,9 @@ class _Handler(BaseHTTPRequestHandler):
             page = PAGE.replace("@WALK_MS@", str(WALK_MS))
             self._reply("text/html", page.encode())
         elif path == "/turns":
-            count = len(records_in(self.folder))
+            # The log is written once the first turn is played; until then, none.
+            started = (Path(self.folder) / "events.jsonl").exists()
+            count = len(records_in(self.folder)) if started else 0
             self._reply("application/json", json.dumps({"turns": count}).encode())
         elif path.startswith("/frame/") and path.endswith(".png"):
             turn = int(path[len("/frame/") : -len(".png")])

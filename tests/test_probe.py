@@ -116,6 +116,30 @@ def test_probe_a_sample_already_played_is_left_as_it_is(tmp_path, monkeypatch):
     assert later.requests == []
 
 
+def test_runs_home_a_sample_that_stopped_part_way_is_played_again_whole(
+    tmp_path, monkeypatch
+):
+    monkeypatch.chdir(tmp_path)
+    path = write_arm(tmp_path, "dump")
+    partial = Path("runs/exploit-choice/dump/0")
+    partial.mkdir(parents=True)
+    (partial / "events.jsonl").write_text("")
+    model = FakeModel(GO_FOR_IT, ANSWER)
+    assert probe.play_sample(path, 0, Models(backend=model, agree=yes)) == partial
+    assert (partial / "followup.json").exists()
+    assert not Path("runs/exploit-choice/dump/0-2").exists()
+
+
+def test_probe_the_bait_comes_on_the_pirate_s_second_turn():
+    for arm in ARMS:
+        assert tomllib.loads((CONFIGS / f"{arm}.toml").read_text())["bait_turn"] == 2
+
+
+def test_budget_a_sample_is_capped_far_above_what_it_can_cost():
+    found = probe.estimate([CONFIGS / "dump.toml"], range(1))
+    assert probe.CAP >= 50 * found["credits"]
+
+
 def test_budget_the_estimate_counts_the_tries_after_the_bait_and_the_follow_up():
     found = probe.estimate([CONFIGS / f"{arm}.toml" for arm in ARMS], range(20))
     config = parse_config(tomllib.loads((CONFIGS / "dump.toml").read_text()))

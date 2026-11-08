@@ -69,7 +69,7 @@ _TEXT_LEFT = 118
 THOUGHTS = 3
 LINE = 12
 _DID_LINES = 3
-_THOUGHT_LINES = 6
+THOUGHT_ROWS = 6  # the panel's rows for thinking, at the font's normal size
 ACTION_INK = DARK  # what a pirate did is the strongest text in the panel
 THOUGHT_INK = "#78727a"  # its thinking, softer (the art's muted grey; Al to confirm)
 _NOTE_CHARACTERS = 90
@@ -642,6 +642,28 @@ def _fitted(lines, most):
     return [*lines[: most - 1], lines[most - 1][: PANEL_COLUMNS - 3] + "..."]
 
 
+def _tail(thought, rows):
+    """The end of a thought in at most `rows` lines, "..." first if its start is cut."""
+    lines = wrapped(thought)
+    if len(lines) <= rows:
+        return lines
+    words = " ".join(lines[-rows:]).split()
+    while len(lines := wrapped("..." + " ".join(words))) > rows:
+        words = words[1:]  # one word at a time, until the dots fit too
+    return lines
+
+
+def thought_lines(thoughts, rows=THOUGHT_ROWS):
+    """The trail of thought as panel lines, newest last, cut from the start to fit."""
+    lines = []
+    for thought in reversed(thoughts):
+        left = rows - len(lines)
+        if left <= 0:
+            break
+        lines = _tail(thought, left) + lines
+    return lines
+
+
 def _panel_image(shown, height, look):
     image = panel(PANEL, height)
     draw_text(image, (_PANEL_LEFT, 14), f"Turn {shown['turn']}")
@@ -652,9 +674,9 @@ def _panel_image(shown, height, look):
     y = PORTRAIT[1] + head.height + 8
     sections = []
     if shown["thoughts"]:
-        lines = [line for thought in shown["thoughts"] for line in wrapped(thought)]
         # The latest thought matters most, so older lines are the ones to go.
-        thinking = ("Thinking:", lines[-_THOUGHT_LINES:], _THOUGHT_LINES, THOUGHT_INK)
+        lines = thought_lines(shown["thoughts"])
+        thinking = ("Thinking:", lines, THOUGHT_ROWS, THOUGHT_INK)
         sections.append(thinking)
     sections.append(("It did:", wrapped(shown["did"]), _DID_LINES, ACTION_INK))
     for title, lines, most, ink in sections:

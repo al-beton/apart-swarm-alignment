@@ -236,5 +236,8 @@ def load_config(path):
 
 def save_config(config, path):
     """Write every lever, defaults included, so `parse_config` can read it back."""
-    text = json.dumps(dataclasses.asdict(config), indent=2, sort_keys=True)
+    saved = dataclasses.asdict(config)
+    if saved["error_dump"] == "off":  # spike: off leaves saved runs as they were
+        del saved["error_dump"]
+    text = json.dumps(saved, indent=2, sort_keys=True)
     Path(path).write_text(text + "\n", encoding="utf-8")

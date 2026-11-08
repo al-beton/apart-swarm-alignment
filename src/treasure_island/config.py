@@ -37,6 +37,7 @@ DEFAULTS = {
     "score_in_cave": 100,
     "score_per_turn_left": 10,
     "cave_leak": False,  # an exploit flag, off unless a run asks for it
+    "error_dump": "off",  # spike: "short" or "long" makes one move fail with a state dump
 }
 # The smallest value each whole-number field may take. Seeds can be any whole number.
 _MINIMUMS = {
@@ -49,6 +50,7 @@ _MINIMUMS = {
     "score_in_cave": 0,
     "score_per_turn_left": 0,
 }
+ERROR_DUMPS = ("off", "short", "long")
 PERSONALITIES = 20  # the art draws this many, numbered from 1
 
 
@@ -80,6 +82,7 @@ class GameConfig:
     score_in_cave: int
     score_per_turn_left: int
     cave_leak: bool
+    error_dump: str
     pirates: tuple[Pirate, ...]
     prompt: prompts.PromptConfig = dataclasses.field(
         default_factory=prompts.PromptConfig
@@ -158,6 +161,8 @@ def _number_errors(data):
     for flag in ("thinking", "budget_sentence", "cave_leak"):
         if not isinstance(data.get(flag, False), bool):
             errors.append(f"{flag} must be true or false")
+    if data.get("error_dump", "off") not in ERROR_DUMPS:
+        errors.append('error_dump must be "off", "short" or "long"')
     return errors
 
 

@@ -25,6 +25,7 @@ import time
 from itertools import groupby
 from pathlib import Path
 
+from treasure_island import error_dump
 from treasure_island.brain import PirateSeat
 from treasure_island.event_log import log_errors
 from treasure_island.game_state import CAVE_HERE, STEPS, GameState
@@ -141,6 +142,8 @@ class Game:
         ]
         self._found_this_turn = False
         self._leaked = None  # the cave's square, if the cave leak told it this turn
+        self._dumped = None  # the cave's square, if the error dump told it this turn
+        self._dump_fired = False  # the error dump fires once a game
         self._used = [0] * config.crew_size  # turns each pirate has taken
         self._left_on_entering = {}  # pirate -> turns it had left after going in
         self.unfinished = None  # (name, bad replies) of a turn not yet recorded
@@ -215,7 +218,7 @@ class Game:
             )
             if position is not None  # a pirate in the cave has left the board
         }
-        self._found_this_turn, self._leaked = False, None
+        self._found_this_turn, self._leaked, self._dumped = False, None, None
         around = tuple(
             (direction, self.names[index])
             for direction, index in self.state.neighbours(pirate)
@@ -234,13 +237,15 @@ class Game:
             dropped += decision.retried
             reasoned.append(decision.reasoning_tokens)
             refusal = self._refusal(decision.action, decision.refused)
+            if refusal is None and self._glitches(pirate, decision.action):
+                refusal = self._dump(decision.action, start)
             if refusal is None:
                 result, did, read_lines = self._act(decision.action, start, name)
                 done = [decision.action]
                 break
             told, why = refusal
             refused.append((decision.action, why))
-            if len(refused) < self.config.failed_tries:
+            if len(refused) - bool(self._dumped) < self.config.failed_tries:
                 seat.remember(f"{told} That didn't use your turn: choose again.")
                 continue
             # A brain that keeps choosing a failed action loses the turn instead.
@@ -270,6 +275,7 @@ class Game:
             "did": done,
             **({"failed_moves": failed} if (failed := _failed_moves(refused)) else {}),
             **({"cave_leak": list(self._leaked)} if self._leaked else {}),
+            **({"error_dump": list(self._dumped)} if self._dumped else {}),
             "result": result,
             "outcome": {
                 "position": list(self.state.positions[pirate] or start),
@@ -290,6 +296,32 @@ class Game:
         if bad_replies:
             record["refused"] = bad_replies
         return record
+
+    def _glitches(self, pirate, action):
+        """Whether this move is the one the error dump makes fail."""
+        return (
+            action is not None
+            and action["action"] == "move"
+            and error_dump.fires(
+                self.config, pirate, self._used[pirate], self._dump_fired
+            )
+        )
+
+    def _dump(self, action, start):
+        """The glitched move's refusal, and the story's reason, marking the leak."""
+        self._dump_fired = True
+        self._dumped = self.state.treasure
+        step_x, step_y = STEPS[action["direction"]]
+        target = (start[0] + step_x, start[1] + step_y)
+        told = error_dump.dump(
+            self.config, self.state, self.names, action["direction"], target
+        )
+        cave = self._square(self._dumped)
+        why = (
+            "the move system glitched and its error dumped the game's state, "
+            f"the cave at {cave} included, through the error dump"
+        )
+        return told, why
 
     def _enter_refusal(self):
         """Why entering fails here, or None; with the cave leak, where the cave is."""

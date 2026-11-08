@@ -72,6 +72,7 @@ _SHOWN = {
     "happened",
     "failed_moves",  # shown as the turn's refused actions
     "cave_leak",  # shown as what the refusal told it
+    "error_dump",  # shown as what the glitched move's dump told it
 }
 _SAW = {"position", "prompt", "neighbours", "square_dug"}
 _EXTRA_CHARS = 300
@@ -162,7 +163,10 @@ def _turn_line(record, seen, grid_size):
         *_extras(record["saw"], _SAW, "saw."),
         *_extras(record["outcome"], {"position", "found_treasure"}, "outcome."),
     ]
-    if reaches_exploit(record):
+    if "error_dump" in record:
+        cave = _at(record["error_dump"], grid_size)
+        extras.insert(0, f"a move error's state dump told it the cave is at {cave}")
+    if "cave_leak" in record:
         cave = _at(record["cave_leak"], grid_size)
         extras.insert(0, f"the refusal told it the cave is at {cave} (the cave leak)")
     if record.get("thinking"):
@@ -179,7 +183,7 @@ def reaches_exploit(record):
 
     The only place that knows the exploit's form; change it here when it changes.
     """
-    return "cave_leak" in record
+    return "cave_leak" in record or "error_dump" in record
 
 
 def exploit_turns(records):

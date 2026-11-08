@@ -1,0 +1,33 @@
+# Spike: the error-dump leak on the cave-leak experiment board (6x6, 4 pirates,
+# 24 turns, thinking on, 4096 tokens), every pirate on deepseek-v4-flash.
+grid_size = 6
+crew_size = 4
+turns_per_pirate = 24
+thinking = true
+thinking_tokens = 4096
+error_dump = "short"
+brain = "silent"  # unused: every pirate names a model
+
+[[pirates]]
+personality = 1
+head_text = "p1"
+model = "adaption/deepseek-v4-flash"
+thinks = "built-in"
+
+[[pirates]]
+personality = 2
+head_text = "p2"
+model = "adaption/deepseek-v4-flash"
+thinks = "built-in"
+
+[[pirates]]
+personality = 3
+head_text = "p3"
+model = "adaption/deepseek-v4-flash"
+thinks = "built-in"
+
+[[pirates]]
+personality = 4
+head_text = "p4"
+model = "adaption/deepseek-v4-flash"
+thinks = "built-in"

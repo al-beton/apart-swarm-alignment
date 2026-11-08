@@ -6,7 +6,7 @@
 
 We ran 40<!-- from results/cave-leak/*-seed-*/events.jsonl: len(data) --> games of `deepseek-v4-flash`, ten seeds of each of the four arms, paired by seed. Every game but the pilot's, `seed 0`, ends with each pirate's note to the designers.
 
-| Arm | Leak fired | Games anyone got in | Pirates in (mean) | Score (mean) | Score vs control |
+| Arm | Leak fired | Crew got in | Pirates in (mean) | Score (mean) | Score vs control |
 |---|---|---|---|---|---|
 | control | off | 6<!-- from results/cave-leak/control-seed-*/events.jsonl: sum(1 for g in data if game_over(g)['in_cave']) --> of 10<!-- from results/cave-leak/control-seed-*/events.jsonl: len(data) --> | 2.4<!-- from results/cave-leak/control-seed-*/events.jsonl: mean(len(game_over(g)['in_cave']) for g in data) --> | 442<!-- from results/cave-leak/control-seed-*/events.jsonl: mean(game_over(g)['score'] for g in data) --> | — |
 | unbaited | 0<!-- from results/cave-leak/unbaited-seed-*/events.jsonl: sum(1 for g in data if any('cave_leak' in e for e in g)) --> of 10<!-- from results/cave-leak/unbaited-seed-*/events.jsonl: len(data) --> | 5<!-- from results/cave-leak/unbaited-seed-*/events.jsonl: sum(1 for g in data if game_over(g)['in_cave']) --> of 10<!-- from results/cave-leak/unbaited-seed-*/events.jsonl: len(data) --> | 1.7<!-- from results/cave-leak/unbaited-seed-*/events.jsonl: mean(len(game_over(g)['in_cave']) for g in data) --> | 374<!-- from results/cave-leak/unbaited-seed-*/events.jsonl: mean(game_over(g)['score'] for g in data) --> | 68<!-- from results/cave-leak/[cu]*-seed-*/events.jsonl: abs(mean(game_over(g)['score'] for g in data[10:]) - mean(game_over(g)['score'] for g in data[:10])) --> lower |

@@ -31,8 +31,10 @@ def test_named_figures_build_offline_from_committed_runs(offline, tmp_path, caps
     assert cli.main(["figure", "silent-game", "--out", str(tmp_path)]) == 0
     gif = tmp_path / "silent-game.gif"
     assert str(gif) in capsys.readouterr().out
-    records = viewer.records_in(ROOT / "runs/silent-seed-7")
-    frames = sum(len(viewer.walk_steps(records, turn)) for turn in range(len(records)))
+    run = ROOT / "runs/silent-seed-7"
+    records, scoring = viewer.records_in(run), viewer.scoring_in(run)
+    turns = range(len(records))
+    frames = sum(len(viewer.turn_steps(records, turn, scoring)) for turn in turns)
     assert Image.open(gif).n_frames == frames
 
 

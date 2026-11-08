@@ -76,7 +76,7 @@ def test_one_renderer_the_gif_holds_exactly_the_frames_the_page_serves(
 
     monkeypatch.setattr(viewer, "frame", counted)
     frames = list(png_frames(viewer.gif(folder)))
-    steps = [(t, s) for t in range(len(RECORDS)) for s in viewer.walk_steps(RECORDS, t)]
+    steps = [(t, s) for t in range(len(RECORDS)) for s in viewer.turn_steps(RECORDS, t)]
     assert drawn == [turn for turn, _ in steps]
     served = [
         Image.open(io.BytesIO(viewer.frame_png(folder, turn, step))).convert("RGB")
@@ -133,7 +133,7 @@ def assert_every_label_shows(image, looks_and_spots):
         ]
         assert label
         for x, y in label:
-            shown = image.getpixel((spot[0] + x, spot[1] + y))
+            shown = image.getpixel((viewer.EDGE_LEFT + spot[0] + x, spot[1] + y))
             assert shown == with_label.getpixel((x, y))[:3], (values[2], x, y)
 
 
@@ -150,7 +150,7 @@ def test_frame_shows_the_swarm_every_pirate_on_its_own_square(count, acting):
 
 
 def tile_at(image, x, y):
-    box = (x * viewer.TILE, y * viewer.TILE)
+    box = (viewer.EDGE_LEFT + x * viewer.TILE, y * viewer.TILE)  # in its frame
     return image.crop((*box, box[0] + viewer.TILE, box[1] + viewer.TILE)).convert("RGB")
 
 
@@ -163,10 +163,14 @@ def sand_tiles():
 
 
 def on_ground(image, x, y, sprite):
-    """Whether the square at (x, y) is exactly this sprite on some sand tile."""
+    """Whether the acting pirate's square is exactly this sprite on some sand tile.
+
+    Its square is outlined in yellow under it (viewer/turn-marked).
+    """
     shown = tile_at(image, x, y).tobytes()
     for name in viewer.SAND_TILES:
         ground = art(f"tiles/{name}").copy()
+        viewer.outline(ground, (0, 0))
         ground.alpha_composite(sprite)
         if ground.convert("RGB").tobytes() == shown:
             return True
@@ -190,8 +194,9 @@ def look(**settings):
 
 
 def test_art_folder_every_empty_square_is_a_sand_tile_from_the_assets():
-    image = viewer.frame([alone()], 0, 3)
-    for x, y in [(0, 0), (2, 0), (0, 2), (2, 2)]:
+    image = viewer.frame([alone()], 0, 5)
+    # Squares away from the west and south edges, which carry the squares' names.
+    for x, y in [(4, 0), (2, 1), (3, 2), (3, 3)]:
         assert tile_at(image, x, y).tobytes() in sand_tiles()
 
 
@@ -276,8 +281,8 @@ def test_sprite_follows_action_a_pirate_faces_the_way_it_moves(direction, pose):
 
 def test_sprite_follows_action_it_keeps_facing_that_way_and_stands_still():
     moved = alone(0, [{"action": "move", "direction": "west"}])
-    wrote = alone(1, [{"action": "write", "text": "hello"}])
-    assert viewer.scene([moved, wrote], 1, 3)["poses"]["pirate-1"] == ("left", 0)
+    passed = alone(1, [])  # a turn that passed, with no action
+    assert viewer.scene([moved, passed], 1, 3)["poses"]["pirate-1"] == ("left", 0)
 
 
 def test_sprite_follows_action_walking_alternates_its_feet():
@@ -309,6 +314,7 @@ def test_sprite_follows_action_digging_and_finding_the_treasure():
 
 def on_ground_dug(image, x, y, sprite):
     ground = art("tiles/dug").copy()
+    viewer.outline(ground, (0, 0))  # the acting pirate's square
     ground.alpha_composite(sprite)
     return tile_at(image, x, y).tobytes() == ground.convert("RGB").tobytes()
 
@@ -407,8 +413,10 @@ def test_render_gif_writes_one_frame_per_turn_and_each_walk_next_to_the_run(
     out = folder.with_suffix(".gif")
     assert out.exists()
     assert str(out) in capsys.readouterr().out
-    # One frame per turn, and the walking frames of the one move (default 4 in all).
-    assert len(list(png_frames(out.read_bytes()))) == len(RECORDS) + 3
+    # One frame per turn, and the in-between steps of each move and dig.
+    steps = [len(viewer.turn_steps(RECORDS, turn)) for turn in range(len(RECORDS))]
+    assert sum(steps) > len(RECORDS)
+    assert len(list(png_frames(out.read_bytes()))) == sum(steps)
 
 
 def test_render_gif_writes_where_asked(folder, tmp_path):

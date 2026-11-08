@@ -30,6 +30,7 @@ def test_examples_folder_each_holds_what_the_game_wrote_and_a_gif(name):
         "pirates-log.txt",
         "replies.jsonl",
         "story.txt",
+        "transcript.md",
     }
 
 
@@ -62,3 +63,10 @@ def test_examples_stay_true_a_stale_example_says_how_to_remake_it(tmp_path):
     assert "game.gif" in message
     assert "make examples" in message
     assert viewer.gif(copy) != b"not this one"
+
+
+def test_examples_stay_true_a_stale_transcript_is_caught(tmp_path):
+    copy = tmp_path / NAMES[0]
+    shutil.copytree(FOLDER / NAMES[0], copy)
+    (copy / "transcript.md").write_text("not this one")
+    assert "transcript.md" in examples.problem(copy)

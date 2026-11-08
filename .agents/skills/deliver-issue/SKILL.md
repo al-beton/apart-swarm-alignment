@@ -43,10 +43,10 @@ For each thread `D wait-review` printed:
 
 ## 4. Merge it yourself
 
-The builder merges its own pull request once it is clean (`merge-pr`). When checks are green and Codex has finished on the latest commit with no open threads, update the description (tests count, review round) and run `D merge <pr>`. It refuses unless `blocking-checks` is green, Codex has finished on the latest commit, every thread is resolved and the description has a closing block. Then it:
+The builder merges its own pull request once it is clean (`merge-pr`). When checks are green and Codex has finished on the latest commit with no open threads, update the description (tests count, review round) and run `D merge <pr>`. It refuses unless `blocking-checks` is green, Codex has finished on the latest commit (or on the commit under plain merges of main that touch none of the pull request's files), every thread is resolved and the description has a closing block. Then it:
 
 1. moves any pull request based on this branch to `main` (deleting a base branch closes the pull requests on it);
-2. squash-merges with the pull request title as subject and the closing block as body;
+2. squash-merges with the pull request title as subject, its issue numbers swapped for the pull request's own so the commit links to it, and the closing block as body;
 3. deletes the branch on the remote (`gh pr merge --delete-branch` fails in a worktree, because `main` is checked out elsewhere);
 4. runs `blocking-checks` on `main` and waits for it to pass.
 

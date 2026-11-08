@@ -9,11 +9,12 @@ plus `"thinking"` when thinking is on. Each backend turns its provider's tool
 call into that one form.
 
 Each backend says which way its models think (`backends.thinking_way`). A model
-that reasons on its own gets `thinking_tokens` for it, and what it returns is
-kept; any other model, fakes included, is asked to write a short thought in its
+that reasons on its own gets `thinking_tokens` for it, even with thinking off,
+since some providers reason whether asked or not, and what it returns is kept
+when thinking is on; any other model, fakes included, is asked to write a short thought in its
 answer, inside `reply_tokens`.
 
-A reply that isn't a valid tool call is kept for our record and comes back as a
+A reply that isn't a valid tool call, one the token limit cut off included, is kept for our record and comes back as a
 failed action, so the game tells the pirate why and asks again, and after
 `failed_tries` failed actions in one turn the turn passes.
 
@@ -50,12 +51,27 @@ THOUGHT = (
 )
 
 
+def _reasoning_tokens(text):
+    """The reasoning tokens a backend says a reply spent, or None."""
+    try:
+        reply = json.loads(text)
+    except json.JSONDecodeError:
+        return None
+    spent = reply.get("reasoning_tokens") if isinstance(reply, dict) else None
+    return spent if isinstance(spent, int) and not isinstance(spent, bool) else None
+
+
 def _read_reply(text):
     """The tool call in a reply and its thinking, or BadToolCall saying why not."""
     try:
         reply = json.loads(text)
     except json.JSONDecodeError:
         raise BadToolCall("your answer wasn't JSON naming a tool") from None
+    if isinstance(reply, dict) and reply.get("cut_off") is True:
+        raise BadToolCall(
+            "your answer ran out of room at the token limit before it named a "
+            "tool: think less and answer with a tool call"
+        )
     if not isinstance(reply, dict) or "tool" not in reply or "arguments" not in reply:
         raise BadToolCall('your answer needs "tool" and "arguments"')
     return tool_call(reply["tool"], reply["arguments"]), reply.get("thinking")
@@ -86,19 +102,20 @@ class LLMPirate:
             "tools": TOOL_DEFINITIONS,
             "max_tokens": self._config.reply_tokens,
             "thinking": thinking,
-            "thinking_tokens": (
-                self._config.thinking_tokens if thinking and self._built_in else 0
-            ),
+            # Some providers reason whether asked or not, so a model that
+            # reasons gets its budget even with thinking off.
+            "thinking_tokens": self._config.thinking_tokens if self._built_in else 0,
         }
 
     def decide(self, view):
         text = self._replies.ask(self._request(view))
         retried = self._replies.last_retries
+        spent = _reasoning_tokens(text)
         try:
             action, thinking = _read_reply(text)
         except BadToolCall as why:
             # A failed action: the game tells the pirate why and asks again.
             bad = ({"reply": text, "why": str(why)},)
-            return Decision(None, None, bad, retried)
+            return Decision(None, None, bad, retried, spent)
         kept = thinking if self._config.thinking and thinking else None
-        return Decision(action, kept, (), retried)
+        return Decision(action, kept, (), retried, spent)

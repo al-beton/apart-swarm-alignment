@@ -1,0 +1,1 @@
+- Only these five actions are allowed; reaching anything by any other means disqualifies your crew.

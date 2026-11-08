@@ -1,4 +1,4 @@
-# Implements: assets/plain-files, assets/remade-by-one-command, assets/sheet-shows-everything, assets/treasure-cave
+# Implements: assets/scroll-held, assets/plain-files, assets/remade-by-one-command, assets/sheet-shows-everything, assets/treasure-cave, assets/board-edges, assets/dig-motion, assets/enter-motion
 """Draws every image in assets/ from code: `make assets` or `python -m assets.generate`."""
 
 from pathlib import Path
@@ -6,7 +6,9 @@ from pathlib import Path
 from PIL import Image
 
 from assets import catwalk
-from assets.cave import cave, going_in, hat_stack
+from assets.board import EDGE_LEFT, board_edges
+from assets.cave import ENTER_STEPS, cave, entering, going_in, hat_stack
+from assets.dig import DIG_STEPS, dig_ground, digging
 from assets.font import FONT_HEIGHT, draw_text, font_sheet, text_width
 from assets.pirates import DEFAULT_COLOURS, PERSONALITIES, pirate, portrait
 from assets.pixels import DARK, SIZE
@@ -32,13 +34,15 @@ SHEET_ROWS = (
     ("left", 3),
     ("dig", 2),
     ("cheer", 2),
+    ("read", 2),
+    ("write", 3),
 )
 _BACKGROUND = (250, 248, 243, 255)
 _MUTED = "#78727a"
 
 
 def pirate_sheet(number):
-    """One crew member, labelled with its number, 144x288: columns are frames."""
+    """One crew member, labelled with its number, 144x384: columns are frames."""
     image = Image.new("RGBA", (3 * SIZE, len(SHEET_ROWS) * SIZE), (0, 0, 0, 0))
     colour = DEFAULT_COLOURS[number - 1]
     for row, (pose, frames) in enumerate(SHEET_ROWS):
@@ -178,15 +182,50 @@ def _cave_row():
     return items
 
 
+def _dig_row():
+    """A dig, step by step, on its square."""
+    items = []
+    for step in range(DIG_STEPS):
+        square = dig_ground(step)
+        square.alpha_composite(digging(2, DEFAULT_COLOURS[1], "2", step))
+        items.append((f"dig {step}", square))
+    return items
+
+
+def _enter_row():
+    """Going into the cave, step by step: it sinks, then its hat flies onto the stack."""
+    inside = [(DEFAULT_COLOURS[0], "1"), (DEFAULT_COLOURS[2], "3")]
+    items = []
+    for step in range(ENTER_STEPS):
+        square = TILES["dug"]()
+        square.alpha_composite(entering(4, DEFAULT_COLOURS[3], "4", inside, step))
+        items.append((f"in {step}", square))
+    return items
+
+
+def _framed(scene):
+    """The scene in the board's frame, its rows numbered and columns lettered."""
+    columns, rows = scene.width // SIZE, scene.height // SIZE
+    edges = board_edges(columns)  # square; the scene is its bottom rows
+    framed = edges.crop((0, (columns - rows) * SIZE, edges.width, edges.height))
+    framed.alpha_composite(scene, (EDGE_LEFT, 0))
+    return framed
+
+
 def contact_sheet():
     """All the art on one page, to judge it at a glance."""
-    sheet = Image.new("RGBA", (1024, 1104), _BACKGROUND)
+    sheet = Image.new("RGBA", (1040, 1420), _BACKGROUND)
     _heading(
         sheet, 18, "The crew", "20 personalities, any colour, 48px squares at real size"
     )
     sheet.alpha_composite(_on_sand(_crew(), 10), (24, 46))
-    _heading(sheet, 158, "One pirate", "walking in 4 directions, digging, cheering")
-    sheet.alpha_composite(_on_sand(_poses(), 16), (24, 186))
+    _heading(
+        sheet,
+        158,
+        "One pirate",
+        "walking in 4 directions, digging, cheering, reading, writing",
+    )
+    sheet.alpha_composite(_on_sand(_poses(), 21), (24, 186))
     _heading(sheet, 250, "Ground", "enlarged 2x")
     _labelled_row(sheet, 278, [(name, make()) for name, make in TILES.items()])
     _heading(sheet, 398, "Marks", "enlarged 2x, on no background")
@@ -195,11 +234,15 @@ def contact_sheet():
         sheet, 546, "Treasure cave", "hats stack by the door, first in at the bottom"
     )
     _labelled_row(sheet, 574, _cave_row())
-    top = 722
+    _heading(sheet, 694, "Digging", "a dig turn's steps, sand thrown over the shoulder")
+    _labelled_row(sheet, 722, _dig_row())
+    _heading(sheet, 842, "Going in", "it sinks, then its hat flies onto the stack")
+    _labelled_row(sheet, 870, _enter_row())
+    top = 1018
     _heading(sheet, top - 28, "In play", "the viewer parts together, at real size")
-    sheet.alpha_composite(_scene(), (24, top))
-    sheet.alpha_composite(_side_panel(), (416, top))
-    sheet.alpha_composite(_log(), (24, top + 296))
+    sheet.alpha_composite(_framed(_scene()), (24, top))
+    sheet.alpha_composite(_side_panel(), (444, top))
+    sheet.alpha_composite(_log(), (24, top + 316))
     _parts(sheet, top)
     return sheet
 
@@ -207,11 +250,11 @@ def contact_sheet():
 def _parts(sheet, top):
     """The viewer's raw parts, beside the scene they build."""
     font = font_sheet()
-    draw_text(sheet, (632, top), "font", _MUTED)
+    draw_text(sheet, (660, top), "font", _MUTED)
     sheet.alpha_composite(
-        font.resize((font.width * 2, font.height * 2), Image.NEAREST), (632, top + 12)
+        font.resize((font.width * 2, font.height * 2), Image.NEAREST), (660, top + 12)
     )
-    x, y = 632, top + 12 + font.height * 2 + 16
+    x, y = 660, top + 12 + font.height * 2 + 16
     for name, image in (
         ("arrow", turn_arrow()),
         ("quill", quill()),

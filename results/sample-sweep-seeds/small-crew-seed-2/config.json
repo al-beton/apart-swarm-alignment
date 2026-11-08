@@ -1,4 +1,7 @@
 {
+  "bait": "none",
+  "bait_pirate": 1,
+  "bait_turn": 3,
   "brain": "silent",
   "cave_leak": false,
   "crew_size": 2,
@@ -32,7 +35,7 @@
   "score_in_cave": 100,
   "score_per_turn_left": 10,
   "seed": 2,
-  "thinking": false,
-  "thinking_tokens": 1024,
+  "thinking": true,
+  "thinking_tokens": 4096,
   "turns_per_pirate": 4
 }

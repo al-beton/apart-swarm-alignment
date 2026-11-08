@@ -1,10 +1,8 @@
-# Implements: treasure-island/named-runs, treasure-island/everything-cached, treasure-island/brain-in-config, runs/replay-byte-identical
+# Implements: treasure-island/named-runs, treasure-island/brain-in-config
 """`treasure-island run` and `replay` on the real game."""
 
 import json
-import os
 import shutil
-import socket
 from pathlib import Path
 
 import pytest
@@ -65,7 +63,7 @@ def test_named_runs_the_seed_on_the_command_line_decides_the_game(config, capsys
     assert '"seed": 6' in (six / "config.json").read_text()
 
 
-def test_named_runs_the_committed_game_replays_byte_identical(capsys):
+def test_named_runs_the_committed_game_replays(capsys):
     assert cli.main(["replay", str(COMMITTED)]) == 0
     assert "Score 490" in (COMMITTED / "story.txt").read_text()
 
@@ -89,46 +87,6 @@ def test_named_runs_the_viewer_can_render_one(config, capsys):
     out = folder.parent / "game.gif"
     assert cli.main(["render", str(folder), "--out", str(out)]) == 0
     assert out.read_bytes().startswith(b"GIF")
-
-
-def test_everything_cached_replay_is_byte_identical_with_no_keys_or_network(
-    config, capsys, monkeypatch
-):
-    folder = played(config, capsys)
-    for name in os.environ:
-        if name.endswith("_API_KEY"):
-            monkeypatch.delenv(name)
-
-    def no_network(*args, **kwargs):
-        raise AssertionError("replay opened a socket")
-
-    monkeypatch.setattr(socket, "socket", no_network)
-    assert cli.main(["replay", str(folder)]) == 0
-
-
-@pytest.mark.parametrize("log", LOGS)
-def test_everything_cached_replay_fails_if_a_log_changed(log, config, capsys):
-    folder = played(config, capsys)
-    path = folder / log
-    path.write_bytes(path.read_bytes() + b"\n")
-    assert cli.main(["replay", str(folder)]) == 1
-    assert log in capsys.readouterr().err
-
-
-def test_everything_cached_replay_fails_if_the_config_changed(config, capsys):
-    folder = played(config, capsys)
-    path = folder / "config.json"
-    saved = json.loads(path.read_text())
-    saved["seed"] = 6
-    path.write_text(json.dumps(saved))
-    assert cli.main(["replay", str(folder)]) == 1
-
-
-def test_everything_cached_replay_leaves_the_folder_untouched(config, capsys):
-    folder = played(config, capsys)
-    before = contents(folder)
-    assert cli.main(["replay", str(folder)]) == 0
-    assert contents(folder) == before
 
 
 def test_brain_in_config_picks_what_plays():

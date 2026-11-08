@@ -1,4 +1,4 @@
-# Implements: commits/named-paths, review/review-finished, merging/stacked-retarget, merging/main-stays-green, merging/merge-when-clean
+# Implements: commits/named-paths, review/review-finished, merging/stacked-retarget, merging/main-stays-green, merging/merge-when-clean, merging/squash-links-pr, commits/commit-refs-issue
 import json
 import unittest
 
@@ -9,6 +9,7 @@ from deliver import (
     merge,
     review_finished,
     review_state,
+    squash_subject,
     unsafe_paths,
 )
 
@@ -21,7 +22,15 @@ def summary(sha, status):
 class FakeGh:
     """Answers the commands `merge` runs; records every one."""
 
-    def __init__(self, checks=("success",), unresolved=0, stacked=(102,), review="abc"):
+    def __init__(  # noqa: PLR0913 (one knob per thing a test varies)
+        self,
+        checks=("success",),
+        unresolved=0,
+        stacked=(102,),
+        review="abc",
+        history=None,
+        before=None,
+    ):
         self.calls = []
         # blocking-checks runs for the head commit, oldest first, by conclusion.
         self.checks = checks
@@ -29,6 +38,10 @@ class FakeGh:
         self.stacked = stacked
         # The commit Codex last finished reviewing; the head is "abc".
         self.review = review
+        # Each commit's parents and the files it changes against its first parent.
+        self.history = history or {}
+        # What the branch had changed by each commit, against where it left main.
+        self.before = before or {}
 
     def __call__(self, *args):
         self.calls.append(args)
@@ -42,6 +55,7 @@ class FakeGh:
                 "headRefName": "7-one-routine",
                 "baseRefName": "main",
                 "headRefOid": "abc",
+                "files": [{"path": "src/one.py"}, {"path": "tests/test_one.py"}],
             },
             ("pr", "list"): [{"number": n} for n in self.stacked],
             ("repo", "view"): {"owner": {"login": "o"}, "name": "r"},
@@ -61,7 +75,22 @@ class FakeGh:
             if "filter=all" not in args[1]:
                 runs = runs[:1]
             return json.dumps({"check_runs": runs})
+        if args[0] == "git":
+            return self.git(*args[1:])
         return json.dumps(answers[args[:2]]) if args[:2] in answers else ""
+
+    def git(self, command, *args):
+        commit = args[-1]
+        if command == "rev-list":
+            return " ".join([commit, *self.history.get(commit, ((), ()))[0]])
+        if command == "merge-base":
+            return "base"
+        if command == "diff" and args[-2] == "base":
+            # What the branch had changed before the merge: its own files then.
+            return "\n".join(self.before.get(commit, ("src/one.py",)))
+        if command == "diff":
+            return "\n".join(self.history.get(commit, ((), ()))[1])
+        return ""
 
     def index(self, *prefix):
         return next(i for i, c in enumerate(self.calls) if c[: len(prefix)] == prefix)
@@ -110,8 +139,29 @@ class DeliverTests(unittest.TestCase):
         self.assertLess(squash, delete)
         merged = gh.calls[squash]
         self.assertNotIn("--delete-branch", merged)
-        self.assertIn("improve(workflow): one routine (#7)", merged)
+        self.assertIn("improve(workflow): one routine (#101)", merged)
         self.assertIn("Closes #7", merged[merged.index("--body") + 1])
+
+    def test_squash_links_pr_the_subject_names_the_pull_request(self):
+        self.assertEqual(
+            squash_subject("feat(cave-leak): tables experiment one (#225)", 230),
+            "feat(cave-leak): tables experiment one (#230)",
+        )
+        self.assertEqual(
+            squash_subject("fix(x): two at once (#3, #4)", 9),
+            "fix(x): two at once (#9)",
+        )
+        self.assertEqual(squash_subject("chore: no number", 9), "chore: no number (#9)")
+
+    def test_squash_links_pr_merge_passes_that_subject_and_the_closing_block(self):
+        gh = FakeGh(stacked=())
+        merge(101, gh, pause=lambda seconds: None)
+        merged = gh.calls[gh.index("pr", "merge", "101", "--squash")]
+        self.assertEqual(
+            merged[merged.index("--subject") + 1],
+            "improve(workflow): one routine (#101)",
+        )
+        self.assertTrue(merged[merged.index("--body") + 1].startswith("Closes #7"))
 
     def test_main_stays_green_reruns_checks_after_merging(self):
         gh = FakeGh(stacked=())
@@ -144,6 +194,44 @@ class DeliverTests(unittest.TestCase):
             with self.assertRaises(MergeRefused):
                 merge(101, gh, pause=lambda seconds: None)
             self.assertFalse([c for c in gh.calls if c[:2] == ("pr", "merge")])
+
+    def test_merge_when_clean_a_plain_merge_of_main_needs_no_second_round(self):
+        # Codex reviewed "def"; "abc" merged main into it, touching only main's files,
+        # and so did the merge under it, so the reviewed commit is two merges down.
+        history = {
+            "abc": (("mid", "main2"), ("README.md", "src/other.py")),
+            "mid": (("def", "main1"), ("docs/guide.md",)),
+        }
+        gh = FakeGh(review="def", history=history)
+        merge(101, gh, pause=lambda seconds: None)
+        self.assertTrue([c for c in gh.calls if c[:2] == ("pr", "merge")])
+        # A review of the plain merge in between counts too.
+        gh = FakeGh(review="mid", history=history)
+        merge(101, gh, pause=lambda seconds: None)
+        self.assertTrue([c for c in gh.calls if c[:2] == ("pr", "merge")])
+
+    def test_merge_when_clean_a_merge_that_changes_the_pull_requests_files_needs_review(
+        self,
+    ):
+        for history in (
+            # A merge whose resolution edits one of the pull request's own files.
+            {"abc": (("def", "main1"), ("README.md", "src/one.py"))},
+            # An ordinary commit after the review.
+            {"abc": (("def",), ("tests/test_one.py",))},
+            # A plain merge, but on a commit Codex hasn't reviewed either.
+            {"abc": (("ghi", "main1"), ("README.md",)), "ghi": (("def",), ())},
+        ):
+            self.refused(FakeGh(review="def", history=history))
+        # A merge that puts back as main has it a file the branch had changed,
+        # so the pull request's files no longer list it.
+        history = {"abc": (("def", "main1"), ("src/two.py",))}
+        before = {"def": ("src/one.py", "src/two.py")}
+        self.refused(FakeGh(review="def", history=history, before=before))
+
+    def refused(self, gh):
+        with self.assertRaises(MergeRefused):
+            merge(101, gh, pause=lambda seconds: None)
+        self.assertFalse([c for c in gh.calls if c[:2] == ("pr", "merge")])
 
 
 if __name__ == "__main__":

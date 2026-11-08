@@ -167,7 +167,7 @@ def test_stripes_on_digging_up_the_treasure_writes_where_it_is_then_enters():
     brain = Stripes(grid_size=4, crew_size=2, index=0)
     earlier = [turn((2, 0), DIG, TREASURE_FOUND)]
     wrote = brain.decide(at((2, 0), earlier, square_dug=True)).action
-    assert wrote == tool_call("write", {"text": "The treasure is at (2, 0)."})
+    assert wrote == tool_call("write", {"text": "The treasure is at C4."})
     earlier.append(turn((2, 0), wrote))
     assert brain.decide(at((2, 0), earlier, square_dug=True)).action == (
         tool_call("enter", {})
@@ -189,7 +189,7 @@ def test_stripes_reads_every_5th_turn():
 
 def test_stripes_heads_for_the_cave_once_it_has_read_where_it_is():
     brain = Stripes(grid_size=4, crew_size=2, index=0)
-    note = {"line": 1, "by": "pirate-2", "text": "The treasure is at (3, 1)."}
+    note = {"line": 1, "by": "pirate-2", "text": "The treasure is at D3."}
     earlier = [turn((0, 0), DIG, NOTHING), turn((0, 0), READ, "", [note])]
     assert brain.decide(at((0, 0), earlier, square_dug=True)).action == move("east")
     in_the_way = brain.decide(at((2, 1), earlier, (("east", "pirate-2"),), True))
@@ -225,9 +225,9 @@ def test_scribe_moves_and_digs_like_the_silent_pirate():
 def test_scribe_writes_what_it_found_on_the_turn_after_each_dig():
     dug = [EarlierTurn((3, 1), DIG, "")]
     note = Scribe(4).decide(view((3, 1), earlier=dug)).action
-    assert note == {"action": "write", "text": "Dug (3, 1): nothing"}
+    assert note == {"action": "write", "text": "Dug D3: nothing"}
     found = Scribe(4).decide(view((3, 1), earlier=dug, on_cave=True)).action
-    assert found == {"action": "write", "text": "Treasure at (3, 1)"}
+    assert found == {"action": "write", "text": "Treasure at D3"}
     # In a whole game, every dig is followed by that pirate writing.
     records = scribe_game(load_config(ROOT / "configs/scribe.toml"))
     for index, record in enumerate(records):
@@ -248,7 +248,7 @@ def test_scribe_writes_where_the_cave_is_before_it_enters():
     # One it walked onto, opened by another pirate, it writes about first too.
     walked = [EarlierTurn((1, 1), {"action": "move", "direction": "east"}, "")]
     note = Scribe(4).decide(view((1, 1), earlier=walked, on_cave=True)).action
-    assert note == {"action": "write", "text": "Treasure at (1, 1)"}
+    assert note == {"action": "write", "text": "Treasure at B3"}
     wrote = [EarlierTurn((1, 1), note, "")]
     assert Scribe(4).decide(view((1, 1), earlier=wrote, on_cave=True)).action == {
         "action": "enter"
@@ -286,7 +286,7 @@ def test_reference_games_match_what_one_command_remakes(name, tmp_path, monkeypa
 def test_reference_games_replay_like_any_other_run(name, capsys):
     folder = ROOT / "runs" / f"reference-{name}"
     assert cli.main(["replay", str(folder)]) == 0
-    assert "byte-identical" in capsys.readouterr().out
+    assert "replay to the same game" in capsys.readouterr().out
 
 
 @pytest.mark.parametrize("name", REFERENCE_GAMES)
@@ -297,8 +297,8 @@ def test_reference_games_pass_the_validator(name):
 def test_reference_games_tell_a_story_that_ends_with_the_score():
     story = (ROOT / "runs/reference-silent/story.txt").read_text().splitlines()
     assert story[0].startswith(
-        "Turn 0: pirate-1 at (0, 0), on undug sand, with pirate-2 to the south. "
-        "It thought: Nobody has dug this square yet. Then it dug at (0, 0)"
+        "Turn 0: pirate-1 at A5, on undug sand, with pirate-2 to the south. "
+        "It thought: Nobody has dug this square yet. Then it dug at A5"
     )
     assert story[-1].startswith("Game over: ")
     assert "Score " in story[-1]

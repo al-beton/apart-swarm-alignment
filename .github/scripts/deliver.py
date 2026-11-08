@@ -1,6 +1,6 @@
 """deliver: the mechanical steps of the deliver-issue skill.
 
-Implements: workflow/one-routine, commits/named-paths, review/review-finished, merging/stacked-retarget, merging/main-stays-green, merging/merge-when-clean
+Implements: workflow/one-routine, commits/named-paths, review/review-finished, merging/stacked-retarget, merging/main-stays-green, merging/merge-when-clean, merging/squash-links-pr, commits/commit-refs-issue
 
 Usage: `python3 .github/scripts/deliver.py <command> ...`
 
@@ -19,7 +19,11 @@ Usage: `python3 .github/scripts/deliver.py <command> ...`
 - `resolve THREAD_ID REPLY` replies in a thread, then resolves it.
 - `merge PR` squash-merges when blocking-checks is green on the latest
   commit, Codex has finished reviewing it and every thread is resolved,
-  keeping the closing block. Green means the commit's last real run passed:
+  keeping the closing block as the commit's body. Its subject is the pull
+  request's title with the issue numbers swapped for its own, so the commit
+  on main links to the pull request. Merges of main that touch none of the pull
+  request's own files don't need a review of their own: Codex's round on the
+  commit under them counts. Green means the commit's last real run passed:
   a draft run that started later and was skipped (marking a pull request
   ready right after a push starts one) doesn't hide it. Pull requests stacked on its branch
   move to main first, the branch is deleted on the remote only (a worktree
@@ -131,9 +135,45 @@ def review_finished(state, head):
     )
 
 
+def review_stands_on(number, head, run=run_command):
+    """The commits a review counts for: the head, then each under plain merges of main.
+
+    A merge commit whose diff against its first parent touches none of the pull
+    request's own files only brought main in, so a review of the commit it was made
+    on still stands. The branch's own files are the pull request's now and those it
+    had changed before each merge, so a merge that puts one back as main has it
+    still needs a review.
+    """
+    yield head
+    files = json.loads(run("pr", "view", str(number), "--json", "files"))["files"]
+    own = {f["path"] for f in files}
+    run("git", "fetch", "--quiet", "origin", f"pull/{number}/head")
+    commit = head
+    while True:
+        parents = run("git", "rev-list", "--parents", "-n", "1", commit).split()[1:]
+        if len(parents) != 2:  # a merge has two parents
+            return
+        base = run("git", "merge-base", *parents).strip()
+        before = run("git", "diff", "--name-only", base, parents[0]).split()
+        changed = run("git", "diff", "--name-only", parents[0], commit).split()
+        if (own | set(before)) & set(changed):
+            return
+        commit = parents[0]
+        yield commit
+
+
 def closing_lines(body):
     """The pull request's closing block: one line per issue."""
     return [line for line in body.splitlines() if CLOSING.match(line.strip())]
+
+
+# The issue numbers that end a pull request's title, such as "(#225)" or "(#3, #4)".
+TITLE_ISSUES = re.compile(r"\s*\(#\d+(?:[,\s]+#\d+)*\)\s*$")
+
+
+def squash_subject(title, number):
+    """The pull request's title ending in its own number, not its issues'."""
+    return f"{TITLE_ISSUES.sub('', title)} (#{number})"
 
 
 def unresolved_threads(number, run=run_command):
@@ -208,7 +248,10 @@ def merge(number, run=run_command, pause=time.sleep):
     )
     if not checks_green(checks["check_runs"]):
         raise MergeRefused("blocking-checks isn't green on the latest commit.")
-    if not review_finished(review_state(_comments(number, run)), pr["headRefOid"]):
+    state = review_state(_comments(number, run))
+    head = pr["headRefOid"]
+    stands = review_stands_on(number, head, run)
+    if not any(review_finished(state, commit) for commit in stands):
         raise MergeRefused("Codex hasn't finished reviewing the latest commit.")
     if open_threads := unresolved_threads(number, run):
         raise MergeRefused(f"{len(open_threads)} review threads are unresolved.")
@@ -227,7 +270,7 @@ def merge(number, run=run_command, pause=time.sleep):
         str(number),
         "--squash",
         "--subject",
-        pr["title"],
+        squash_subject(pr["title"], number),
         "--body",
         "\n".join(closing),
     )

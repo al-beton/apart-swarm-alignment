@@ -37,7 +37,7 @@ def over(treasure):
 
 
 def square(image, x, y):
-    box = (x * viewer.TILE, y * viewer.TILE)
+    box = (viewer.EDGE_LEFT + x * viewer.TILE, y * viewer.TILE)  # in its frame
     return image.crop((*box, box[0] + viewer.TILE, box[1] + viewer.TILE))
 
 
@@ -68,25 +68,26 @@ def records_of(folder):
 
 
 def test_treasure_mark_a_question_mark_from_the_start():
-    records = [record(0), record(1, game_over=over((2, 2)))]
+    # The top-right square: unlike the west and south edges, it carries no name.
+    records = [record(0), record(1, game_over=over((2, 0)))]
     image = viewer.frame(records, 0, 3)
-    assert shows(image, 2, 2, "mark-question", viewer.SAND_TILES)
+    assert shows(image, 2, 0, "mark-question", viewer.SAND_TILES)
 
 
 def test_treasure_mark_the_cave_once_it_is_dug_up_and_never_before():
     dig = [{"action": "dig"}]
     records = [
-        record(0, position=(2, 2)),
-        record(1, dig, found=True, position=(2, 2)),
-        record(2, [{"action": "move", "direction": "west"}], position=(1, 2)),
+        record(0, position=(2, 0)),
+        record(1, dig, found=True, position=(2, 0)),
+        record(2, [{"action": "move", "direction": "west"}], position=(1, 0)),
     ]
-    assert viewer.scene(records, 0, 3, (2, 2))["mark"] == ("mark-question", (2, 2))
-    assert viewer.scene(records, 1, 3, (2, 2))["mark"] == ("cave", (2, 2))
-    image = viewer.frame(records, 2, 3, None, (2, 2))
+    assert viewer.scene(records, 0, 3, (2, 0))["mark"] == ("mark-question", (2, 0))
+    assert viewer.scene(records, 1, 3, (2, 0))["mark"] == ("cave", (2, 0))
+    image = viewer.frame(records, 2, 3, None, (2, 0))
     ground = art("tiles/dug").copy()
     ground.alpha_composite(art("treasure/cave"))
     assert (
-        square(image, 2, 2).convert("RGB").tobytes() == ground.convert("RGB").tobytes()
+        square(image, 2, 0).convert("RGB").tobytes() == ground.convert("RGB").tobytes()
     )
 
 

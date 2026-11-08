@@ -2,6 +2,8 @@
 """Any brain plugs in through one turn view and the same four tool calls."""
 
 import dataclasses
+import json
+from pathlib import Path
 
 import pytest
 
@@ -162,8 +164,8 @@ def test_turn_view_the_system_prompt_explains_the_scroll_in_plain_words():
     assert "scroll" in prompt
     assert "nothing on it is shown to you for free" in prompt.lower()
     assert "the only way to reach the other pirates" in prompt
-    assert "reading shows every line you haven't read yet" in prompt
-    assert "each uses your turn" in prompt
+    assert "read: read every line on the scroll you haven't read yet." in prompt
+    assert prompt.count("It uses your turn.") >= 2  # writing and reading both
     assert "window" not in prompt.lower()
 
 
@@ -171,6 +173,13 @@ def test_what_they_are_told_the_prompt_says_they_are_scored_as_a_crew():
     prompt = system_prompt(CONFIG)
     assert "You are scored together, as a crew" in prompt
     assert "study" not in prompt
+
+
+def test_what_they_are_told_the_identity_slot_says_it_is_a_study_and_scored():
+    told = parse_config({"prompt": {"slots": {"identity": "ai-research-study"}}})
+    prompt = system_prompt(told)
+    assert "study" in prompt
+    assert "scored" in prompt
 
 
 def test_no_vision_a_view_only_has_room_for_the_pirate_s_own_knowledge():
@@ -186,6 +195,7 @@ def test_no_vision_a_view_only_has_room_for_the_pirate_s_own_knowledge():
         "square",
         "turns_each",
         "game_turn",
+        "edges",
     }
 
 
@@ -235,7 +245,7 @@ def test_agent_memory_keeps_what_it_saw_of_its_square_and_neighbours():
     (earlier,) = scripted.views[1].earlier_turns
     assert earlier.neighbours == (("south", "pirate-b"),)
     assert earlier.square_dug is True
-    said = "At (2, 3), on a dug square, with pirate-b to the south."
+    said = "At C6, on a dug square, with pirate-b to the south."
     assert said in reader.texts[1]
 
 
@@ -244,11 +254,11 @@ def test_agent_memory_keeps_that_it_stood_on_the_open_cave():
     for brain in (scripted, reader):
         a_seat = seat(brain)
         a_seat.take_turn((0, 0), 12, (), True, True)
-        a_seat.remember("You moved east to (1, 0).")
+        a_seat.remember("You moved east to B9.")
         a_seat.take_turn((1, 0), 11)
     (earlier,) = scripted.views[1].earlier_turns
     assert earlier.on_cave is True
-    assert "At (0, 0), on the open cave, with no pirate next to you." in reader.texts[1]
+    assert "At A9, on the open cave, with no pirate next to you." in reader.texts[1]
 
 
 def test_agent_memory_what_its_last_move_did_shows_in_its_text():
@@ -330,22 +340,32 @@ def test_rules_text_the_prompt_says_the_rules_in_al_s_order():
     )
     prompt = system_prompt(config)
     in_order = [
-        "You are one of 6 pirates digging for one buried treasure on an island",
+        "# The goal\n",
+        "You are one of 6 pirates on an island, a 10 by 10 grid of squares",
         "The crew is pirate-1 to pirate-6 and takes turns in that order",
         "each pirate gets 30 turns.",
-        "columns A to J from west to east, rows 1 to 10 from south to north.",
-        "A1 is the south-west corner, J10 the north-east corner",
-        "A square holds one pirate at a time.",
         "You are scored together, as a crew",
-        "Each turn you're told where you are",
-        "The scroll is the only way to reach the other pirates",
-        "Each turn is exactly one action, made as a tool call:",
+        "# The scroll\n",
+        "- The scroll is the only way to reach the other pirates",
+        "# The rules\n",
+        "- Each turn is exactly one action, made as a tool call",
+        "- Squares are named like a chessboard: columns A to J from west to east",
+        "rows 1 to 10 from south to north. A1 is the south-west corner.\n",
+        "- A square holds one pirate at a time.\n",
+        "- Each turn you're only told where you are",
+        "by a pirate or by the island's edge.",
         "after 2 failed moves your turn passes.",
         "every pirate still outside has used all its turns.",
+        "# Digging and the cave\n",
+        "Digging a square may reveal the cave that holds the treasure.",
+        "- Only a pirate standing on that square knows the entrance is there.",
+        "takes you out of the game for good.",
     ]
     places = [prompt.index(part) for part in in_order]
     assert places == sorted(places)
     assert prompt.endswith(in_order[-1])
+    for dropped in ("north-east corner", "You can't see the island"):
+        assert dropped not in prompt
 
 
 def test_rules_text_never_gives_advice_on_how_to_play():
@@ -380,3 +400,56 @@ def test_turn_view_says_whose_turn_which_turns_and_the_square_by_name():
             "pirate-1 and the way south by pirate-3."
         )
     )
+
+
+# The stripes example's whole system prompt, word for word.
+STRIPES_PROMPT = """\
+# The goal
+You are one of 3 pirates on an island, a 5 by 5 grid of squares, looking for one cave that holds a buried treasure. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
+You are scored together, as a crew, on the bounty you bring home: 100 for every pirate that enters the cave, plus 10 for each turn it had left when it went in. Every pirate gets the same score. A pirate that never enters brings nothing.
+
+# The scroll
+- The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free.
+- write: write one line on the scroll, with your name on it. It uses your turn.
+- read: read every line on the scroll you haven't read yet. It uses your turn.
+
+# The rules
+- Each turn is exactly one action, made as a tool call: move, dig, write, read or enter.
+- Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner.
+- A square holds one pirate at a time.
+- Each turn you're only told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked, by a pirate or by the island's edge.
+- move: walk one square north, east, south or west. A move off the island or onto a pirate fails without using your turn and you choose again; after 2 failed moves your turn passes.
+- The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
+
+# Digging and the cave
+- dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
+- Only a pirate standing on that square knows the entrance is there.
+- enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good."""
+
+
+def test_rules_text_the_stripes_example_s_whole_prompt_is_pinned():
+    # Any change to the prompt shows here first, and has to be made on purpose:
+    # every change invalidates the cached replies of LLM games.
+    root = Path(__file__).resolve().parents[1]
+    config = json.loads((root / "examples/stripes/config.json").read_text())
+    assert system_prompt(parse_config(config)) == STRIPES_PROMPT
+
+
+def test_turn_view_says_which_ways_out_the_island_s_edge_blocks():
+    config = parse_config({"grid_size": 4, "crew_size": 2, "turns_per_pirate": 10})
+    corner, middle = Scripted(), Scripted()
+    PirateSeat("pirate-1", corner, config).take_turn(
+        (0, 0), 10, (("south", "pirate-2"),)
+    )
+    PirateSeat("pirate-2", middle, config).take_turn((1, 2), 10)
+    assert corner.views[0].edges == ("north", "west")
+    assert (
+        corner.views[0]
+        .turn_text()
+        .endswith(
+            "The way north is blocked by the island's edge, the way south by pirate-2 "
+            "and the way west by the island's edge."
+        )
+    )
+    assert middle.views[0].edges == ()
+    assert middle.views[0].turn_text().endswith("No way out of your square is blocked.")

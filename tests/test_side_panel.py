@@ -4,7 +4,7 @@
 from PIL import Image, ImageChops
 
 from assets.pirates import portrait
-from assets.ui import open_scroll, scroll_note
+from assets.ui import scroll_note
 from treasure_island import viewer
 from treasure_island.brain import Decision
 from treasure_island.config import parse_config
@@ -15,8 +15,8 @@ CREW = {"pirate-1": [0, 0], "pirate-2": [0, 0]}
 
 
 def drawn_at(image, overlay, position):
-    """Whether every solid pixel of `overlay` is in `image` at `position`."""
-    x, y = position
+    """Whether every solid pixel of `overlay` is in the frame at board `position`."""
+    x, y = position[0] + viewer.EDGE_LEFT, position[1]  # the board sits in its frame
     box = (x, y, x + overlay.width, y + overlay.height)
     here = image.crop(box).convert("RGB")
     solid = overlay.getchannel("A").point(lambda value: 255 if value == 255 else 0)
@@ -49,7 +49,9 @@ def shown(records, turn=None):
 
 
 def panel_of(image, size=4):
-    return image.crop((size * viewer.TILE, 0, image.width, image.height))
+    return image.crop(
+        (viewer.EDGE_LEFT + size * viewer.TILE, 0, image.width, image.height)
+    )
 
 
 def test_side_panel_says_what_the_pirate_did_in_plain_words():
@@ -161,7 +163,7 @@ def test_readable_at_once_a_turn_that_does_not_write_has_nothing_over_the_pirate
     # Nothing is drawn over the pirate: the board is the same as a turn with no action.
     quiet = viewer.frame([record(0, did=[], at=[2, 2])], 0, 4)
     dig = viewer.frame([record(0, at=[2, 2])], 0, 4)
-    above = (0, 0, 4 * viewer.TILE, 2 * viewer.TILE)
+    above = (viewer.EDGE_LEFT, 0, viewer.EDGE_LEFT + 4 * viewer.TILE, 2 * viewer.TILE)
     assert quiet.crop(above).tobytes() == dig.crop(above).tobytes()
 
 
@@ -181,9 +183,9 @@ def test_readable_at_once_the_scroll_stays_on_the_board():
 
 def test_readable_at_once_a_scroll_with_no_room_above_goes_below_the_pirate():
     _, top = viewer.note_box((0, 0), (60, 30), 4)
-    assert top == viewer.TILE + viewer.ARROW_ROOM + 2  # below the arrow under its feet
+    assert top == viewer.TILE + viewer.ARROW_ROOM + 2  # below its feet
     _, top = viewer.note_box((0, 3), (60, 30), 4)
-    assert top == 3 * viewer.TILE - viewer.ARROW_ROOM - 30  # above the turn arrow
+    assert top == 3 * viewer.TILE - viewer.ARROW_ROOM - 30  # above its hat
 
 
 def test_side_panel_says_how_many_lines_a_read_got_and_never_their_words():
@@ -202,22 +204,36 @@ def test_side_panel_says_how_many_lines_a_read_got_and_never_their_words():
     assert one.tobytes() == other.tobytes()
 
 
-def test_frame_shows_the_swarm_a_reader_holds_an_open_scroll_clear_of_the_crew():
-    crew = {"pirate-1": [0, 0], "pirate-2": [0, 1]}
-    for reader, other in (("pirate-1", "pirate-2"), ("pirate-2", "pirate-1")):
-        made = record(0, agent=reader, did=[{"action": "read"}], at=crew[reader])
-        records = [{**made, "crew": crew}]
-        seen = viewer.scene(records, 0, 4)
-        assert seen["reading"] is True
-        arrow, spot = viewer.turn_arrow(seen)
-        arrow_box = (*spot, spot[0] + arrow.width, spot[1] + arrow.height)
-        held = open_scroll()
-        x, y = viewer.note_spot(seen, held.size, arrow_box)
-        assert drawn_at(viewer.frame(records, 0, 4), held, (x, y))
-        ox, oy = (value * viewer.TILE for value in crew[other])
-        box = (x, y, x + held.width, y + held.height)
-        assert not viewer._overlap(box, (ox, oy, ox + viewer.TILE, oy + viewer.TILE))
+def holding(image, position, pose, frame):
+    """Whether the pirate at board `position` is drawn in its scroll-holding pose."""
+    look = viewer._default_pirates(["pirate-1", "pirate-2"])["pirate-1"]
+    sprite = viewer._sprite(look, pose, frame)
+    x, y = (value * viewer.TILE for value in position)
+    rim = 3  # the acting pirate's outline goes round the edge of its square
+    tile = image.crop(
+        (viewer.EDGE_LEFT + x, y, viewer.EDGE_LEFT + x + viewer.TILE, y + viewer.TILE)
+    )
+    solid = sprite.getchannel("A").point(lambda value: 255 if value == 255 else 0)
+    wanted = Image.composite(sprite.convert("RGB"), tile.convert("RGB"), solid)
+    inner = (rim, rim, viewer.TILE - rim, viewer.TILE - rim)
+    return tile.convert("RGB").crop(inner).tobytes() == wanted.crop(inner).tobytes()
+
+
+def test_frame_shows_the_swarm_a_reader_holds_the_scroll_in_front_of_it():
+    made = record(0, did=[{"action": "read"}], at=[1, 1])
+    assert viewer.scene([made], 0, 4)["reading"] is True
+    assert holding(viewer.frame([made], 0, 4), (1, 1), "read", 1)
     assert shown([record(0)])["reading"] is False
+
+
+def test_frame_shows_the_swarm_a_writer_holds_the_scroll_and_its_line_shows_beside_it():
+    made = record(0, did=[{"action": "write", "text": "Over here, crew!"}], at=[1, 1])
+    image = viewer.frame([made], 0, 4)
+    assert holding(image, (1, 1), "write", 2)
+    note = scroll_note("Over here, crew!")
+    assert drawn_at(
+        image, note, viewer.note_spot(viewer.scene([made], 0, 4), note.size)
+    )
 
 
 def test_readable_at_once_a_real_game_tells_its_ending_in_the_frame():
@@ -247,14 +263,11 @@ def test_frame_shows_the_swarm_a_note_never_covers_another_pirate():
     for writer, other in (("pirate-1", "pirate-2"), ("pirate-2", "pirate-1")):
         records, crew = stacked(writer)
         shown = viewer.scene(records, 0, 4)
-        arrow, spot = viewer.turn_arrow(shown)
-        arrow_box = (*spot, spot[0] + arrow.width, spot[1] + arrow.height)
         note = scroll_note("Over here, crew!")
-        x, y = viewer.note_spot(shown, note.size, arrow_box)
+        x, y = viewer.note_spot(shown, note.size)
         ox, oy = (value * viewer.TILE for value in crew[other])
         box = (x, y, x + note.width, y + note.height)
         assert not viewer._overlap(box, (ox, oy, ox + viewer.TILE, oy + viewer.TILE))
-        assert not viewer._overlap(box, arrow_box)
         assert 0 <= x and box[2] <= 4 * viewer.TILE and 0 <= y
 
 
@@ -263,10 +276,8 @@ def test_frame_shows_the_swarm_what_was_written_shows_in_full():
         records, _ = stacked(writer)
         image = viewer.frame(records, 0, 4)
         shown = viewer.scene(records, 0, 4)
-        arrow, spot = viewer.turn_arrow(shown)
-        arrow_box = (*spot, spot[0] + arrow.width, spot[1] + arrow.height)
         note = scroll_note("Over here, crew!")
-        assert drawn_at(image, note, viewer.note_spot(shown, note.size, arrow_box))
+        assert drawn_at(image, note, viewer.note_spot(shown, note.size))
 
 
 def test_frame_shows_the_swarm_a_tall_note_on_the_top_row_stays_clear_of_the_crew():
@@ -276,15 +287,50 @@ def test_frame_shows_the_swarm_a_tall_note_on_the_top_row_stays_clear_of_the_cre
     text = "I'll search row 1, then row 2, then we check in."
     made = record(0, did=[{"action": "write", "text": text}], at=[0, 0])
     shown = viewer.scene([{**made, "crew": crew}], 0, 5)
-    arrow, spot = viewer.turn_arrow(shown)
-    arrow_box = (*spot, spot[0] + arrow.width, spot[1] + arrow.height)
     note = scroll_note(text)
     assert (
         note.height > viewer.TILE // 2
     )  # three lines: taller than a centred spot allows
-    x, y = viewer.note_spot(shown, note.size, arrow_box)
+    x, y = viewer.note_spot(shown, note.size)
     box = (x, y, x + note.width, y + note.height)
     for other in ("pirate-2", "pirate-3"):
         ox, oy = (value * viewer.TILE for value in crew[other])
         assert not viewer._overlap(box, (ox, oy, ox + viewer.TILE, oy + viewer.TILE))
     assert 0 <= y and box[3] <= 5 * viewer.TILE
+
+
+LONG = " ".join(f"word{n}" for n in range(1000)) + " So I will dig here now."
+
+
+def test_side_panel_a_thought_that_fits_shows_whole():
+    thought = "The scroll says the cave is at C4, so I head there."
+    assert viewer.thought_lines([thought]) == viewer.wrapped(thought)
+
+
+def test_side_panel_a_long_thought_shows_its_end_after_dots_at_the_normal_size():
+    lines = viewer.thought_lines([LONG])
+    assert len(lines) == viewer.THOUGHT_ROWS  # as much as fits, no more
+    assert lines[0].startswith("...")
+    assert " ".join(lines).endswith("dig here now.")
+    assert all(
+        len(line) <= viewer.PANEL_COLUMNS for line in lines
+    )  # never smaller type
+    # The words shown are the thought's own last words, in order, none left out.
+    shown = " ".join(lines)[3:].split()
+    assert LONG.split()[-len(shown) :] == shown
+    # The frame stays one size and draws those lines in the normal pixel font.
+    records = [record(0, thinking=LONG)]
+    assert viewer.frame(records, 0, 1).size == viewer.frame([record(0)], 0, 1).size
+
+
+def test_side_panel_an_older_thought_cut_short_starts_with_dots():
+    older = " ".join(f"old{n}" for n in range(40))
+    lines = viewer.thought_lines([older, "Now I dig."])
+    assert lines[-1] == "Now I dig."
+    assert lines[0].startswith("...")
+    assert lines[-2].endswith("old39")
+
+
+def test_side_panel_the_story_and_page_keep_the_whole_thought():
+    records = [record(0, thinking=LONG)]
+    assert viewer.turn_records(records)[0]["thinking"] == LONG

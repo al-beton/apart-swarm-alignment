@@ -11,6 +11,7 @@ Treasure Island is a reproducible sandbox for asking when a swarm of LLM agents 
 - **Paper:** `paper/`, one Markdown file per section, each results section bound to the experiment or result it reports; `paper/README.md` explains the loop and `paper/plan.md` holds what the paper says. Built with `make paper-html` or `make paper-pdf`, previewed on GitHub Pages from every pull request.
 - **Games:** `results/` keeps findings, each with the games behind it; `examples/` is the fixed set of games remade with the code; `runs/` is everyday evidence. `results/README.md` says how to add one.
 - **Work** is tracked as GitHub issues on this repository.
+- **People** working here without these skills read `CONTRIBUTING.md`, the same loop in one page. A person's pull request gets its Codex round asked for by a team agent and is merged by the person; nobody else touches their branch.
 
 Al handles accounts, API keys and spending. Agents never put keys in code, configs, logs or commits.
 

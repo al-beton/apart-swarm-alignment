@@ -1,4 +1,4 @@
-# Implements: viewer/game-page
+# Implements: viewer/game-page, viewer/score-counter
 """The slideshow as a full game page: the board beside every turn's whole record."""
 
 import json
@@ -55,7 +55,7 @@ def test_game_page_both_commands_write_it(saved, capsys):
         saved.with_suffix(".html").unlink(missing_ok=True)
         assert cli.main(command) == 0
         page = saved.with_suffix(".html").read_text()
-        assert 'id="record"' in page
+        assert 'id="feed"' in page
         assert str(saved.with_suffix(".html")) in capsys.readouterr().out
 
 
@@ -65,6 +65,13 @@ def test_game_page_is_built_from_the_event_log_alone(saved, tmp_path):
     shutil.copy(saved / "events.jsonl", alone / "events.jsonl")
     turns = turns_in(viewer.slideshow_page(alone))
     assert [t["agent"] for t in turns] == [r["agent"] for r in records_of(saved)]
+    # The last frame counts up to the recorded score, by the log's own numbers.
+    records = viewer.records_in(alone)
+    scoring, last = viewer.scoring_in(alone), len(records) - 1
+    final = viewer.turn_steps(records, last, scoring)[-1]
+    size = viewer.grid_size(alone, records)
+    shown = viewer.scene(records, last, size, step=final, scoring=scoring)
+    assert shown["score"] == records[-1]["game_over"]["score"]
 
 
 def test_game_page_holds_each_turn_s_whole_record(saved):
@@ -110,24 +117,21 @@ def test_game_page_the_scroll_so_far_is_rebuilt_newest_last(saved):
         assert [w["text"] for w in turn["wrote"]] == writes
 
 
-def test_game_page_a_click_or_the_arrow_keys_step_through_the_turn_list(saved):
-    page = viewer.slideshow_page(saved)
-    assert 'id="turns"' in page
-    assert 'addEventListener("click"' in page
-    assert '"ArrowLeft"' in page and '"ArrowRight"' in page
-
-
-def test_game_page_the_prompt_is_folded_and_the_thinking_grey(saved):
-    page = viewer.slideshow_page(saved)
-    folded = re.search(r"<details[^>]*>", page).group(0)
-    assert "open" not in folded
-    assert re.search(r"\.thinking \{[^}]*color: #[0-9a-f]{3,6}", page)
-
-
-def test_game_page_a_filter_keeps_one_pirate_s_turns(saved):
-    page = viewer.slideshow_page(saved)
-    assert '<select id="pirate"' in page
-    assert "every pirate" in page
+def test_game_page_a_note_written_over_lines_shows_on_one_as_the_scroll_keeps_it(saved):
+    # A pirate writes its first note across two lines; the scroll joins them.
+    records = records_of(saved)
+    turn = next(r for r in records if any(a["action"] == "write" for a in r["did"]))
+    note = next(a for a in turn["did"] if a["action"] == "write")
+    note["text"] = note["text"].replace(" ", "\n", 1)
+    assert "\n" in note["text"]
+    rewrite(saved, records)
+    turns = turns_in(viewer.slideshow_page(saved))
+    written = [line for shown in turns for line in shown["wrote"]]
+    as_saved = (saved / "pirates-log.txt").read_text().splitlines()
+    assert [f"{w['line']} {w['by']}: {w['text']}" for w in written] == as_saved
+    # What the pirate did stays exactly as it wrote it.
+    first = next(shown for shown in turns if shown["wrote"])
+    assert "\n" in next(a["text"] for a in first["did"] if a["action"] == "write")
 
 
 def test_game_page_long_text_wraps_inside_its_column(saved):
@@ -165,3 +169,14 @@ def test_game_page_its_script_parses(saved, tmp_path):
     path = tmp_path / "page.js"
     path.write_text(script.group(1))
     subprocess.run(["node", "--check", str(path)], check=True)
+
+
+def test_game_page_shows_the_reasoning_tokens_a_turn_spent(saved):
+    records = records_of(saved)
+    records[0]["reasoning_tokens"] = 812
+    rewrite(saved, records)
+    page = viewer.slideshow_page(saved)
+    turns = turns_in(page)
+    assert turns[0]["reasoned"] == "Its model spent 812 tokens reasoning."
+    assert turns[1]["reasoned"] == ""
+    assert 'id="reasoned"' in page

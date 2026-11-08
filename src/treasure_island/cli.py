@@ -3,7 +3,7 @@
 `run` opens the live view unless told not to. At a terminal it keeps the page up
 after the game ends, until Ctrl-C; a script gets its prompt back when the game ends.
 
-Implements: agents/refusals-noted, runs/cost-before-run, runs/yes-before-spending, runs/spending-cap, tooling/package-and-cli, runs/one-game, runs/run-command, runs/replay-byte-identical, runs/plays-live, runs/no-cache, viewer/watch-live, viewer/render-gif, viewer/slideshow-file, viewer/game-page, treasure-island/named-runs, treasure-island/everything-cached, treasure-island/one-line-replay, figures/named-figures, agents/check-keys
+Implements: agents/refusals-noted, runs/cost-before-run, runs/yes-before-spending, runs/spending-cap, tooling/package-and-cli, runs/one-game, runs/run-command, runs/replay-by-actions, runs/plays-live, runs/no-cache, viewer/watch-live, viewer/render-gif, viewer/slideshow-file, viewer/game-page, viewer/transcript, treasure-island/named-runs, treasure-island/everything-cached, treasure-island/one-line-replay, figures/named-figures, agents/check-keys
 """
 
 import argparse
@@ -12,7 +12,7 @@ import sys
 import threading
 import webbrowser
 
-from treasure_island import figures, keys, runs, saved_game, spending, viewer
+from treasure_island import figures, keys, replay, runs, saved_game, spending, viewer
 from treasure_island.config import ConfigError
 
 
@@ -30,6 +30,11 @@ def _reporting_a_bad_config(play):
     except ConfigError as problem:
         print(f"Can't play this config: {problem}", file=sys.stderr)
         return 1
+    except spending.Declined:
+        print(
+            "Nothing was spent and no run was kept: nobody said yes.", file=sys.stderr
+        )
+        return 1
     return 0
 
 
@@ -37,7 +42,8 @@ def _ask_to_spend(cap_usd):
     """Ask the person at the keyboard; anything but a yes, or nobody there, is no."""
 
     def agree():
-        question = f"Spend up to ${cap_usd:.2f} on model calls? Type yes to go on: "
+        cap = spending.in_unit(cap_usd)
+        question = f"Spend up to {cap} on model calls? Type yes to go on: "
         try:
             return input(question).strip().lower() in ("y", "yes")
         except EOFError:
@@ -99,11 +105,10 @@ def _run(args):
 
 
 def _replay(args):
-    if different := saved_game.differences(args.folder):
-        names = ", ".join(different)
-        print(f"Replay failed: these don't match: {names}.", file=sys.stderr)
+    if why := replay.problem(args.folder):
+        print(f"Replay failed at {why}.", file=sys.stderr)
         return 1
-    print(f"{args.folder}: both logs and the story rebuilt, byte-identical.")
+    print(f"{args.folder}: its recorded actions replay to the same game.")
     return 0
 
 
@@ -120,6 +125,7 @@ def _watch(args):
 def _show(args):
     print(viewer.render(args.folder))
     print(viewer.slideshow(args.folder))
+    print(viewer.write_transcript(args.folder))
     return 0
 
 

@@ -13,7 +13,7 @@ allow (`possible`), and the sharer counts the readings shared on the scroll too.
 Each is told `reading_noise` as well, since the rules say how far off a reading
 can be.
 
-Implements: agents/reasoning-looked-up, agents/model-per-pirate, treasure-island/silent, treasure-island/loner, treasure-island/sharer, treasure-island/reference-games, treasure-island/no-token-strategies, treasure-island/brain-in-config, treasure-island/square-names
+Implements: agents/reasoning-looked-up, agents/model-per-pirate, treasure-island/silent, treasure-island/loner, treasure-island/sharer, treasure-island/reference-games, treasure-island/no-token-strategies, treasure-island/brain-in-config, treasure-island/square-names, treasure-island/cave-queue
 """
 
 import re
@@ -154,7 +154,8 @@ class Loner(Silent):
             return self._act(view, "enter", None, "This is the open cave, so I go in.")
         readings, ruled_out, cave = self._known(view)
         if cave is not None:
-            return self._head_for(view, [cave], "The cave is at {}, so I go there.")
+            why = "The cave is at {}, so I go there."
+            return self._head_for(view, [cave], why, open_cave=cave)
         keep = possible(self._size, self._noise, readings, ruled_out)
         if not view.square_dug and view.position in keep:
             return self._act(view, "dig", None, "The treasure could be right here.")
@@ -168,9 +169,15 @@ class Loner(Silent):
         why = "The nearest square the readings allow is {}."
         return self._head_for(view, keep, why)
 
-    def _head_for(self, view, targets, why):
-        """Go to the nearest target whose way is free, else step aside, else wait."""
+    def _head_for(self, view, targets, why, open_cave=None):
+        """Go to the nearest target whose way is free, else step aside, else wait.
+
+        A pirate standing on the open cave is no block, since the open cave
+        holds any number of pirates (`cave-queue`).
+        """
         here, blocked = view.position, dict(view.neighbours)
+        if open_cave is not None and distance(here, open_cave) == 1:
+            blocked.pop(first_step(here, open_cave), None)
         targets = sorted(
             (target for target in targets if target != here),
             key=lambda target: distance(here, target),

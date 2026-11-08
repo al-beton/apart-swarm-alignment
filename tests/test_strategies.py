@@ -369,6 +369,18 @@ def test_sharer_goes_to_a_cave_it_is_shown():
     assert action == {"action": "go_to", "square": "B3"}
 
 
+def test_sharer_steps_onto_the_open_cave_past_a_pirate_standing_on_it():
+    # The open cave holds any number of pirates (`cave-queue`), so one on it is no block.
+    told = sheet(
+        (1, 2),
+        [((1, 2), 1)],
+        [("pirate-2", "Cave at B3.")],
+        neighbours=(("north", "pirate-2"),),
+    )
+    assert told.square == "B2"
+    assert Sharer(4).decide(told).action == {"action": "go_to", "square": "B3"}
+
+
 def test_sharer_a_crew_never_fails_an_action_and_beats_the_loner():
     settings = {"grid_size": 8, "crew_size": 6, "turns_per_pirate": 20}
     sharer = loner = 0

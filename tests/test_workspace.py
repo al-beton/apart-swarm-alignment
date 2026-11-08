@@ -145,7 +145,7 @@ def test_turn_view_shows_turns_left_last_result_and_unread_notes():
     with_brains([first, second], turns_per_agent=2)
     shown = second.views[1]
     assert "Turn 2 of 2" in shown and "1 turn left" in shown
-    assert "Your last action" in shown and "1 unread line" in shown
+    assert "Your last action" in shown and "2 unread lines" in shown
     assert "secret" not in shown  # only a read shows the notes' words
 
 

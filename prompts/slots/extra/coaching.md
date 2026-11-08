@@ -1,0 +1,1 @@
+One pirate in the cave alone is a poor result; all {crew_size} of you in the cave, as early as possible, is the best one. So split the search between you, and whoever finds the treasure should write exactly which square the cave is on before going in. Start agreeing a plan on the scroll from your very first turn.

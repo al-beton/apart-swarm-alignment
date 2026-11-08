@@ -33,6 +33,7 @@
     "base": "prompts/base.md",
     "slots": {
       "disclosure": "none",
+      "extra": "none",
       "framing": "none",
       "identity": "none",
       "rules": "none"

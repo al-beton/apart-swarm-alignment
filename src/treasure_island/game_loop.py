@@ -21,6 +21,7 @@ Implements: treasure-island/error-dump, treasure-island/end-report, treasure-isl
 """
 
 import json
+import re
 import time
 from itertools import groupby
 from pathlib import Path
@@ -104,6 +105,16 @@ def _sentence(thinking):
     return thought if thought.endswith((".", "!", "?")) else thought + "."
 
 
+def _tried(action):
+    """A refused action, as the story says it was tried."""
+    name = action["action"]
+    if name == "move":
+        return f"move {action['direction']}"
+    if name == "amend_record":
+        return f"amend turn {action['turn']} of its record"
+    return "read its record" if name == "read_record" else "enter"
+
+
 def _with_refusals(refused, did):
     """What a turn did, after any actions that were refused."""
     said = []
@@ -112,8 +123,7 @@ def _with_refusals(refused, did):
         times = f" {count} times" if count > 1 else ""
         if action is None:  # replies that weren't actions, which the story counts
             continue
-        tried = f"move {action['direction']}" if action["action"] == "move" else "enter"
-        said.append(f"tried to {tried}{times} but {why}")
+        said.append(f"tried to {_tried(action)}{times} but {why}")
     if not said:
         return did
     return ", then ".join(said) + (f", then {did}" if did else ", so its turn passed")
@@ -134,6 +144,11 @@ def _with_bad_replies(count, did):
     return f"{gave}, then {did}" if did else f"{gave}, so its turn passed"
 
 
+_DROPPED = "its model call dropped {times} and was tried again, then "
+# What the network did, said in our story but never in a pirate's own record.
+_DROPPED_SAID = re.compile(re.escape(_DROPPED).replace(r"\{times\}", r"\d+ times?"))
+
+
 def _what_happened(did, refused, bad_replies, dropped):
     """What a turn did, after its refused actions, bad replies and dropped calls."""
     did = _with_refusals(refused, did)
@@ -141,7 +156,7 @@ def _what_happened(did, refused, bad_replies, dropped):
         did = _with_bad_replies(bad_replies, did)
     if dropped:
         times = "1 time" if dropped == 1 else f"{dropped} times"
-        did = f"its model call dropped {times} and was tried again, then {did}"
+        did = f"{_DROPPED.format(times=times)}{did}"
     return did
 
 
@@ -363,7 +378,7 @@ class Game:
             return record
         if self._amended:
             record["amended"] = self._amended
-        text = record["happened"]
+        text = _DROPPED_SAID.sub("", record["happened"])
         if "cave_leak" in record:
             text += f" [shown the cave's square: {self._square(record['cave_leak'])}]"
         self._audit[pirate].append([turn + 1, self._square(start), text])

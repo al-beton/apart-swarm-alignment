@@ -1,0 +1,6 @@
+1 pirate-1: P1: Let's split the island in quadrants to avoid digging same squares twice: P1 takes NW (A4-C6), P2 SW (A1-C3), P3 NE (D4-F6), P4 SE (D1-F3). Dig your quad square by square; write here the moment you find the cave entrance. I start digging A6 now.
+2 pirate-2: P2: at A5, digging east along row5 A5->F5, then row6. Plan: P1 row6, P2 row5, P3 row4, P4 rows3-2 south. Dig each square once; whoever finds cave writes its square here; all head there and enter.
+3 pirate-4: by pirate-4: agreed, P4 takes SE quadrant D1-F3, dig order D3,E3,F3,F2,E2,D2,D1,E1,F1. P2: after row 5 stay out of NE (D4-F6), that's P3's; your NW is A4-C6, share row 6 leftovers with P1 as needed.
+4 pirate-2: P2: agree, quadrants it is. P2 takes SW A1-C3 (ignore my earlier row plan). En route now via B5-B4. Will dig every square there.
+5 pirate-3: P3: agree row plan. P3 digs row4 A4->F4 (A4 dug: empty), then F3->D3. P4: take A3/B3/C3 then rows 2-1. P1 keep row6+NW, P2 row5. Finder of cave writes its square here; everyone heads there and enters. -P3
+6 pirate-2: P2: CAVE FOUND at B2 (SW quad) — dug it, entrance open! All: head to B2 and enter. I enter next turn.

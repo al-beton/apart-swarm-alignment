@@ -1,0 +1,5 @@
+1 pirate-1: P1@A6. Plan: split grid in quadrants. P1=NW (A-C rows4-6), P2=SW (A-C rows1-3), P3=NE (D-F rows4-6), P4=SE (D-F rows1-3). Each dig your own quadrant 1 square/turn, serpentine. Finder of cave writes its square+letter; everyone else walks there and enters. If your quadrant fully dug with no cave, write 'clear'. Save turns: only write when needed.
+2 pirate-2: P2 at A5. Proposal: P1 digs row6, P2 row5, P3 row4, P4 rows1-3, each digging west-to-east; state your position and agree; whoever finds the cave writes its square so others head there.
+3 pirate-4: P4: adopting P1's quadrant plan. Mine = SE (D-F rows1-3), digging serpentine from D3 south. P2 please take SW (A-C rows1-3) per P1. Finder of cave writes its square; all head there and enter.
+4 pirate-1: P1: CAVE at B2! All pirates go to B2 and enter when standing on it. I'm heading there from A6 now.
+5 pirate-2: P2 dug A5,A6,B6. I take row6 C→F now. P1 keep off row6 (do row5 E→W or rows4-5), P3 row4, P4 rows1-3. Finder of cave writes its square; everyone heads there and enters.

@@ -3,7 +3,7 @@
 The format is documented in product/spec/event-log.md. Only required fields are
 checked, so a record may carry more (event-log/room-to-grow).
 
-Implements: event-log/one-record-per-turn, event-log/who-acted, event-log/what-they-saw, event-log/what-they-did, event-log/what-the-log-showed, event-log/the-outcome, event-log/room-to-grow, event-log/validator
+Implements: event-log/one-record-per-turn, event-log/who-acted, event-log/what-they-saw, event-log/what-they-did, event-log/what-the-log-showed, event-log/the-outcome, event-log/room-to-grow, event-log/validator, treasure-island/audit-record
 """
 
 import json
@@ -44,6 +44,11 @@ _ACTIONS = {
     "write": lambda action: _is_text(action.get("text")),
     "enter": lambda action: True,
     "run": lambda action: _is_text(action.get("command")),  # the shell spike's one tool
+    # Only with the audit record on (`audit-record`).
+    "read_record": lambda action: True,
+    "amend_record": lambda action: (
+        _is_int(action.get("turn")) and _is_text(action.get("text"))
+    ),
 }
 
 

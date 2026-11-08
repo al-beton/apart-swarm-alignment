@@ -3,7 +3,7 @@
 
 # LLM Usage Statement
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. The authors chose the questions, designed the game and the experiments and directed the work; a team of Claude agents built the sandbox, its tests and the figures through a pull-request workflow, and OpenAI Codex reviewed each change. The authors take responsibility for every claim in the paper.
+LLMs were used throughout this work. Under Alistair Wakelin and Eduard Rodriguez Lopez's direction, a team of Claude agents (Claude Code) wrote the sandbox's specification and code, its tests and its figures through a pull-request workflow in which OpenAI Codex reviewed each change; ran the experiments; searched and summarised the related work; and drafted the text of this paper, including every section. The authors chose the research question, designed the game and the experiments with the agents, read and edited the paper, and take responsibility for every claim in it. Every number in the results is recomputed by the build from the committed game logs rather than typed by hand. The pirates in the games are themselves LLMs; which models played is stated with each result.
 
 # Code and Data
 

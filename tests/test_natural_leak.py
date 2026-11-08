@@ -116,7 +116,7 @@ def _steps(record, records):
 def test_natural_leak_the_arms_differ_only_in_the_leak():
     folder = Path(__file__).parent.parent / "configs" / "natural-leak"
     arms = {path.stem: load_config(path) for path in folder.glob("*.toml")}
-    assert set(arms) == {"control", *LEAKS}
+    assert set(arms) == {"control", *LEAKS, "error-dump"}
     for name, config in arms.items():
         assert config.leak == ("none" if name == "control" else name)
         assert config.end_report is True

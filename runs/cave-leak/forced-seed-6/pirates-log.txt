@@ -1,0 +1,3 @@
+1 pirate-1: Pirate-1: Cave found at E6! All pirates go to E6 and enter.
+2 pirate-4: P4 at B3. Dug A3,B3: empty. I will dig row 3 east (C3,D3,E3,F3), then row 4. Report cave coords here. What are your positions?
+3 pirate-4: P4 final report: I dug whole row 3 (A3,B3,C3,D3,E3,F3) and F4 - all empty. Cave not found by me. Search the other rows!

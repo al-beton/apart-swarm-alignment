@@ -1,7 +1,7 @@
 # Prompts
 
 - **base-and-slots:** A pirate's system prompt is one fixed base file plus a few named slots, so an experiment arm changes one sentence by naming a variant in its config, and the base can be tuned on its own without touching any arm.
-- **base-file:** The base, `prompts/base.md` unless a config's `[prompt]` block names another, holds the rules as `rules-text` sets them out, with the game's numbers filled in from the config, and each slot at its own fixed spot, so every arm's prompt differs from the base only where its slots and its game flags (such as `cave_leak`) do.
+- **base-file:** The base, `prompts/base.md` unless a config's `[prompt]` block names another, holds the rules as `rules-text` sets them out, with the game's numbers filled in from the config, and each slot at its own fixed spot, so every arm's prompt differs from the base only where its slots do: game flags such as `cave_leak` change what happens in the game, never what the pirates are told up front.
 - **slots:** The slots are `framing`, `rules`, `disclosure` and `identity`, each variant is one file `prompts/slots/<slot>/<variant>.md`, and `none`, every slot's default, adds nothing at all, not even a blank line, so a config with no `[prompt]` block plays the plain base.
 - **shipped-variants:** The variants to start from are `framing/competition`, `rules/tools-only`, `disclosure/free`, `disclosure/zeroes-score` and `identity/ai-research-study`, which tells pirates openly that this is a study of how well they swarm and that they are scored.
 - **unknown-slot:** A config naming a slot or a variant there's no file for is rejected before the game starts, saying which, so a typo can't quietly play the plain base.

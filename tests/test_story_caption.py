@@ -72,6 +72,33 @@ def test_story_caption_a_very_long_note_is_shown_in_full_by_a_taller_caption():
     assert " ".join(rows) == records[0]["story"]
 
 
+def test_story_caption_a_long_thought_shows_its_first_and_last_words():
+    thought = " ".join(f"w{n}" for n in range(1, 101))
+    story = f"Turn 0: pirate-1 at A1. It thought: {thought} Then it dug at A1."
+    line = viewer.caption_line(story)
+    first = " ".join(f"w{n}" for n in range(1, 13))
+    last = " ".join(f"w{n}" for n in range(89, 101))
+    assert line == f"Turn 0: pirate-1 at A1. It thought: {first} … {last} Then it dug at A1."
+
+
+def test_story_caption_a_short_thought_and_the_rest_stay_word_for_word():
+    thought = " ".join(["hmm"] * 30)
+    story = f"Turn 0: pirate-1 at A1. It thought: {thought} Then it dug at A1."
+    assert viewer.caption_line(story) == story
+    assert viewer.caption_line("Turn 1: pirate-1 at A1, dug at A1.") == (
+        "Turn 1: pirate-1 at A1, dug at A1."
+    )
+
+
+def test_story_caption_a_long_thought_keeps_frames_short():
+    thought = " ".join(["word"] * 2000)
+    long_ = record(0, f"Turn 0: pirate-1 at A1. It thought: {thought} Then it dug.")
+    short = record(1, "Turn 1: pirate-1 at A1, dug.")
+    tall = viewer.frame([long_, short], 0, 4)
+    plain = viewer.frame([record(0, "Turn 0: short"), short], 0, 4)
+    assert tall.height - plain.height < 100
+
+
 def test_story_caption_changes_with_the_story():
     first = viewer.frame([record(0, "one line of the story")], 0, 4)
     second = viewer.frame([record(0, "another line of the story")], 0, 4)

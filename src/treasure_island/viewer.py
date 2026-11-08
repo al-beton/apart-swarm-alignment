@@ -296,10 +296,22 @@ SCORE_INK = "#ffd23f"  # what the crew earns, in the cave's gold (Al to confirm)
 
 
 def scoring_in(folder):
-    """The score numbers from the run's config.json, or the defaults it would have."""
+    """The run's score numbers: as its event log records them, else as config.json
+    says, else the defaults it would have had.
+
+    A finished game's last record holds them, so a run viewed from its event log
+    alone counts by them too; a game still being played has a config beside it.
+    """
+    fields = ("turns_per_pirate", "score_in_cave", "score_per_turn_left")
+    events = Path(folder) / "events.jsonl"
+    records = records_in(folder) if events.exists() else []
+    recorded = (
+        records[-1].get("game_over", {}).get("score_numbers") if records else None
+    )
+    if recorded:
+        return Scoring(*(recorded[field] for field in fields))
     path = Path(folder) / "config.json"
     saved = json.loads(path.read_text()) if path.exists() else {}
-    fields = ("turns_per_pirate", "score_in_cave", "score_per_turn_left")
     return Scoring(*(saved.get(field, DEFAULTS[field]) for field in fields))
 
 

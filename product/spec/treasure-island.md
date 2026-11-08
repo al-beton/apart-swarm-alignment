@@ -94,7 +94,7 @@ The pirates' log is a scroll: nothing of it is shown for free, and writing on it
 
 - **toggles:** (decided) Terrain, agent count and the exploit can each be changed or switched off in a run's config; the scroll has no length to set, since nothing on it is shown for free.
 - **prompt-variants:** (open) System prompt variants to compare are: act within the rules, a reputation score, a reward for honesty, and simulation awareness.
-- **coached-arm:** (default, Al to confirm) An optional prompt variant, off by default, adds the advice to split the search, have the finder write the cave's square before entering and agree a plan from the first turn, so a coached crew can be compared with a plain one; the default prompt never carries it.
+- **extra-paragraph:** (decided) A config can add one paragraph of its own at the end of the system prompt, nothing by default, so an arm can tell the crew something more, such as how to swarm, without the default prompt ever carrying it; the first paragraph shipped is the coaching one, which says to split the search, have the finder write the cave's square before entering and agree a plan from the first turn.
 - **sudoku-last:** (decided) The Sudoku time from Something to Lose is tried last, once the rest works.
 - **model-backends:** (decided) Model backends are pluggable, and a config names the model each pirate plays with; which models we run is not yet chosen.
 - **retries-dropped-calls:** (decided) A model call that fails for want of a network (a dropped connection, a DNS failure, a timeout, a reply cut off part way or a 5xx answer) is tried again with backoff, 5 tries over about a minute (default, Al to confirm), and that turn's story says so, live and on replay alike; only when the last try fails does the run stop, and its story says how to resume, so one dropped connection doesn't end a live game.
@@ -191,7 +191,7 @@ The pirates' log is a scroll: nothing of it is shown for free, and writing on it
 | `run-count` | not yet | — |
 | `toggles` | `src/treasure_island/game_loop.py` | `test_toggles_the_crew_size_changes_through_the_config_alone` |
 | `prompt-variants` | not yet | — |
-| `coached-arm` | not yet | — |
+| `extra-paragraph` | not yet | — |
 | `sudoku-last` | not yet | — |
 | `model-backends` | `src/treasure_island/config.py`, `src/treasure_island/llm.py` | `test_model_backends_a_config_names_each_pirate_s_model` |
 | `retries-dropped-calls` | `src/treasure_island/retries.py`, `src/treasure_island/runs.py`, `src/treasure_island/llm.py`, `src/treasure_island/brain.py`, `src/treasure_island/game_loop.py`, `src/treasure_island/saved_game.py` | `test_retries_dropped_calls_a_dropped_call_is_tried_again`, `test_retries_dropped_calls_back_off_to_about_a_minute`, `test_retries_dropped_calls_the_story_says_so_on_that_turn`, `test_retries_dropped_calls_the_story_is_the_same_on_replay`, `test_retries_dropped_calls_a_5xx_is_retried_but_a_4xx_is_not`, `test_retries_dropped_calls_only_the_last_failure_stops_the_run`, `test_retries_dropped_calls_a_reply_cut_off_part_way_is_tried_again` |

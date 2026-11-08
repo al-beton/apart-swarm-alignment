@@ -98,11 +98,13 @@ def _differs(turn, was, now):
     if was is None:
         return f"turn {turn}: the replay played a turn the game never had"
     was, now = _ruled(was), _ruled(now)
-    fields = [field for field in was if was[field] != now[field]]
+    # Both records' fields: an ending only the replay reached counts as a difference.
+    fields = [f for f in {**was, **now} if was.get(f) != now.get(f)]
     if not fields:
         return None
     shown = "; ".join(
-        f"{field} recorded {json.dumps(was[field])}, replayed {json.dumps(now[field])}"
+        f"{field} recorded {json.dumps(was.get(field))}, "
+        f"replayed {json.dumps(now.get(field))}"
         for field in fields
     )
     return f"turn {turn}: {', '.join(fields)} differ ({shown})"

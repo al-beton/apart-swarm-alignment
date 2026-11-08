@@ -188,3 +188,18 @@ def test_replay_checks_replay_all_names_a_game_that_fails(tmp_path, capsys):
     assert "reference-stripes" in out.err
     assert "examples/silent" not in out.err
     assert "2 games" in out.out
+
+
+def test_replay_by_actions_fails_when_only_the_replay_ends_the_game(game):
+    # A game that stopped part way (at a spending cap, say), replayed under a rule
+    # that now ends it on its last recorded turn: the ending is a difference too.
+    played = records(game)
+    del played[-1]["game_over"]
+    rewrite(game, played[: len(played)])
+    manifest = game / "manifest.json"
+    saved = json.loads(manifest.read_text())
+    saved["stopped"] = "it reached its spending cap"
+    manifest.write_text(json.dumps(saved))
+    why = replay.problem(game)
+    assert why is not None
+    assert "game_over" in why

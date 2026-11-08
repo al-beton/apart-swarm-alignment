@@ -25,7 +25,7 @@ MOVED = [turn(0, [0, 1], [1, 1], EAST)]
 
 def test_walks_between_squares_a_move_slides_over_4_frames():
     assert WALK_FRAMES == 4
-    assert viewer.walk_steps(MOVED, 0) == [1, 2, 3, 4]
+    assert viewer.turn_steps(MOVED, 0) == [1, 2, 3, 4]
     spots = [
         viewer.scene(MOVED, 0, 3, step=s)["positions"]["pirate-1"] for s in (1, 2, 3)
     ]
@@ -46,8 +46,8 @@ def test_walks_between_squares_it_walks_on_every_in_between_frame():
 
 
 def test_walks_between_squares_a_turn_where_nobody_moves_gets_one_frame():
-    dug = [turn(0, [1, 1], [1, 1], [{"action": "dig"}])]
-    assert viewer.walk_steps(dug, 0) == [None]
+    stayed = [turn(0, [1, 1], [1, 1], [{"action": "read"}])]
+    assert viewer.turn_steps(stayed, 0) == [None]
     # A move that failed against the edge goes nowhere, so it doesn't walk either.
     bumped = [turn(0, [0, 0], [0, 0], [{"action": "move", "direction": "north"}])]
-    assert viewer.walk_steps(bumped, 0) == [None]
+    assert viewer.turn_steps(bumped, 0) == [None]

@@ -4,9 +4,8 @@
 import re
 
 import pytest
-from PIL import Image
 
-from assets.font import draw_text
+from assets.board import EDGE_LEFT, board_edges
 from treasure_island import viewer
 from treasure_island.brain import Decision, PirateSeat
 from treasure_island.config import ConfigError, parse_config
@@ -127,28 +126,12 @@ def test_square_names_the_board_is_lettered_and_numbered_at_its_edges():
             "outcome": {"position": [1, 1], "found_treasure": False},
         }
     ]
-    image = viewer.frame(records, 0, 3).convert("RGB")
-    tile = viewer.TILE
-    for column, letter in enumerate("ABC"):
-        x, y = viewer.column_label_spot(column, 3)
-        assert drawn(image, letter, (x, y))
-        assert column * tile <= x < (column + 1) * tile
-        assert 2 * tile <= y < 3 * tile  # in the bottom row
-    for row, number in enumerate("321"):
-        x, y = viewer.row_label_spot(row)
-        assert drawn(image, number, (x, y))
-        assert 0 <= x < tile  # in the west column
-        assert row * tile <= y < (row + 1) * tile
-
-
-def drawn(image, text, spot):
-    """Whether `text` in the pixel font is in `image` at `spot`, in the label's ink."""
-    ink = viewer.rgb(viewer.BOARD_LABEL_INK)
-    blank = Image.new("RGB", (40, 12), (0, 0, 0))
-    draw_text(blank, (0, 0), text, viewer.BOARD_LABEL_INK)
-    for x in range(blank.width):
-        for y in range(blank.height):
-            here = image.getpixel((spot[0] + x, spot[1] + y))
-            if blank.getpixel((x, y)) == ink and here != ink:
-                return False
-    return True
+    image = viewer.frame(records, 0, 3).convert("RGBA")
+    edges = board_edges(3)
+    grid = 3 * viewer.TILE
+    # The frame round the board is the art's, lettered and numbered, on every side drawn.
+    for box in ((0, 0, EDGE_LEFT, grid), (0, grid, edges.width, edges.height)):
+        assert image.crop(box).tobytes() == edges.crop(box).tobytes()
+    # Those are the art's own labels (tested with the art), for these names.
+    assert [square_name((column, 2), 3)[0] for column in range(3)] == list("ABC")
+    assert [square_name((0, row), 3)[1:] for row in range(3)] == list("321")

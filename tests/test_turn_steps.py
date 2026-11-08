@@ -1,7 +1,7 @@
 # Implements: viewer/board-framed, viewer/dig-steps, viewer/enter-steps
 """The board in its chess-named frame, a dig in six steps and going in in nine."""
 
-from PIL import Image, ImageChops
+from PIL import Image
 
 from assets.board import EDGE_BOTTOM, EDGE_LEFT, board_edges
 from assets.cave import ENTER_STEPS, entering, hat_stack
@@ -63,8 +63,8 @@ def test_board_framed_no_square_names_on_the_sand():
     image = viewer.frame(STILL, 0, 3)
     for x in range(3):
         for y in range(3):
-            if (x, y) == (1, 1):
-                continue  # the pirate's square
+            if (x, y) in ((1, 1), (1, 0)):
+                continue  # the pirate's square, and the arrow's over it
             tile = art(f"tiles/{viewer._ground_tile(x, y)}").convert("RGB")
             assert square(image, x, y).tobytes() == tile.tobytes()
 
@@ -138,7 +138,7 @@ def test_enter_steps_the_pirate_sinks_then_its_hat_flies_onto_the_stack():
     assert drawn[4] != drawn[3]
     assert empty.tobytes() == drawn[4]
     # ...and its hat is on the stack in the last.
-    stacked = over(art("treasure/cave"), hat_stack([(look[1], look[2])]))
+    stacked = over(art("tiles/dug"), art("treasure/cave"), hat_stack([look[1:]]))
     assert drawn[-1] == stacked.tobytes()
 
 

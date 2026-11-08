@@ -37,7 +37,7 @@ def art(name):
 
 
 def tile(image, x, y):
-    box = (x * viewer.TILE, y * viewer.TILE)
+    box = (viewer.EDGE_LEFT + x * viewer.TILE, y * viewer.TILE)  # in its frame
     return image.crop((*box, box[0] + viewer.TILE, box[1] + viewer.TILE)).convert("RGB")
 
 
@@ -82,7 +82,7 @@ def test_cave_drawn_the_dug_up_treasure_shows_the_cave_not_an_x():
 
 
 def test_cave_drawn_a_pirate_going_in_is_drawn_going_in_with_no_hat_yet():
-    image = viewer.frame(GAME, 2, 4)
+    image = viewer.frame(GAME, 2, 4, step=2)  # sinking in, before its hat flies out
     personality, colour, label = LOOKS["pirate-1"]
     expected = layered(art("treasure/cave"), going_in(personality, colour, label, 1))
     assert tile(image, *CAVE).tobytes() == expected.tobytes()

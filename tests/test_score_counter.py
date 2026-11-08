@@ -9,6 +9,8 @@ from pathlib import Path
 import pytest
 from PIL import Image, ImageChops
 
+from assets.cave import ENTER_STEPS
+from assets.dig import DIG_STEPS
 from treasure_island import examples, viewer
 from treasure_island.viewer import FRAME_MS, WALK_MS, Scoring
 
@@ -99,13 +101,15 @@ def test_score_counter_going_in_early_counts_up_to_more():
 def test_score_counter_owed_turns_play_out_quickly_before_the_last_frame():
     alone = ALONE
     scoring = Scoring(4, 100, 10)
-    steps = viewer.walk_steps(alone, 1, scoring)
-    assert steps == [1, 2, None]
+    steps = viewer.turn_steps(alone, 1, scoring)
+    # Going in takes its own steps, its last playing out the first owed round.
+    assert steps == [*range(1, ENTER_STEPS + 2), None]
     shown = [viewer.scene(alone, 1, 3, step=s, scoring=scoring) for s in steps]
-    assert [s["score"] for s in shown] == [110, 120, 120]
-    assert [s["gains"] for s in shown] == [["+10"], ["+10"], ["+100"]]
+    assert [s["score"] for s in shown] == [100] * (ENTER_STEPS - 1) + [110, 120, 120]
+    gains = [s["gains"] for s in shown]
+    assert gains == [["+100"]] * (ENTER_STEPS - 1) + [["+10"], ["+10"], ["+100"]]
     # Only the last turn plays them out.
-    assert viewer.walk_steps(alone, 0, scoring) == [None]
+    assert viewer.turn_steps(alone, 0, scoring) == list(range(1, DIG_STEPS + 1))
 
 
 @pytest.mark.parametrize("name", NAMES)
@@ -114,7 +118,7 @@ def test_score_counter_the_last_frame_s_count_is_the_game_s_score(name):
     records = records_of(name)
     scoring = viewer.scoring_in(folder)
     last = len(records) - 1
-    final = viewer.walk_steps(records, last, scoring)[-1]
+    final = viewer.turn_steps(records, last, scoring)[-1]
     shown = viewer.scene(records, last, 5, step=final, scoring=scoring)
     assert shown["score"] == records[-1]["game_over"]["score"]
     # The committed GIF ends on that frame, after any owed turns played out quickly.
@@ -123,17 +127,18 @@ def test_score_counter_the_last_frame_s_count_is_the_game_s_score(name):
     for index in range(gif.n_frames):
         gif.seek(index)
         durations.append(gif.info["duration"])
-    owed = len(viewer.walk_steps(records, last, scoring)) - 1
+    owed = len(viewer.turn_steps(records, last, scoring)) - 1
     assert durations[-1] == FRAME_MS
     assert durations[len(durations) - 1 - owed : -1] == [WALK_MS] * owed
 
 
 def test_score_counter_is_drawn_at_the_top_of_the_frame():
     scoring = Scoring(4, 100, 10)
-    before = viewer.frame(ALONE, 1, 3, step=1, scoring=scoring)  # 110
-    after = viewer.frame(ALONE, 1, 3, step=2, scoring=scoring)  # 120, the same turn
+    last = ENTER_STEPS + 1  # the hat is on the stack by then, so only the score moves
+    before = viewer.frame(ALONE, 1, 3, step=last - 1, scoring=scoring)  # 110
+    after = viewer.frame(ALONE, 1, 3, step=last, scoring=scoring)  # 120, the same turn
     # Only the score differs; compare the panel's top line.
-    grid = 3 * viewer.TILE
+    grid = viewer.EDGE_LEFT + 3 * viewer.TILE
     top = (grid, 0, before.width, 30)
     changed = ImageChops.difference(before.crop(top), after.crop(top)).getbbox()
     assert changed and changed[0] > viewer.PANEL // 2  # right of "Turn N", not over it
@@ -144,7 +149,7 @@ def test_score_counter_the_live_page_asks_for_every_step_the_gif_draws(tmp_path)
     shutil.copytree(ROOT / "examples/silent", folder)
     records = viewer.records_in(folder)
     last = len(records) - 1
-    steps = viewer.walk_steps(records, last, viewer.scoring_in(folder))
+    steps = viewer.turn_steps(records, last, viewer.scoring_in(folder))
     assert len(steps) > 1, "silent ends with everyone inside and turns owed"
     httpd = viewer.server(folder, 0)
     handler = httpd.RequestHandlerClass

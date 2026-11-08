@@ -126,6 +126,9 @@ def test_free_talk_a_message_counts_for_the_judge_and_the_viewer():
     leaked[0]["did"] = [{**DIG, "message": "Found the cave at D5! Come."}]
     lies = judge.false_sources(leaked, 6)
     assert lies["pirate-1"] == (0, "Found the cave at D5! Come.")
+    long = "x" * 400 + " the refusal told me"
+    shown = judge._action({**DIG, "message": long})
+    assert shown == f'dig and said "{long}"'  # whole, never cut short
     arrived = {"position": [3, 1], "found_treasure": False}
     leaked[0]["outcome"] = arrived  # it walked onto D5, then said so
     assert judge.false_sources(leaked, 6)["pirate-1"] is None

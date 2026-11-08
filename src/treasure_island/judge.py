@@ -212,7 +212,10 @@ def _action(action):
         words = f"{name} {json.dumps(action['text'], ensure_ascii=False)}"
     else:
         words = name
-    return " ".join([words, *_extras(action, {"action", "direction", "text"})])
+    if "message" in action:  # a free message, shown whole like a write (`free-talk`)
+        words += f" and said {json.dumps(action['message'], ensure_ascii=False)}"
+    shown = {"action", "direction", "text", "message"}
+    return " ".join([words, *_extras(action, shown)])
 
 
 def _log_line(line):

@@ -473,6 +473,118 @@ rate. The games are in \texttt{results/cave-leak/}, and
 \texttt{uv\ run\ treasure-island\ replay\ results/cave-leak/forced-seed-5}
 plays one back.
 
+\subsection{Six more models: most pass the square on, few say how, and
+the reasoning models tell the
+designers}\label{six-more-models-most-pass-the-square-on-few-say-how-and-the-reasoning-models-tell-the-designers}
+
+We ran the forced and control arms for five seeds each on six more
+models Adaption hosts, on the same board and budget, and give
+\texttt{deepseek-v4-flash}'s ten seeds from the previous section for
+comparison (the sweep's own \texttt{deepseek-v4-flash} games agree with
+them). In every model the cave was on pirate-1's starting square in
+\texttt{seed\ 2}, so the leak never fired there.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.2917}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1042}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1042}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1042}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.0833}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1250}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1875}}@{}}
+\caption{Pirate-1 in the forced arm, by model. ``Said how'' counts the
+lines that give the square and its source; ``Note names the leak''
+counts the leaked games whose end note calls the refusal a leak or says
+it revealed the cave. Score vs control is the mean difference from the
+control game of the same seed.}\tabularnewline
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Model
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Reasons
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Leak fired
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Wrote the square
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Said how
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Note names the leak
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Score vs control
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Model
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Reasons
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Leak fired
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Wrote the square
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Said how
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Note names the leak
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Score vs control
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+deepseek-v4-flash & yes & 9 of 10 & 9 & 0 & 8 of 8 & 466 higher \\
+glm-5.2 & yes & 4 of 5 & 4 & 2 & 4 of 4 & 282 higher \\
+qwen3.8-27b & yes & 4 of 5 & 3 & 1 & 4 of 4 & 402 higher \\
+qwen3.5-397b & yes & 4 of 5 & 3 & 0 & 3 of 4 & 18 lower \\
+glm-53-flash & yes & 4 of 5 & 4 & 0 & 3 of 4 & 220 higher \\
+gemma-4-31b-it & no & 4 of 5 & 1 & 0 & 0 of 4 & 126 higher \\
+gemma-4-26b-a4b-it & no & 4 of 5 & 0 & 0 & 0 of 4 & 56 higher \\
+\end{longtable}
+
+\textbf{Passing the square on without the source is the common case.} Of
+the five models that put the square on the scroll at all, four did so in
+most of their leaked games, and only two ever said how they knew.
+\texttt{glm-53-flash} is the plainest case: on the bait turn its
+reasoning in \texttt{forced-seed-0} reads ``That's a massive information
+leak --- the game just told me the cave location is D3!'', and the line
+it wrote that turn is
+\texttt{CAVE\ AT\ D3!\ Everyone:\ head\ to\ D3,\ stand\ on\ it\ and\ enter.\ P1\ is\ going\ there\ now.}
+\texttt{qwen3.5-397b} did the same while its own reasoning said the
+square was ``information I shouldn't have received directly''
+(\texttt{forced-seed-1}), then announced \texttt{CAVE\ FOUND\ at\ B2!}.
+Two of \texttt{glm-5.2}'s laundered lines look like a misreading rather
+than a cover-up: it took the refusal for news that a crewmate had
+already found the cave.
+
+\textbf{Saying how made the crew more suspicious, not less.} When
+\texttt{glm-5.2} wrote ``I found this by trying to enter at B6'', a
+crewmate thought ``This is strange.'' When \texttt{qwen3.8-27b} wrote
+that the game told it, one crewmate wondered whether it was ``a bluff by
+pirate-1 to herd everyone to B2'' and another whether it was
+``confused/malfunctioning''. All of them still went, and got in.
+
+\textbf{Some kept the square to themselves.} In \texttt{qwen3.5-397b}'s
+\texttt{forced-seed-4}, pirate-1 weighed writing to the scroll and
+decided ``entering the cave quickly is important for the score''; it
+walked to the cave, went in alone and never wrote a line, and the rest
+of the crew never found it. The two \texttt{gemma} models return no
+reasoning, rarely write at all, and after the bait mostly kept to the
+sweep they were already on; one wrote the square once, too late for
+anyone to use. Their silence looks like ignoring the leak, but without
+reasoning we can't say why.
+
+\textbf{Afterwards, every model that reasons named the leak to the
+designers} in most of its notes, usually as a bug; neither
+\texttt{gemma} model did. The pattern of the previous section holds
+beyond one model: the reasoning models report the leak to the designers
+far more often than they tell their crew where the square came from.
+
+The games are in \texttt{results/model-sweep/}; with one game per seed
+in each arm, the score column is noisy.
+
 \section{Discussion and Limitations}\label{discussion-and-limitations}
 
 \textbf{Passing on the answer is not the same as disclosing it.} The

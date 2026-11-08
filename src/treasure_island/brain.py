@@ -19,7 +19,7 @@ A brain is only asked on a turn it isn't walking under an order (`go-to`): the
 turns walked aren't kept one by one, and the asked turn that gave the order
 is kept with how it went.
 
-Implements: treasure-island/forced-discovery, treasure-island/model-reasoning, treasure-island/rules-text, treasure-island/score-told, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/config-variables, treasure-island/cave, treasure-island/failed-move-cost, treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/actions, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/shown-when-asked, treasure-island/say-on-any-action, treasure-island/alert, treasure-island/dig-reading, treasure-island/thinking, treasure-island/what-they-are-told, treasure-island/looks-are-cosmetic, treasure-island/square-names, agents/reply-cap, prompts/base-and-slots
+Implements: treasure-island/forced-discovery, treasure-island/model-reasoning, treasure-island/rules-text, treasure-island/score-told, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/config-variables, treasure-island/cave, treasure-island/failed-move-cost, treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/actions, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/shown-when-asked, treasure-island/say-on-any-action, treasure-island/alert, treasure-island/dig-reading, treasure-island/thinking, treasure-island/what-they-are-told, treasure-island/looks-are-cosmetic, treasure-island/square-names, agents/reply-cap, prompts/base-and-slots, event-log/what-they-did
 """
 
 import dataclasses
@@ -28,7 +28,7 @@ from typing import Protocol
 
 from treasure_island import prompts
 from treasure_island.event_log import DIRECTIONS, is_action
-from treasure_island.squares import column_letter, square_name
+from treasure_island.squares import canonical_name, column_letter, square_name
 
 _TALK = {
     "say": "optional: one line to say on the scroll as you act, for free",
@@ -88,8 +88,9 @@ def cut_off_reply(words, reasoning_tokens=None):
 def tool_call(name, arguments=None):
     """The event-log action for a tool call, or BadToolCall saying what's wrong.
 
-    An empty `say` and an `alert` that is false are left out, so a record shows
-    only a line that was said and an alert that was raised.
+    The action is tidied as every brain's is (`tidy`), so a record shows a
+    square as the game names it, only a line that was said and only an alert
+    raised on a line.
     """
     arguments = {} if arguments is None else arguments
     described = f"{name}({json.dumps(arguments)})"
@@ -108,13 +109,26 @@ def tool_call(name, arguments=None):
         raise BadToolCall(f"{described}: say must be a line of text")
     if not isinstance(arguments.get("alert", False), bool):
         raise BadToolCall(f"{described}: alert must be true or false")
-    action = {"action": name}
-    if "square" in arguments:
-        action["square"] = arguments["square"]
-    if arguments.get("say"):
-        action["say"] = arguments["say"]
-    if arguments.get("alert"):
-        action["alert"] = True
+    return tidy({"action": name, **arguments})
+
+
+def tidy(action):
+    """An action as the game keeps it, whichever brain chose it.
+
+    A square's name is written as the game writes it (" e05 " is E5); a line to
+    say is put on one line with no spaces round it, and a line of only spaces
+    is no line; an `alert` is kept only when true and on a line, since an alert
+    with no line marks nothing (`alert`).
+    """
+    action = dict(action)
+    if "square" in action:
+        action["square"] = canonical_name(action["square"])
+    said = " ".join(action.pop("say", "").split())
+    alert = action.pop("alert", False)
+    if said:
+        action["say"] = said
+        if alert:
+            action["alert"] = True
     return action
 
 
@@ -444,8 +458,10 @@ class PirateSeat:
             tuple(new_lines),
         )
         decision = Decision(forced) if forced else self._brain.decide(view)
-        if decision.action is not None and not is_tool_call(decision.action):
-            raise BadToolCall(f"{json.dumps(decision.action)} is not a tool call")
+        if decision.action is not None:
+            if not is_tool_call(decision.action):
+                raise BadToolCall(f"{json.dumps(decision.action)} is not a tool call")
+            decision = dataclasses.replace(decision, action=tidy(decision.action))
         self._pending = (view, decision)
         return decision
 

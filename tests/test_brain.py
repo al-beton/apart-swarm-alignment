@@ -1,4 +1,4 @@
-# Implements: treasure-island/rules-text, treasure-island/score-told, treasure-island/failed-move-cost, treasure-island/failed-move, treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/actions, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/thinking, treasure-island/what-they-are-told, treasure-island/say-on-any-action, treasure-island/alert, treasure-island/dig-reading, treasure-island/shown-when-asked
+# Implements: treasure-island/rules-text, treasure-island/score-told, treasure-island/failed-move-cost, treasure-island/failed-move, treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/actions, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/thinking, treasure-island/what-they-are-told, treasure-island/say-on-any-action, treasure-island/alert, treasure-island/dig-reading, treasure-island/shown-when-asked, event-log/what-they-did
 """Any brain plugs in through one turn view and the same four tool calls."""
 
 import dataclasses
@@ -117,6 +117,35 @@ def test_tools_only_a_tool_call_becomes_an_event_log_action(name, arguments, act
 def test_tools_only_anything_else_is_refused_and_says_why(name, arguments):
     with pytest.raises(BadToolCall, match=name):
         tool_call(name, arguments)
+
+
+@pytest.mark.parametrize(
+    "name, arguments, action",
+    [
+        ("go_to", {"square": " e05 "}, {"action": "go_to", "square": "E5"}),
+        ("go_to", {"square": "c4"}, {"action": "go_to", "square": "C4"}),
+        # A name that isn't a square's stays as said, for the refusal to quote.
+        ("go_to", {"square": "the cave"}, {"action": "go_to", "square": "the cave"}),
+        ("wait", {"alert": True}, {"action": "wait"}),
+        ("dig", {"say": "   ", "alert": True}, {"action": "dig"}),
+        (
+            "wait",
+            {"say": " Dug C4:\n5 away. "},
+            {"action": "wait", "say": "Dug C4: 5 away."},
+        ),
+    ],
+)
+def test_what_they_did_a_tool_call_is_recorded_as_the_game_names_it(
+    name, arguments, action
+):
+    assert tool_call(name, arguments) == action
+
+
+def test_what_they_did_a_seat_tidies_any_brain_s_action_the_same_way():
+    brain = Scripted({"action": "go_to", "square": "d 6", "say": " ", "alert": True})
+    assert take_turn(seat(brain)).action == {"action": "go_to", "square": "d 6"}
+    tidy = Scripted({"action": "go_to", "square": "d06", "alert": True})
+    assert take_turn(seat(tidy)).action == {"action": "go_to", "square": "D6"}
 
 
 def test_tools_only_a_seat_refuses_a_brain_that_acts_any_other_way():
@@ -453,7 +482,10 @@ def test_rules_text_the_prompt_says_the_rules_in_edu_s_order():
 def test_say_on_any_action_the_rules_say_a_failed_action_says_nothing():
     prompt = system_prompt(parse_config({}))
     assert "- A failed action says nothing: its line isn't put on the scroll." in prompt
-    assert "A line without it reaches a walking pirate when that pirate is next asked." in prompt
+    assert (
+        "A line without it reaches a walking pirate when that pirate is next asked."
+        in prompt
+    )
 
 
 def test_rules_text_says_how_far_off_a_reading_can_be():

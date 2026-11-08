@@ -243,3 +243,28 @@ def test_say_on_any_action_a_refused_line_is_told_it_was_not_said():
     # A refused action with no line to say isn't told of one.
     assert "line" not in second[1].result
     assert "Your line wasn't said." in first[0].as_text()
+
+
+def test_alert_with_no_line_wakes_nobody_and_is_not_recorded():
+    walker = Steps(go("E5"), WAIT)
+    shouter = Steps({"action": "wait", "alert": True}, WAIT)
+    records = play(config(turns_per_pirate=5), walker, shouter)
+    assert [r["asked"] for r in of(records, "pirate-1")] == [True] + [False] * 3 + [
+        True
+    ]
+    assert records[1]["did"] == [WAIT]
+    assert all(r["log_shown"] == [] for r in records)
+
+
+def test_asked_or_walked_an_order_names_its_square_as_the_game_does():
+    from treasure_island.brain import tool_call
+
+    class Sloppy:
+        def decide(self, view):
+            square = " e05 " if view.position == (0, 0) else "e5"
+            return Decision(tool_call("go_to", {"square": square}))
+
+    records = play(config(turns_per_pirate=3), Sloppy(), Steps(WAIT))
+    mine = of(records, "pirate-1")
+    assert mine[0]["did"][0] == go("E5")
+    assert [r["order"]["to"] for r in mine] == ["E5", "E5", "E5"]

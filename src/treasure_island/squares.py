@@ -6,7 +6,7 @@ east, and a row number, 1 onward from south to north: A1 is the south-west
 corner, and north of E4 is E5. The letters stop at Z, so the config rejects a
 grid wider than 26 (`MOST_COLUMNS`).
 
-Implements: treasure-island/square-names
+Implements: treasure-island/square-names, event-log/what-they-did
 """
 
 import re
@@ -29,6 +29,18 @@ def square_name(position, grid_size):
 def is_square_name(name):
     """Whether `name` is shaped like a square's name, on this grid or not."""
     return isinstance(name, str) and bool(_NAME.fullmatch(name.strip()))
+
+
+def canonical_name(name):
+    """A square's name as the game writes it (" e05 " is E5), on this grid or not.
+
+    A name that isn't shaped like a square's comes back as it was, so a refusal
+    can quote it.
+    """
+    if not is_square_name(name):
+        return name
+    found = _NAME.fullmatch(name.strip())
+    return f"{found[1].upper()}{int(found[2])}"
 
 
 def square_at(name, grid_size):

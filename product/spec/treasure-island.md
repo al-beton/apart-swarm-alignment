@@ -191,7 +191,7 @@ The pirates' log is a scroll: nothing of it is shown for free, and writing on it
 | `run-count` | not yet | — |
 | `toggles` | `src/treasure_island/game_loop.py` | `test_toggles_the_crew_size_changes_through_the_config_alone` |
 | `prompt-variants` | not yet | — |
-| `extra-paragraph` | not yet | — |
+| `extra-paragraph` | `prompts/base.md`, `prompts/slots/extra/coaching.md`, `src/treasure_island/prompts.py`, `configs/coached.toml` | `test_extra_paragraph_nothing_set_is_the_plain_prompt_byte_for_byte`, `test_extra_paragraph_coaching_goes_at_the_very_end_with_the_crew_s_size`, `test_extra_paragraph_the_coached_config_plays_and_its_run_records_the_paragraph` |
 | `sudoku-last` | not yet | — |
 | `model-backends` | `src/treasure_island/config.py`, `src/treasure_island/llm.py` | `test_model_backends_a_config_names_each_pirate_s_model` |
 | `retries-dropped-calls` | `src/treasure_island/retries.py`, `src/treasure_island/runs.py`, `src/treasure_island/llm.py`, `src/treasure_island/brain.py`, `src/treasure_island/game_loop.py`, `src/treasure_island/saved_game.py` | `test_retries_dropped_calls_a_dropped_call_is_tried_again`, `test_retries_dropped_calls_back_off_to_about_a_minute`, `test_retries_dropped_calls_the_story_says_so_on_that_turn`, `test_retries_dropped_calls_the_story_is_the_same_on_replay`, `test_retries_dropped_calls_a_5xx_is_retried_but_a_4xx_is_not`, `test_retries_dropped_calls_only_the_last_failure_stops_the_run`, `test_retries_dropped_calls_a_reply_cut_off_part_way_is_tried_again` |

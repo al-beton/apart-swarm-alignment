@@ -33,7 +33,7 @@ with no note, and the scroll as parchment; on the right one entry for every turn
 `planned_turns` lists, each played turn's steps drawn ahead so stepping onto it
 plays them.
 
-Implements: viewer/planned-turns, viewer/game-page-steps, viewer/scroll-written-live, viewer/cave-drawn, treasure-island/cave, viewer/turn-marked, viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/walks-between-squares, treasure-island/pokemon-style, viewer/slideshow-file, viewer/game-page, viewer/scroll-steps, viewer/score-counter, viewer/transcript, viewer/board-framed, viewer/dig-steps, viewer/enter-steps, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process, treasure-island/square-names
+Implements: treasure-island/end-report, viewer/planned-turns, viewer/game-page-steps, viewer/scroll-written-live, viewer/cave-drawn, treasure-island/cave, viewer/turn-marked, viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/walks-between-squares, treasure-island/pokemon-style, viewer/slideshow-file, viewer/game-page, viewer/scroll-steps, viewer/score-counter, viewer/transcript, viewer/board-framed, viewer/dig-steps, viewer/enter-steps, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process, treasure-island/square-names, treasure-island/forced-discovery
 """
 
 import base64
@@ -929,6 +929,7 @@ def turn_records(records):
             "did": record.get("did", []),
             "result": record.get("result", ""),
             "wrote": wrote,
+            **({"bait": record["bait"]} if "bait" in record else {}),
         }
         for number, (record, wrote) in enumerate(
             zip(records, _scroll_writes(records), strict=True)
@@ -1080,6 +1081,13 @@ def _fenced(text):
     return f"{fence}text\n{text}\n{fence}"
 
 
+def _bait_text(bait):
+    """The bait a turn carries, said plainly (`forced-discovery`)."""
+    if bait["kind"] == "forced-action":
+        return f"The game made {bait['pirate']} try to enter here."
+    return f"{bait['pirate']}'s thought was seeded with: {bait['seeded']}"
+
+
 def _transcript_turn(turn):
     parts = [f"## Turn {turn['turn']}: {turn['agent']}"]
     if turn["prompt"]:
@@ -1088,6 +1096,8 @@ def _transcript_turn(turn):
         parts.append(details + _fenced(turn["prompt"]) + "\n\n</details>")
     else:
         parts.append("*No prompt recorded: a scripted pirate reads no words.*")
+    if bait := turn.get("bait"):
+        parts.append("**The bait**\n\n" + _quoted(_bait_text(bait)))
     thinking = _quoted(turn["thinking"]) if turn["thinking"] else None
     parts.append("**Its thinking**\n\n" + (thinking or "*No thinking recorded.*"))
     if turn["reasoned"]:
@@ -1117,6 +1127,12 @@ def transcript(folder):
     else:
         ending = "*This game has no game over line yet: it stopped or is still going.*"
     parts.append(ending)
+    if notes := (game_over or {}).get("notes"):
+        parts.append("## Notes to the designers")
+        parts += [
+            f"**{note['agent']}:**\n\n{_quoted(note['note'] or '(none)')}"
+            for note in notes
+        ]
     return "\n\n".join(parts) + "\n"
 
 

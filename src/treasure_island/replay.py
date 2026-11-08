@@ -12,7 +12,7 @@ replies, so a changed rule is caught and a reworded one isn't.
 `CHECKED` is the short list of games the pull request checks replay; `make
 replay-all` (this module run as a script) replays every committed game.
 
-Implements: runs/replay-by-actions, runs/replay-checks, results/results-stay-checkable, treasure-island/everything-cached
+Implements: treasure-island/end-report, runs/replay-by-actions, runs/replay-checks, results/results-stay-checkable, treasure-island/everything-cached, treasure-island/forced-discovery
 """
 
 import json
@@ -54,7 +54,10 @@ def _attempts(record):
     passed replays exactly the tries it had. Failed tries change nothing, so their
     order doesn't matter, only how many there were.
     """
-    tries = [Decision(action) for action in record.get("failed_moves", [])]
+    failed = record.get("failed_moves", [])
+    if record.get("bait", {}).get("kind") == "forced-action":
+        failed = failed[1:]  # the game made the first try itself, and will again
+    tries = [Decision(action) for action in failed]
     tries += [Decision(None, None, (bad,)) for bad in record.get("refused", [])]
     if record["did"]:
         tries.append(Decision(record["did"][0], record.get("thinking")))
@@ -86,7 +89,10 @@ def _ruled(record):
     kept["saw"] = {k: v for k, v in record.get("saw", {}).items() if k != "prompt"}
     if "game_over" in record:
         kept["game_over"] = {
-            k: v for k, v in record["game_over"].items() if k != "story"
+            # Notes are a pirate's own words after the game, not a rule's outcome.
+            k: v
+            for k, v in record["game_over"].items()
+            if k not in ("story", "notes")
         }
     return kept
 

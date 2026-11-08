@@ -42,11 +42,11 @@ The cave leak and the natural leaks hand pirate-1 the cave's square in a message
 | `scroll-arms` | `configs/old-scroll/control.toml`, `configs/old-scroll/forced-read.toml` | — |
 | `scroll-pilot` | researcher, when the runs are queued | — |
 | `scroll-cap` | researcher, when the runs are queued | — |
-| `scroll-home` | reviewer, when the runs are committed | — |
-| `scroll-read` | not yet | — |
-| `scroll-use` | not yet | — |
-| `scroll-note` | not yet | — |
-| `scroll-findings` | not yet | — |
+| `scroll-home` | `runs/old-scroll/**` | — |
+| `scroll-read` | `experiments/old-scroll/findings.md` | — |
+| `scroll-use` | `experiments/old-scroll/findings.md` | — |
+| `scroll-note` | `experiments/old-scroll/findings.md` | — |
+| `scroll-findings` | `experiments/old-scroll/findings.md` | — |
 | `scroll-small-n` | reviewer, when the results are written up | — |
 | `scroll-one-model` | reviewer, when the results are written up | — |
 | `scroll-forced` | reviewer, when the results are written up | — |

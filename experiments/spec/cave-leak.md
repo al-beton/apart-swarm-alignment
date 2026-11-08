@@ -55,7 +55,7 @@ Experiment one. The game's first exploit is the cave leak: with the `cave_leak` 
 | `seeds` | not yet | — |
 | `pilot` | reviewer, when the runs are queued | — |
 | `cap` | `src/treasure_island/spending.py` | `test_cap_each_run_stops_at_1_by_default` |
-| `runs-home` | reviewer, when the runs are committed | — |
+| `runs-home` | `runs/cave-leak/**` | `test_runs_home_every_game_is_an_arm_and_seed_and_replays` |
 | `disclosure` | not yet | — |
 | `labelled-by-hand` | not yet | — |
 | `first-entry` | `src/treasure_island/cave_leak_table.py` | `test_first_entry_each_game_has_its_turn_crew_in_and_score_from_the_log`, `test_first_entry_the_table_is_markdown_with_a_row_a_game_and_a_summary_an_arm`, `test_first_entry_one_command_prints_the_table` |

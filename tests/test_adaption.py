@@ -1,4 +1,4 @@
-# Implements: treasure-island/model-reasoning, agents/reply-cap, agents/adaption-backend, agents/adaption-cost, agents/key-from-the-environment, agents/check-keys, agents/normal-temperature
+# Implements: treasure-island/model-reasoning, agents/reply-cap, agents/adaption-backend, agents/adaption-waits, agents/adaption-cost, agents/key-from-the-environment, agents/check-keys, agents/normal-temperature
 """The Adaption backend, tested against a reply in the SDK's own shape, offline."""
 
 import json
@@ -323,3 +323,15 @@ def test_check_keys_lists_adaption_and_never_prints_its_key(monkeypatch):
 def test_normal_temperature_adaption_sends_no_temperature():
     _, _, sent = answer()
     assert "temperature" not in sent
+
+
+def test_adaption_waits_ten_minutes_and_leaves_retrying_to_the_game(monkeypatch):
+    made = {}
+
+    def recording(**settings):
+        made.update(settings)
+        return "client"
+
+    monkeypatch.setattr(adaption, "Adaption", recording)
+    assert adaption_backend.client("a key") == "client"
+    assert made == {"api_key": "a key", "timeout": 600.0, "max_retries": 0}

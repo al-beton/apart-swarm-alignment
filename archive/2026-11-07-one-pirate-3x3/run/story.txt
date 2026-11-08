@@ -1,0 +1,6 @@
+Turn 0: pirate-1 at (0, 0), on undug sand, with no pirate beside it, dug at (0, 0) and found nothing.
+Turn 1: pirate-1 at (0, 0), on dug sand, with no pirate beside it, moved east to (1, 0).
+Turn 2: pirate-1 at (1, 0), on undug sand, with no pirate beside it, dug at (1, 0) and found nothing.
+Turn 3: pirate-1 at (1, 0), on dug sand, with no pirate beside it, moved south to (1, 1).
+Turn 4: pirate-1 at (1, 1), on undug sand, with no pirate beside it, dug at (1, 1) and found nothing.
+Game over: the turns ran out. The treasure at (0, 2) was never dug up, and 0 of 1 pirates got into the cave. Score 0.

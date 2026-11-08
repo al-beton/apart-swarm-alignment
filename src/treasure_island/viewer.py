@@ -33,7 +33,7 @@ with no note, and the scroll as parchment; on the right one entry for every turn
 `planned_turns` lists, each played turn's steps drawn ahead so stepping onto it
 plays them.
 
-Implements: viewer/planned-turns, viewer/game-page-steps, viewer/scroll-written-live, viewer/cave-drawn, treasure-island/cave, viewer/turn-marked, viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/walks-between-squares, treasure-island/pokemon-style, viewer/slideshow-file, viewer/game-page, viewer/scroll-steps, viewer/score-counter, viewer/transcript, viewer/board-framed, viewer/dig-steps, viewer/enter-steps, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process, treasure-island/square-names
+Implements: treasure-island/end-report, viewer/planned-turns, viewer/game-page-steps, viewer/scroll-written-live, viewer/cave-drawn, treasure-island/cave, viewer/turn-marked, viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/walks-between-squares, treasure-island/pokemon-style, viewer/slideshow-file, viewer/game-page, viewer/scroll-steps, viewer/score-counter, viewer/transcript, viewer/board-framed, viewer/dig-steps, viewer/enter-steps, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process, treasure-island/square-names, treasure-island/forced-discovery
 """
 
 import base64
@@ -929,6 +929,7 @@ def turn_records(records):
             "did": record.get("did", []),
             "result": record.get("result", ""),
             "wrote": wrote,
+            **({"bait": record["bait"]} if "bait" in record else {}),
         }
         for number, (record, wrote) in enumerate(
             zip(records, _scroll_writes(records), strict=True)
@@ -1080,6 +1081,13 @@ def _fenced(text):
     return f"{fence}text\n{text}\n{fence}"
 
 
+def _bait_text(bait):
+    """The bait a turn carries, said plainly (`forced-discovery`)."""
+    if bait["kind"] == "forced-action":
+        return f"The game made {bait['pirate']} try to enter here."
+    return f"{bait['pirate']}'s thought was seeded with: {bait['seeded']}"
+
+
 def _transcript_turn(turn):
     parts = [f"## Turn {turn['turn']}: {turn['agent']}"]
     if turn["prompt"]:
@@ -1088,6 +1096,8 @@ def _transcript_turn(turn):
         parts.append(details + _fenced(turn["prompt"]) + "\n\n</details>")
     else:
         parts.append("*No prompt recorded: a scripted pirate reads no words.*")
+    if bait := turn.get("bait"):
+        parts.append("**The bait**\n\n" + _quoted(_bait_text(bait)))
     thinking = _quoted(turn["thinking"]) if turn["thinking"] else None
     parts.append("**Its thinking**\n\n" + (thinking or "*No thinking recorded.*"))
     if turn["reasoned"]:
@@ -1117,6 +1127,12 @@ def transcript(folder):
     else:
         ending = "*This game has no game over line yet: it stopped or is still going.*"
     parts.append(ending)
+    if notes := (game_over or {}).get("notes"):
+        parts.append("## Notes to the designers")
+        parts += [
+            f"**{note['agent']}:**\n\n{_quoted(note['note'] or '(none)')}"
+            for note in notes
+        ]
     return "\n\n".join(parts) + "\n"
 
 
@@ -1417,6 +1433,7 @@ function paint(scroll) {
   try { history.replaceState(null, "", "#turn-" + at); } catch (e) { /* a file page may refuse */ }
   if (scroll) {
     lock = Date.now() + 1500;
+    readerScrolled = false;
     $("turn" + at).scrollIntoView({ block: "center", behavior: timer ? "smooth" : "auto" });
   }
 }
@@ -1427,6 +1444,8 @@ function nearestKept(k) {
   const later = TURNS.findIndex((t, n) => n > k && kept(n));
   return later >= 0 ? later : TURNS.map((t, n) => n).filter((n) => n < k && kept(n)).pop();
 }
+// The filter's last turn, or -1 if it keeps none.
+const lastKept = () => TURNS.map((t, n) => n).filter(kept).concat(-1).sort((a, b) => b - a)[0];
 function go(k, scroll = true) {
   if (k < 0 || k >= N) return;
   forward = k === at + 1;
@@ -1440,7 +1459,8 @@ function step(by) {
 }
 function play() {
   if (timer) { stop(); return; }
-  if (at === N - 1) { const first = nearestKept(0); if (first !== undefined) go(first); }
+  // At the filter's last turn there's nothing later to play, so start again.
+  if (at >= lastKept()) { const first = nearestKept(0); if (first !== undefined) go(first); }
   $("play").textContent = "❚❚";
   timer = setInterval(() => step(1), Number($("speed").value));
 }
@@ -1480,8 +1500,37 @@ document.addEventListener("keydown", (key) => {
 function band() {
   return -Math.round(innerHeight * 0.45) + "px 0px " + -Math.round(innerHeight * 0.5) + "px 0px";
 }
+// The entry across the band's middle, if any: what the reader has scrolled to.
+function inView() {
+  const y = innerHeight * 0.475;
+  return entries.find((entry) => {
+    const box = entry.getBoundingClientRect();
+    return !entry.classList.contains("hidden") && box.top <= y && box.bottom >= y;
+  });
+}
+// Once a step's own scroll has settled, the board catches up with any scroll the
+// reader made meanwhile, which the observer won't report again. Only the reader's
+// own scrolling counts: the step's scroll, clamped near the feed's end, can leave
+// an earlier entry in the band without the reader moving at all.
+let settling = null, readerScrolled = false;
+const readerScrolls = () => { readerScrolled = true; };
+for (const kind of ["wheel", "touchmove", "pointerdown"]) addEventListener(kind, readerScrolls, { passive: true });
+addEventListener("keydown", (key) => {
+  if (["PageUp", "PageDown", "Home", "End", "ArrowUp", "ArrowDown"].includes(key.key)) readerScrolls();
+});
+function settle() {
+  if (timer || Date.now() < lock || !readerScrolled) return;
+  const entry = inView();
+  const k = entry ? Number(entry.dataset.turn) : at;
+  if (k !== at) { forward = k === at + 1; at = k; paint(false); }
+}
 function onScroll(seen) {
-  if (Date.now() < lock || timer) return;
+  if (timer) return;
+  if (Date.now() < lock) {
+    clearTimeout(settling);
+    settling = setTimeout(settle, lock - Date.now() + 50);
+    return;
+  }
   for (const one of seen) {
     const k = Number(one.target.dataset.turn);
     if (one.isIntersecting && k !== at) { forward = k === at + 1; at = k; paint(false); }

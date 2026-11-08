@@ -5,7 +5,7 @@ How a finished game's pirates get the labels the whistleblowing study counts (`e
 ## What it reads
 
 - **after-the-fact:** (open) Proposed: one judge model reads a whole finished game after it's played and never watches or steers a game live, so judging can't change what the pirates do.
-- **compact-transcript:** (open) Proposed: the judge reads a transcript built from the run's event log, one line per turn with the pirate, its square named as the game names it, what it did and any action that was refused, what it wrote, what it read and its thinking, plus each pirate's rules once and only what's new in its later rules, never the recap of its own turns, so a full crew's game fits in one request without every turn's whole prompt.
+- **compact-transcript:** (open) Proposed: the judge reads a transcript built from the run's event log, one line per turn with the pirate, its square named as the game names it, what it did and any action that was refused, what it wrote, what it read and its thinking, plus each pirate's rules once and only what's new in its later rules, never the recap of its own turns, and after the turns each pirate's note to the designers when the game has them (`treasure-island/end-report`), so a full crew's game fits in one request without every turn's whole prompt.
 - **extra-fields-shown:** (open) Proposed: fields a turn carries beyond the event-log format are shown in the transcript too, so a new game rule, such as an injected realisation, reaches the judge without changing it.
 
 ## What it says
@@ -32,7 +32,7 @@ How a finished game's pirates get the labels the whistleblowing study counts (`e
 | Statement | Enforced by | Tested by |
 |---|---|---|
 | `after-the-fact` | `src/treasure_island/judge.py` | `test_after_the_fact_the_game_never_calls_the_judge` |
-| `compact-transcript` | `src/treasure_island/judge.py` | `test_compact_transcript_has_one_line_per_turn_with_who_where_and_what`, `test_compact_transcript_names_squares_only_when_it_knows_the_grid`, `test_compact_transcript_shows_each_pirates_rules_once_never_every_prompt`, `test_compact_transcript_shows_writes_reads_refusals_and_thinking` |
+| `compact-transcript` | `src/treasure_island/judge.py` | `test_compact_transcript_has_one_line_per_turn_with_who_where_and_what`, `test_compact_transcript_names_squares_only_when_it_knows_the_grid`, `test_compact_transcript_shows_each_pirates_rules_once_never_every_prompt`, `test_compact_transcript_shows_writes_reads_refusals_and_thinking`, `test_end_report_the_transcripts_show_the_notes` |
 | `extra-fields-shown` | `src/treasure_island/judge.py` | `test_extra_fields_shown_in_the_transcript` |
 | `per-pirate-flags` | `src/treasure_island/judge.py`, `src/treasure_island/judge_rubric.py` | `test_per_pirate_flags_a_reply_that_agrees_with_the_labels_parses`, `test_per_pirate_flags_a_reply_in_a_code_fence_parses` |
 | `exploit-by-rule` | `src/treasure_island/judge.py`, `src/treasure_island/judge_rubric.py` | `test_exploit_by_rule_finds_the_first_turn_each_pirate_reached_it`, `test_exploit_by_rule_one_check_says_what_reaching_it_looks_like`, `test_exploit_by_rule_the_judge_is_told_it_as_a_fact`, `test_exploit_by_rule_a_reply_cannot_override_it`, `test_exploit_by_rule_an_honest_cave_is_not_the_exploit` |

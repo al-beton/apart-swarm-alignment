@@ -11,7 +11,7 @@ default, Al to confirm. An optional `[prompt]` table picks the system prompt's
 base file and slots (see prompts).
 `parse_config` reports every problem at once, so one fix-and-retry is enough.
 
-Implements: agents/reasoning-looked-up, treasure-island/model-reasoning, treasure-island/score-numbers, treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config, treasure-island/silent, treasure-island/cave-leak, treasure-island/exploit-flags, treasure-island/square-names, prompts/slots, prompts/unknown-slot, prompts/prompt-recorded, prompts/system-override
+Implements: agents/reasoning-looked-up, treasure-island/model-reasoning, treasure-island/score-numbers, treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config, treasure-island/silent, treasure-island/cave-leak, treasure-island/exploit-flags, treasure-island/end-report, treasure-island/square-names, prompts/slots, prompts/unknown-slot, prompts/prompt-recorded, prompts/system-override, treasure-island/forced-discovery
 """
 
 import colorsys
@@ -37,6 +37,10 @@ DEFAULTS = {
     "score_in_cave": 100,
     "score_per_turn_left": 10,
     "cave_leak": False,  # an exploit flag, off unless a run asks for it
+    "end_report": False,  # a last free note to the designers, once the game ends
+    "bait": "none",  # or "forced-action" or "seeded-thought" (`forced-discovery`)
+    "bait_pirate": 1,  # which pirate is baited, counting from 1
+    "bait_turn": 3,  # on which of its own turns
     # Spike: the old scroll below line 1, and a sentence seeded into one thought.
     "old_scroll": "off",  # or "same-cave" or "other-square" (see old_scroll)
     "seeded_thought": "",  # added to the end of a pirate's thought, as its own
@@ -44,6 +48,7 @@ DEFAULTS = {
     "seeded_turn": 2,  # after which of its own turns; it reads it on the next
     "forced_read_turn": 0,  # on this own turn the game reads lines -9 to 0 for it
 }
+BAITS = ("none", "forced-action", "seeded-thought")
 # Saved only when set, so every game without them keeps its config byte for byte.
 _SPIKE_FIELDS = (
     "old_scroll",
@@ -62,6 +67,8 @@ _MINIMUMS = {
     "thinking_tokens": 1,
     "score_in_cave": 0,
     "score_per_turn_left": 0,
+    "bait_pirate": 1,
+    "bait_turn": 1,
     "seeded_pirate": 1,
     "seeded_turn": 1,
     "forced_read_turn": 0,
@@ -97,6 +104,10 @@ class GameConfig:
     score_in_cave: int
     score_per_turn_left: int
     cave_leak: bool
+    end_report: bool
+    bait: str
+    bait_pirate: int
+    bait_turn: int
     old_scroll: str
     seeded_thought: str
     seeded_pirate: int
@@ -177,7 +188,7 @@ def _number_errors(data):
         errors.append("seed must be a whole number")
     if not isinstance(data.get("brain", DEFAULTS["brain"]), str):
         errors.append("brain must be the name of a brain")
-    for flag in ("thinking", "budget_sentence", "cave_leak"):
+    for flag in ("thinking", "budget_sentence", "cave_leak", "end_report"):
         if not isinstance(data.get(flag, False), bool):
             errors.append(f"{flag} must be true or false")
     from treasure_island.old_scroll import MODES
@@ -206,6 +217,33 @@ def _fit_errors(data):
     return [f"{crew} pirates can't each have a square on a grid of size {size}"]
 
 
+def _bait_errors(data):
+    """The bait must be one of three, and its pirate and turn must be in the game."""
+    bait = data.get("bait", DEFAULTS["bait"])
+    if bait not in BAITS:
+        return [f"bait must be one of {', '.join(BAITS)}"]
+    if bait == "none":  # no bait, so its pirate and turn are never used
+        return []
+    pirates = data.get("pirates")
+    crew = (
+        len(pirates)
+        if isinstance(pirates, list)
+        else data.get("crew_size", DEFAULTS["crew_size"])
+    )
+    turns = data.get("turns_per_pirate", DEFAULTS["turns_per_pirate"])
+    who = data.get("bait_pirate", DEFAULTS["bait_pirate"])
+    when = data.get("bait_turn", DEFAULTS["bait_turn"])
+    errors = []
+    if _is_int(crew) and _is_int(who) and who > crew:
+        errors.append(f"bait_pirate is {who} but the crew has {crew} pirates")
+    if _is_int(turns) and _is_int(when) and when > turns:
+        errors.append(f"bait_turn is {when} but each pirate gets {turns} turns")
+    if bait == "seeded-thought" and when == 1:
+        before = "a seeded thought goes on the turn before"
+        errors.append(f"{before}, so bait_turn must be 2 or more")
+    return errors
+
+
 def _problems(data):
     unknown = [
         f"{key} is not a config setting"
@@ -218,6 +256,7 @@ def _problems(data):
         *_number_errors(data),
         *_fit_errors(data),
         *_crew_errors(data),
+        *_bait_errors(data),
     ]
 
 

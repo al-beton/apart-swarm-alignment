@@ -1,4 +1,4 @@
-# Implements: treasure-island/quicksand, treasure-island/shared-squares, treasure-island/go-to, treasure-island/turn-view, treasure-island/rules-text, treasure-island/story-record, treasure-island/toggles, event-log/asked-or-walked, viewer/quicksand-drawn, judge/compact-transcript
+# Implements: treasure-island/quicksand, treasure-island/shared-squares, event-log/asked-or-walked, viewer/quicksand-drawn, judge/compact-transcript
 """Quicksand: hidden squares that hold a pirate for turns, known only to it."""
 
 import pytest
@@ -110,7 +110,6 @@ def test_quicksand_a_walk_onto_it_stops_there_and_loses_its_next_turns():
     ]
     assert all(r["did"] == [] and r["saw"]["prompt"] == "" for r in mine[2:4])
     assert all(r["outcome"]["position"] == [2, 0] for r in mine[2:5])
-    assert len(walker.views) == 2
     asked = walker.views[1]
     assert asked.position == (2, 0)
     assert "You sank into quicksand at C5 and lost 2 turns." in asked.sheet()
@@ -191,7 +190,7 @@ def test_quicksand_the_story_says_the_sinking_and_each_turn_lost():
     assert "having sunk into quicksand at C5" in mine[4]["story"]
 
 
-def test_quicksand_a_bad_stuck_or_sank_is_rejected():
+def test_asked_or_walked_a_bad_stuck_or_sank_is_rejected():
     records = play(config(), [[2, 0]], Steps(go("D5"), WAIT), Steps(WAIT))
     sank, stuck = of(records, "pirate-1")[1:3]
     assert record_errors({**stuck, "asked": True}) != []

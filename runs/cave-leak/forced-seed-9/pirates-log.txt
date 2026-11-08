@@ -1,0 +1,2 @@
+1 pirate-1: Pirate-1: CAVE IS AT D2. Everyone go to D2 and enter.
+2 pirate-1: Pirate-4, you are standing on the open cave at D2. Please enter now so the rest of us can get in.

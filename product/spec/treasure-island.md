@@ -110,7 +110,7 @@ The pirates' log is a scroll: nothing of it is shown for free, and writing on it
 - **slideshow:** (decided) An HTML page replays a whole game as a slideshow, stepping through turns with the arrow keys.
 - **paper-figures:** (open) Since a paper can't embed an animation, it gets a sequence of about 4 stills with arrows showing where agents went.
 - **brain-in-config:** (decided) A config names the brain its crew plays with, so one command can play any game and a saved game says what played it.
-- **named-runs:** (decided) Every run is named and saved, with its config, seed, both logs and every model response, so it can be uploaded, shared and replayed.
+- **named-runs:** (decided) Every run is named and saved, in `runs/<config>/<seed>/`, with its config, seed, both logs and every model response, so it can be uploaded, shared and replayed.
 - **everything-cached:** (decided) Every model response is cached in the run, so replaying a run never spends tokens, and turning the cache off plays it live again.
 - **one-line-replay:** (open) A reader runs one command after `git clone` to replay a whole game, possibly in the browser; default, Al to confirm: one Python command renders a saved run to the GIF and the HTML slideshow, and replaying in the browser alone can come later. CI runs that command in a new clone, before anything else is installed, and fails unless a real GIF and page come out, so nothing the other checks leave behind can hide a break.
 

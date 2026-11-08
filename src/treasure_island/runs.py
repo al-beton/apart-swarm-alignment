@@ -97,7 +97,7 @@ def _started_at(replies_path):
 def earlier_rows():
     """Every stored reply earlier runs got, with its request, oldest run first."""
     paths = sorted(
-        RUNS.glob("*/replies.jsonl"), key=lambda p: (_started_at(p), p.parent.name)
+        RUNS.glob("**/replies.jsonl"), key=lambda p: (_started_at(p), str(p.parent))
     )
     return [json.loads(line) for p in paths for line in p.read_text().splitlines()]
 
@@ -108,11 +108,15 @@ def earlier_replies():
 
 
 def new_folder(name):
-    """runs/<name>, or runs/<name>-2 and so on if that's already taken."""
+    """runs/<name>, or runs/<name>-2 and so on if that's already taken.
+
+    A name may hold a slash, as `<config>/<seed>` does: its parents are made too.
+    """
     RUNS.mkdir(exist_ok=True)
     folder, tries = RUNS / name, 1
     while True:
         try:
+            folder.parent.mkdir(parents=True, exist_ok=True)
             folder.mkdir()
             return folder
         except FileExistsError:

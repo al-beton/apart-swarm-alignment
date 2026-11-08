@@ -176,7 +176,7 @@ def test_yes_before_spending_the_question_reads_y_or_yes(toml, monkeypatch):
     monkeypatch.setattr(saved_game, "backend_for", lambda model: FakeModel())
     assert cli.main(["run", str(toml), "--seed", "0", "--no-watch"]) == 1
     assert cli.main(["run", str(toml), "--seed", "1", "--no-watch"]) == 0
-    (kept,) = Path("runs").iterdir()
+    (kept,) = Path("runs").glob("*/*")
     assert story_lines(kept)[-1].startswith("Game over:")
 
 

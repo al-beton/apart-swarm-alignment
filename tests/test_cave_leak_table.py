@@ -42,11 +42,11 @@ def records(folder):
 
 def experiment(root):
     for seed in (1, 2):
-        play(root / f"control-seed-{seed}", seed, leak=False, baited=True)
-        play(root / f"forced-seed-{seed}", seed, leak=True, baited=True)
-    play(root / "unbaited-seed-1", 1, leak=True, baited=False)
-    (root / "notes").mkdir()  # not a game: listed and skipped
-    (root / "forced-seed-9").mkdir()  # no events.jsonl yet: skipped too
+        play(root / "control" / str(seed), seed, leak=False, baited=True)
+        play(root / "forced" / str(seed), seed, leak=True, baited=True)
+    play(root / "unbaited" / "1", 1, leak=True, baited=False)
+    (root / "notes.md").write_text("")  # not an arm: listed and skipped
+    (root / "forced" / "9").mkdir()  # no events.jsonl yet: skipped too
     return root
 
 
@@ -61,7 +61,7 @@ def test_first_entry_each_game_has_its_turn_crew_in_and_score_from_the_log(tmp_p
         ("unbaited", 1),
     ]
     for game in games:
-        log = records(root / f"{game.arm}-seed-{game.seed}")
+        log = records(root / game.arm / str(game.seed))
         entered = [r["turn"] for r in log if r["outcome"].get("in_cave")]
         assert game.first_entry == (entered[0] if entered else None)
         assert game.pirates_in == len(entered) == len(log[-1]["game_over"]["in_cave"])
@@ -111,7 +111,7 @@ def test_first_entry_the_table_is_markdown_with_a_row_a_game_and_a_summary_an_ar
         and f"{gain:+.1f}" in line
         for line in rows
     )
-    assert "notes" in text and "forced-seed-9" in text  # what was skipped, and why
+    assert "notes.md" in text and "forced/9" in text  # what was skipped, and why
 
 
 def test_first_entry_one_command_prints_the_table(tmp_path, capsys):

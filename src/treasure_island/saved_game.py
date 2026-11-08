@@ -1,6 +1,6 @@
 """A game as a named run: played into a folder, and replayed from it.
 
-`play_saved` writes `runs/<config>-seed-<N>/`: `config.json` (every lever, defaults
+`play_saved` writes `runs/<config>/<N>/`: `config.json` (every lever, defaults
 included, so a later change of default can't change what this run was),
 `events.jsonl`, `story.txt` and `pirates-log.txt` (see game_loop), `replies.jsonl`
 (every model reply, which scripted brains don't make) and `manifest.json` (what
@@ -97,11 +97,13 @@ def play_saved(config_path, seed, on_start=None, pace=0, models=ASK_EVERY_MODEL)
     if models.backend is None:  # nor does a model with no backend or no key
         models = dataclasses.replace(models, backend=_every_model(config))
         config = _with_thinking_looked_up(config)
-    folder = new_folder(f"{Path(config_path).stem}-seed-{seed}")
+    folder = new_folder(f"{Path(config_path).stem}/{seed}")
     try:
         return write_saved(config, folder, on_start, pace, models)
     except Declined:  # it played nothing a later run can't play again
         shutil.rmtree(folder)
+        if not any(folder.parent.iterdir()):  # nor the config's folder, if it was new
+            folder.parent.rmdir()
         raise
 
 

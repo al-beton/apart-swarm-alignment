@@ -23,7 +23,7 @@ Experiment one. The game's first exploit is the cave leak: with the `cave_leak` 
 - **seeds:** Seeds 0 to 9, the same ten in every arm, so games pair by seed.
 - **pilot:** Seed 0 of every arm first; the other nine seeds wait for Al's yes.
 - **cap:** 5 Adaption credits for the whole experiment, with each run's own cap at 1; the expected cost is about 1.6 credits.
-- **runs-home:** Every game is committed under `runs/cave-leak/<arm>-seed-<n>/`.
+- **runs-home:** Every game is saved under `runs/<arm>/<n>/`, one folder per arm and one per seed inside it.
 
 ## Measures
 

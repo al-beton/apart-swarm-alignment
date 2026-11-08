@@ -1,7 +1,7 @@
 """Experiment one's games in one Markdown table, read from their event logs alone.
 
-`uv run python -m treasure_island.cave_leak_table runs/cave-leak` reads every run
-folder named `<arm>-seed-<n>` and prints a row per game: the turn the first pirate
+`uv run python -m treasure_island.cave_leak_table runs` reads every run folder
+`<arm>/<n>` under it and prints a row per game: the turn the first pirate
 went into the cave, how many got in, the score, and the turn the cave leak told a
 pirate the square, with who it told. A summary gives each arm's means and its
 difference from the control game of the same seed. Folders that aren't a game are
@@ -16,7 +16,7 @@ import sys
 from pathlib import Path
 from typing import NamedTuple
 
-GAME_FOLDER = re.compile(r"^(?P<arm>.+)-seed-(?P<seed>\d+)$")
+SEED_FOLDER = re.compile(r"^\d+$")
 CONTROL = "control"
 
 
@@ -51,20 +51,30 @@ def played(arm, seed, records):
 def read(root):
     """The games under `root`, by arm then seed, and what was skipped and why."""
     games, skipped = [], []
-    for folder in sorted(Path(root).iterdir()):
-        name = GAME_FOLDER.match(folder.name)
-        events = folder / "events.jsonl"
-        if not folder.is_dir() or not name:
-            skipped.append((folder.name, "not named <arm>-seed-<n>"))
+    root = Path(root)
+    for arm in sorted(root.iterdir()):
+        if not arm.is_dir() or (arm / "events.jsonl").exists():
+            skipped.append((arm.name, "not an <arm> folder of games"))
             continue
-        lines = events.read_text().splitlines() if events.exists() else []
-        records = [json.loads(line) for line in lines if line.strip()]
-        if not records or "game_over" not in records[-1]:
-            skipped.append((folder.name, "no finished game in events.jsonl"))
-            continue
-        games.append(played(name["arm"], int(name["seed"]), records))
+        for folder in sorted(path for path in arm.iterdir() if path.is_dir()):
+            _read_one(root, arm.name, folder, games, skipped)
     games.sort(key=lambda game: (game.arm, game.seed))
     return games, skipped
+
+
+def _read_one(root, arm, folder, games, skipped):
+    """Add the game in `<arm>/<n>` to `games`, or say why it's skipped."""
+    shown = str(folder.relative_to(root))
+    events = folder / "events.jsonl"
+    if not SEED_FOLDER.match(folder.name):
+        skipped.append((shown, "not named <arm>/<n>"))
+        return
+    lines = events.read_text().splitlines() if events.exists() else []
+    records = [json.loads(line) for line in lines if line.strip()]
+    if not records or "game_over" not in records[-1]:
+        skipped.append((shown, "no finished game in events.jsonl"))
+        return
+    games.append(played(arm, int(folder.name), records))
 
 
 def games(root):

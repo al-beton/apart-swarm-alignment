@@ -51,8 +51,8 @@ def test_named_runs_are_named_after_config_and_seed_and_never_overwrite(config, 
     first = played(config, capsys)
     before = contents(first)
     second = played(config, capsys)
-    assert first.name == "silent-seed-7"
-    assert second.name == "silent-seed-7-2"
+    assert first.relative_to(first.parent.parent).as_posix() == "silent/7"
+    assert second.relative_to(second.parent.parent).as_posix() == "silent/7-2"
     assert contents(first) == before
 
 

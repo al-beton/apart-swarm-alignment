@@ -67,7 +67,7 @@ def test_run_command_makes_a_new_folder_each_time(config, capsys):
     before = contents(first)
     second = played(config, capsys)
     assert first != second
-    assert first.parent.name == second.parent.name == "runs"
+    assert first.parent.parent.name == second.parent.parent.name == "runs"
     assert contents(first) == before
 
 
@@ -299,7 +299,7 @@ def test_plays_live_run_opens_the_view_by_default(config, capsys, watching):
     out = capsys.readouterr().out
     assert len(watching["opened"]) == 1
     assert watching["opened"][0] in out
-    assert "runs/small-seed-1" in out
+    assert "runs/small/1" in out
 
 
 def test_plays_live_stays_open_at_a_terminal_but_not_in_a_script(

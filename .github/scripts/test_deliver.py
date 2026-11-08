@@ -21,7 +21,14 @@ def summary(sha, status):
 class FakeGh:
     """Answers the commands `merge` runs; records every one."""
 
-    def __init__(self, checks=("success",), unresolved=0, stacked=(102,), review="abc"):
+    def __init__(
+        self,
+        checks=("success",),
+        unresolved=0,
+        stacked=(102,),
+        review="abc",
+        history=None,
+    ):
         self.calls = []
         # blocking-checks runs for the head commit, oldest first, by conclusion.
         self.checks = checks
@@ -29,6 +36,8 @@ class FakeGh:
         self.stacked = stacked
         # The commit Codex last finished reviewing; the head is "abc".
         self.review = review
+        # Each commit's parents and the files it changes against its first parent.
+        self.history = history or {}
 
     def __call__(self, *args):
         self.calls.append(args)
@@ -42,6 +51,7 @@ class FakeGh:
                 "headRefName": "7-one-routine",
                 "baseRefName": "main",
                 "headRefOid": "abc",
+                "files": [{"path": "src/one.py"}, {"path": "tests/test_one.py"}],
             },
             ("pr", "list"): [{"number": n} for n in self.stacked],
             ("repo", "view"): {"owner": {"login": "o"}, "name": "r"},
@@ -61,6 +71,11 @@ class FakeGh:
             if "filter=all" not in args[1]:
                 runs = runs[:1]
             return json.dumps({"check_runs": runs})
+        if args[:2] == ("git", "rev-list"):
+            parents = self.history.get(args[-1], ((), ()))[0]
+            return " ".join([args[-1], *parents])
+        if args[:2] == ("git", "diff"):
+            return "\n".join(self.history.get(args[-1], ((), ()))[1])
         return json.dumps(answers[args[:2]]) if args[:2] in answers else ""
 
     def index(self, *prefix):
@@ -141,6 +156,33 @@ class DeliverTests(unittest.TestCase):
             FakeGh(review=None),
             FakeGh(review="old"),
         ):
+            with self.assertRaises(MergeRefused):
+                merge(101, gh, pause=lambda seconds: None)
+            self.assertFalse([c for c in gh.calls if c[:2] == ("pr", "merge")])
+
+    def test_merge_when_clean_a_plain_merge_of_main_needs_no_second_round(self):
+        # Codex reviewed "def"; "abc" merged main into it, touching only main's files,
+        # and so did the merge under it, so the reviewed commit is two merges down.
+        history = {
+            "abc": (("mid", "main2"), ("README.md", "src/other.py")),
+            "mid": (("def", "main1"), ("docs/guide.md",)),
+        }
+        gh = FakeGh(review="def", history=history)
+        merge(101, gh, pause=lambda seconds: None)
+        self.assertTrue([c for c in gh.calls if c[:2] == ("pr", "merge")])
+
+    def test_merge_when_clean_a_merge_that_changes_the_pull_requests_files_needs_review(
+        self,
+    ):
+        for history in (
+            # A merge whose resolution edits one of the pull request's own files.
+            {"abc": (("def", "main1"), ("README.md", "src/one.py"))},
+            # An ordinary commit after the review.
+            {"abc": (("def",), ("tests/test_one.py",))},
+            # A plain merge, but on a commit Codex hasn't reviewed either.
+            {"abc": (("ghi", "main1"), ("README.md",)), "ghi": (("def",), ())},
+        ):
+            gh = FakeGh(review="def", history=history)
             with self.assertRaises(MergeRefused):
                 merge(101, gh, pause=lambda seconds: None)
             self.assertFalse([c for c in gh.calls if c[:2] == ("pr", "merge")])

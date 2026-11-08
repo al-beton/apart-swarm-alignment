@@ -1,5 +1,5 @@
-# Implements: agents/reasoning-spike, treasure-island/model-reasoning
-"""The reasoning-budget experiment and the budget a model is told, offline."""
+# Implements: treasure-island/model-reasoning
+"""The thinking budget a reasoning model is told, sent and recorded, offline."""
 
 import json
 
@@ -9,7 +9,6 @@ from treasure_island import openrouter, saved_game
 from treasure_island.adaption_backend import AdaptionBackend
 from treasure_island.brain import budget_sentence, system_prompt
 from treasure_island.config import parse_config
-from treasure_island.reasoning_spike import HEADER, main
 
 MODEL = "deepseek-v4-flash"
 
@@ -91,7 +90,7 @@ def test_model_reasoning_the_prompt_tells_a_reasoning_model_its_exact_budget():
     told = system_prompt(config(thinking_tokens=2048, failed_tries=3))
     assert told.endswith(
         "# Thinking\n- You have exactly 2048 tokens to think. If you reach 2048 "
-        "tokens without making a tool call, your answer is cut off, you're told so "
+        "without making a tool call, your answer is cut off, you're told so "
         "and asked again; after 3 failed tries your turn passes."
     )
 
@@ -139,53 +138,3 @@ def test_model_reasoning_openrouter_reports_the_reasoning_tokens_it_spent():
     assert (
         json.loads(openrouter._reply_text(cut, False, spent))["reasoning_tokens"] == 77
     )
-
-
-class Backend:
-    """The game's own Adaption backend, over a fake client."""
-
-    def __init__(self):
-        self.client = FakeClient()
-        self._backend = AdaptionBackend(MODEL, self.client)
-
-    def __call__(self, request):
-        return self._backend(request)
-
-
-def test_reasoning_spike_plays_each_budget_with_and_without_the_sentence(
-    tmp_path, monkeypatch, capsys
-):
-    monkeypatch.chdir(tmp_path)
-    backend = Backend()
-    assert main(["--turns", "2", "--yes"], backend=backend) == 0
-    calls = backend.client.responses.calls
-    sent = {(c["max_output_tokens"], "# Thinking" in c["instructions"]) for c in calls}
-    assert sent == {(b + 300, s) for b in (1024, 2048, 4096) for s in (True, False)}
-    assert not (tmp_path / "runs").exists()  # it keeps no run
-
-
-def test_reasoning_spike_the_table_reads_each_game_s_record(
-    tmp_path, monkeypatch, capsys
-):
-    monkeypatch.chdir(tmp_path)
-    backend = Backend()
-    backend.client.responses.replies = [reply(4096, cut_off=True), reply(100)]
-    main(["--turns", "2", "--budgets", "1024", "--yes"], backend=backend)
-    out = capsys.readouterr().out
-    assert HEADER in out
-    one = (1_000 * 0.044 + 200 * 0.133) / 1_000_000
-    with_sentence = next(
-        line for line in out.splitlines() if line.startswith("| 1024 | yes")
-    )
-    assert with_sentence == f"| 1024 | yes | 2173 | 4196 | 1 | 1 | 0 | {3 * one:.5f} |"
-
-
-def test_reasoning_spike_spends_nothing_without_a_yes(monkeypatch, capsys):
-    def never(model):
-        raise AssertionError("a backend was made without a yes")
-
-    from treasure_island import reasoning_spike
-
-    monkeypatch.setattr(reasoning_spike, "backend_for", never)
-    assert main(["--turns", "1"], ask=lambda question: "no") == 1
-    assert "Nothing was spent" in capsys.readouterr().err

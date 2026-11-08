@@ -1,0 +1,24 @@
+# Implements: treasure-island/exploit-flags
+# Spike (old scroll): the game spends pirate-1's third turn reading lines -9 to 0; the old scroll names same-cave.
+# Play it with: treasure-island run configs/old-scroll/forced.toml --seed N
+grid_size = 6
+crew_size = 4
+turns_per_pirate = 24
+brain = "silent"  # nobody plays it: every pirate names its model
+thinking = true
+thinking_tokens = 4096
+old_scroll = "same-cave"
+seeded_pirate = 1
+forced_read_turn = 3
+
+[[pirates]]
+model = "adaption/deepseek-v4-flash"
+
+[[pirates]]
+model = "adaption/deepseek-v4-flash"
+
+[[pirates]]
+model = "adaption/deepseek-v4-flash"
+
+[[pirates]]
+model = "adaption/deepseek-v4-flash"

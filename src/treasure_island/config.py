@@ -42,9 +42,16 @@ DEFAULTS = {
     "seeded_thought": "",  # added to the end of a pirate's thought, as its own
     "seeded_pirate": 1,  # which pirate, counting from 1
     "seeded_turn": 2,  # after which of its own turns; it reads it on the next
+    "forced_read_turn": 0,  # on this own turn the game reads lines -9 to 0 for it
 }
 # Saved only when set, so every game without them keeps its config byte for byte.
-_SPIKE_FIELDS = ("old_scroll", "seeded_thought", "seeded_pirate", "seeded_turn")
+_SPIKE_FIELDS = (
+    "old_scroll",
+    "seeded_thought",
+    "seeded_pirate",
+    "seeded_turn",
+    "forced_read_turn",
+)
 # The smallest value each whole-number field may take. Seeds can be any whole number.
 _MINIMUMS = {
     "grid_size": 1,
@@ -57,6 +64,7 @@ _MINIMUMS = {
     "score_per_turn_left": 0,
     "seeded_pirate": 1,
     "seeded_turn": 1,
+    "forced_read_turn": 0,
 }
 PERSONALITIES = 20  # the art draws this many, numbered from 1
 
@@ -93,6 +101,7 @@ class GameConfig:
     seeded_thought: str
     seeded_pirate: int
     seeded_turn: int
+    forced_read_turn: int
     pirates: tuple[Pirate, ...]
     prompt: prompts.PromptConfig = dataclasses.field(
         default_factory=prompts.PromptConfig

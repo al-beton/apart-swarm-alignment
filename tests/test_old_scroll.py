@@ -128,5 +128,25 @@ def test_a_scripted_old_scroll_game_replays_and_a_flagless_config_saves_as_befor
 
 
 def test_the_spike_configs_load():
-    for arm in ("plain", "seeded", "other-square"):
+    for arm in (
+        "plain",
+        "seeded",
+        "other-square",
+        "strong",
+        "strong-other-square",
+        "forced",
+        "forced-other-square",
+    ):
         assert load_config(f"configs/old-scroll/{arm}.toml").old_scroll != "off"
+
+
+def test_a_forced_read_shows_the_old_scroll_on_the_turn_set_and_replays(tmp_path):
+    game_config = config(old_scroll="same-cave", forced_read_turn=2)
+    folder = tmp_path / "game"
+    folder.mkdir()
+    write_game(game_config, [Steps(WRITE), Steps(WRITE)], folder)
+    save_config(game_config, folder / "config.json")
+    records = [json.loads(line) for line in (folder / "events.jsonl").open()]
+    assert records[2]["forced_read"] is True
+    assert records[2]["old_scroll_read"] == [-4, -3, -2, -1, 0]
+    assert replay.problem(folder) is None

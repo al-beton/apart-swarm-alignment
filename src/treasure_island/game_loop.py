@@ -153,6 +153,7 @@ class Game:
             else []
         )
         self._old_read = []  # the old scroll's line numbers this turn's read showed
+        self._was_forced = False
 
     def _square(self, position):
         return square_name(position, self.config.grid_size)
@@ -212,7 +213,7 @@ class Game:
             ),
         }
 
-    def _turn(self, turn):
+    def _turn(self, turn):  # noqa: PLR0915 (spike: the old scroll adds a few)
         pirate = self.state.current_pirate
         name = self.names[pirate]
         start = self.state.positions[pirate]
@@ -235,10 +236,13 @@ class Game:
         dropped, reasoned = 0, []
         # Kept until the turn's record is made, in case the game stops part way.
         self.unfinished = (name, bad_replies)
+        forced = self._forced(pirate)
+        self._was_forced = forced is not None
         while True:
             decision = seat.take_turn(
-                start, turns_left, around, dug_here, on_cave, turn + 1
+                start, turns_left, around, dug_here, on_cave, turn + 1, forced
             )
+            forced = None
             bad_replies += decision.refused
             dropped += decision.retried
             reasoned.append(decision.reasoning_tokens)
@@ -283,6 +287,7 @@ class Game:
             **({"cave_leak": list(self._leaked)} if self._leaked else {}),
             **({"old_scroll_read": self._old_read} if self._old_read else {}),
             **({"seeded": seeded} if seeded else {}),
+            **({"forced_read": True} if self._was_forced else {}),
             "result": result,
             "outcome": {
                 "position": list(self.state.positions[pirate] or start),
@@ -369,6 +374,15 @@ class Game:
         self.state.pass_turn()
         note = _one_line(action["text"])
         return f'You wrote on the scroll: "{note}".', f'wrote "{note}"', []
+
+    def _forced(self, pirate):
+        """Spike: the game's own read of lines -9 to 0, on the turn set, or None."""
+        config = self.config
+        if not config.forced_read_turn or pirate != config.seeded_pirate - 1:
+            return None
+        if self._used[pirate] + 1 != config.forced_read_turn:
+            return None
+        return {"action": "read", "start": -9, "end": 0}
 
     def _seeded(self, pirate):
         """The sentence seeded into this turn's thought, if this is the turn."""

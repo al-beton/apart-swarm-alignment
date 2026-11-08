@@ -57,7 +57,7 @@ def _attempts(record):
     """
     tries = [Decision(action) for action in record.get("failed_moves", [])]
     tries += [Decision(None, None, (bad,)) for bad in record.get("refused", [])]
-    if record["did"]:
+    if record["did"] and not record.get("forced_read"):  # the game reads again
         tries.append(Decision(record["did"][0], record.get("thinking")))
     return tries
 

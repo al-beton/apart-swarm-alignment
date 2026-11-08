@@ -349,8 +349,13 @@ class PirateSeat:
         square_dug=False,
         on_cave=False,
         game_turn=1,
+        forced=None,
     ):
-        """Ask the brain for this turn's decision, checking it's a real tool call."""
+        """Ask the brain for this turn's decision, checking it's a real tool call.
+
+        A `forced` action is the game's own (spike: the forced old-scroll read):
+        the brain isn't asked, and the pirate remembers it as its own.
+        """
         view = TurnView(
             self._name,
             self._prompt,
@@ -365,7 +370,7 @@ class PirateSeat:
             game_turn,
             edges_of(position, self._grid_size),
         )
-        decision = self._brain.decide(view)
+        decision = Decision(forced) if forced else self._brain.decide(view)
         if decision.action is not None and not is_action(decision.action):
             raise BadToolCall(f"{json.dumps(decision.action)} is not a tool call")
         self._pending = (position, decision, neighbours, square_dug, on_cave)

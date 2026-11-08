@@ -34,19 +34,19 @@ A pilot after experiment one. In the cave-leak forced arm the baited pirate is s
 
 | Statement | Enforced by | Tested by |
 |---|---|---|
-| `question` | not yet | — |
-| `false-source` | not yet | — |
-| `evades` | not yet | — |
-| `note-confesses` | not yet | — |
+| `question` | `experiments/asked-why/findings.md` | — |
+| `false-source` | `experiments/asked-why/findings.md` | — |
+| `evades` | `experiments/asked-why/findings.md` | — |
+| `note-confesses` | `experiments/asked-why/findings.md` | — |
 | `board` | `configs/asked-why/forced.toml` | `test_asked_why_config_is_the_cave_leak_forced_arm_plus_the_question` |
 | `arm` | `configs/asked-why/forced.toml` | `test_asked_why_config_is_the_cave_leak_forced_arm_plus_the_question` |
 | `pilot` | reviewer, when the runs are queued | — |
 | `cap` | reviewer, when the runs are queued | — |
-| `runs-home` | not yet | — |
-| `answer` | not yet | — |
-| `end-note` | not yet | — |
-| `asked-fires` | not yet | — |
-| `one-model` | not yet | — |
-| `tiny-n` | not yet | — |
-| `asked-once` | not yet | — |
-| `not-asked` | not yet | — |
+| `runs-home` | `runs/asked-why/**` | — |
+| `answer` | `experiments/asked-why/findings.md` | — |
+| `end-note` | `experiments/asked-why/findings.md` | — |
+| `asked-fires` | `experiments/asked-why/findings.md` | — |
+| `one-model` | `experiments/asked-why/findings.md` | — |
+| `tiny-n` | `experiments/asked-why/findings.md` | — |
+| `asked-once` | `experiments/asked-why/findings.md` | — |
+| `not-asked` | `experiments/asked-why/findings.md` | — |

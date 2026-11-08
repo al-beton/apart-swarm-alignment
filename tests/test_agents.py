@@ -55,7 +55,7 @@ def test_free_runs_in_ci_each_scripted_brain_plays_a_full_game(name, offline, ca
 @pytest.mark.parametrize(
     "name", ["silent-seed-7", "reference-silent", "reference-stripes"]
 )
-def test_committed_runs_pass_the_validator_and_replay_byte_identical(name, offline):
+def test_committed_runs_pass_the_validator_and_replay(name, offline):
     folder = ROOT / "runs" / name
     assert log_errors(folder / "events.jsonl") == []
     assert cli.main(["replay", str(folder)]) == 0

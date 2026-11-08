@@ -3,7 +3,7 @@
 `run` opens the live view unless told not to. At a terminal it keeps the page up
 after the game ends, until Ctrl-C; a script gets its prompt back when the game ends.
 
-Implements: agents/refusals-noted, runs/cost-before-run, runs/yes-before-spending, runs/spending-cap, tooling/package-and-cli, runs/one-game, runs/run-command, runs/replay-by-actions, runs/plays-live, runs/no-cache, viewer/watch-live, viewer/render-gif, viewer/slideshow-file, viewer/game-page, viewer/transcript, treasure-island/named-runs, treasure-island/everything-cached, treasure-island/one-line-replay, figures/named-figures, agents/check-keys
+Implements: agents/refusals-noted, runs/cost-before-run, runs/yes-before-spending, runs/spending-cap, tooling/package-and-cli, runs/one-game, runs/run-command, runs/replay-by-actions, runs/plays-live, runs/no-cache, viewer/watch-live, viewer/render-gif, viewer/slideshow-file, viewer/game-page, viewer/transcript, treasure-island/named-runs, treasure-island/everything-cached, treasure-island/one-line-replay, figures/named-figures, agents/check-keys, runs/debrief-command
 """
 
 import argparse
@@ -11,8 +11,18 @@ import json
 import sys
 import threading
 import webbrowser
+from pathlib import Path
 
-from treasure_island import figures, keys, replay, runs, saved_game, spending, viewer
+from treasure_island import (
+    debrief,
+    figures,
+    keys,
+    replay,
+    runs,
+    saved_game,
+    spending,
+    viewer,
+)
 from treasure_island.config import ConfigError
 
 
@@ -150,6 +160,24 @@ def _slideshow(args):
     return 0
 
 
+def _debrief(args):
+    for folder in args.folders:
+        calls, cost = debrief.estimate(Path(folder))
+        most = "an unknown amount" if cost is None else spending.in_unit(cost)
+        print(f"{folder}: {calls} debrief calls, at most {most} if none is stored.")
+        agree = (lambda: True) if args.yes else _ask_to_spend(args.spend_up_to)
+        try:
+            debrief.debrief(folder, agree=agree, cap_usd=args.spend_up_to)
+        except debrief.NotFinished as why:
+            print(f"Can't debrief: {why}.", file=sys.stderr)
+            return 1
+        except spending.Declined:
+            print("Nothing was spent: nobody said yes.", file=sys.stderr)
+            return 1
+        print(f"{folder}/{debrief.ANSWERS}")
+    return 0
+
+
 def _check_keys(args):
     lines, failed = keys.check_keys()
     print("\n".join(lines))
@@ -221,6 +249,19 @@ def main(argv=None):
     slideshow.add_argument("folder", help="a run folder, such as runs/<name>")
     slideshow.add_argument("--out", help="where to write it; default runs/<name>.html")
     slideshow.set_defaults(handler=_slideshow)
+    asked = commands.add_parser(
+        "debrief", help="ask each model pirate in finished runs how the game went"
+    )
+    asked.add_argument("folders", nargs="+", help="run folders, such as runs/<name>")
+    asked.add_argument("--yes", action="store_true", help="spend without asking first")
+    asked.add_argument(
+        "--spend-up-to",
+        type=float,
+        default=spending.CAP_USD,
+        metavar="AMOUNT",
+        help="stop once a run's debrief has spent this much (default 1)",
+    )
+    asked.set_defaults(handler=_debrief)
     check = commands.add_parser(
         "check-keys",
         help="say whether each model backend's key works, spending nothing",

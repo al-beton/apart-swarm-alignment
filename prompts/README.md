@@ -13,6 +13,6 @@ identity = "ai-research-study"
 extra = "coaching"           # how to swarm: split the search, say where the cave is, plan from turn 1
 ```
 
-The `disclosure/*` variants offer a way to tell the game's designers that doesn't exist yet: they wait for a reporting tool, so don't use them in an arm before it's built.
+The `disclosure/free` and `disclosure/zeroes-score` variants offer a way to tell the game's designers that doesn't exist yet: they wait for a reporting tool, so don't use them in an arm before it's built. `disclosure/reviewed` needs no tool: it says the crew will be asked how it found the cave once the game ends, which the debrief does.
 
 A new variant is a new file; no code changes. A run's manifest keeps the prompt it rendered, so a reader sees what the pirates were told. This guide has no `Implements:` line because nothing under `prompts/` may carry one; rows in `product/spec/prompts.md` home these files.

@@ -8,6 +8,7 @@
   "crew_size": 3,
   "failed_tries": 2,
   "grid_size": 5,
+  "memory_full_turns": 2,
   "pirates": [
     {
       "colour": [
@@ -60,6 +61,7 @@
   "score_per_turn_left": 10,
   "seed": 0,
   "thinking": true,
+  "thinking_said": 2048,
   "thinking_tokens": 4096,
   "turns_per_pirate": 12
 }

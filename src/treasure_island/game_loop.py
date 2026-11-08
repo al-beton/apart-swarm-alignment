@@ -25,7 +25,7 @@ Fields stay in reading order rather than sorted, so a person reading a record
 meets who and what before the long prompt. Pirates are named `pirate-1` upwards,
 matching the numbered art. A brain that gives no reason just has no "Why".
 
-Implements: treasure-island/forced-discovery, treasure-island/model-reasoning, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/thinking, treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/score-numbers, runs/stops-cleanly, agents/ask-once-more, treasure-island/every-turn-a-line, treasure-island/shown-when-asked, treasure-island/say-on-any-action, treasure-island/alert, treasure-island/go-to, treasure-island/wait, treasure-island/dig-reading, treasure-island/turn-order, treasure-island/one-action-per-turn, treasure-island/failed-move, event-log/asked-or-walked, treasure-island/turn-view, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/failed-move-cost, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process, agents/refusals-noted, treasure-island/square-names, event-log/score-numbers
+Implements: treasure-island/forced-discovery, treasure-island/model-reasoning, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/thinking, treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/score-numbers, runs/stops-cleanly, agents/ask-once-more, treasure-island/every-turn-a-line, treasure-island/shown-when-asked, treasure-island/say-on-any-action, treasure-island/alert, treasure-island/go-to, treasure-island/wait, treasure-island/dig-reading, treasure-island/share-reading, treasure-island/turn-order, treasure-island/one-action-per-turn, treasure-island/failed-move, event-log/asked-or-walked, treasure-island/turn-view, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/failed-move-cost, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process, agents/refusals-noted, treasure-island/square-names, event-log/score-numbers
 """
 
 import json
@@ -36,7 +36,7 @@ from pathlib import Path
 from treasure_island.brain import OrderEnd, PirateSeat, Reading
 from treasure_island.event_log import log_errors
 from treasure_island.game_state import CAVE_HERE, GameState, first_step
-from treasure_island.pirates_log import PiratesLog, line_text
+from treasure_island.pirates_log import PiratesLog, line_text, shared_text
 from treasure_island.score import score
 from treasure_island.squares import square_at, square_name
 
@@ -198,6 +198,7 @@ class Game:
         self._ended = [None] * config.crew_size  # an order's end not yet shown
         self._readings = [[] for _ in range(config.crew_size)]  # each one's digs
         self._baited = False  # the bait goes on one turn only
+        self._shared = None  # the line a dig shared this turn, for its record
         self.unfinished = None  # (name, bad replies) of a turn not yet recorded
 
     def _square(self, position):
@@ -352,6 +353,7 @@ class Game:
         turns_left = self.config.turns_per_pirate - self._used[pirate]
         crew = self._crew()
         self._found_this_turn, self._leaked = False, None
+        self._shared = None  # the scroll line this turn's dig shared, if any
         around = self._around(pirate)
         dug_here = start in self.state.dug
         on_cave = self.state.treasure_dug_up and start == self.state.treasure
@@ -367,7 +369,7 @@ class Game:
         # Kept until the turn's record is made, in case the game stops part way.
         self.unfinished = (name, bad_replies)
         sheet = (start, turns_left, around, dug_here, on_cave, turn + 1)
-        sheet += (forced, readings, ended, shown)
+        sheet += (forced, readings, ended, shown, self._shared_so_far())
         decision, result, did, done = self._tries(pirate, sheet, tried)
         self.unfinished = None
         seat.remember(result)
@@ -392,6 +394,7 @@ class Game:
             "happened": f"{did}.",
             "did": done,
             **({"failed_moves": failed} if (failed := _failed_moves(refused)) else {}),
+            **({"shared": self._shared} if self._shared else {}),
             **({"cave_leak": list(self._leaked)} if self._leaked else {}),
             **({"bait": self._bait_mark(bait, name)} if bait else {}),
             **({"order_ended": _ended_mark(ended)} if ended else {}),
@@ -446,6 +449,7 @@ class Game:
                 start, game_turn = sheet[0], sheet[5]
                 result, did, done = self._act(decision.action, start, pirate)
                 did += self._say(decision.action, pirate, game_turn)
+                did += self._share(decision.action, pirate, game_turn)
                 return decision, result, did, done
             told, why = refusal
             if decision.action and "say" in decision.action:
@@ -563,6 +567,32 @@ class Game:
             f"dug at {here} and read {away} to the treasure",
             [action],
         )
+
+    def _shared_so_far(self):
+        """(by, square, away) of every reading shared so far, from shared lines only."""
+        return tuple(
+            (line["by"], line["shared"]["square"], line["shared"]["away"])
+            for line in self.log.lines()
+            if "shared" in line
+        )
+
+    def _share(self, action, pirate, game_turn):
+        """Write a shared dig's reading on the scroll, once it is known.
+
+        It goes after any line the dig said, in the digger's name and one fixed
+        form, never as an alert (`share-reading`). A dig that opened the cave has
+        no reading, so it shares nothing. Returns the story's words for it.
+        """
+        if not action.get("share"):
+            return ""
+        reading = self._readings[pirate][-1]
+        if reading.away is None:
+            return ""
+        shared = {"square": reading.square, "away": reading.away}
+        text = shared_text(reading.square, reading.away)
+        line = self.log.say(self.names[pirate], text, game_turn, shared=shared)
+        self._shared = {"line": line["line"], **shared}
+        return ", sharing its reading on the scroll"
 
     def _wait(self, action, start, pirate):
         result = self.state.wait()

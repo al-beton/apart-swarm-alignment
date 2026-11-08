@@ -16,7 +16,8 @@ rules new to that pirate, never the recap or the status sheet, which the turn li
 already say. Under the v2 rules a line is an asked turn: how its last order ended,
 the scroll lines it was shown, named by number, writer and turn (their words are
 quoted once, on the turn they were said), then what it did and said, alert
-included, and the result, which holds a dig's reading. A pirate's turns walked
+included, and the result, which holds a dig's reading, with the line a dig that
+shared its reading posted, called "posted" so it isn't read as the `shared` flag. A pirate's turns walked
 under one order are one line, so a long walk costs one line. A first-rules turn
 lists its writes and reads. A refused action shows as "tried ..., refused", and a
 cave leak as what the refusal told the pirate. Any field beyond the event-log
@@ -29,7 +30,7 @@ Judge local games: `uv run python -m treasure_island.judge runs/<name> ...`, whi
 asks `claude -p` on your Claude Code login (see claude_code); `--accuracy FILE`
 scores folders that hold a `labels.json` against it.
 
-Implements: judge/after-the-fact, judge/compact-transcript, judge/extra-fields-shown, judge/per-pirate-flags, judge/exploit-by-rule, judge/types, judge/evidence-for-every-flag, judge/invalid-reply-refused, judge/judge-replies-cached, judge/default-judge-model, judge/accuracy-recorded
+Implements: treasure-island/share-reading, judge/after-the-fact, judge/compact-transcript, judge/extra-fields-shown, judge/per-pirate-flags, judge/exploit-by-rule, judge/types, judge/evidence-for-every-flag, judge/invalid-reply-refused, judge/judge-replies-cached, judge/default-judge-model, judge/accuracy-recorded
 """
 
 import argparse
@@ -41,6 +42,7 @@ from pathlib import Path
 
 from treasure_island.event_log import log_errors
 from treasure_island.judge_rubric import RUBRIC
+from treasure_island.pirates_log import shared_text
 from treasure_island.runs import Replies, request_key
 from treasure_island.squares import square_name
 
@@ -82,6 +84,7 @@ _SHOWN = {
     "order_ended",  # shown as how its last order ended
     "refused",  # replies that weren't tool calls: the thinking says enough
     "reasoning_tokens",
+    "shared",  # shown as the reading the dig posted on the scroll
 }
 _SAW = {"position", "prompt", "neighbours", "square_dug"}
 _EXTRA_CHARS = 300
@@ -128,7 +131,9 @@ def _action(action):
     if "say" in action:
         alert = " as an alert" if action.get("alert") else ""
         words += f" saying {json.dumps(action['say'], ensure_ascii=False)}{alert}"
-    known = {"action", "direction", "text", "square", "say", "alert"}
+    if action.get("share") is True:
+        words += " posting its reading"
+    known = {"action", "direction", "text", "square", "say", "alert", "share"}
     return " ".join([words, *_extras(action, known)])
 
 
@@ -141,8 +146,9 @@ def _log_line(line):
     who = f" {line['by']}" if line.get("by") else ""
     when = f" T{line['turn'] - 1}" if isinstance(line.get("turn"), int) else ""
     alert = " ALERT" if line.get("alert") else ""
+    alert += " POSTED READING" if line.get("shared") else ""
     text = json.dumps(line["text"], ensure_ascii=False)
-    extra = _extras(line, {"line", "text", "by", "turn", "alert"})
+    extra = _extras(line, {"line", "text", "by", "turn", "alert", "shared"})
     head = f"#{line['line']}{who}{when}{alert}: {text}"
     return head + (f" ({', '.join(extra)})" if extra else "")
 
@@ -173,6 +179,7 @@ def _shown_line(line):
     if not isinstance(line.get("turn"), int):
         return _log_line(line)
     alert = " ALERT" if line.get("alert") else ""
+    alert += " POSTED READING" if line.get("shared") else ""
     return f"#{line['line']} {line.get('by', '?')} T{line['turn'] - 1}{alert}"
 
 
@@ -204,6 +211,9 @@ def _asked_line(record, seen, grid_size):
         parts.append(_at(end, grid_size))
     if record.get("result") and not {a["action"] for a in did} & {"go_to"}:
         parts.append(_short(record["result"]))
+    if posted := record.get("shared"):
+        words = shared_text(posted["square"], posted["away"])
+        parts.append(f"posted on the scroll as #{posted['line']}: {json.dumps(words)}")
     if record["outcome"]["found_treasure"]:
         parts.append("FOUND THE TREASURE")
     where = _at(start, grid_size)

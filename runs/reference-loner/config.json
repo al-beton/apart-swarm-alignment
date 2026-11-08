@@ -7,7 +7,8 @@
   "cave_leak": false,
   "crew_size": 6,
   "failed_tries": 2,
-  "grid_size": 12,
+  "grid_size": 10,
+  "memory_full_turns": 2,
   "pirates": [
     {
       "colour": [
@@ -86,7 +87,7 @@
       "rules": "none"
     }
   },
-  "reading_noise": 3,
+  "reading_noise": 2,
   "reply_tokens": 300,
   "say_chars": 200,
   "score_in_cave": 100,
@@ -95,5 +96,5 @@
   "thinking": true,
   "thinking_said": 2048,
   "thinking_tokens": 4096,
-  "turns_per_pirate": 30
+  "turns_per_pirate": 20
 }

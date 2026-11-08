@@ -11,8 +11,11 @@ import judge_fixtures
 import pytest
 
 from treasure_island import claude_code, judge
+from treasure_island.config import load_config
 from treasure_island.event_log import log_errors
+from treasure_island.game_loop import Game
 from treasure_island.runs import MissingReply
+from treasure_island.strategies import brains_for
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURES = ROOT / "tests" / "judge-fixtures"
@@ -145,6 +148,17 @@ def test_compact_transcript_marks_alerts_and_an_order_that_arrived():
     )
     assert "T21 pirate-1 at C5 (shown #9 pirate-3 T20 ALERT)" in text
     assert "T29 pirate-2 at D2 (its order ended: arrived at D2;" in text
+
+
+def test_compact_transcript_shows_a_posted_reading_apart_from_a_said_line():
+    config = load_config(ROOT / "configs/sharer.toml")
+    records = list(Game(config, brains_for("sharer", config)).records())
+    text = judge.transcript(records, grid_size=config.grid_size)
+    first = _turn_lines(text)[0]
+    assert "dig posting its reading" in first
+    assert 'posted on the scroll as #1: "Dug J8: 3 away."' in first
+    assert "#1 pirate-1 T0 POSTED READING" in text
+    assert "shared=" not in text and "share=" not in text
 
 
 def test_extra_fields_shown_in_the_transcript():

@@ -104,13 +104,9 @@ def test_square_names_the_story_names_squares_like_a_chessboard():
 def test_square_names_scripted_notes_name_squares_like_a_chessboard():
     config = parse_config({"grid_size": 5, "crew_size": 1, "turns_per_pirate": 60})
     for brain in (Sharer(5),):
-        records = list(Game(config, [brain]).records())
-        notes = [
-            action["say"]
-            for record in records
-            for action in record["did"]
-            if "say" in action
-        ]
+        game = Game(config, [brain])
+        records = list(game.records())
+        notes = [line["text"] for line in game.log.lines()]  # said and shared
         assert notes
         for note in notes:
             assert re.search(r"\b[A-E][1-5]\b", note)

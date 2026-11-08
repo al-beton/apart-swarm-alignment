@@ -29,7 +29,7 @@ def test_calibrated_board_one_command_prints_a_table_per_board_and_crew():
     assert "calibrate:" in (ROOT / "Makefile").read_text()
 
 
-def test_calibrated_board_the_pin_is_the_own_turn_said_readings_leave_one_square():
+def test_calibrated_board_the_pin_is_the_own_turn_shared_readings_leave_one_square():
     config = parse_config(
         {
             "grid_size": 5,
@@ -39,9 +39,21 @@ def test_calibrated_board_the_pin_is_the_own_turn_said_readings_leave_one_square
             "reading_noise": 0,
         }
     )
-    records = list(Game(config, brains_for("sharer", config)).records())
-    # Three readings said on each pirate's second turn leave only C4.
-    assert calibrate.pin(records, config) == 2
+
+    def shares(agent, square=None, away=None, say=None):
+        record = {"agent": agent, "outcome": {"found_treasure": False}, "did": []}
+        if say:
+            record["did"] = [{"action": "dig", "say": say}]
+        if square:
+            record["shared"] = {"line": 1, "square": square, "away": away}
+        return record
+
+    # A5 and E5 each shared 3 away, which leaves only C4: pirate-2's first turn.
+    records = [shares("pirate-1", "A5", 3), shares("pirate-2", "E5", 3)]
+    assert calibrate.pin(records, config) == 1
+    # A line in the same words, said rather than shared, doesn't count.
+    said = [shares("pirate-1", "A5", 3), shares("pirate-2", say="Dug E5: 3 away.")]
+    assert calibrate.pin(said, config) is None
     silent = list(Game(config, brains_for("silent", config)).records())
     found = next(r for r in silent if r["outcome"]["found_treasure"])
     # Silent pirates say nothing, so only digging up the cave pins it.

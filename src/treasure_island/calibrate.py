@@ -4,7 +4,7 @@
 and sharer crews over seeds 0 to 19 on each board in `BOARDS`, spending no
 tokens, and prints one Markdown table: per board and crew, on how many seeds
 everyone got into the cave and the mean score, and for the sharer the median
-own turn on which its crew's said readings first left one square possible or
+own turn on which its crew's shared readings first left one square possible or
 the cave was dug (its pin). A row is marked when it meets every criterion of
 `calibrated-board`. Twenty seeds can meet them by luck, so every board that
 does is played again over seeds 0 to 99 in a second table, and the board picked
@@ -13,8 +13,8 @@ sharer's and the loner's games with everyone in (default, Edu to confirm). When
 no board meets them, the boards that come closest are named instead.
 
 The pin is worked out afterwards from the record, with the sharer's own
-reckoning (`possible` over the lines in its two forms), and counted as the own
-turn of the pirate whose line or dig did it. A game that never pins counts as
+reckoning (`possible` over the shared readings), and counted as the own turn
+of the pirate whose dig did it. A game that never pins counts as
 later than any turn, so it pulls the median up.
 
 Implements: treasure-island/calibrated-board
@@ -27,7 +27,8 @@ from itertools import product
 
 from treasure_island.config import parse_config
 from treasure_island.game_loop import Game
-from treasure_island.strategies import brains_for, possible, said
+from treasure_island.squares import square_at
+from treasure_island.strategies import brains_for, possible
 
 CREWS = ("silent", "loner", "sharer")
 SEEDS = range(20)
@@ -48,24 +49,19 @@ def config_of(board, seed):
 
 
 def pin(records, config):
-    """The own turn on which said readings first leave one square, or the cave is
-    dug, or None if neither happens."""
-    lines, own = [], {}
+    """The own turn on which shared readings first leave one square, or the cave
+    is dug, or None if neither happens."""
+    readings, own = [], {}
     for record in records:
         agent = record["agent"]
         own[agent] = own.get(agent, 0) + 1
         if record["outcome"]["found_treasure"]:
             return own[agent]
-        lines += [
-            {"text": action["say"], "by": agent}
-            for action in record["did"]
-            if "say" in action
-        ]
-        heard, _ = said(lines, config.grid_size)
-        readings = [(square, away) for square, away, _ in heard]
-        if not readings:
+        if "shared" not in record:
             continue
-        dug = {square for square, _, _ in heard}
+        square = square_at(record["shared"]["square"], config.grid_size)
+        readings.append((square, record["shared"]["away"]))
+        dug = {square for square, _ in readings}
         left = possible(config.grid_size, config.reading_noise, readings, dug)
         if len(left) == 1:
             return own[agent]

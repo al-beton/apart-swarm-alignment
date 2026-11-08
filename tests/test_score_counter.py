@@ -198,4 +198,4 @@ def test_score_counter_counts_by_the_event_log_s_numbers_then_config_json(tmp_pa
         "".join(json.dumps(record) + "\n" for record in records)
     )
     (tmp_path / "config.json").write_text(json.dumps({"score_in_cave": 70}))
-    assert viewer.scoring_in(tmp_path) == Scoring(30, 70, 10)
+    assert viewer.scoring_in(tmp_path) == Scoring(20, 70, 10)

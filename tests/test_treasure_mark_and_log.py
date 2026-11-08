@@ -226,6 +226,15 @@ def test_log_at_bottom_is_titled_the_scroll():
     assert viewer.STRIP_TITLE == "The scroll"
 
 
+def test_log_at_bottom_marks_a_shared_reading(tmp_path):
+    folder = sharer_game(tmp_path / "sharer")
+    file = (folder / "pirates-log.txt").read_text().splitlines()
+    records = records_of(folder)
+    lines = viewer.scene(records, len(records) - 1, 5)["log_so_far"]
+    assert [f"{n} {text}" for n, text in lines] == file
+    assert any(", shared): Dug " in text for _, text in lines)
+
+
 def test_log_at_bottom_marks_each_said_line_s_turn_and_alert(tmp_path):
     # A v2 game whose pirates say readings and raise alerts.
     folder = sharer_game(tmp_path / "sharer")

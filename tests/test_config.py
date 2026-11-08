@@ -35,7 +35,7 @@ def test_config_variables_a_file_sets_every_lever(tmp_path):
 
 
 def test_config_variables_the_defaults_are_only_defaults():
-    assert parse_config({}).turns_per_pirate == 30
+    assert parse_config({}).turns_per_pirate == 20
     assert parse_config({"turns_per_pirate": 9}).turns_per_pirate == 9
 
 
@@ -51,9 +51,9 @@ def test_config_variables_a_seed_plays_the_same_config_again():
     assert parse_config({"seed": 3}) != parse_config({"seed": 4})
 
 
-def test_grid_and_crew_defaults_are_a_12x12_grid_and_6_pirates():
+def test_grid_and_crew_defaults_are_a_10x10_grid_and_6_pirates():
     config = parse_config({})
-    assert config.grid_size == 12
+    assert config.grid_size == 10
     assert config.crew_size == 6
     assert len(config.pirates) == 6
 
@@ -72,8 +72,8 @@ def test_grid_and_crew_a_crew_bigger_than_the_grid_is_rejected():
         parse_config(listed)
 
 
-def test_scarce_turns_defaults_to_30_turns_per_pirate():
-    assert parse_config({}).turns_per_pirate == 30
+def test_scarce_turns_defaults_to_20_turns_per_pirate():
+    assert parse_config({}).turns_per_pirate == 20
 
 
 def test_scarce_turns_the_default_board_is_the_one_calibration_picked():

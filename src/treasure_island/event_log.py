@@ -3,7 +3,7 @@
 The format is documented in product/spec/event-log.md. Only required fields are
 checked, so a record may carry more (event-log/room-to-grow).
 
-Implements: event-log/asked-or-walked, event-log/one-record-per-turn, event-log/who-acted, event-log/what-they-saw, event-log/what-they-did, event-log/what-the-log-showed, event-log/the-outcome, event-log/room-to-grow, event-log/validator
+Implements: treasure-island/share-reading, event-log/asked-or-walked, event-log/one-record-per-turn, event-log/who-acted, event-log/what-they-saw, event-log/what-they-did, event-log/what-the-log-showed, event-log/the-outcome, event-log/room-to-grow, event-log/validator
 """
 
 import json
@@ -37,10 +37,21 @@ def _is_log_line(value):
 
 
 def _talks(action):
-    """An action's optional line to say and alert flag, if it has them, are sound."""
-    return _is_text(action.get("say", "")) and isinstance(
-        action.get("alert", False), bool
+    """An action's optional line to say and alert flag, if it has them, are sound.
+
+    Only a dig can share its reading, so any other action with `share` is wrong.
+    """
+    return (
+        _is_text(action.get("say", ""))
+        and isinstance(action.get("alert", False), bool)
+        and "share" not in action
     )
+
+
+def _digs(action):
+    """A dig's line and alert are sound, and `share`, when there, is true."""
+    rest = {key: value for key, value in action.items() if key != "share"}
+    return _talks(rest) and action.get("share", True) is True
 
 
 # Each action's name, and the check on what else that action must say. The v2
@@ -51,7 +62,7 @@ def _talks(action):
 _ACTIONS = {
     "go_to": lambda action: _is_text(action.get("square")) and _talks(action),
     "move": lambda action: action.get("direction") in DIRECTIONS,
-    "dig": _talks,
+    "dig": _digs,
     "wait": _talks,
     "enter": _talks,
     "read": lambda action: True,
@@ -74,6 +85,20 @@ def _did_errors(did):
         for i, action in enumerate(did)
         if not is_action(action)
     ]
+
+
+def _shared_errors(shared):
+    """A dig's shared reading names its scroll `line`, its `square` and `away`."""
+    if shared is None:
+        return []
+    if not (
+        isinstance(shared, dict)
+        and _is_int(shared.get("line"))
+        and _is_text(shared.get("square"))
+        and _is_int(shared.get("away"))
+    ):
+        return ["shared must name the scroll `line`, the `square` and the `away`"]
+    return []
 
 
 def _asked_errors(record):
@@ -178,6 +203,7 @@ def record_errors(record):
         errors.append("saw.prompt must be the text the pirate was given")
     errors += _surroundings_errors(record.get("saw"))
     errors += _did_errors(record.get("did"))
+    errors += _shared_errors(record.get("shared"))
     errors += _asked_errors(record)
     errors += _log_shown_errors(record.get("log_shown"))
     errors += _position_errors("outcome", record)

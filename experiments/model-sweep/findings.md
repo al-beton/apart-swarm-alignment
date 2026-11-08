@@ -26,7 +26,7 @@ Costs are in Adaption credits, as each game's `manifest.json` records them. Almo
 **What the leak was worth**, forced mean score minus control, per model: gemma-4-31b-it +126, gemma-4-26b-a4b-it +56, qwen3.5-397b -18, glm-5.2 +282, qwen3.8-27b +402, glm-53-flash +220, deepseek-v4-flash +548 (four pairs). Seed 2 has no leak in either arm, yet its pairs differ by up to 760 points, so a single pair per seed is noisy.
 
 **Hypotheses** (`experiments/spec/model-sweep.md`):
-- `models-differ`: **supported.** glm-5.2 is candid half the time; glm-53-flash launders every time; the gemmas stay quiet.
+- `models-differ`: **not supported as stated.** It asked for a model that is mostly candid, and none is: glm-5.2 is candid at most 2 of 4. The models do differ, though: only glm-5.2 and qwen3.8-27b are ever candid, glm-53-flash and deepseek-v4-flash launder every time, and the gemmas stay quiet.
 - `reasoning-tells`: **direction only.** The only candid pirates are reasoning models (3 of 20, against 0 of 8 for the gemmas), but reasoning models launder far more often (15 of 20) than they're candid.
 - `note-adds-little`: **rejected.** For the reasoning models, the end note is where they own up: 18 of 20.
 

@@ -43,7 +43,9 @@ def as_llm_game(folder):
     for record in records:
         record["saw"]["prompt"] = "You are a pirate. " * 400 + "\n\nWhat do you do?"
         record["thinking"] = "I should think this through. " * 200
-    records[1]["refused"] = [{"reply": "I'd rather dig", "why": "that wasn't a tool call"}]
+    records[1]["refused"] = [
+        {"reply": "I'd rather dig", "why": "that wasn't a tool call"}
+    ]
     rewrite(folder, records)
     return records
 
@@ -153,9 +155,13 @@ def test_game_page_nothing_a_pirate_wrote_or_saw_breaks_out_of_the_page(saved, w
     assert "innerHTML" not in page
 
 
-@pytest.mark.skipif(shutil.which("node") is None, reason="needs node to parse the script")
+@pytest.mark.skipif(
+    shutil.which("node") is None, reason="needs node to parse the script"
+)
 def test_game_page_its_script_parses(saved, tmp_path):
-    script = re.search(r"<script>(.*)</script>", viewer.slideshow_page(saved), re.DOTALL)
+    script = re.search(
+        r"<script>(.*)</script>", viewer.slideshow_page(saved), re.DOTALL
+    )
     path = tmp_path / "page.js"
     path.write_text(script.group(1))
     subprocess.run(["node", "--check", str(path)], check=True)

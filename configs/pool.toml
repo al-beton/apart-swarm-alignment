@@ -1,0 +1,5 @@
+# Implements: treasure-island/pool, treasure-island/distance-reading
+# The pooling crew on the rod: each missed dig reads a noisy distance to the cave, shared on the scroll.
+# Play it with: treasure-island run configs/pool.toml --seed N
+brain = "pool"
+distance_noise = 3

@@ -1453,14 +1453,26 @@ document.addEventListener("keydown", (key) => {
   if (key.key === "Escape") closeMind();
 });
 // Scrolling the feed moves the board to the entry in view.
-const watcher = new IntersectionObserver((seen) => {
+// A band across the middle of the window, in pixels from its height: percentages in
+// rootMargin can be taken from the width, which on a wide window leaves no band.
+function band() {
+  return -Math.round(innerHeight * 0.45) + "px 0px " + -Math.round(innerHeight * 0.5) + "px 0px";
+}
+function onScroll(seen) {
   if (Date.now() < lock || timer) return;
   for (const one of seen) {
     const k = Number(one.target.dataset.turn);
     if (one.isIntersecting && k !== at) { forward = k === at + 1; at = k; paint(false); }
   }
-}, { rootMargin: "-45% 0px -50% 0px" });
-entries.forEach((entry) => watcher.observe(entry));
+}
+let watcher = null;
+function watch() {
+  if (watcher) watcher.disconnect();
+  watcher = new IntersectionObserver(onScroll, { rootMargin: band() });
+  entries.forEach((entry) => watcher.observe(entry));
+}
+watch();
+addEventListener("resize", watch);
 
 const linked = location.hash.match(/^#turn-(\d+)$/);
 if (linked) at = Math.min(Number(linked[1]), Math.max(N - 1, 0));

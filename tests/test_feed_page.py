@@ -185,6 +185,8 @@ def test_game_page_steps_each_turn_holds_its_steps_on_the_board(saved):
 def test_game_page_steps_scrolling_the_feed_moves_the_board(saved):
     page = viewer.slideshow_page(saved)
     assert "IntersectionObserver" in page
+    # Its band is in pixels from the window's height, kept up on resize.
+    assert "innerHeight * 0.45" in page and 'addEventListener("resize", watch)' in page
     assert "scrollIntoView" in page
 
 

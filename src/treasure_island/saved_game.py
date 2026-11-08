@@ -10,18 +10,20 @@ A model's replies go through `Replies`: a live run asks the model's backend for
 any reply neither this run nor an earlier one has (unless `cache` is off), but
 only after a yes and up to its spending cap (see spending). Replay asks nothing,
 so a reply its folder doesn't hold fails instead of costing. A run that stopped
-says why in its manifest, and its replay stops at the same turn for that reason.
+says why in its manifest, and its replay stops at the same turn for that reason;
+one nobody said yes to raises `Declined` and leaves no folder.
 
 `differences` plays the game again from that folder, in a temporary folder and
 with nothing but what's saved, and names any log that doesn't match byte for byte.
 
-Implements: treasure-island/retries-dropped-calls, agents/reasoning-looked-up, runs/yes-before-spending, runs/spending-cap, runs/stops-cleanly, agents/plays-then-replays, runs/cache-across-runs, runs/no-cache, treasure-island/named-runs, treasure-island/everything-cached, runs/one-game, runs/run-folder, runs/manifest-varies, runs/replay-byte-identical, runs/plays-live, results/examples-stay-true, agents/key-from-the-environment, agents/refusals-noted
+Implements: agents/adaption-cost, treasure-island/retries-dropped-calls, agents/reasoning-looked-up, runs/yes-before-spending, runs/spending-cap, runs/stops-cleanly, agents/plays-then-replays, runs/cache-across-runs, runs/no-cache, treasure-island/named-runs, treasure-island/everything-cached, runs/one-game, runs/run-folder, runs/manifest-varies, runs/plays-live, results/examples-stay-true, agents/key-from-the-environment, agents/refusals-noted
 """
 
 import collections
 import dataclasses
 import datetime
 import json
+import shutil
 import tempfile
 import tomllib
 from pathlib import Path
@@ -31,7 +33,7 @@ from treasure_island.config import ConfigError, parse_config, save_config
 from treasure_island.game_loop import GameStopped, write_game
 from treasure_island.retries import Retrying
 from treasure_island.runs import Replies, earlier_replies, new_folder
-from treasure_island.spending import CAP_USD, Guard
+from treasure_island.spending import CAP_USD, Declined, Guard
 from treasure_island.strategies import brains_for
 
 LOGS = ("events.jsonl", "story.txt", "pirates-log.txt")
@@ -93,7 +95,11 @@ def play_saved(config_path, seed, on_start=None, pace=0, models=ASK_EVERY_MODEL)
         models = dataclasses.replace(models, backend=_every_model(config))
         config = _with_thinking_looked_up(config)
     folder = new_folder(f"{Path(config_path).stem}-seed-{seed}")
-    return write_saved(config, folder, on_start, pace, models)
+    try:
+        return write_saved(config, folder, on_start, pace, models)
+    except Declined:  # it played nothing a later run can't play again
+        shutil.rmtree(folder)
+        raise
 
 
 def _with_thinking_looked_up(config):
@@ -139,13 +145,18 @@ def write_saved(config, folder, on_start=None, pace=0, models=ASK_EVERY_MODEL):
         on_start(folder)
     started_at = _now()
     ending = write_game(config, brains, folder, pace)
+    if guard.declined:
+        raise Declined(ending["stopped"])
+    dollars, credits = guard.spent_in["dollars"], guard.spent_in["credits"]
     manifest = {
         "started_at": started_at,
         "finished_at": _now(),
-        "cost_usd": round(replies.cost_usd, 9) if replies.cost_usd else 0,
+        "cost_usd": round(dollars, 9) if dollars else 0,
         "cache_hits": replies.hits,
         "cache_misses": replies.misses,
     }
+    if credits:  # Adaption bills in credits, kept apart from dollars
+        manifest["cost_credits"] = round(credits, 9)
     if "stopped" in ending:
         manifest["stopped"] = ending["stopped"]
     if refused := refused_replies(folder, ending.get("refused")):

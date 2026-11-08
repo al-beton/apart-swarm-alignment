@@ -36,6 +36,6 @@
   "score_per_turn_left": 10,
   "seed": 7,
   "thinking": true,
-  "thinking_tokens": 1024,
+  "thinking_tokens": 4096,
   "turns_per_pirate": 4
 }

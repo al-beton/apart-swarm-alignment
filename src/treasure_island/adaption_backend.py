@@ -5,24 +5,27 @@ A model named `adaption/<model id>` goes to Adaption's Responses API through its
 the rules as instructions, the turn's messages as input, the pirate's tools
 as function tools and the reply cap. The first function call in the reply becomes
 the JSON the LLM brain reads; a reply with no function call comes back as its
-words, so the brain can say why and ask once more.
+words, so the brain can say why and ask once more, and one the token limit cut off
+(`incomplete_details` "max_output_tokens") is marked so.
 
 A reply costs its token usage at the model's rate in `RATES`, in credits per
 million tokens, from Adaption's price list (its model listing has no prices). A
 model with no rate is refused rather than run unpriced, and a reply that gives no
-token usage stops the run, since the spending cap couldn't count it. Default, Al to confirm:
-a credit counts as a dollar, so the manifest's `cost_usd` totals credits.
+token usage stops the run, since the spending cap couldn't count it. The manifest
+totals credits as `cost_credits`, apart from dollars; the cap counts a credit as a
+dollar (default, Al to confirm).
 
 `check_key` lists the hosted models the key can use, which asks no model anything
 and spends nothing. `backends` makes one for each run, with the key from `ADAPTION_API_KEY`, and the
 key goes only to the SDK's client, so it never reaches a request, a reply or a
 run folder.
 
-Implements: treasure-island/model-reasoning, agents/adaption-backend, agents/adaption-cost, agents/check-keys, agents/normal-temperature
+Implements: treasure-island/model-reasoning, agents/adaption-backend, agents/adaption-cost, agents/check-keys, agents/normal-temperature, agents/reply-cap
 """
 
 import json
 
+from treasure_island.brain import cut_off_reply
 from treasure_island.game_loop import GameStopped
 
 # Model id -> (credits per million input tokens, credits per million output tokens).
@@ -72,6 +75,9 @@ def _text(part):
 def _reply_text(response, thinking):
     """The JSON the LLM brain reads, or the reply's own words if it called no tool."""
     calls = [item for item in response.output if item.type == "function_call"]
+    details = getattr(response, "incomplete_details", None)
+    if not calls and getattr(details, "reason", None) == "max_output_tokens":
+        return cut_off_reply(response.output_text)
     if not calls:
         return response.output_text
     call = calls[0]

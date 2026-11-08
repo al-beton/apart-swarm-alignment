@@ -35,7 +35,7 @@
   "score_in_cave": 100,
   "score_per_turn_left": 10,
   "seed": 1,
-  "thinking": false,
-  "thinking_tokens": 1024,
+  "thinking": true,
+  "thinking_tokens": 4096,
   "turns_per_pirate": 4
 }

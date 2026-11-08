@@ -1,0 +1,20 @@
+\contentsline {section}{\numberline {1}Introduction}{3}{section.1}%
+\contentsline {section}{\numberline {2}Related Work}{3}{section.2}%
+\contentsline {section}{\numberline {3}Methods}{3}{section.3}%
+\contentsline {subsection}{\numberline {3.1}The game}{3}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}The agents}{3}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Measuring whistleblowing}{3}{subsection.3.3}%
+\contentsline {section}{\numberline {4}Results}{4}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Where the treasure lands decides the silent crew's score}{4}{subsection.4.1}%
+\contentsline {section}{\numberline {5}Discussion and Limitations}{5}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Limitations}{5}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Future Work}{6}{subsection.5.2}%
+\contentsline {section}{\numberline {6}Conclusion}{6}{section.6}%
+\contentsline {section}{References}{6}{section*.3}%
+\contentsline {section}{\numberline {A}LLM Usage Statement}{6}{appendix.A}%
+\contentsline {section}{\numberline {B}Code and Data}{6}{appendix.B}%
+\contentsline {section}{\numberline {C}Limitations and Dual-Use / Ethical Considerations}{7}{appendix.C}%
+\contentsline {subsection}{\numberline {C.1}Limitations}{7}{subsection.C.1}%
+\contentsline {subsection}{\numberline {C.2}Dual-use risks}{7}{subsection.C.2}%
+\contentsline {subsection}{\numberline {C.3}Ethical considerations}{7}{subsection.C.3}%
+\contentsline {section}{\numberline {D}Reproducibility}{7}{appendix.D}%

@@ -5,10 +5,10 @@ import json
 
 import pytest
 
-from treasure_island import viewer
+from treasure_island import replay, viewer
 from treasure_island.brain import Decision
 from treasure_island.config import ConfigError, parse_config, save_config
-from treasure_island.game_loop import SEEDED_THOUGHT, Game
+from treasure_island.game_loop import SEEDED_THOUGHT, Game, write_game
 from treasure_island.game_state import GameState
 
 DIG = {"action": "dig"}
@@ -176,3 +176,15 @@ def test_forced_discovery_the_transcript_shows_the_bait(bait, says, tmp_path):
     assert "**The bait**" in text
     assert f"> {says}" in text
     assert text.count("**The bait**") == 1
+
+
+@pytest.mark.parametrize("bait", ["forced-action", "seeded-thought"])
+def test_forced_discovery_a_baited_game_replays_by_its_actions(bait, tmp_path):
+    settings = {"grid_size": 4, "crew_size": 1, "turns_per_pirate": 4}
+    config = parse_config(
+        {**settings, "seed": seed_away_from_the_start(), "cave_leak": True}
+        | {"bait": bait}
+    )
+    save_config(config, tmp_path / "config.json")
+    write_game(config, [Digger()], tmp_path)
+    assert replay.problem(tmp_path) is None

@@ -1,4 +1,4 @@
-# Implements: commits/named-paths, review/review-finished, merging/stacked-retarget, merging/main-stays-green, merging/merge-when-clean
+# Implements: commits/named-paths, review/review-finished, merging/stacked-retarget, merging/main-stays-green, merging/merge-when-clean, merging/squash-links-pr, commits/commit-refs-issue
 import json
 import unittest
 
@@ -9,6 +9,7 @@ from deliver import (
     merge,
     review_finished,
     review_state,
+    squash_subject,
     unsafe_paths,
 )
 
@@ -138,8 +139,29 @@ class DeliverTests(unittest.TestCase):
         self.assertLess(squash, delete)
         merged = gh.calls[squash]
         self.assertNotIn("--delete-branch", merged)
-        self.assertIn("improve(workflow): one routine (#7)", merged)
+        self.assertIn("improve(workflow): one routine (#101)", merged)
         self.assertIn("Closes #7", merged[merged.index("--body") + 1])
+
+    def test_squash_links_pr_the_subject_names_the_pull_request(self):
+        self.assertEqual(
+            squash_subject("feat(cave-leak): tables experiment one (#225)", 230),
+            "feat(cave-leak): tables experiment one (#230)",
+        )
+        self.assertEqual(
+            squash_subject("fix(x): two at once (#3, #4)", 9),
+            "fix(x): two at once (#9)",
+        )
+        self.assertEqual(squash_subject("chore: no number", 9), "chore: no number (#9)")
+
+    def test_squash_links_pr_merge_passes_that_subject_and_the_closing_block(self):
+        gh = FakeGh(stacked=())
+        merge(101, gh, pause=lambda seconds: None)
+        merged = gh.calls[gh.index("pr", "merge", "101", "--squash")]
+        self.assertEqual(
+            merged[merged.index("--subject") + 1],
+            "improve(workflow): one routine (#101)",
+        )
+        self.assertTrue(merged[merged.index("--body") + 1].startswith("Closes #7"))
 
     def test_main_stays_green_reruns_checks_after_merging(self):
         gh = FakeGh(stacked=())

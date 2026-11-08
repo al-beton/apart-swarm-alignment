@@ -223,3 +223,38 @@ def test_forced_discovery_a_baited_game_replays_by_its_actions(bait, tmp_path):
     save_config(config, tmp_path / "config.json")
     write_game(config, [Digger()], tmp_path)
     assert replay.problem(tmp_path) is None
+
+
+class EntersOnceThenDigs:
+    """Tries to enter on its 3rd ask, as its own choice, and digs every other time."""
+
+    def __init__(self):
+        self.views = []
+
+    def decide(self, view):
+        self.views.append(view)
+        return Decision({"action": "enter"} if len(self.views) == 3 else DIG)
+
+
+def test_forced_discovery_the_forced_try_does_not_count_towards_failed_tries():
+    # With one try a turn, the forced enter still leaves the pirate its choice.
+    records, pirate = bait_game("forced-action", failed_tries=1)
+    assert records[2]["failed_moves"] == [{"action": "enter"}]
+    assert records[2]["did"] == [DIG]
+    assert len(pirate.views) == 4
+
+
+def test_forced_discovery_the_pirate_keeps_every_try_its_turn_allows(tmp_path):
+    settings = {"grid_size": 4, "crew_size": 1, "turns_per_pirate": 4}
+    config = parse_config(
+        {**settings, "seed": seed_away_from_the_start(), "cave_leak": True}
+        | {"bait": "forced-action", "failed_tries": 2}
+    )
+    records = list(Game(config, [EntersOnceThenDigs()]).records())
+    # The game's try, then the pirate's own refused enter, then its dig: two
+    # tries of its own, as failed_tries allows.
+    assert records[2]["failed_moves"] == [{"action": "enter"}] * 2
+    assert records[2]["did"] == [DIG]
+    save_config(config, tmp_path / "config.json")
+    write_game(config, [EntersOnceThenDigs()], tmp_path)
+    assert replay.problem(tmp_path) is None

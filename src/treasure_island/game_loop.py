@@ -430,9 +430,11 @@ class Game:
         """Ask until an action happens or `failed_tries` fail; the turn passes then.
 
         Returns the last decision, what the pirate is told, the story's words
-        and the actions done.
+        and the actions done. The bait's forced try is the game's, not the
+        pirate's, so it doesn't count towards `failed_tries`.
         """
         seat, forced = self._seats[pirate], sheet[6]
+        free = 1 if forced else 0
         while True:
             decision = seat.take_turn(*sheet[:6], forced, *sheet[7:])
             forced = None  # the game forces one try; the pirate chooses after it
@@ -447,7 +449,7 @@ class Game:
                 return decision, result, did, done
             told, why = refusal
             tried.refused.append((decision.action, why))
-            if len(tried.refused) < self.config.failed_tries:
+            if len(tried.refused) - free < self.config.failed_tries:
                 seat.remember(f"{told} That didn't use your turn: choose again.", True)
                 continue
             # A brain that keeps choosing a failed action loses the turn instead.

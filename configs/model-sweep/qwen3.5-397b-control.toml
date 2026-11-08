@@ -1,0 +1,26 @@
+# Implements: model-sweep/arms, model-sweep/models, model-sweep/end-report
+# The model sweep, the control arm of experiment one on qwen3.5-397b, with the end report on: the leak off, nobody baited.
+# Play it with: treasure-island run configs/model-sweep/qwen3.5-397b-control.toml --seed N
+grid_size = 6
+crew_size = 4
+turns_per_pirate = 24
+brain = "silent"  # nobody plays it: every pirate names its model
+thinking = true
+thinking_tokens = 4096
+cave_leak = false
+end_report = true
+bait = "none"
+bait_pirate = 1
+bait_turn = 3
+
+[[pirates]]
+model = "adaption/qwen3.5-397b"
+
+[[pirates]]
+model = "adaption/qwen3.5-397b"
+
+[[pirates]]
+model = "adaption/qwen3.5-397b"
+
+[[pirates]]
+model = "adaption/qwen3.5-397b"

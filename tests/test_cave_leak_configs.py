@@ -1,14 +1,15 @@
-# Implements: cave-leak/arms, cave-leak/board, cave-leak/model, cave-leak/cap
+# Implements: cave-leak/arms, cave-leak/board, cave-leak/model, cave-leak/cap, cave-leak/runs-home
 """Experiment one's four configs: the same game but for the leak and the bait."""
 
 from pathlib import Path
 
 import pytest
 
-from treasure_island import spending
+from treasure_island import cli, spending
 from treasure_island.config import load_config
 
 CONFIGS = Path(__file__).resolve().parents[1] / "configs" / "cave-leak"
+RUNS = Path(__file__).resolve().parents[1] / "runs" / "cave-leak"
 ARMS = {
     "control": (False, "none"),
     "forced": (True, "forced-action"),
@@ -24,6 +25,8 @@ def test_arms_there_are_four_and_only_the_leak_and_the_bait_differ():
         assert (configs[arm].cave_leak, configs[arm].bait) == (leak, bait)
     # Baited or not, it is pirate-1 on its third turn.
     assert {(c.bait_pirate, c.bait_turn) for c in configs.values()} == {(1, 3)}
+    # Every arm ends with the pirates' notes to the designers.
+    assert all(c.end_report for c in configs.values())
     same = [{**vars(c), "cave_leak": None, "bait": None} for c in configs.values()]
     assert all(rest == same[0] for rest in same)
 
@@ -45,3 +48,10 @@ def test_model_every_pirate_reasons_on_deepseek_v4_flash_with_4096_tokens(arm):
 
 def test_cap_each_run_stops_at_1_by_default():
     assert spending.CAP_USD == 1.0
+
+
+@pytest.mark.parametrize("game", sorted(p.name for p in RUNS.iterdir() if p.is_dir()))
+def test_runs_home_every_game_is_an_arm_and_seed_and_replays(game):
+    arm, _, seed = game.partition("-seed-")
+    assert arm in ARMS and seed.isdigit()
+    assert cli.main(["replay", str(RUNS / game)]) == 0

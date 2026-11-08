@@ -1,0 +1,4 @@
+1 pirate-1: P1 at A6. I'll search row 6 E, digging each square. Everyone: write your position. If cave found, write square.
+2 pirate-4: P4 at A3, A3 dug no cave. I'll search row 3 east (B3,F3) then row 2. P1 row6 noted.
+3 pirate-1: P1: row6 A6-F6 all dug no cave. Now searching col F down from F5. Report positions.
+4 pirate-4: P4 found the cave at D3. Everyone come to D3 and enter.

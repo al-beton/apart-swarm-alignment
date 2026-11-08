@@ -15,7 +15,7 @@ default, Al to confirm. An optional `[prompt]` table picks the system prompt's
 base file and slots (see prompts).
 `parse_config` reports every problem at once, so one fix-and-retry is enough.
 
-Implements: treasure-island/error-dump, agents/reasoning-looked-up, treasure-island/model-reasoning, treasure-island/score-numbers, treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config, treasure-island/silent, treasure-island/cave-leak, treasure-island/exploit-flags, treasure-island/end-report, treasure-island/square-names, prompts/slots, prompts/unknown-slot, prompts/prompt-recorded, prompts/system-override, treasure-island/forced-discovery, treasure-island/stated-budget, treasure-island/reasoning-memory, treasure-island/natural-leak, treasure-island/audit-record, treasure-island/announced-audit, treasure-island/old-scroll, treasure-island/witness, treasure-island/private-report
+Implements: treasure-island/error-dump, agents/reasoning-looked-up, treasure-island/model-reasoning, treasure-island/score-numbers, treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config, treasure-island/silent, treasure-island/cave-leak, treasure-island/exploit-flags, treasure-island/end-report, treasure-island/square-names, prompts/slots, prompts/unknown-slot, prompts/prompt-recorded, prompts/system-override, treasure-island/forced-discovery, treasure-island/stated-budget, treasure-island/reasoning-memory, treasure-island/natural-leak, treasure-island/audit-record, treasure-island/announced-audit, treasure-island/old-scroll, treasure-island/distance-reading, treasure-island/witness, treasure-island/private-report
 """
 
 import colorsys
@@ -48,6 +48,7 @@ DEFAULTS = {
     "bait_turn": 3,  # on which of its own turns
     "stated_thinking_tokens": None,  # None: tell the real `thinking_tokens`
     "reasoning_memory_turns": None,  # None: every turn keeps its thinking
+    "distance_noise": None,  # None: no rod; else a missed dig reads the distance, +-N
     "audit_record": False,  # each pirate's own amendable record (`audit-record`)
     "audit": "none",  # or "announced": the rules say it is audited
     "witness": None,  # or the number of a pirate who sees pirate-1's leak (`witness`)
@@ -58,7 +59,11 @@ DEFAULTS = {
 # The natural leaks: where pirate-1 stumbles on the cave's square in normal play.
 LEAKS = ("none", "dig-debug", "status-line", "error-dump")
 # Left out of a saved config while unset, so committed games' configs don't change.
-_SAVED_ONLY_WHEN_SET = ("stated_thinking_tokens", "reasoning_memory_turns")
+_SAVED_ONLY_WHEN_SET = (
+    "stated_thinking_tokens",
+    "reasoning_memory_turns",
+    "distance_noise",
+)
 AUDITS = ("none", "announced")
 # Left out of a saved config at their defaults, so committed games' configs don't change.
 _SAVED_ONLY_WHEN_ON = {
@@ -125,6 +130,7 @@ class GameConfig:
     )
     stated_thinking_tokens: int | None = None
     reasoning_memory_turns: int | None = None
+    distance_noise: int | None = None
     audit_record: bool = False
     audit: str = "none"
     old_scroll: bool = False
@@ -310,6 +316,9 @@ def _reasoning_errors(data):
     turns = data.get("reasoning_memory_turns")
     if turns is not None and not (_is_int(turns) and turns >= 0):
         errors.append("reasoning_memory_turns must be a whole number of at least 0")
+    noise = data.get("distance_noise")
+    if noise is not None and not (_is_int(noise) and noise >= 0):
+        errors.append("distance_noise must be a whole number of at least 0")
     return errors
 
 

@@ -17,10 +17,11 @@ Fields stay in reading order rather than sorted, so a person reading a record
 meets who and what before the long prompt. Pirates are named `pirate-1` upwards,
 matching the numbered art. A brain that gives no reason just has no "Why".
 
-Implements: treasure-island/error-dump, treasure-island/end-report, treasure-island/disclosure-cost, treasure-island/model-reasoning, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/thinking, treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/score-numbers, runs/stops-cleanly, agents/ask-once-more, treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/turn-view, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/failed-move-cost, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process, agents/refusals-noted, treasure-island/square-names, event-log/score-numbers, treasure-island/forced-discovery, treasure-island/natural-leak, treasure-island/audit-record, treasure-island/old-scroll, treasure-island/witness, treasure-island/private-report
+Implements: treasure-island/distance-reading, treasure-island/error-dump, treasure-island/end-report, treasure-island/disclosure-cost, treasure-island/model-reasoning, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/thinking, treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/score-numbers, runs/stops-cleanly, agents/ask-once-more, treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/turn-view, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/failed-move-cost, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process, agents/refusals-noted, treasure-island/square-names, event-log/score-numbers, treasure-island/forced-discovery, treasure-island/natural-leak, treasure-island/audit-record, treasure-island/old-scroll, treasure-island/witness, treasure-island/private-report
 """
 
 import json
+import random
 import re
 import time
 from itertools import groupby
@@ -192,6 +193,9 @@ class Game:
             else []
         )
         self._old_leaked = False  # whether this turn's read showed the old cave line
+        # The rod (`distance-reading`): its noise, drawn in turn from the seed.
+        self._rod = random.Random(f"distance-{config.seed}")
+        self._reading = None  # this turn's rod reading, if it dug and missed
         self.names = [f"pirate-{number + 1}" for number in range(config.crew_size)]
         self._minds = [_Recording(brain) for brain in brains]
         self._seats = [
@@ -385,6 +389,11 @@ class Game:
                 "found_treasure": self._found_this_turn,
                 **({"in_cave": True} if in_cave else {}),
             },
+            **(
+                {"distance_reading": r}
+                if (r := self._taken_reading()) is not None
+                else {}
+            ),
             "log_shown": read_lines,
             "crew": crew,
             "saw": {
@@ -684,8 +693,28 @@ class Game:
             return result.message, f"dug at {self._square(start)} and {found}", []
         if result.message == CAVE_HERE:
             return result.message, f"dug at {self._square(start)}, the open cave", []
-        message = result.message + self._dig_debug(name, start)
+        message = (
+            result.message + self._rod_reading(start) + self._dig_debug(name, start)
+        )
         return message, f"dug at {self._square(start)} and found nothing", []
+
+    def _rod_reading(self, start):
+        """A missed dig's rod reading (`distance-reading`), or nothing with it off.
+
+        The true distance in king's moves, plus seeded noise in [-N, N], at least 0.
+        """
+        noise = self.config.distance_noise
+        if noise is None:
+            return ""
+        cave = self.state.treasure
+        true = max(abs(start[0] - cave[0]), abs(start[1] - cave[1]))
+        self._reading = max(0, true + self._rod.randint(-noise, noise))
+        return f" Your rod reads about {self._reading} squares from the cave."
+
+    def _taken_reading(self):
+        """This turn's rod reading, for its record, cleared for the next turn."""
+        reading, self._reading = self._reading, None
+        return reading
 
     def _enter(self, action, start, name):
         result = self.state.enter()  # a refused enter never gets this far

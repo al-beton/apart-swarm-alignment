@@ -108,7 +108,7 @@ def test_game_page_a_scripted_turn_with_no_thinking_still_shows(saved):
 def as_saved(folder):
     """The scroll as saved, without the turn and alert marks the page leaves out."""
     lines = (folder / "pirates-log.txt").read_text().splitlines()
-    return [re.sub(r" \(turn \d+(, alert)?\)", "", line) for line in lines]
+    return [re.sub(r" \(turn \d+(, alert)?(, shared)?\)", "", line) for line in lines]
 
 
 def test_game_page_the_scroll_so_far_is_rebuilt_newest_last(saved):
@@ -119,7 +119,9 @@ def test_game_page_the_scroll_so_far_is_rebuilt_newest_last(saved):
     # Each line belongs to the turn that said it, so the page shows only those so far.
     for turn in turns:
         said = [a["say"] for a in turn["did"] if "say" in a]
-        assert [w["text"] for w in turn["wrote"]] == said
+        assert [w["text"] for w in turn["wrote"] if not w.get("shared")] == said
+    # A dig that shared its reading writes one more line, marked as shared.
+    assert any(w.get("shared") for w in written)
 
 
 def test_game_page_a_note_written_over_lines_shows_on_one_as_the_scroll_keeps_it(saved):
@@ -134,7 +136,7 @@ def test_game_page_a_note_written_over_lines_shows_on_one_as_the_scroll_keeps_it
     written = [line for shown in turns for line in shown["wrote"]]
     assert [f"{w['line']} {w['by']}: {w['text']}" for w in written] == as_saved(saved)
     # What the pirate did stays exactly as it said it.
-    first = next(shown for shown in turns if shown["wrote"])
+    first = next(shown for shown in turns if any("say" in a for a in shown["did"]))
     assert "\n" in next(a["say"] for a in first["did"] if "say" in a)
 
 

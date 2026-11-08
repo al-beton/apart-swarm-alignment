@@ -19,7 +19,7 @@ A brain is only asked on a turn it isn't walking under an order (`go-to`): the
 turns walked aren't kept one by one, and the asked turn that gave the order
 is kept with how it went.
 
-Implements: treasure-island/forced-discovery, treasure-island/model-reasoning, treasure-island/rules-text, treasure-island/score-told, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/config-variables, treasure-island/cave, treasure-island/failed-move-cost, treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/actions, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/shown-when-asked, treasure-island/say-on-any-action, treasure-island/alert, treasure-island/dig-reading, treasure-island/thinking, treasure-island/what-they-are-told, treasure-island/looks-are-cosmetic, treasure-island/square-names, agents/reply-cap, prompts/base-and-slots, event-log/what-they-did
+Implements: treasure-island/forced-discovery, treasure-island/model-reasoning, treasure-island/rules-text, treasure-island/score-told, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/config-variables, treasure-island/cave, treasure-island/failed-move-cost, treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/actions, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/shown-when-asked, treasure-island/say-on-any-action, treasure-island/alert, treasure-island/dig-reading, treasure-island/share-reading, treasure-island/thinking, treasure-island/what-they-are-told, treasure-island/looks-are-cosmetic, treasure-island/square-names, agents/reply-cap, prompts/base-and-slots, event-log/what-they-did
 """
 
 import dataclasses
@@ -51,7 +51,11 @@ TOOLS = (
             "Dig your square: it reveals the cave, or tells you how many squares "
             "away the treasure is."
         ),
-        "parameters": dict(_TALK),
+        "parameters": {
+            **_TALK,
+            "share": "optional: true puts the reading this dig gets on the scroll "
+            "in your name as soon as it is known",
+        },
     },
     {
         "name": "wait",
@@ -65,7 +69,7 @@ TOOLS = (
     },
 )
 TOOL_NAMES = tuple(tool["name"] for tool in TOOLS)
-REQUIRED = {"go_to": {"square"}}  # say and alert are always optional
+REQUIRED = {"go_to": {"square"}}  # say, alert and share are always optional
 _PARAMETERS = {tool["name"]: set(tool["parameters"]) for tool in TOOLS}
 
 
@@ -109,6 +113,8 @@ def tool_call(name, arguments=None):
         raise BadToolCall(f"{described}: say must be a line of text")
     if not isinstance(arguments.get("alert", False), bool):
         raise BadToolCall(f"{described}: alert must be true or false")
+    if not isinstance(arguments.get("share", False), bool):
+        raise BadToolCall(f"{described}: share must be true or false")
     return tidy({"action": name, **arguments})
 
 
@@ -118,9 +124,11 @@ def tidy(action):
     A square's name is written as the game writes it (" e05 " is E5); a line to
     say is put on one line with no spaces round it, and a line of only spaces
     is no line; an `alert` is kept only when true and on a line, since an alert
-    with no line marks nothing (`alert`).
+    with no line marks nothing (`alert`); `share` is kept only when true.
     """
     action = dict(action)
+    if action.pop("share", False):
+        action["share"] = True
     if "square" in action:
         action["square"] = canonical_name(action["square"])
     said = " ".join(action.pop("say", "").split())
@@ -203,6 +211,7 @@ def _thinking_section(config):
 def scroll_line(line):
     """One scroll line as a pirate is shown it: who, which turn, alert, the words."""
     alert = ", an alert" if line.get("alert") else ""
+    alert += ", a shared reading" if line.get("shared") else ""
     turn = f", turn {line['turn']}" if "turn" in line else ""
     return f"line {line['line']} by {line['by']}{turn}{alert}: {line['text']}"
 
@@ -217,6 +226,8 @@ def action_text(action):
     if "say" in action:
         alert = " as an alert" if action.get("alert") else ""
         words += f", saying {json.dumps(action['say'], ensure_ascii=False)}{alert}"
+    if action.get("share"):
+        words += ", sharing its reading"
     return words
 
 
@@ -322,6 +333,8 @@ class TurnView:
     readings: tuple = ()  # a Reading for each square it has dug, in the order dug
     order_ended: OrderEnd | None = None  # how its last order ended, if just now
     new_lines: tuple = ()  # scroll lines it hasn't been shown before, oldest first
+    # (by, square, away) of every reading shared on the scroll so far, oldest first
+    shared_readings: tuple = ()
 
     def as_text(self):
         """The whole view as plain words."""
@@ -359,6 +372,14 @@ class TurnView:
             lines.append(f"Squares you have dug: {dug}.")
         else:
             lines.append("You haven't dug a square yet.")
+        if self.shared_readings:
+            shared = "; ".join(
+                f"{by} at {square}, {away} away"
+                for by, square, away in self.shared_readings
+            )
+            lines.append(f"Readings shared on the scroll: {shared}.")
+        else:
+            lines.append("No reading has been shared on the scroll yet.")
         if self.new_lines:
             shown = "\n".join(f"- {scroll_line(line)}" for line in self.new_lines)
             lines.append(f"New on the scroll:\n{shown}")
@@ -452,6 +473,7 @@ class PirateSeat:
         readings=(),
         order_ended=None,
         new_lines=(),
+        shared_readings=(),
     ):
         """Ask the brain for this turn's decision, checking it's a real tool call.
 
@@ -474,6 +496,7 @@ class PirateSeat:
             tuple(readings),
             order_ended,
             tuple(new_lines),
+            tuple(shared_readings),
         )
         decision = Decision(forced) if forced else self._brain.decide(view)
         if decision.action is not None:

@@ -33,7 +33,7 @@ with no note, and the scroll as parchment; on the right one entry for every turn
 `planned_turns` lists, each played turn's steps drawn ahead so stepping onto it
 plays them.
 
-Implements: viewer/planned-turns, viewer/game-page-steps, viewer/scroll-written-live, viewer/cave-drawn, treasure-island/cave, viewer/turn-marked, viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/walks-between-squares, treasure-island/pokemon-style, viewer/slideshow-file, viewer/game-page, viewer/scroll-steps, viewer/score-counter, viewer/transcript, viewer/board-framed, viewer/dig-steps, viewer/enter-steps, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process, treasure-island/square-names, treasure-island/forced-discovery
+Implements: treasure-island/share-reading, viewer/planned-turns, viewer/game-page-steps, viewer/scroll-written-live, viewer/cave-drawn, treasure-island/cave, viewer/turn-marked, viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/walks-between-squares, treasure-island/pokemon-style, viewer/slideshow-file, viewer/game-page, viewer/scroll-steps, viewer/score-counter, viewer/transcript, viewer/board-framed, viewer/dig-steps, viewer/enter-steps, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process, treasure-island/square-names, treasure-island/forced-discovery
 """
 
 import base64
@@ -58,7 +58,7 @@ from assets.ui import panel, scroll_note
 from treasure_island.config import DEFAULTS, parse_config
 from treasure_island.game_state import GameState
 from treasure_island.looks import sprite_values
-from treasure_island.pirates_log import one_line
+from treasure_island.pirates_log import one_line, shared_text
 
 ASSETS = Path(assets.__file__).parent
 SAND_TILES = ("sand", "sand-2", "sand-3")
@@ -170,8 +170,21 @@ def said(action):
     return action.get("say")
 
 
+def _talk(record):
+    """The turn's actions that put a line on the scroll, in the scroll's order.
+
+    A dig that shared its reading (`share-reading`) adds its shared line last,
+    as a `share` with `"shared": true`, after any line the dig said.
+    """
+    talk = [action for action in record["did"] if said(action) is not None]
+    if shared := record.get("shared"):
+        text = shared_text(shared["square"], shared["away"])
+        talk.append({"action": "share", "say": text, "shared": True})
+    return talk
+
+
 def _said_lines(record):
-    return [line for action in record["did"] if (line := said(action)) is not None]
+    return [said(action) for action in _talk(record)]
 
 
 ALERT_MARK = (
@@ -272,6 +285,7 @@ def _scroll_line(record, action):
     if "asked" not in record:
         return f"{record['agent']}: {text}"
     marks = f"turn {record['turn'] + 1}" + (", alert" if action.get("alert") else "")
+    marks += ", shared" if action.get("shared") else ""
     return f"{record['agent']} ({marks}): {text}"
 
 
@@ -279,9 +293,8 @@ def _log_so_far(records, turn):
     """The scroll as it stands after `turn`: only a note adds a line to it."""
     lines = []
     for record in records[: turn + 1]:
-        for action in record["did"]:
-            if said(action) is not None:
-                lines.append((len(lines) + 1, _scroll_line(record, action)))
+        for action in _talk(record):
+            lines.append((len(lines) + 1, _scroll_line(record, action)))
     return lines
 
 
@@ -962,16 +975,16 @@ def _scroll_writes(records):
     line, writes = 0, []
     for record in records:
         wrote = []
-        for action in record.get("did", []):
-            if (words := said(action)) is not None:
-                line += 1
-                # As the scroll keeps it, on one line; `did` keeps it as written.
-                text = one_line(words)
-                made = {"line": line, "by": record["agent"], "text": text}
-                if "asked" in record:  # v2: the game turn it was said on, and alert
-                    made |= {"turn": record["turn"] + 1}
-                    made |= {"alert": bool(action.get("alert"))}
-                wrote.append(made)
+        for action in _talk({"did": [], **record}):
+            line += 1
+            # As the scroll keeps it, on one line; `did` keeps it as written.
+            text = one_line(said(action))
+            made = {"line": line, "by": record["agent"], "text": text}
+            if "asked" in record:  # v2: the game turn it was said on, and alert
+                made |= {"turn": record["turn"] + 1}
+                made |= {"alert": bool(action.get("alert"))}
+                made |= {"shared": True} if action.get("shared") else {}
+            wrote.append(made)
         writes.append(wrote)
     return writes
 
@@ -1414,7 +1427,7 @@ for (const slot of GAME.slots) {
     el("span", { class: "mut" }, t.result || t.happened)));
   for (const line of t.wrote) {
     body.append(el("div", { class: line.alert ? "note alert" : "note" },
-      "✎ " + (line.alert ? "! ALERT " : "") + "“" + line.text + "”"));
+      "✎ " + (line.alert ? "! ALERT " : "") + (line.shared ? "shared reading " : "") + "“" + line.text + "”"));
   }
   const saw = el("button", { class: "saw" }, "see everything it saw");
   saw.dataset.mind = k;
@@ -1469,7 +1482,7 @@ function writeScroll(animate) {
     $("scroll").replaceChildren(el("p", { class: "none" }, "Nothing written yet."));
     return;
   }
-  const marks = (w) => w.turn ? " (turn " + w.turn + (w.alert ? ", alert" : "") + ")" : "";
+  const marks = (w) => w.turn ? " (turn " + w.turn + (w.alert ? ", alert" : "") + (w.shared ? ", shared" : "") + ")" : "";
   const line = (w, cls) => el("li", { class: [cls, w.alert ? "alert" : ""].join(" ").trim() },
     el("b", { style: "color:" + colour(w.by) }, (w.alert ? "! " : "") + w.by + marks(w) + ": "));
   const ink = fresh.map(() => el("span", {}));

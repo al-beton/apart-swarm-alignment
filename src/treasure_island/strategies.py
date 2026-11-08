@@ -9,7 +9,7 @@ a model reads as text.
 `python -m treasure_island.strategies` remakes the committed reference games.
 
 The loner and the sharer also triangulate: each keeps the squares its readings
-allow (`possible`), and the sharer counts the readings said on the scroll too.
+allow (`possible`), and the sharer counts the readings shared on the scroll too.
 Each is told `reading_noise` as well, since the rules say how far off a reading
 can be.
 
@@ -100,25 +100,23 @@ def possible(grid_size, noise, readings, ruled_out=()):
     ]
 
 
-DUG_LINE = re.compile(r"Dug ([A-Z]\d+): (\d+) away\.")
 CAVE_LINE = re.compile(r"Cave at ([A-Z]\d+)\.")
 
 
-def said(lines, grid_size):
-    """What lines in the sharer's two forms say: readings, by whom, and the cave.
+def cave_said(lines, grid_size):
+    """The square the first line in the sharer's form "Cave at C4." names, or None.
 
-    Returns ((square, away, by), ...) and the cave's square or None. Any other
-    line, or a square that isn't on the island, is passed over.
+    Any other line, or a square that isn't on the island, is passed over.
     """
-    readings, cave = [], None
     for line in lines:
-        if found := DUG_LINE.fullmatch(line["text"]):
-            square = square_at(found[1], grid_size)
-            if square is not None:
-                readings.append((square, int(found[2]), line["by"]))
-        elif (found := CAVE_LINE.fullmatch(line["text"])) and cave is None:
-            cave = square_at(found[1], grid_size)
-    return tuple(readings), cave
+        if found := CAVE_LINE.fullmatch(line["text"]):
+            return square_at(found[1], grid_size)
+    return None
+
+
+def shared(readings, grid_size):
+    """The (square, away) of each (by, square's name, away) shared reading."""
+    return [(square_at(name, grid_size), away) for _, name, away in readings]
 
 
 class Loner(Silent):
@@ -186,34 +184,30 @@ class Loner(Silent):
 
 
 class Sharer(Loner):
-    """Plays like the loner, counting every reading said on the scroll as well.
+    """Plays like the loner, counting every reading shared on the scroll as well.
 
-    After each dig it says the reading as "Dug C4: 5 away.", it never digs a
-    square said dug, it says "Cave at C4." as an alert when it dug up the cave
-    and goes in, and once it is shown where the cave is it goes there.
+    It digs with `share` set, so each reading reaches the scroll as it gets it,
+    never digs a square shared as dug, says "Cave at C4." as an alert when it
+    dug up the cave and goes in, and once it is shown where the cave is it goes
+    there. Readings it takes only from shared lines, never from what a line says.
     """
-
-    def _heard(self, view):
-        lines = [line for turn in view.earlier_turns for line in turn.shown]
-        return said([*lines, *view.new_lines], self._size)
 
     def _known(self, view):
         readings, ruled_out, _ = super()._known(view)
-        heard, cave = self._heard(view)
-        readings += [(square, away) for square, away, _ in heard]
-        ruled_out |= {square for square, _, _ in heard}
-        return readings, ruled_out, cave
+        heard = shared(view.shared_readings, self._size)
+        readings += heard
+        ruled_out |= {square for square, _ in heard}
+        lines = [line for turn in view.earlier_turns for line in turn.shown]
+        return readings, ruled_out, cave_said([*lines, *view.new_lines], self._size)
+
+    def _act(self, view, name, arguments, why):
+        if name == "dig":
+            arguments = {**(arguments or {}), "share": True}
+        return super()._act(view, name, arguments, why)
 
     def _line(self, view):
         if view.on_cave and any(r.away is None for r in view.readings):
             return f"Cave at {view.square}.", True
-        heard, _ = self._heard(view)
-        mine = {square for square, _, by in heard if by == view.name}
-        unsaid = [
-            r for r in view.readings if r.away is not None and r.position not in mine
-        ]
-        if unsaid:
-            return f"Dug {unsaid[-1].square}: {unsaid[-1].away} away.", False
         return None, False
 
 

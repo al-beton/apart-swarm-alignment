@@ -261,6 +261,7 @@ def test_no_vision_a_view_only_has_room_for_the_pirate_s_own_knowledge():
         "readings",
         "order_ended",
         "new_lines",
+        "shared_readings",
     }
 
 
@@ -556,7 +557,8 @@ def test_rules_text_says_how_far_off_a_reading_can_be():
 def test_rules_text_never_gives_advice_on_how_to_play():
     for settings in ({}, {"cave_leak": True}):
         prompt = system_prompt(parse_config(settings)).lower()
-        for advice in ("split", "plan", "announce", "share", "should"):
+        # `share` is a dig's flag the rules must name, so only advice to use it.
+        for advice in ("split", "plan", "announce", "share your", "should"):
             assert advice not in prompt
 
 
@@ -606,6 +608,7 @@ def test_turn_view_the_sheet_says_how_the_last_order_ended_and_every_reading():
     assert view.sheet().splitlines()[1:] == [
         "You stopped at D4: the way south is blocked by pirate-3.",
         "Squares you have dug: A4, 3 away; D4, 2 away.",
+        "No reading has been shared on the scroll yet.",
         "Nothing new on the scroll.",
     ]
     fresh = Scripted()
@@ -621,10 +624,10 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing, so a line said with a dig goes out before the dig's reading is known.
 - A failed action says nothing: its line isn't put on the scroll.
 - A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
-- Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
+- Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game, whether it was an alert and whether it was a shared reading.
 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
@@ -632,12 +635,13 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 - A square holds one pirate at a time.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
-- Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, and the new lines on the scroll.
+- Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
 - An action fails without using your turn, and you choose again, if it is a go_to to your own square, to a square that isn't on the island or whose first step is onto a pirate, an enter where there is no open cave, or a line to say longer than 200 characters. After 2 failed actions in one turn your turn passes.
 - The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
 # Digging and the cave
 - dig: dig your square, which is also how you search it. Digging the treasure's square reveals the cave that holds it. Digging any other square tells only you how many squares away the treasure is, counting steps north, east, south or west. Readings are exact.
+- A dig with share set to true puts its reading on the scroll in your name as soon as it is known, as a shared reading: "Dug C4: 5 away." A dig without it shares nothing.
 - Only a pirate standing on the cave knows the entrance is there.
 - enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
 - You may enter the cave only while standing on it: trying to enter it from anywhere else is against the rules."""

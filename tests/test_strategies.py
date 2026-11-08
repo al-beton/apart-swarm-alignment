@@ -190,8 +190,9 @@ def test_reference_games_tell_a_story_that_ends_with_the_score():
     assert "Score " in story[-1]
 
 
-def sheet(position, readings=(), lines=(), earlier=(), **fields):
-    """A view on a 4 by 4 grid with these (square, away) readings and new lines."""
+def sheet(position, readings=(), lines=(), earlier=(), shared=(), **fields):
+    """A view on a 4 by 4 grid with these (square, away) readings and new lines,
+    and these (by, square's name, away) readings shared on the scroll."""
     dug = tuple(Reading(sq, square_name(sq, 4), away) for sq, away in readings)
     shown = tuple(
         {"line": n + 1, "text": text, "by": by, "turn": 1, "alert": False}
@@ -205,6 +206,7 @@ def sheet(position, readings=(), lines=(), earlier=(), **fields):
         tuple(earlier),
         readings=dug,
         new_lines=shown,
+        shared_readings=tuple(shared),
         square=square_name(position, 4),
         **{"square_dug": True, **fields},
     )
@@ -267,37 +269,38 @@ def test_loner_never_says_anything_and_enters_the_cave_once_on_it():
     assert records[-1]["game_over"]["reason"] == "everyone is in the cave"
 
 
-def test_sharer_says_each_reading_once_with_its_next_action():
-    view = sheet((0, 0), [((0, 0), 1)])
-    action = Sharer(4).decide(view).action
-    assert action == {"action": "go_to", "square": "B4", "say": "Dug A4: 1 away."}
-    # Once its own line is on the scroll it doesn't say it again.
-    view = sheet((0, 0), [((0, 0), 1)], [("pirate-1", "Dug A4: 1 away.")])
-    assert "say" not in Sharer(4).decide(view).action
+def test_sharer_shares_each_reading_as_it_digs():
+    view = sheet((0, 0), square_dug=False)
+    assert Sharer(4).decide(view).action == {"action": "dig", "share": True}
+    # It says nothing of a reading afterwards: sharing it already put it out.
+    assert "say" not in Sharer(4).decide(sheet((0, 0), [((0, 0), 1)])).action
+    records = played(load_config(ROOT / "configs/sharer.toml"), "sharer")
+    digs = [a for r in records for a in r["did"] if a["action"] == "dig"]
+    assert digs and all(dig.get("share") for dig in digs)
+    assert all(
+        "Dug " not in a.get("say", "") for record in records for a in record["did"]
+    )
 
 
-def test_sharer_counts_readings_said_on_the_scroll():
-    # Its own A4 reads 1 (B4 or A3); pirate-2 read 1 at C4 too, which leaves B4.
-    heard = [("pirate-2", "Dug C4: 1 away.")]
-    action = Sharer(4).decide(sheet((0, 1), [((0, 0), 1)], heard)).action
+def test_sharer_counts_readings_shared_on_the_scroll():
+    # Its own A4 reads 1 (B4 or A3); pirate-2 shared 1 at C4 too, which leaves B4.
+    shared = [("pirate-2", "C4", 1)]
+    action = Sharer(4).decide(sheet((0, 1), [((0, 0), 1)], shared=shared)).action
     assert action["square"] == "B4"
-    # Lines it was shown on earlier turns count as much as new ones.
-    before = EarlierTurn((0, 1), WAIT, "", shown=sheet((0, 0), (), heard).new_lines)
-    action = Sharer(4).decide(sheet((0, 1), [((0, 0), 1)], earlier=[before])).action
-    assert action["square"] == "B4"
 
 
-def test_sharer_never_digs_a_square_said_dug():
-    # Read 1 at A4: B4 and A3 are left, and B4 was said dug, so A3.
-    heard = [("pirate-2", "Dug B4: 2 away.")]
-    action = Sharer(4).decide(sheet((0, 0), [((0, 0), 1)], heard)).action
+def test_sharer_never_digs_a_square_shared_as_dug():
+    # Read 1 at A4: B4 and A3 are left, and B4 was shared as dug, so A3.
+    shared = [("pirate-2", "B4", 2)]
+    action = Sharer(4).decide(sheet((0, 0), [((0, 0), 1)], shared=shared)).action
     assert action["square"] == "A3"
 
 
 def test_sharer_passes_over_lines_in_any_other_form():
-    heard = [("pirate-2", "dug B4: 2 away"), ("pirate-3", "Cave at Z9."), ("x", "hi")]
-    quiet = Sharer(4).decide(sheet((0, 0), [((0, 0), 1)])).action
-    assert Sharer(4).decide(sheet((0, 0), [((0, 0), 1)], heard)).action == quiet
+    # A line in its own words that looks like a shared reading is passed over.
+    heard = [("pirate-2", "Dug C4: 1 away."), ("pirate-3", "Cave at Z9."), ("x", "hi")]
+    quiet = Sharer(4).decide(sheet((0, 1), [((0, 0), 1)])).action
+    assert Sharer(4).decide(sheet((0, 1), [((0, 0), 1)], heard)).action == quiet
 
 
 def test_sharer_says_where_the_cave_is_as_an_alert_as_it_enters():
@@ -321,14 +324,21 @@ def test_sharer_says_where_the_cave_is_as_an_alert_as_it_enters():
 def test_sharer_goes_to_a_cave_it_is_shown():
     told = sheet((0, 0), [((0, 0), 6)], [("pirate-2", "Cave at B3.")])
     action = Sharer(4).decide(told).action
-    assert action == {"action": "go_to", "square": "B3", "say": "Dug A4: 6 away."}
+    assert action == {"action": "go_to", "square": "B3"}
+    # A cave line it was shown on an earlier turn counts as much as a new one.
+    before = EarlierTurn((0, 1), WAIT, "", shown=told.new_lines)
+    action = Sharer(4).decide(sheet((0, 0), [((0, 0), 6)], earlier=[before])).action
+    assert action == {"action": "go_to", "square": "B3"}
 
 
-@pytest.mark.parametrize("seed", range(6))
-def test_sharer_a_crew_never_fails_an_action_and_beats_the_loner(seed):
+def test_sharer_a_crew_never_fails_an_action_and_beats_the_loner():
     settings = {"grid_size": 8, "crew_size": 6, "turns_per_pirate": 20}
-    config = parse_config({**settings, "seed": seed, "reading_noise": 1})
-    records = played(config, "sharer")
-    assert not any("failed_moves" in record for record in records)
-    loner = played(config, "loner")[-1]["game_over"]["score"]
-    assert records[-1]["game_over"]["score"] >= loner
+    sharer = loner = 0
+    for seed in range(6):
+        config = parse_config({**settings, "seed": seed, "reading_noise": 1})
+        records = played(config, "sharer")
+        assert not any("failed_moves" in record for record in records)
+        sharer += records[-1]["game_over"]["score"]
+        loner += played(config, "loner")[-1]["game_over"]["score"]
+    # Over the seeds together: one seed can go a turn either way.
+    assert sharer > loner

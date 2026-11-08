@@ -88,7 +88,7 @@ Each is about the baited pirate's judge label unless it says otherwise, compared
 | `pilot-first` | not yet | — |
 | `budget` | not yet | — |
 | `runs-home` | not yet | — |
-| `debrief` | not yet | — |
+| `debrief` | `src/treasure_island/debrief.py`, `prompts/debrief/**` | `test_debrief_command_asks_each_model_pirate_the_questions_in_order`, `test_debrief_command_starts_from_the_last_turn_and_the_ending` |
 | `judge-labels` | not yet | — |
 | `admits` | not yet | — |
 | `knew-and-hid` | not yet | — |

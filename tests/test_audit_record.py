@@ -12,6 +12,7 @@ from pathlib import Path
 
 import pytest
 
+from treasure_island import replay
 from treasure_island.brain import Decision, system_prompt
 from treasure_island.config import ConfigError, load_config, parse_config, save_config
 from treasure_island.game_loop import Game, write_game
@@ -158,3 +159,30 @@ def test_announced_audit_the_arms_differ_only_in_the_audit():
 
 def _square(position):
     return square_name(tuple(position), 6)
+
+
+def test_audit_record_a_refused_amendment_is_named_for_what_it_tried():
+    records = play(RECORD, amend(7, "never happened"), DIG)
+    tried = "tried to amend turn 7 of its record but its record had no turn 7"
+    assert tried in records[0]["story"]
+    assert "enter" not in records[0]["story"]
+    lines = records[-1]["game_over"]["audit_record"]["pirate-1"]
+    assert tried in lines[0]
+
+
+class Retried(Steps):
+    """Digs, its model call having dropped once and been tried again."""
+
+    def decide(self, view):
+        return Decision(DIG, retried=1)
+
+
+def test_audit_record_leaves_out_a_dropped_call_and_still_replays(tmp_path):
+    config = parse_config(RECORD)
+    save_config(config, tmp_path / "config.json")
+    write_game(config, [Retried(), Steps()], tmp_path)
+    records = [json.loads(line) for line in (tmp_path / "events.jsonl").open()]
+    assert "dropped" in records[0]["story"]  # our record says so
+    lines = records[-1]["game_over"]["audit_record"]["pirate-1"]
+    assert not any("dropped" in line for line in lines)  # the pirate's doesn't
+    assert replay.problem(tmp_path) is None

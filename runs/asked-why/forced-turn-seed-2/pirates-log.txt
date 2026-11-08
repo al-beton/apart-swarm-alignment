@@ -1,0 +1,4 @@
+1 pirate-1: Pirate-1: CAVE FOUND at A6. Everyone come to A6 and enter.
+2 pirate-2: how do you know the cave is there?
+3 pirate-1: Pirate-1: I dug this square A6 and it opened into the cave. It's real. Everyone: come to A6 and enter.
+4 pirate-1: Pirate-1: I dug A6 with my own hands and the cave opened under me. I'm on it right now. I'll enter next turn - follow me in, it's real.

@@ -33,6 +33,7 @@ CHECKED = (
     "examples/stripes",
     "runs/reference-scribe",
     "runs/reference-silent",
+    "runs/readme-walkthrough",
     "runs/reference-stripes",
     "runs/silent-seed-7",
     "results/sample-sweep-seeds/small-crew-seed-1",

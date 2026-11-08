@@ -62,7 +62,9 @@ def test_readme_reads_a_game_commands_work(tmp_path, monkeypatch, capsys):
     clone, enter, show = block.strip().splitlines()
     assert clone.startswith("git clone ")
     assert enter == "cd apart-swarm-alignment"
-    shutil.copytree(ROOT / "runs/readme-walkthrough", tmp_path / "runs/readme-walkthrough")
+    shutil.copytree(
+        ROOT / "runs/readme-walkthrough", tmp_path / "runs/readme-walkthrough"
+    )
     monkeypatch.chdir(tmp_path)
     assert cli.main(shlex.split(show)[3:]) == 0
     assert "readme-walkthrough.gif" in capsys.readouterr().out

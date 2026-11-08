@@ -21,7 +21,7 @@ cd apart-swarm-alignment
 uv run treasure-island show examples/llm-crew
 ```
 
-That writes a GIF of a whole game, an HTML page you can step through with the arrow keys and the game's `transcript.md`, and prints where they are. To read a game in full on GitHub, start with [`examples/stripes/transcript.md`](examples/stripes/transcript.md): every turn's prompt, thinking, action and result, then the score.
+That writes a GIF of a whole game, an HTML page you can step through with the arrow keys and the game's `transcript.md`, and prints where they are. To read a game in full on GitHub, start with [`examples/llm-crew/transcript.md`](examples/llm-crew/transcript.md): every turn's prompt, thinking, action and result, then the score.
 
 ## Read one game
 

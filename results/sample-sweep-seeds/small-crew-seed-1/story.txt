@@ -1,9 +1,9 @@
-Turn 0: pirate-1 at (0, 0), on undug sand, with pirate-2 to the south. It thought: Nobody has dug this square yet. Then it dug at (0, 0) and found nothing.
-Turn 1: pirate-2 at (0, 1), on undug sand, with pirate-1 to the north. It thought: Nobody has dug this square yet. Then it dug at (0, 1) and found nothing.
-Turn 2: pirate-1 at (0, 0), on dug sand, with pirate-2 to the south. It thought: The nearest square I haven't seen dug is (1, 0). Then it moved east to (1, 0).
-Turn 3: pirate-2 at (0, 1), on dug sand, with no pirate beside it. It thought: The nearest square I haven't seen dug is (0, 0). Then it moved north to (0, 0).
-Turn 4: pirate-1 at (1, 0), on undug sand, with pirate-2 to the west. It thought: Nobody has dug this square yet. Then it dug at (1, 0) and found nothing.
-Turn 5: pirate-2 at (0, 0), on dug sand, with pirate-1 to the east. It thought: I'm heading for (1, 0), but pirate-1 is in the way, so I go round. Then it moved south to (0, 1).
-Turn 6: pirate-1 at (1, 0), on dug sand, with no pirate beside it. It thought: The nearest square I haven't seen dug is (2, 0). Then it moved east to (2, 0).
-Turn 7: pirate-2 at (0, 1), on dug sand, with no pirate beside it. It thought: The nearest square I haven't seen dug is (1, 1). Then it moved east to (1, 1).
-Game over: the turns ran out. The treasure at (0, 2) was never dug up, and 0 of 2 pirates got into the cave. Score 0.
+Turn 0: pirate-1 at A3, on undug sand, with pirate-2 to the south. It thought: Nobody has dug this square yet. Then it dug at A3 and found nothing.
+Turn 1: pirate-2 at A2, on undug sand, with pirate-1 to the north. It thought: Nobody has dug this square yet. Then it dug at A2 and found nothing.
+Turn 2: pirate-1 at A3, on dug sand, with pirate-2 to the south. It thought: The nearest square I haven't seen dug is B3. Then it moved east to B3.
+Turn 3: pirate-2 at A2, on dug sand, with no pirate beside it. It thought: The nearest square I haven't seen dug is A3. Then it moved north to A3.
+Turn 4: pirate-1 at B3, on undug sand, with pirate-2 to the west. It thought: Nobody has dug this square yet. Then it dug at B3 and found nothing.
+Turn 5: pirate-2 at A3, on dug sand, with pirate-1 to the east. It thought: I'm heading for B3, but pirate-1 is in the way, so I go round. Then it moved south to A2.
+Turn 6: pirate-1 at B3, on dug sand, with no pirate beside it. It thought: The nearest square I haven't seen dug is C3. Then it moved east to C3.
+Turn 7: pirate-2 at A2, on dug sand, with no pirate beside it. It thought: The nearest square I haven't seen dug is B2. Then it moved east to B2.
+Game over: the turns ran out. The treasure at A1 was never dug up, and 0 of 2 pirates got into the cave. Score 0.

@@ -1,42 +1,42 @@
-Turn 0: pirate-1 at (0, 0), on undug sand, with pirate-2 to the south. It thought: Nobody has dug this square yet. Then it dug at (0, 0) and found nothing.
-Turn 1: pirate-2 at (0, 1), on undug sand, with pirate-1 to the north and pirate-3 to the south. It thought: Nobody has dug this square yet. Then it dug at (0, 1) and found nothing.
-Turn 2: pirate-3 at (0, 2), on undug sand, with pirate-2 to the north. It thought: Nobody has dug this square yet. Then it dug at (0, 2) and found nothing.
-Turn 3: pirate-1 at (0, 0), on dug sand, with pirate-2 to the south. It thought: The nearest square I haven't seen dug is (1, 0). Then it moved east to (1, 0).
-Turn 4: pirate-2 at (0, 1), on dug sand, with pirate-3 to the south. It thought: The nearest square I haven't seen dug is (0, 0). Then it moved north to (0, 0).
-Turn 5: pirate-3 at (0, 2), on dug sand, with no pirate beside it. It thought: The nearest square I haven't seen dug is (0, 1). Then it moved north to (0, 1).
-Turn 6: pirate-1 at (1, 0), on undug sand, with pirate-2 to the west. It thought: Nobody has dug this square yet. Then it dug at (1, 0) and found nothing.
-Turn 7: pirate-2 at (0, 0), on dug sand, with pirate-1 to the east and pirate-3 to the south. It thought: pirate-1 is in the way and I can't go round, so I dig here again. Then it dug at (0, 0) and found nothing.
-Turn 8: pirate-3 at (0, 1), on dug sand, with pirate-2 to the north. It thought: I'm heading for (0, 0), but pirate-2 is in the way, so I go round. Then it moved east to (1, 1).
-Turn 9: pirate-1 at (1, 0), on dug sand, with pirate-3 to the south and pirate-2 to the west. It thought: The nearest square I haven't seen dug is (2, 0). Then it moved east to (2, 0).
-Turn 10: pirate-2 at (0, 0), on dug sand, with no pirate beside it. It thought: The nearest square I haven't seen dug is (1, 0). Then it moved east to (1, 0).
-Turn 11: pirate-3 at (1, 1), on undug sand, with pirate-2 to the north. It thought: Nobody has dug this square yet. Then it dug at (1, 1) and found nothing.
-Turn 12: pirate-1 at (2, 0), on undug sand, with pirate-2 to the west. It thought: Nobody has dug this square yet. Then it dug at (2, 0) and found nothing.
-Turn 13: pirate-2 at (1, 0), on dug sand, with pirate-1 to the east and pirate-3 to the south. It thought: I'm heading for (2, 0), but pirate-1 is in the way, so I go round. Then it moved west to (0, 0).
-Turn 14: pirate-3 at (1, 1), on dug sand, with no pirate beside it. It thought: The nearest square I haven't seen dug is (1, 0). Then it moved north to (1, 0).
-Turn 15: pirate-1 at (2, 0), on dug sand, with pirate-3 to the west. It thought: The nearest square I haven't seen dug is (3, 0). Then it moved east to (3, 0).
-Turn 16: pirate-2 at (0, 0), on dug sand, with pirate-3 to the east. It thought: I'm heading for (2, 0), but pirate-3 is in the way, so I go round. Then it moved south to (0, 1).
-Turn 17: pirate-3 at (1, 0), on dug sand, with no pirate beside it. It thought: The nearest square I haven't seen dug is (0, 0). Then it moved west to (0, 0).
-Turn 18: pirate-1 at (3, 0), on undug sand, with no pirate beside it. It thought: Nobody has dug this square yet. Then it dug at (3, 0) and found nothing.
-Turn 19: pirate-2 at (0, 1), on dug sand, with pirate-3 to the north. It thought: The nearest square I haven't seen dug is (1, 1). Then it moved east to (1, 1).
-Turn 20: pirate-3 at (0, 0), on dug sand, with no pirate beside it. It thought: The nearest square I haven't seen dug is (2, 0). Then it moved east to (1, 0).
-Turn 21: pirate-1 at (3, 0), on dug sand, with no pirate beside it. It thought: The nearest square I haven't seen dug is (4, 0). Then it moved east to (4, 0).
-Turn 22: pirate-2 at (1, 1), on dug sand, with pirate-3 to the north. It thought: The nearest square I haven't seen dug is (2, 1). Then it moved east to (2, 1).
-Turn 23: pirate-3 at (1, 0), on dug sand, with no pirate beside it. It thought: The nearest square I haven't seen dug is (2, 0). Then it moved east to (2, 0).
-Turn 24: pirate-1 at (4, 0), on undug sand, with no pirate beside it. It thought: Nobody has dug this square yet. Then it dug at (4, 0) and found nothing.
-Turn 25: pirate-2 at (2, 1), on undug sand, with pirate-3 to the north. It thought: Nobody has dug this square yet. Then it dug at (2, 1) and found the treasure, which opened the cave.
-Turn 26: pirate-3 at (2, 0), on dug sand, with pirate-2 to the south. It thought: The nearest square I haven't seen dug is (3, 0). Then it moved east to (3, 0).
-Turn 27: pirate-1 at (4, 0), on dug sand, with pirate-3 to the west. It thought: The nearest square I haven't seen dug is (4, 1). Then it moved south to (4, 1).
-Turn 28: pirate-2 at (2, 1), on the open cave, with no pirate beside it. It thought: This is the open cave, so I'm going in. Then it went into the cave at (2, 1), so 1 of 3 pirates are inside.
-Turn 29: pirate-3 at (3, 0), on dug sand, with no pirate beside it. It thought: The nearest square I haven't seen dug is (4, 0). Then it moved east to (4, 0).
-Turn 30: pirate-1 at (4, 1), on undug sand, with pirate-3 to the north. It thought: Nobody has dug this square yet. Then it dug at (4, 1) and found nothing.
-Turn 31: pirate-3 at (4, 0), on dug sand, with pirate-1 to the south. It thought: I'm heading for (4, 1), but pirate-1 is in the way, so I go round. Then it moved west to (3, 0).
-Turn 32: pirate-1 at (4, 1), on dug sand, with no pirate beside it. It thought: The nearest square I haven't seen dug is (3, 1). Then it moved west to (3, 1).
-Turn 33: pirate-3 at (3, 0), on dug sand, with pirate-1 to the south. It thought: I'm heading for (3, 1), but pirate-1 is in the way, so I go round. Then it moved east to (4, 0).
-Turn 34: pirate-1 at (3, 1), on undug sand, with no pirate beside it. It thought: Nobody has dug this square yet. Then it dug at (3, 1) and found nothing.
-Turn 35: pirate-3 at (4, 0), on dug sand, with no pirate beside it. It thought: The nearest square I haven't seen dug is (4, 1). Then it moved south to (4, 1).
-Turn 36: pirate-1 at (3, 1), on dug sand, with pirate-3 to the east. It thought: The nearest square I haven't seen dug is (2, 1). Then it moved west to (2, 1).
-Turn 37: pirate-3 at (4, 1), on dug sand, with no pirate beside it. It thought: The nearest square I haven't seen dug is (3, 1). Then it moved west to (3, 1).
-Turn 38: pirate-1 at (2, 1), on the open cave, with pirate-3 to the east. It thought: This is the open cave, so I'm going in. Then it went into the cave at (2, 1), so 2 of 3 pirates are inside.
-Turn 39: pirate-3 at (3, 1), on dug sand, with no pirate beside it. It thought: The nearest square I haven't seen dug is (2, 1). Then it moved west to (2, 1).
-Turn 40: pirate-3 at (2, 1), on the open cave, with no pirate beside it. It thought: This is the open cave, so I'm going in. Then it went into the cave at (2, 1), so 3 of 3 pirates are inside.
-Game over: everyone is in the cave. The treasure at (2, 1) was dug up, and 3 of 3 pirates got into the cave. Score 490.
+Turn 0: pirate-1 at A5, on undug sand, with pirate-2 to the south. It thought: Nobody has dug this square yet. Then it dug at A5 and found nothing.
+Turn 1: pirate-2 at A4, on undug sand, with pirate-1 to the north and pirate-3 to the south. It thought: Nobody has dug this square yet. Then it dug at A4 and found nothing.
+Turn 2: pirate-3 at A3, on undug sand, with pirate-2 to the north. It thought: Nobody has dug this square yet. Then it dug at A3 and found nothing.
+Turn 3: pirate-1 at A5, on dug sand, with pirate-2 to the south. It thought: The nearest square I haven't seen dug is B5. Then it moved east to B5.
+Turn 4: pirate-2 at A4, on dug sand, with pirate-3 to the south. It thought: The nearest square I haven't seen dug is A5. Then it moved north to A5.
+Turn 5: pirate-3 at A3, on dug sand, with no pirate beside it. It thought: The nearest square I haven't seen dug is A4. Then it moved north to A4.
+Turn 6: pirate-1 at B5, on undug sand, with pirate-2 to the west. It thought: Nobody has dug this square yet. Then it dug at B5 and found nothing.
+Turn 7: pirate-2 at A5, on dug sand, with pirate-1 to the east and pirate-3 to the south. It thought: pirate-1 is in the way and I can't go round, so I dig here again. Then it dug at A5 and found nothing.
+Turn 8: pirate-3 at A4, on dug sand, with pirate-2 to the north. It thought: I'm heading for A5, but pirate-2 is in the way, so I go round. Then it moved east to B4.
+Turn 9: pirate-1 at B5, on dug sand, with pirate-3 to the south and pirate-2 to the west. It thought: The nearest square I haven't seen dug is C5. Then it moved east to C5.
+Turn 10: pirate-2 at A5, on dug sand, with no pirate beside it. It thought: The nearest square I haven't seen dug is B5. Then it moved east to B5.
+Turn 11: pirate-3 at B4, on undug sand, with pirate-2 to the north. It thought: Nobody has dug this square yet. Then it dug at B4 and found nothing.
+Turn 12: pirate-1 at C5, on undug sand, with pirate-2 to the west. It thought: Nobody has dug this square yet. Then it dug at C5 and found nothing.
+Turn 13: pirate-2 at B5, on dug sand, with pirate-1 to the east and pirate-3 to the south. It thought: I'm heading for C5, but pirate-1 is in the way, so I go round. Then it moved west to A5.
+Turn 14: pirate-3 at B4, on dug sand, with no pirate beside it. It thought: The nearest square I haven't seen dug is B5. Then it moved north to B5.
+Turn 15: pirate-1 at C5, on dug sand, with pirate-3 to the west. It thought: The nearest square I haven't seen dug is D5. Then it moved east to D5.
+Turn 16: pirate-2 at A5, on dug sand, with pirate-3 to the east. It thought: I'm heading for C5, but pirate-3 is in the way, so I go round. Then it moved south to A4.
+Turn 17: pirate-3 at B5, on dug sand, with no pirate beside it. It thought: The nearest square I haven't seen dug is A5. Then it moved west to A5.
+Turn 18: pirate-1 at D5, on undug sand, with no pirate beside it. It thought: Nobody has dug this square yet. Then it dug at D5 and found nothing.
+Turn 19: pirate-2 at A4, on dug sand, with pirate-3 to the north. It thought: The nearest square I haven't seen dug is B4. Then it moved east to B4.
+Turn 20: pirate-3 at A5, on dug sand, with no pirate beside it. It thought: The nearest square I haven't seen dug is C5. Then it moved east to B5.
+Turn 21: pirate-1 at D5, on dug sand, with no pirate beside it. It thought: The nearest square I haven't seen dug is E5. Then it moved east to E5.
+Turn 22: pirate-2 at B4, on dug sand, with pirate-3 to the north. It thought: The nearest square I haven't seen dug is C4. Then it moved east to C4.
+Turn 23: pirate-3 at B5, on dug sand, with no pirate beside it. It thought: The nearest square I haven't seen dug is C5. Then it moved east to C5.
+Turn 24: pirate-1 at E5, on undug sand, with no pirate beside it. It thought: Nobody has dug this square yet. Then it dug at E5 and found nothing.
+Turn 25: pirate-2 at C4, on undug sand, with pirate-3 to the north. It thought: Nobody has dug this square yet. Then it dug at C4 and found the treasure, which opened the cave.
+Turn 26: pirate-3 at C5, on dug sand, with pirate-2 to the south. It thought: The nearest square I haven't seen dug is D5. Then it moved east to D5.
+Turn 27: pirate-1 at E5, on dug sand, with pirate-3 to the west. It thought: The nearest square I haven't seen dug is E4. Then it moved south to E4.
+Turn 28: pirate-2 at C4, on the open cave, with no pirate beside it. It thought: This is the open cave, so I'm going in. Then it went into the cave at C4, so 1 of 3 pirates are inside.
+Turn 29: pirate-3 at D5, on dug sand, with no pirate beside it. It thought: The nearest square I haven't seen dug is E5. Then it moved east to E5.
+Turn 30: pirate-1 at E4, on undug sand, with pirate-3 to the north. It thought: Nobody has dug this square yet. Then it dug at E4 and found nothing.
+Turn 31: pirate-3 at E5, on dug sand, with pirate-1 to the south. It thought: I'm heading for E4, but pirate-1 is in the way, so I go round. Then it moved west to D5.
+Turn 32: pirate-1 at E4, on dug sand, with no pirate beside it. It thought: The nearest square I haven't seen dug is D4. Then it moved west to D4.
+Turn 33: pirate-3 at D5, on dug sand, with pirate-1 to the south. It thought: I'm heading for D4, but pirate-1 is in the way, so I go round. Then it moved east to E5.
+Turn 34: pirate-1 at D4, on undug sand, with no pirate beside it. It thought: Nobody has dug this square yet. Then it dug at D4 and found nothing.
+Turn 35: pirate-3 at E5, on dug sand, with no pirate beside it. It thought: The nearest square I haven't seen dug is E4. Then it moved south to E4.
+Turn 36: pirate-1 at D4, on dug sand, with pirate-3 to the east. It thought: The nearest square I haven't seen dug is C4. Then it moved west to C4.
+Turn 37: pirate-3 at E4, on dug sand, with no pirate beside it. It thought: The nearest square I haven't seen dug is D4. Then it moved west to D4.
+Turn 38: pirate-1 at C4, on the open cave, with pirate-3 to the east. It thought: This is the open cave, so I'm going in. Then it went into the cave at C4, so 2 of 3 pirates are inside.
+Turn 39: pirate-3 at D4, on dug sand, with no pirate beside it. It thought: The nearest square I haven't seen dug is C4. Then it moved west to C4.
+Turn 40: pirate-3 at C4, on the open cave, with no pirate beside it. It thought: This is the open cave, so I'm going in. Then it went into the cave at C4, so 3 of 3 pirates are inside.
+Game over: everyone is in the cave. The treasure at C4 was dug up, and 3 of 3 pirates got into the cave. Score 490.

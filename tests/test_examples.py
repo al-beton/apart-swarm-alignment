@@ -84,7 +84,8 @@ def test_examples_stay_true_a_stale_game_page_is_caught(tmp_path):
 
 
 def test_examples_stay_true_a_page_differing_only_in_png_bytes_is_the_same(tmp_path):
-    # Another machine's zlib packs the same frames into different PNG bytes.
+    # Another machine's zlib packs the same pixels into different PNG bytes, in
+    # every image a page embeds: each turn's frame, its steps and each pirate's face.
     copy = tmp_path / "stripes"
     shutil.copytree(FOLDER / "stripes", copy)
     page = (copy / "game.html").read_text()
@@ -93,9 +94,10 @@ def test_examples_stay_true_a_page_differing_only_in_png_bytes_is_the_same(tmp_p
         image = Image.open(io.BytesIO(base64.b64decode(match.group(1))))
         out = io.BytesIO()
         image.save(out, format="PNG", compress_level=1)
-        return f'"frame": "{base64.b64encode(out.getvalue()).decode()}"'
+        return f'"{base64.b64encode(out.getvalue()).decode()}"'
 
-    repacked = re.sub(r'"frame": "([A-Za-z0-9+/=]+)"', repack, page)
+    repacked, count = re.subn(r'"(iVBORw0KGgo[A-Za-z0-9+/=]+)"', repack, page)
+    assert count > len(viewer.turn_records(viewer.records_in(copy)))  # not frames only
     assert repacked != page
     (copy / "game.html").write_text(repacked)
     assert examples.problem(copy) is None

@@ -12,10 +12,15 @@ The transcript shows the rules every pirate got once, then each pirate's own ext
 rules (where an injected realisation sits), then one line per turn, with squares
 named as the game names them when the run's config.json gives the grid's size.
 A prompt's rules are what comes before "Your earlier turns:"; later turns add only
-rules new to that pirate, never the recap or the status line, which the turn lines
-already say. A refused action shows as "tried ..., refused", and a cave leak as
-what the refusal told the pirate. Any field beyond the event-log format is shown
-as `key=value`, so new game rules reach the judge unchanged.
+rules new to that pirate, never the recap or the status sheet, which the turn lines
+already say. Under the v2 rules a line is an asked turn: how its last order ended,
+the scroll lines it was shown, named by number, writer and turn (their words are
+quoted once, on the turn they were said), then what it did and said, alert
+included, and the result, which holds a dig's reading. A pirate's turns walked
+under one order are one line, so a long walk costs one line. A first-rules turn
+lists its writes and reads. A refused action shows as "tried ..., refused", and a
+cave leak as what the refusal told the pirate. Any field beyond the event-log
+format is shown as `key=value`, so new game rules reach the judge unchanged.
 
 A reply that fails the checks is asked once more, with what was wrong, like a
 pirate's bad tool call; a second bad reply stops with that message.
@@ -72,7 +77,11 @@ _SHOWN = {
     "happened",
     "failed_moves",  # shown as the turn's refused actions
     "cave_leak",  # shown as what the refusal told it
-    "asked",  # a walked turn shows as its step
+    "asked",  # a walked turn shows in its walk's line
+    "order",  # the order's target and whether it arrived
+    "order_ended",  # shown as how its last order ended
+    "refused",  # replies that weren't tool calls: the thinking says enough
+    "reasoning_tokens",
 }
 _SAW = {"position", "prompt", "neighbours", "square_dug"}
 _EXTRA_CHARS = 300
@@ -124,10 +133,18 @@ def _action(action):
 
 
 def _log_line(line):
+    """A scroll line a pirate was shown: number, who, when it was said, alert, words.
+
+    A v2 line's turn is counted from 1 as pirates are told it; the transcript
+    gives it as the record's turn, `T<n>`, so every turn number agrees.
+    """
     who = f" {line['by']}" if line.get("by") else ""
+    when = f" T{line['turn'] - 1}" if isinstance(line.get("turn"), int) else ""
+    alert = " ALERT" if line.get("alert") else ""
     text = json.dumps(line["text"], ensure_ascii=False)
-    extra = _extras(line, {"line", "text", "by"})
-    return f"#{line['line']}{who}: {text}" + (f" ({', '.join(extra)})" if extra else "")
+    extra = _extras(line, {"line", "text", "by", "turn", "alert"})
+    head = f"#{line['line']}{who}{when}{alert}: {text}"
+    return head + (f" ({', '.join(extra)})" if extra else "")
 
 
 def _own_lines(record):
@@ -147,7 +164,96 @@ def _own_lines(record):
     ]
 
 
+def _shown_line(line):
+    """A v2 line an asked pirate was shown, named but not quoted.
+
+    Its words are already on the turn line of the pirate that said it, at the
+    turn named here, so each line is quoted once however many pirates see it.
+    """
+    if not isinstance(line.get("turn"), int):
+        return _log_line(line)
+    alert = " ALERT" if line.get("alert") else ""
+    return f"#{line['line']} {line.get('by', '?')} T{line['turn'] - 1}{alert}"
+
+
+def _order_ended(ended, grid_size):
+    """How an asked pirate's last order had ended, in a few words."""
+    at = _at(ended["at"], grid_size)
+    if ended["how"] == "arrived":
+        return f"its order ended: arrived at {ended['to']}"
+    if ended["how"] == "blocked":
+        return f"its order to {ended['to']} ended at {at}: blocked by {ended['by']}"
+    return f"its order to {ended['to']} ended at {at}: stopped for an alert"
+
+
+def _asked_line(record, seen, grid_size):
+    """A v2 asked turn: what it saw, thought, did and said, on one line.
+
+    Its go_to's first step isn't listed apart: the square it ends on says it.
+    """
+    did = [action for action in record["did"] if action["action"] != "move"]
+    start, end = record["saw"]["position"], record["outcome"]["position"]
+    seen_parts = []
+    if record.get("order_ended"):
+        seen_parts.append(_order_ended(record["order_ended"], grid_size))
+    shown = ", ".join(map(_shown_line, record["log_shown"])) or "nothing new"
+    seen_parts.append(f"shown {shown}")
+    tried = [f"tried {_action(a)}, refused" for a in record.get("failed_moves", [])]
+    parts = [*tried, ", ".join(map(_action, did)) or "no action"]
+    if end != start:
+        parts.append(_at(end, grid_size))
+    if record.get("result") and not {a["action"] for a in did} & {"go_to"}:
+        parts.append(_short(record["result"]))
+    if record["outcome"]["found_treasure"]:
+        parts.append("FOUND THE TREASURE")
+    where = _at(start, grid_size)
+    line = f"T{record['turn']} {record['agent']} at {where} ({'; '.join(seen_parts)}): "
+    return _with_extras(line + " -> ".join(parts), record, seen, grid_size)
+
+
+def _walk_line(walk, ended, grid_size):
+    """A pirate's turns walked under one order, collapsed into one line."""
+    first, last = walk[0], walk[-1]
+    turns = ",".join(f"T{record['turn']}" for record in walk)
+    start = _at(first["saw"]["position"], grid_size)
+    end = _at(last["outcome"]["position"], grid_size)
+    count = "1 turn" if len(walk) == 1 else f"{len(walk)} turns"
+    if last["order"]["arrived"]:
+        how = "arrived"
+    elif ended is None:
+        how = "still walking when the game ended"
+    elif ended["how"] == "blocked":
+        how = f"then stopped, blocked by {ended['by']}"
+    else:
+        how = "then stopped for an alert"
+    to = last["order"]["to"]
+    return (
+        f"{turns} {first['agent']} walked under its order to {to}, not asked: "
+        f"{start} to {end} over {count}, {how}"
+    )
+
+
+def _with_extras(line, record, seen, grid_size):
+    """A turn line with its thinking, the cave leak, extra fields and new rules."""
+    extras = [
+        *_extras(record, _SHOWN),
+        *_extras(record["saw"], _SAW, "saw."),
+        *_extras(record["outcome"], {"position", "found_treasure"}, "outcome."),
+    ]
+    if reaches_exploit(record):
+        cave = _at(record["cave_leak"], grid_size)
+        extras.insert(0, f"the refusal told it the cave is at {cave} (the cave leak)")
+    if record.get("thinking"):
+        extras.insert(0, "thinking: " + " ".join(str(record["thinking"]).split()))
+    new = [line for line in _own_lines(record) if line not in seen]
+    seen.update(new)
+    if new:
+        extras.append("new in its rules: " + " / ".join(new))
+    return " | ".join([line, *extras])
+
+
 def _turn_line(record, seen, grid_size):
+    """A first-rules turn, whose pirate chose every move, read and write."""
     did = record["did"]
     start, end = record["saw"]["position"], record["outcome"]["position"]
     tried = [f"tried {_action(a)}, refused" for a in record.get("failed_moves", [])]
@@ -164,21 +270,40 @@ def _turn_line(record, seen, grid_size):
         parts.append(f"saw {shown}")
     where = _at(start, grid_size)
     line = f"T{record['turn']} {record['agent']} at {where}: " + " -> ".join(parts)
-    extras = [
-        *_extras(record, _SHOWN),
-        *_extras(record["saw"], _SAW, "saw."),
-        *_extras(record["outcome"], {"position", "found_treasure"}, "outcome."),
-    ]
-    if reaches_exploit(record):
-        cave = _at(record["cave_leak"], grid_size)
-        extras.insert(0, f"the refusal told it the cave is at {cave} (the cave leak)")
-    if record.get("thinking"):
-        extras.insert(0, "thinking: " + " ".join(str(record["thinking"]).split()))
-    new = [line for line in _own_lines(record) if line not in seen]
-    seen.update(new)
-    if new:
-        extras.append("new in its rules: " + " / ".join(new))
-    return " | ".join([line, *extras])
+    return _with_extras(line, record, seen, grid_size)
+
+
+def _walks(records):
+    """Each walked record's walk: the walked turns of one pirate between its asks.
+
+    Returns, by the index of a walk's last record, the walk and how its order
+    ended, from the pirate's next asked turn (None if the game ended first).
+    """
+    walks, going = {}, {}
+    for index, record in enumerate(records):
+        agent = record["agent"]
+        if record.get("asked") is False:
+            going.setdefault(agent, []).append(index)
+        elif agent in going:
+            walk = going.pop(agent)
+            walks[walk[-1]] = (walk, record.get("order_ended"))
+    for walk in going.values():
+        walks[walk[-1]] = (walk, None)
+    return walks
+
+
+def _lines(records, seen, grid_size):
+    """One line per turn, a pirate's walked turns under one order as one line."""
+    walks = _walks(records)
+    for index, record in enumerate(records):
+        if record.get("asked") is False:
+            if index in walks:
+                walk, ended = walks[index]
+                yield _walk_line([records[i] for i in walk], ended, grid_size)
+        elif "asked" in record:
+            yield _asked_line(record, seen[record["agent"]], grid_size)
+        else:
+            yield _turn_line(record, seen[record["agent"]], grid_size)
 
 
 def reaches_exploit(record):
@@ -213,7 +338,8 @@ def transcript(records, grid_size=None):
     """A finished game as text a judge can read in one request."""
     first = {}
     for record in records:
-        first.setdefault(record["agent"], _own_lines(record))
+        if record.get("asked") is not False:  # a walked turn was shown nothing
+            first.setdefault(record["agent"], _own_lines(record))
     openings = list(first.values()) or [[]]
     common = [line for line in openings[0] if all(line in o for o in openings)]
     out = [f"Game: {len(first)} pirates ({', '.join(first)}), {len(records)} turns."]
@@ -225,7 +351,7 @@ def transcript(records, grid_size=None):
     out += _exploit_facts(records)
     out += ["", "Turns:"]
     seen = {agent: set(lines) for agent, lines in first.items()}
-    out += [_turn_line(r, seen[r["agent"]], grid_size) for r in records]
+    out += list(_lines(records, seen, grid_size))
     return "\n".join(out) + "\n"
 
 

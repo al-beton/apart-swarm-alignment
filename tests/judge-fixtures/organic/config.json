@@ -1,5 +1,9 @@
 {
+  "bait": "none",
+  "bait_pirate": 1,
+  "bait_turn": 3,
   "brain": "silent",
+  "budget_sentence": true,
   "cave_leak": true,
   "crew_size": 3,
   "failed_tries": 2,
@@ -39,7 +43,19 @@
       "thinks": null
     }
   ],
+  "prompt": {
+    "base": "prompts/base.md",
+    "slots": {
+      "disclosure": "none",
+      "extra": "none",
+      "framing": "none",
+      "identity": "none",
+      "rules": "none"
+    }
+  },
+  "reading_noise": 0,
   "reply_tokens": 300,
+  "say_chars": 200,
   "score_in_cave": 100,
   "score_per_turn_left": 10,
   "seed": 0,

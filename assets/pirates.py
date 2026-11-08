@@ -432,18 +432,21 @@ def _quill(frame):
     return layer
 
 
-# The dig is a pickaxe swing. The pirate steps left so the swing has the right of
-# its square. Each stance: the hand on the haft, the haft's angle (0 points right,
-# 90 up), the body's lift (up is negative) and the haft's length.
+# The dig is a pickaxe swing. The pirate steps a little left so the swing has the
+# right of its square, and the whole swing stays inside the square's 3-pixel border,
+# where the viewer outlines the acting pirate's square. Each stance: the hand on the
+# haft, the haft's angle (0 points right, 90 up), the body's lift (up is negative)
+# and the haft's length.
 DIG_STANCES = (
-    ((37, 25), 72, -2, 20),  # raised high: dig frame 0
-    ((38, 27), 38, -1, 14),  # swinging down
-    ((34, 33), -72, 2, 10),  # the point in the sand: dig frame 1
-    ((34, 33), -72, 2, 10),  # held there while the chips fly
-    ((37, 27), 55, 0, 16),  # lifting out
-    ((37, 25), 72, -2, 20),  # raised again, as dig frame 0
+    ((32, 25), 78, 0, 16),  # raised high: dig frame 0
+    ((34, 28), 35, 0, 11),  # swinging down
+    ((31, 33), -70, 2, 9),  # the point in the sand: dig frame 1
+    ((31, 33), -70, 2, 9),  # held there while the chips fly
+    ((33, 27), 58, 0, 13),  # lifting out
+    ((32, 25), 78, 0, 16),  # raised again, as dig frame 0
 )
-_DIG_STEP_LEFT = 6
+_DIG_STEP_LEFT = 2  # keeps the hat off the square's outline
+_HEAD_REACH = 7  # the pickaxe head runs this far either side of the haft
 _IRON, _IRON_LIT = "#9aa4ae", "#d8e0e8"
 
 
@@ -456,8 +459,8 @@ def _pick_head(stance):
     across = (-math.sin(a), -math.cos(a))
     along = (math.cos(a), -math.sin(a))
     head = []
-    for t in range(-9, 10):
-        bend = 2 - (t / 9) ** 2 * 4  # the points curve back toward the hand
+    for t in range(-_HEAD_REACH, _HEAD_REACH + 1):
+        bend = 2 - (t / _HEAD_REACH) ** 2 * 4  # the points curve back toward the hand
         head.append(
             (
                 end[0] + across[0] * t + along[0] * bend,

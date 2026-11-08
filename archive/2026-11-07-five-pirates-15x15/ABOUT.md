@@ -14,7 +14,7 @@ Five pirates, 15x15 grid, 50 turns each, seed 6 (treasure at (12, 9)), thinking 
 
 ## What it showed
 
-Four of the five wrote a plan in their first turns, two by rows and one by columns, until pirate-5 settled it: "ALL use ROW plan". The crew agreed, unlike in the 6x6 game. But each pirate's strip was 45 squares, which takes about 90 turns of moving and digging, and they had 50. The treasure lay at the far end of pirate-5's rows, and was never dug up. Score 0. Of the 250 turns, 122 were moves, 73 were reads (mostly "nothing new"), 47 were digs and 4 were writes. 15 moves hit the north edge, because the pirates read (x, y) as (row, col). No square was dug twice, but pirates often walked back over dug squares.
+Four of the five wrote a plan in their first turns, two by rows and one by columns, until pirate-5 settled it: "ALL use ROW plan". The crew agreed, unlike in the 6x6 game. But each pirate's strip was 45 squares, which takes about 90 turns of moving and digging, and they had 50. The treasure lay at the far end of pirate-5's rows, and was never dug up. Score 0. Of the 250 turns, 122 were moves, 73 were reads (mostly "nothing new"), 47 were digs and 4 were writes. 15 moves hit the north edge, because the pirates read (x, y) as (row, col). No square was dug twice, but pirates often walked back over dug squares. Even with the + 4096 budget, 16 of the 282 replies came back empty. All but one were saved by asking once more, and 1 turn passed.
 
 ## Replaying it
 

@@ -16,7 +16,7 @@ Three pirates, 6x6 grid, 20 turns each, seed 20 (treasure at (5, 5), the corner 
 
 ## What it showed
 
-Talking isn't enough to coordinate. Pirate-1 wrote a plan by rows using (row, col). Pirate-2 wrote one by columns using (x, y), and pirate-3 another by columns. Pirate-2 then wrote "UNIFY on ROW plan", while pirate-1 wrote "P1 CONFIRMS column plan": each switched to the other's plan. By the end they were listing the squares they'd dug and asking each other to cover the gaps. Nobody reached (5, 5), and the score was 0. The prompt never said which way the coordinates run, so the pirates guessed. 2 moves hit the north edge. No reply came back empty with the + 4096 budget.
+Talking isn't enough to coordinate. Pirate-1 wrote a plan by rows using (row, col). Pirate-2 wrote one by columns using (x, y), and pirate-3 another by columns. Pirate-2 then wrote "UNIFY on ROW plan", while pirate-1 wrote "P1 CONFIRMS column plan": each switched to the other's plan. By the end they were listing the squares they'd dug and asking each other to cover the gaps. Nobody reached (5, 5), and the score was 0. The prompt never said which way the coordinates run, so the pirates guessed. 2 moves hit the north edge. Even with the + 4096 budget, used in all three sittings, 4 of the 66 replies came back empty (rows 2, 9, 27 and 30 of `run/replies.jsonl`). Each pirate was asked once more and answered, so no turn passed.
 
 ## Replaying it
 

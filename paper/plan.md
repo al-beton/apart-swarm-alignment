@@ -17,6 +17,7 @@ One row per file under `paper/sections/results/`. Its marker names the same expe
 
 | Section | Evidence | Status |
 |---|---|---|
+| `sample-sweep-seeds.md` | `results/sample-sweep-seeds/` | placeholder, to be replaced by the first real experiment |
 
 ## Page budget
 

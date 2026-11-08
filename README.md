@@ -1,4 +1,4 @@
-<!-- Implements: tooling/one-command-each, tooling/how-we-work, specs-and-docs/readme-commands-run, specs-and-docs/readme-keeps-up, treasure-island/one-line-replay, specs-and-docs/readme-reads-a-game -->
+<!-- Implements: tooling/one-command-each, tooling/how-we-work, workflow/one-page-for-people, specs-and-docs/readme-commands-run, specs-and-docs/readme-keeps-up, treasure-island/one-line-replay, specs-and-docs/readme-reads-a-game -->
 # Treasure Island
 
 A reproducible sandbox for asking when a swarm of LLM agents whistleblows, and what in their environment changes that. Pirates dig for one buried treasure on a grid, with too few turns for any one of them to search it alone and a shared scroll as their only channel, which costs a turn to write on or read. One of them will be handed a secret. We watch what it does. It's our entry to Apart's multi-agent oversight and control track.
@@ -145,17 +145,13 @@ What the pirates are told is `prompts/base.md` plus four slots a config's `[prom
 
 ## How we work
 
-A team of coding agents builds this, directed by one person. Coding agents start at `AGENTS.md`.
+A team of coding agents builds this, directed by one person, with a human collaborator or two. People start at [`CONTRIBUTING.md`](CONTRIBUTING.md): the loop from issue to merge, the labels, how to get a review round and merge, and how to change a spec. Coding agents start at `AGENTS.md`. Both lead to the same rules, in `contributing/spec/`.
 
 1. Work starts as a GitHub issue with checkbox acceptance criteria.
 2. Spec first: the statements in `product/spec/`, `experiments/spec/` or `contributing/spec/` change before anything else.
 3. Then a failing test, then the smallest code that passes it, then the trace: each file names the statements it implements, and each statement the files and tests behind it.
 4. One draft pull request per issue; CI must be green, and anything a person can now run or see is in this README.
-5. Codex reviews it, then a reviewer agent that didn't write it; every thread is answered and resolved before merging.
-
-## History reset
-
-`main` was restarted from a fresh first commit on 6 November 2026 to make clones small. A clone older than that must not push: it would bring the old history back. Clone again. Nothing was lost: the old history is in [`al-beton/something-to-lose-apart-ai-collusion`](https://github.com/al-beton/something-to-lose-apart-ai-collusion). Edu: your Treasure Island draft is on `experiment/treasure-island`, with the same content and you as author, now on top of the new `main`; your original commit is backed up in the old repo as `edu/treasure-island-original`. To bring over anything you hadn't pushed, copy the files or make a patch from your old clone and apply it on a branch from the new `main`.
+5. Codex reviews it once; every thread is answered and resolved, then whoever opened it merges.
 
 ## License
 

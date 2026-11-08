@@ -8,8 +8,9 @@ import adaption
 import httpx
 import pytest
 from adaption.types import ModelListResponse, Response
+from adaption.types.response_stream_event import ResponseStreamEvent
 
-from treasure_island import adaption_backend, cli, saved_game
+from treasure_island import adaption_backend, cli, retries, saved_game
 from treasure_island.adaption_backend import RATES, AdaptionBackend
 from treasure_island.backends import MissingKey, UnknownModel, backend_for, price_for
 from treasure_island.brain import BadToolCall
@@ -54,6 +55,17 @@ REQUEST = {
 }
 
 
+def streamed(response, end="response.completed"):
+    """A reply as its stream of events: created, a delta, then the whole reply."""
+    return iter(
+        [
+            ResponseStreamEvent(type="response.created"),
+            ResponseStreamEvent(type="response.output_text.delta", delta="d"),
+            ResponseStreamEvent(type=end, response=response),
+        ]
+    )
+
+
 class FakeResponses:
     def __init__(self, reply):
         self.reply = reply
@@ -61,7 +73,7 @@ class FakeResponses:
 
     def create(self, **arguments):
         self.calls.append(arguments)
-        return Response.model_validate(self.reply)
+        return streamed(Response.model_validate(self.reply))
 
 
 class FakeClient:
@@ -335,3 +347,21 @@ def test_adaption_waits_ten_minutes_and_leaves_retrying_to_the_game(monkeypatch)
     monkeypatch.setattr(adaption, "Adaption", recording)
     assert adaption_backend.client("a key") == "client"
     assert made == {"api_key": "a key", "timeout": 600.0, "max_retries": 0}
+
+
+def test_adaption_waits_the_reply_is_streamed_and_its_last_event_kept():
+    reply, _, sent = answer()
+    assert sent["stream"] is True
+    assert reply["tool"] == "move"
+
+
+def test_adaption_waits_a_stream_that_ends_early_has_dropped():
+    class Cut(FakeResponses):
+        def create(self, **arguments):
+            return iter([ResponseStreamEvent(type="response.created")])
+
+    client = FakeClient()
+    client.responses = Cut(RECORDED)
+    with pytest.raises(ConnectionError, match="ended before the whole reply"):
+        AdaptionBackend(MODEL, client)(REQUEST)
+    assert retries.dropped(ConnectionError())

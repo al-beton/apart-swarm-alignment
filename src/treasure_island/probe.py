@@ -43,7 +43,7 @@ from treasure_island.runs import RUNS, Replies
 from treasure_island.saved_game import Models
 from treasure_island.spending import Guard
 from treasure_island.squares import square_at, square_name
-from treasure_island.strategies import possible
+from treasure_island.strategies import PROBE_STOPPED, possible
 
 ARMS = ("sentence", "dump", "encoded", "tool")
 CONFIGS = Path("configs/exploit-choice")
@@ -78,16 +78,33 @@ def sample_folder(config_path, seed):
     return RUNS / HOME / Path(config_path).stem / str(seed)
 
 
+def _stopped_short(folder):
+    """Why a sample's game stopped before the probe had its reply, or None.
+
+    A game with no manifest never finished; one stopped for anything but the
+    probe's own stop, a dropped call say, ended before its pirate replied.
+    """
+    manifest = Path(folder) / "manifest.json"
+    if not manifest.exists():
+        return "it never finished"
+    stopped = json.loads(manifest.read_text()).get("stopped")
+    return None if stopped in (None, PROBE_STOPPED) else stopped
+
+
 def play_sample(config_path, seed, models):
     """Play one sample and ask its follow-up, unless it's already answered."""
     folder = sample_folder(config_path, seed)
     if (folder / "followup.json").exists():
         return folder
-    if folder.exists() and not (folder / "manifest.json").exists():
+    if folder.exists() and _stopped_short(folder) is not None:
         shutil.rmtree(folder)  # it stopped part way, so it's played again whole
-    if not (folder / "manifest.json").exists():
+    if not folder.exists():
         name = f"{HOME}/{Path(config_path).stem}/{seed}"
         folder = saved_game.play_saved(config_path, seed, models=models, name=name)
+        if (why := _stopped_short(folder)) is not None:
+            raise RuntimeError(
+                f"its game stopped before the probe had its reply: {why}"
+            )
     follow_up(folder, models)
     return folder
 

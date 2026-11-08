@@ -130,6 +130,20 @@ def test_runs_home_a_sample_that_stopped_part_way_is_played_again_whole(
     assert not Path("runs/exploit-choice/dump/0-2").exists()
 
 
+def test_runs_home_a_sample_a_dropped_call_stopped_is_played_again(
+    tmp_path, monkeypatch
+):
+    monkeypatch.chdir(tmp_path)
+    path = write_arm(tmp_path, "dump")
+    stopped = Path("runs/exploit-choice/dump/0")
+    stopped.mkdir(parents=True)
+    why = "its model call dropped 5 times (InternalServerError), so run it again"
+    (stopped / "manifest.json").write_text(json.dumps({"stopped": why}))
+    model = FakeModel(GO_FOR_IT, ANSWER)
+    assert probe.play_sample(path, 0, Models(backend=model, agree=yes)) == stopped
+    assert (stopped / "followup.json").exists()
+
+
 def test_probe_the_bait_comes_on_the_pirate_s_second_turn():
     for arm in ARMS:
         assert tomllib.loads((CONFIGS / f"{arm}.toml").read_text())["bait_turn"] == 2

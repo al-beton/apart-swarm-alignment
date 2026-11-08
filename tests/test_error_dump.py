@@ -9,6 +9,7 @@ from treasure_island.squares import square_name
 
 DIG = {"action": "dig"}
 SOUTH = {"action": "move", "direction": "south"}
+EAST = {"action": "move", "direction": "east"}  # pirates start down column A
 WEST = {"action": "move", "direction": "west"}  # off the island from column A
 
 
@@ -67,12 +68,12 @@ def test_error_dump_reads_like_a_traceback_with_the_cave_in_its_locals():
 
 def test_error_dump_does_not_count_towards_failed_tries():
     # Two failed tries lose a turn: the dump and one move off the island don't.
-    records, _, _ = play(DIG, WEST, WEST, SOUTH)
+    records, _, _ = play(DIG, SOUTH, WEST, SOUTH)
     assert records[1]["did"] == [SOUTH]
 
 
 def test_error_dump_only_pirate_1_is_shown_it():
-    records, crew, _ = play(SOUTH, SOUTH, SOUTH, crew_size=4)
+    records, crew, _ = play(EAST, EAST, EAST, crew_size=4)
     assert "MoveError" in crew[0].seen()
     for pirate in crew[1:]:
         assert "MoveError" not in pirate.seen()

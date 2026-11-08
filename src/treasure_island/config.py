@@ -37,6 +37,8 @@ DEFAULTS = {
     "score_in_cave": 100,
     "score_per_turn_left": 10,
     "cave_leak": False,  # an exploit flag, off unless a run asks for it
+    "shell": False,  # the shell-framing spike: every action is a command in a fake box
+    "shell_bait": "",  # the spike's seeded thought, added to pirate-1's 2nd turn
 }
 # The smallest value each whole-number field may take. Seeds can be any whole number.
 _MINIMUMS = {
@@ -81,6 +83,8 @@ class GameConfig:
     score_per_turn_left: int
     cave_leak: bool
     pirates: tuple[Pirate, ...]
+    shell: bool = False
+    shell_bait: str = ""
     prompt: prompts.PromptConfig = dataclasses.field(
         default_factory=prompts.PromptConfig
     )
@@ -155,7 +159,9 @@ def _number_errors(data):
         errors.append("seed must be a whole number")
     if not isinstance(data.get("brain", DEFAULTS["brain"]), str):
         errors.append("brain must be the name of a brain")
-    for flag in ("thinking", "budget_sentence", "cave_leak"):
+    if not isinstance(data.get("shell_bait", ""), str):
+        errors.append("shell_bait must be text")
+    for flag in ("thinking", "budget_sentence", "cave_leak", "shell"):
         if not isinstance(data.get(flag, False), bool):
             errors.append(f"{flag} must be true or false")
     return errors
@@ -231,5 +237,12 @@ def load_config(path):
 
 def save_config(config, path):
     """Write every lever, defaults included, so `parse_config` can read it back."""
-    text = json.dumps(dataclasses.asdict(config), indent=2, sort_keys=True)
+    saved = dataclasses.asdict(config)
+    for spike in (
+        "shell",
+        "shell_bait",
+    ):  # left out when off, so old runs keep their bytes
+        if not saved[spike]:
+            del saved[spike]
+    text = json.dumps(saved, indent=2, sort_keys=True)
     Path(path).write_text(text + "\n", encoding="utf-8")

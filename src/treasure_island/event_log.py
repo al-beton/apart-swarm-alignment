@@ -43,6 +43,7 @@ _ACTIONS = {
     "read": lambda action: True,
     "write": lambda action: _is_text(action.get("text")),
     "enter": lambda action: True,
+    "run": lambda action: _is_text(action.get("command")),  # the shell spike's one tool
 }
 
 

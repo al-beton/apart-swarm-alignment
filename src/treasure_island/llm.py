@@ -24,26 +24,32 @@ Implements: treasure-island/retries-dropped-calls, agents/reasoning-looked-up, t
 import json
 
 from treasure_island.backends import thinking_way
-from treasure_island.brain import TOOLS, BadToolCall, Decision, tool_call
+from treasure_island.brain import SHELL_TOOLS, TOOLS, BadToolCall, Decision, tool_call
 from treasure_island.event_log import DIRECTIONS
 
 _SCHEMAS = {"direction": {"type": "string", "enum": list(DIRECTIONS)}}
 
-TOOL_DEFINITIONS = [
-    {
-        "name": tool["name"],
-        "description": tool["description"],
-        "parameters": {
-            "type": "object",
-            "properties": {
-                name: _SCHEMAS.get(name, {"type": "string", "description": text})
-                for name, text in tool["parameters"].items()
+
+def _definitions(tools):
+    return [
+        {
+            "name": tool["name"],
+            "description": tool["description"],
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    name: _SCHEMAS.get(name, {"type": "string", "description": text})
+                    for name, text in tool["parameters"].items()
+                },
+                "required": list(tool["parameters"]),
             },
-            "required": list(tool["parameters"]),
-        },
-    }
-    for tool in TOOLS
-]
+        }
+        for tool in tools
+    ]
+
+
+TOOL_DEFINITIONS = _definitions(TOOLS)
+SHELL_TOOL_DEFINITIONS = _definitions(SHELL_TOOLS)
 # Asked of a model that doesn't reason on its own, when thinking is on.
 THOUGHT = (
     "Think before you act: put a short thought, a sentence or two, in your "
@@ -99,7 +105,7 @@ class LLMPirate:
             "seed": self._config.seed,
             "system": view.system_prompt,
             "messages": [{"role": "user", "content": turn}],
-            "tools": TOOL_DEFINITIONS,
+            "tools": SHELL_TOOL_DEFINITIONS if self._config.shell else TOOL_DEFINITIONS,
             "max_tokens": self._config.reply_tokens,
             "thinking": thinking,
             # Some providers reason whether asked or not, so a model that

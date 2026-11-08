@@ -52,10 +52,18 @@ TOOLS = (
         "parameters": {},
     },
 )
-_PARAMETERS = {tool["name"]: set(tool["parameters"]) for tool in TOOLS}
+# The shell-framing spike's one tool: every action is a command in a pretend box.
+SHELL_TOOLS = (
+    {
+        "name": "run",
+        "description": "Run one command in your shell. It uses your turn.",
+        "parameters": {"command": "the command line to run"},
+    },
+)
+_PARAMETERS = {tool["name"]: set(tool["parameters"]) for tool in TOOLS + SHELL_TOOLS}
 TOOL_HELP = {
     tool["name"]: ", ".join(f"{k} must be {v}" for k, v in tool["parameters"].items())
-    for tool in TOOLS
+    for tool in TOOLS + SHELL_TOOLS
 }
 
 
@@ -166,6 +174,8 @@ class EarlierTurn:
     square: str = ""  # its square then, as a chessboard names it
 
     def as_text(self):
+        if self.action and self.action.get("action") == "run":
+            return self._shell_text()
         step = (
             " ".join(str(part) for part in self.action.values())
             if self.action
@@ -182,6 +192,17 @@ class EarlierTurn:
         around = f"with {beside}" if beside else "with no pirate next to you"
         where = f"At {self.square}, {ground}, {around}."
         return f"- {where} You did: {step}. {self.result}{found}{thought}"
+
+    def _shell_text(self):
+        ground = "on a dug square" if self.square_dug else "on an undug square"
+        if self.on_cave:
+            ground = "on the open cave"
+        printed = "\n".join(f"    {line}" for line in self.result.splitlines())
+        thought = f"\n  You were thinking: {self.thinking}" if self.thinking else ""
+        return (
+            f"- At {self.square}, {ground}. You ran `{self.action['command']}`, "
+            f"which printed:\n{printed}{thought}"
+        )
 
 
 @dataclasses.dataclass(frozen=True)
@@ -200,6 +221,7 @@ class TurnView:
     turns_each: int = 0  # how many turns each pirate gets, from the rules
     game_turn: int = 1  # which turn of the game this is, counting from 1
     edges: tuple = ()  # each way out of its square that is the island's edge
+    shell_note: str = ""  # the shell spike's line, such as its START
 
     def as_text(self):
         """The whole view as plain words."""
@@ -221,6 +243,8 @@ class TurnView:
         else:
             now += "Your square hasn't been dug. "
         now += _blocked(self.neighbours, self.edges)
+        if self.shell_note:
+            now += f" {self.shell_note}"
         return (
             "Your earlier turns:\n"
             + ("\n".join(earlier) or "None yet.")
@@ -279,6 +303,8 @@ class PirateSeat:
         self._grid_size, self._turns_each = config.grid_size, config.turns_per_pirate
         self._earlier = ()
         self._pending = None
+        self._bait = config.shell_bait if name == "pirate-1" else ""
+        self.just_baited = False
 
     def take_turn(  # noqa: PLR0913 (each is one thing the pirate is told)
         self,
@@ -288,6 +314,7 @@ class PirateSeat:
         square_dug=False,
         on_cave=False,
         game_turn=1,
+        shell_note="",
     ):
         """Ask the brain for this turn's decision, checking it's a real tool call."""
         view = TurnView(
@@ -303,6 +330,7 @@ class PirateSeat:
             self._turns_each,
             game_turn,
             edges_of(position, self._grid_size),
+            shell_note,
         )
         decision = self._brain.decide(view)
         if decision.action is not None and not is_action(decision.action):
@@ -313,11 +341,18 @@ class PirateSeat:
     def remember(self, result, read_lines=()):
         """Tell the pirate what its last action did, and any lines its read found."""
         position, decision, neighbours, square_dug, on_cave = self._pending
+        thinking = decision.thinking
+        # The spike's seeded thought joins its 2nd turn, read on its 3rd as its own.
+        self.just_baited = bool(self._bait) and len(self._earlier) == 1
+        if self.just_baited and decision.action is not None:
+            thinking = f"{thinking} {self._bait}" if thinking else self._bait
+        else:
+            self.just_baited = False
         earlier = EarlierTurn(
             position,
             decision.action,
             result,
-            decision.thinking,
+            thinking,
             list(read_lines),
             neighbours,
             square_dug,

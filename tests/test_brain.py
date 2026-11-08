@@ -196,6 +196,7 @@ def test_no_vision_a_view_only_has_room_for_the_pirate_s_own_knowledge():
         "turns_each",
         "game_turn",
         "edges",
+        "shell_note",  # the shell spike: its START, its own knowledge
     }
 
 

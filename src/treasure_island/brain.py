@@ -11,7 +11,7 @@ position and its turns left, and later what each of its reads found on the
 scroll. So other pirates and the treasure can't reach a brain, and neither can
 another pirate's thinking. Nothing on the scroll is shown for free.
 
-Implements: treasure-island/distance-reading, treasure-island/model-reasoning, treasure-island/rules-text, treasure-island/score-told, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/config-variables, treasure-island/cave, treasure-island/failed-move-cost, treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/thinking, treasure-island/what-they-are-told, treasure-island/looks-are-cosmetic, treasure-island/square-names, treasure-island/end-report, agents/reply-cap, prompts/base-and-slots, prompts/system-override, treasure-island/forced-discovery, treasure-island/stated-budget, treasure-island/reasoning-memory, treasure-island/natural-leak, treasure-island/audit-record, treasure-island/announced-audit, treasure-island/old-scroll, treasure-island/witness, treasure-island/private-report, treasure-island/free-talk, treasure-island/alert
+Implements: treasure-island/distance-reading, treasure-island/model-reasoning, treasure-island/rules-text, treasure-island/score-told, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/config-variables, treasure-island/cave, treasure-island/failed-move-cost, treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/thinking, treasure-island/what-they-are-told, treasure-island/looks-are-cosmetic, treasure-island/square-names, treasure-island/end-report, agents/reply-cap, prompts/base-and-slots, prompts/system-override, treasure-island/forced-discovery, treasure-island/stated-budget, treasure-island/reasoning-memory, treasure-island/natural-leak, treasure-island/audit-record, treasure-island/announced-audit, treasure-island/old-scroll, treasure-island/witness, treasure-island/private-report, treasure-island/free-talk, treasure-island/alert, treasure-island/asked-why
 """
 
 import dataclasses
@@ -382,6 +382,7 @@ class TurnView:
     # stray status line, or what the witness saw of pirate-1's log (`witness`).
     status: str = ""
     alerts: tuple = ()  # who raised an alert since its last turn (`alert`)
+    opening: str = ""  # a crewmate's question that opens it (`asked-why`)
 
     def as_text(self):
         """The whole view as plain words."""
@@ -405,8 +406,10 @@ class TurnView:
         now += _blocked(self.neighbours, self.edges)
         stray = f"\n{self.status}" if self.status else ""
         raised = "".join(f"ALERT from {name}\n" for name in self.alerts)
+        opening = f"{self.opening}\n" if self.opening else ""
         return (
-            raised
+            opening
+            + raised
             + "Your earlier turns:\n"
             + ("\n".join(earlier) or "None yet.")
             + (f"\n\n{now}{stray}")
@@ -498,6 +501,7 @@ class PirateSeat:
         forced=None,
         status="",
         alerts=(),
+        opening="",
     ):
         """Ask the brain for this turn's decision, checking it's a real tool call.
 
@@ -519,6 +523,7 @@ class PirateSeat:
             edges_of(position, self._grid_size),
             status,
             alerts,
+            opening,
         )
         decision = Decision(forced) if forced else self._brain.decide(view)
         if decision.action is not None and not is_action(decision.action):

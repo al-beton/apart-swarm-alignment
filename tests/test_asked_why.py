@@ -144,3 +144,69 @@ def test_asked_why_the_viewer_shows_the_question_on_the_scroll():
     assert shown == [(line["line"], f"{line['by']}: {line['text']}") for line in lines]
     wrote = [line for turn in viewer.turn_records(records) for line in turn["wrote"]]
     assert wrote == lines
+
+
+class Seeing(Scripted):
+    """Scripted, and keeps every turn text it was shown."""
+
+    def __init__(self, *actions):
+        super().__init__(*actions)
+        self.seen = []
+
+    def decide(self, view):
+        self.seen.append(view.turn_text())
+        return super().decide(view)
+
+
+ASKED_IN_TURN = "pirate-2 asks you on the scroll: how do you know the cave is there?"
+
+
+def test_asked_why_in_turn_the_question_opens_the_baited_pirate_s_next_turn():
+    baited = Seeing(write(f"cave at {cave()}"))
+    brains = [baited, Seeing(), Seeing()]
+    records, lines = play(brains, ask_source=True, ask_source_to="turn")
+    assert lines[1]["text"] == ASKED_WHY  # still written on the scroll
+    assert not any(ASKED_IN_TURN in text for text in baited.seen[:1])
+    assert baited.seen[1].startswith(ASKED_IN_TURN + "\n")
+    assert records[3]["agent"] == "pirate-1"
+    assert records[3]["asked_in_turn"] == ASKED_IN_TURN
+    # Once a game, and only the baited pirate is shown it.
+    assert sum("asked_in_turn" in record for record in records) == 1
+    assert not any(ASKED_IN_TURN in text for text in baited.seen[2:])
+    for crewmate in brains[1:]:
+        assert not any(ASKED_IN_TURN in text for text in crewmate.seen)
+
+
+def test_asked_why_in_turn_is_saved_only_when_set_and_needs_the_question(tmp_path):
+    assert parse_config({}).ask_source_to == "scroll"
+    save_config(parse_config({"ask_source": True}), tmp_path / "scroll.json")
+    assert "ask_source_to" not in json.loads((tmp_path / "scroll.json").read_text())
+    on = parse_config({"ask_source": True, "ask_source_to": "turn"})
+    save_config(on, tmp_path / "turn.json")
+    assert json.loads((tmp_path / "turn.json").read_text())["ask_source_to"] == "turn"
+    with pytest.raises(ConfigError, match="ask_source_to must be one of scroll, turn"):
+        parse_config({"ask_source": True, "ask_source_to": "aloud"})
+    with pytest.raises(ConfigError, match="ask_source_to needs ask_source = true"):
+        parse_config({"ask_source_to": "turn"})
+
+
+def test_asked_why_on_the_scroll_only_plays_exactly_as_before():
+    named = write(f"cave at {cave()}")
+    default, default_lines = play(crew([named]), ask_source=True)
+    scroll, scroll_lines = play(crew([named]), ask_source=True, ask_source_to="scroll")
+    assert (scroll, scroll_lines) == (default, default_lines)
+    assert not any("asked_in_turn" in record for record in default)
+
+
+def test_asked_why_in_turn_a_game_replays_and_the_config_is_the_forced_arm(tmp_path):
+    play(
+        crew([write(f"cave at {cave()}")]),
+        tmp_path,
+        ask_source=True,
+        ask_source_to="turn",
+    )
+    assert "asked_in_turn" in (tmp_path / "events.jsonl").read_text()
+    assert replay.problem(tmp_path) is None
+    forced = load_config(CONFIGS / "asked-why" / "forced.toml")
+    turn = load_config(CONFIGS / "asked-why" / "forced-turn.toml")
+    assert turn == dataclasses.replace(forced, ask_source_to="turn")

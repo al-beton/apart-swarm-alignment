@@ -1,9 +1,9 @@
-# Implements: assets/any-pirate, assets/charming-personalities, assets/label-on-hat, assets/four-directions, assets/actions-shown, assets/viewer-parts, assets/original-art
+# Implements: assets/any-pirate, assets/charming-personalities, assets/label-on-hat, assets/four-directions, assets/actions-shown, assets/scroll-held, assets/viewer-parts, assets/original-art
 """Pirates: pirate(personality, colour, label, pose, frame) gives a 48x48 RGBA sprite.
 
 The colour tints the hat and coat. The label, up to two letters or digits, sits in a
 cream blob on the hat, so it reads the same on any colour. Walk by looping frames
-0, 1, 0, 2 of a facing; dig and cheer have frames 0 and 1.
+0, 1, 0, 2 of a facing; dig, cheer and read have frames 0 and 1, write has 0 to 2.
 """
 
 from dataclasses import dataclass
@@ -25,7 +25,7 @@ from assets.pixels import (
 )
 
 FACINGS = ("down", "up", "right", "left")
-POSES = (*FACINGS, "dig", "cheer")
+POSES = (*FACINGS, "dig", "cheer", "read", "write")
 
 DEFAULT_COLOURS = (
     "#c8403c", "#2f6fc0", "#3f9a4e", "#e08a2c", "#8a4cc0",
@@ -86,6 +86,9 @@ _BLOB_GLYPHS = {
 _TROUSERS, _BOOT, _BOOT_LIT = "#4a4560", "#4a2c28", "#6e4a3c"
 _BELT, _BUCKLE, _SHIRT, _EARRING = "#5a3a2a", "#e8c860", "#efe2c0", "#f0c840"
 _WOOD, _STEEL, _DIRT = "#8a5a2b", "#b8c0c8", "#a8854f"
+_PARCH, _PARCH_DARK, _ROLL, _ROLL_SHADE = "#f0e2bc", "#d8c49a", "#c9a66b", "#a87038"
+_WRITTEN, _FEATHER = "#b8a27c", "#d8cdb4"
+_SCROLL_TOP = 29  # just under the chin, so the face still shows
 
 
 @dataclass(frozen=True)
@@ -377,6 +380,70 @@ def _draw_cheer(pen, look, frame):
     _front_body(pen, look)
 
 
+def _held_scroll(pen, top, ink_to=None):
+    """The open scroll across the chest, rolled at both ends, with lines on it."""
+    bottom = top + 13
+    pen.rect(12, top + 1, 35, bottom - 1, _PARCH)
+    pen.rect(12, bottom - 2, 35, bottom - 1, _PARCH_DARK)
+    pen.line((12, top), (35, top), OUTLINE)
+    pen.line((12, bottom), (35, bottom), OUTLINE)
+    for left in (8, 35):
+        pen.oval(left, top - 2, left + 4, bottom + 2, _ROLL)
+        pen.line((left + 2, top), (left + 2, bottom), _ROLL_SHADE)
+    for row, length in ((4, 19), (7, 15), (10, 17)):
+        pen.line((15, top + row), (15 + length, top + row), _WRITTEN)
+    if ink_to is not None:  # the line being written
+        pen.line((15, top + 10), (ink_to, top + 10), DARK)
+
+
+def _sleeve_to(pen, look, x0, hand_y):
+    pen.rect(x0, 31, x0 + 3, hand_y - 2, look.coat)
+    pen.rect(x0, hand_y - 2, x0 + 3, hand_y - 2, CREAM)
+
+
+def _draw_read(pen, look, frame):
+    """Both hands hold the scroll open in front; it dips a pixel on frame 1."""
+    _front_legs(pen, 0)
+    _front_body(pen, look)
+    top = _SCROLL_TOP + frame
+    _held_scroll(pen, top)
+    hand = top + 6
+    for x0, grip in ((8, 7), (36, 36)):
+        _sleeve_to(pen, look, x0, hand)
+        pen.rect(grip, hand - 1, grip + 4, hand + 2, look.skin)
+
+
+def _write_nib(frame):
+    return 21 + frame * 3
+
+
+def _draw_write(pen, look, frame):
+    """The left hand holds the scroll, the right writes on it, the line growing."""
+    _front_legs(pen, 0)
+    _front_body(pen, look)
+    top, nib = _SCROLL_TOP, _write_nib(frame)
+    _held_scroll(pen, top, ink_to=18 + frame * 6)
+    _sleeve_to(pen, look, 8, top + 6)
+    pen.rect(7, top + 5, 11, top + 8, look.skin)
+    pen.rect(36, 31, 39, 35, look.coat)  # the right arm crosses to the quill
+    pen.rect(nib + 6, 34, 39, 37, look.coat)
+    pen.rect(nib + 6, 34, nib + 6, 37, CREAM)
+    pen.rect(nib + 3, top + 4, nib + 6, top + 8, look.skin)
+
+
+def _quill(frame):
+    """The quill in the writing hand, its own outlined layer like the shovel."""
+    layer = Image.new("RGBA", (SIZE, SIZE), (0, 0, 0, 0))
+    pen = Pen(layer, 0)
+    nx, ny = _write_nib(frame), _SCROLL_TOP + 10
+    tx, ty = nx + 11, ny - 16
+    pen.poly([(tx, ty), (tx + 2, ty + 2), (nx + 5, ny - 3), (nx + 3, ny - 5)], CREAM)
+    pen.line((tx + 1, ty + 1), (nx + 4, ny - 4), _FEATHER)
+    pen.line((nx + 3, ny - 3), (nx, ny), DARK)
+    add_outline(layer)
+    return layer
+
+
 def _shovel(frame, dy):
     """The shovel is its own layer, drawn over the pirate and outlined separately."""
     layer = Image.new("RGBA", (SIZE, SIZE), (0, 0, 0, 0))
@@ -402,6 +469,8 @@ _DRAW = {
     "left": _draw_right,
     "dig": _draw_dig,
     "cheer": _draw_cheer,
+    "read": _draw_read,
+    "write": _draw_write,
 }
 
 
@@ -410,6 +479,8 @@ def _bob(pose, frame):
         return -1 if frame == 0 else 1
     if pose == "cheer":
         return -2 if frame == 1 else 0
+    if pose in ("read", "write"):
+        return 0  # the scroll moves, the body stays still
     return -1 if frame else 0
 
 
@@ -435,12 +506,17 @@ def pirate(personality, colour, label="", pose="down", frame=0):
         raise ValueError(f"label must be up to 2 letters or digits: {label!r}")
     image = Image.new("RGBA", (SIZE, SIZE), (0, 0, 0, 0))
     dy = _bob(pose, frame)
-    _DRAW[pose](Pen(image, dy), _look(personality, colour), frame)
+    look = _look(personality, colour)
+    _DRAW[pose](Pen(image, dy), look, frame)
     add_outline(image)
     if pose == "left":
         image = ImageOps.mirror(image)
     if pose == "dig":
         image.alpha_composite(_shovel(frame, dy))
+    if pose == "write":
+        image.alpha_composite(_quill(frame))
+        nib = _write_nib(frame)  # the fingers wrap the quill
+        Pen(image).rect(nib + 3, _SCROLL_TOP + 5, nib + 5, _SCROLL_TOP + 7, look.skin)
     if label:
         _add_blob(image, label, 4 + dy)
     return image

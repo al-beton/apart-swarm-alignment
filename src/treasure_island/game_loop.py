@@ -17,7 +17,7 @@ Fields stay in reading order rather than sorted, so a person reading a record
 meets who and what before the long prompt. Pirates are named `pirate-1` upwards,
 matching the numbered art. A brain that gives no reason just has no "Why".
 
-Implements: treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/thinking, treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/score-numbers, runs/stops-cleanly, agents/ask-once-more, treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/turn-view, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/failed-move-cost, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process, agents/refusals-noted, treasure-island/square-names, event-log/score-numbers
+Implements: treasure-island/model-reasoning, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/thinking, treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/score-numbers, runs/stops-cleanly, agents/ask-once-more, treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/turn-view, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/failed-move-cost, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process, agents/refusals-noted, treasure-island/square-names, event-log/score-numbers
 """
 
 import json
@@ -67,6 +67,12 @@ class _Recording:
     def decide(self, view):
         self.prompt = view.as_text()
         return self._brain.decide(view)
+
+
+def _reasoning_tokens(spent):
+    """The turn's reasoning tokens over every try, cut-offs included, if known."""
+    known = [tokens for tokens in spent if tokens is not None]
+    return {"reasoning_tokens": sum(known)} if known else {}
 
 
 def _one_line(text):
@@ -217,7 +223,7 @@ class Game:
         dug_here = start in self.state.dug
         on_cave = self.state.treasure_dug_up and start == self.state.treasure
         seat, refused, bad_replies = self._seats[pirate], [], []
-        dropped = 0
+        dropped, reasoned = 0, []
         # Kept until the turn's record is made, in case the game stops part way.
         self.unfinished = (name, bad_replies)
         while True:
@@ -226,6 +232,7 @@ class Game:
             )
             bad_replies += decision.refused
             dropped += decision.retried
+            reasoned.append(decision.reasoning_tokens)
             refusal = self._refusal(decision.action, decision.refused)
             if refusal is None:
                 result, did, read_lines = self._act(decision.action, start, name)
@@ -277,9 +284,9 @@ class Game:
                 "neighbours": dict(around),
                 "square_dug": dug_here,
             },
+            **({"thinking": decision.thinking} if decision.thinking else {}),
+            **_reasoning_tokens(reasoned),
         }
-        if decision.thinking:
-            record["thinking"] = decision.thinking
         if bad_replies:
             record["refused"] = bad_replies
         return record

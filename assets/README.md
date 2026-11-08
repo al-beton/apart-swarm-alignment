@@ -15,7 +15,7 @@ A square is 48x48, so a 10x10 board is 480px at real size. Scale by whole number
 
 | Path | Size | What |
 |---|---|---|
-| `pirates/pirate-01.png` to `pirate-20.png` | 144x288 | One crew member, labelled with its number, in that number's colour and personality. Columns are frames, rows are `down`, `up`, `right`, `left`, `dig`, `cheer`. |
+| `pirates/pirate-01.png` to `pirate-20.png` | 144x384 | One crew member, labelled with its number, in that number's colour and personality. Columns are frames, rows are `down`, `up`, `right`, `left`, `dig`, `cheer`, `read`, `write`. |
 | `tiles/sand.png`, `sand-2.png`, `sand-3.png` | 48x48 | Sand. Mix the three so the ground doesn't look stamped; each has a faint dotted top and left edge, so squares can be counted. |
 | `tiles/grass.png` | 48x48 | Grass, walkable like sand, there to break up the ground. |
 | `tiles/dug.png` | 48x48 | A dug square: ruffled, and still walkable. |
@@ -29,7 +29,7 @@ A square is 48x48, so a 10x10 board is 480px at real size. Scale by whole number
 | `ui/open-scroll.png` | 28x22 | A scroll held open beside a pirate reading, with lines but no words. |
 | `ui/panel.png` | 36x36 | Side panel and log frame nine-slice, with 12px cells. |
 | `ui/turn-arrow.png` | 16x12 | Floats above the pirate whose turn it is. |
-| `sheet.png` | 1024x1420 | All of the above on one page. |
+| `sheet.png` | 1040x1420 | All of the above on one page. |
 | `catwalk.gif` | 480x384 | Every pirate walking a loop on a sample of the walkable tiles: 32 frames, 100 ms each. A preview for people, not something to build a renderer on. |
 
 ## Walking

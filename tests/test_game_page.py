@@ -189,3 +189,14 @@ def test_game_page_its_script_parses(saved, tmp_path):
     path = tmp_path / "page.js"
     path.write_text(script.group(1))
     subprocess.run(["node", "--check", str(path)], check=True)
+
+
+def test_game_page_shows_the_reasoning_tokens_a_turn_spent(saved):
+    records = records_of(saved)
+    records[0]["reasoning_tokens"] = 812
+    rewrite(saved, records)
+    page = viewer.slideshow_page(saved)
+    turns = turns_in(page)
+    assert turns[0]["reasoned"] == "Its model spent 812 tokens reasoning."
+    assert turns[1]["reasoned"] == ""
+    assert 'id="reasoned"' in page

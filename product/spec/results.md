@@ -8,10 +8,12 @@
 - **result-folder:** Each result is `results/<name>/`, holding its run folders and a short `README.md` that says the question, what was run, what it shows and what it cost, so a finding can be kept and shared with its evidence beside it.
 - **results-are-runs:** A result's run folders use the same format as `runs/` and `examples/`, so the same commands work on them.
 - **results-listed:** `results/README.md` lists every result, so a reader can see at once what's been found.
-- **results-stay-checkable:** CI replays every committed result with no keys and no network, so anyone can trust a result without paying to rerun it.
+- **results-stay-checkable:** Every committed result replays with no keys and no network: CI replays the result games on the named list (`runs/replay-checks`) and `make replay-all` replays the rest, so anyone can trust a result without paying to rerun it.
 - **sample-result:** `results/` holds a small sample result from a scripted game, so the layout can be copied and costs nothing to check.
 - **result-gif:** Each result holds a `game.gif` of one of its games, under 2 MB, so a reader sees it play without running anything.
 - **result-on-its-pr:** A pull request that adds or changes a result shows what it found, how each game ended and its GIF in the one game comment, from committed files alone, and one that touches no result shows no results section, so a reviewer can see what came in without running anything.
+- **archived-games:** Each real model game we keep is `archive/<name>/`, holding its run folder exactly as it was played, its `game.gif` and an `ABOUT.md` that says when and at which commit it was played, any local changes, the model and settings, what it cost, what it showed and how to replay it, so collaborators can study real games after the code has moved on. Archived games aren't replayed by CI, since a changed prompt stops an old game replaying.
+- **archive-listed:** `archive/README.md` lists every archived game in one line, so a reader can pick one.
 
 ## Where this is enforced
 
@@ -25,7 +27,9 @@
 | `result-folder` | `results/**` | `test_result_folder_each_holds_run_folders_and_says_what_it_found` |
 | `results-are-runs` | `results/**` | `test_results_are_runs_with_the_same_files`, `test_results_are_runs_the_same_commands_work` |
 | `results-listed` | `results/README.md` | `test_results_listed_in_the_index_exactly_once_each` |
-| `results-stay-checkable` | `results/**`, `.github/workflows/blocking-checks.yml` | `test_results_stay_checkable_replaying_with_no_keys_or_network` |
+| `results-stay-checkable` | `results/**`, `src/treasure_island/replay.py` | `test_results_stay_checkable_replaying_with_no_keys_or_network`, `test_results_stay_checkable_each_result_has_a_game_on_the_list` |
 | `sample-result` | `results/sample-sweep-seeds/**` | `test_sample_result_is_a_scripted_game_that_cost_nothing` |
 | `result-gif` | `results/**`, `results/README.md` | `test_result_gif_each_result_has_one_under_2_mb` |
 | `result-on-its-pr` | `.github/workflows/game-gif.yml` | `test_result_on_its_pr_shows_summary_endings_and_gif`, `test_result_on_its_pr_reads_only_what_the_pull_request_changed`, `test_result_on_its_pr_has_no_section_without_a_result`, `test_result_on_its_pr_finds_the_section_a_result_calls_what_it_shows` |
+| `archived-games` | `archive/**` | `test_archived_games_each_has_its_run_gif_and_about` |
+| `archive-listed` | `archive/README.md` | `test_archive_listed_each_game_once_in_the_guide` |

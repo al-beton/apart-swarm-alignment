@@ -12,7 +12,7 @@ from treasure_island import backends, cli, saved_game
 from treasure_island.config import load_config
 from treasure_island.event_log import log_errors
 from treasure_island.saved_game import Models
-from treasure_island.spending import estimate
+from treasure_island.spending import Declined, Estimate, estimate
 
 DIG = json.dumps({"tool": "dig", "arguments": {}})
 CONFIG = """
@@ -75,7 +75,7 @@ def test_cost_before_run_counts_every_call_a_crew_can_make(toml):
     assert found.calls == TURNS * 2
     assert found.cached == 0
     assert found.tokens >= found.calls * load_config(toml).reply_tokens
-    assert found.cost_usd is None
+    assert found.costs is None
 
 
 def test_cost_before_run_counts_every_failed_move_a_turn_allows(toml):
@@ -87,16 +87,35 @@ def test_cost_before_run_counts_every_failed_move_a_turn_allows(toml):
 
 def test_cost_before_run_counts_the_thinking_budget(toml):
     config = load_config(toml)
+    less = dataclasses.replace(config, thinking_tokens=config.thinking_tokens - 100)
+    budget = estimate(config).tokens - estimate(less).tokens
+    assert budget == estimate(config).calls * 100
+    # A model that reasons gets its budget with thinking off too.
     off = dataclasses.replace(config, thinking=False)
-    budget = estimate(config).tokens - estimate(off).tokens
-    assert budget == estimate(config).calls * config.thinking_tokens
+    assert estimate(off).tokens == estimate(config).tokens
 
 
 def test_cost_before_run_prices_a_model_whose_price_is_known(toml, monkeypatch):
     monkeypatch.setitem(backends.PRICES, "fake/digger", (1.0, 4.0))
     found = estimate(load_config(toml))
     reply_tokens = load_config(toml).reply_tokens
-    assert found.cost_usd >= found.calls * reply_tokens * 4.0 / 1_000_000
+    assert found.costs["dollars"] >= found.calls * reply_tokens * 4.0 / 1_000_000
+
+
+def test_cost_before_run_shows_a_cost_under_a_cent_as_more_than_nothing():
+    found = Estimate(4, 0, 2000, {"dollars": 0.0042137}, ())
+    text = found.as_text(1.0)
+    assert "costing at most $0.0042." in text
+    assert "$0.00." not in text
+
+
+def test_cost_before_run_shows_an_adaption_cost_in_credits(toml):
+    toml.write_text(
+        toml.read_text().replace("fake/digger", "adaption/deepseek-v4-flash")
+    )
+    text = estimate(load_config(toml)).as_text(1.0)
+    assert "Adaption credits." in text
+    assert "costing at most $" not in text
 
 
 def test_cost_before_run_counts_replies_earlier_runs_got(toml):
@@ -133,14 +152,21 @@ def test_yes_before_spending_asks_once_before_the_first_uncached_call(toml):
 
 def test_yes_before_spending_anything_but_yes_spends_nothing(toml):
     model = FakeModel()
-    folder = saved_game.play_saved(toml, 0, models=Models(model, agree=Asker(False)))
+    with pytest.raises(Declined, match="said yes"):
+        saved_game.play_saved(toml, 0, models=Models(model, agree=Asker(False)))
     assert model.requests == []
-    assert "said yes" in story_lines(folder)[-1]
+
+
+def test_yes_before_spending_anything_but_yes_leaves_no_run_folder(toml):
+    with pytest.raises(Declined):
+        saved_game.play_saved(toml, 0, models=Models(FakeModel(), agree=Asker(False)))
+    assert list(Path("runs").iterdir()) == []
 
 
 def test_yes_before_spending_with_no_one_to_ask_spends_nothing(toml):
     model = FakeModel()
-    saved_game.play_saved(toml, 0, models=Models(model))
+    with pytest.raises(Declined):
+        saved_game.play_saved(toml, 0, models=Models(model))
     assert model.requests == []
 
 
@@ -148,11 +174,10 @@ def test_yes_before_spending_the_question_reads_y_or_yes(toml, monkeypatch):
     answers = iter(["", "y"])
     monkeypatch.setattr(builtins, "input", lambda prompt: next(answers))
     monkeypatch.setattr(saved_game, "backend_for", lambda model: FakeModel())
-    cli.main(["run", str(toml), "--seed", "0", "--no-watch"])
-    cli.main(["run", str(toml), "--seed", "1", "--no-watch"])
-    first, second = sorted(Path("runs").iterdir())
-    assert story_lines(first)[-1].startswith("Game stopped:")
-    assert story_lines(second)[-1].startswith("Game over:")
+    assert cli.main(["run", str(toml), "--seed", "0", "--no-watch"]) == 1
+    assert cli.main(["run", str(toml), "--seed", "1", "--no-watch"]) == 0
+    (kept,) = Path("runs").iterdir()
+    assert story_lines(kept)[-1].startswith("Game over:")
 
 
 def test_yes_before_spending_yes_skips_the_question(toml, monkeypatch):
@@ -219,7 +244,8 @@ def test_stops_cleanly_a_capped_run_keeps_its_turns_and_replays(toml):
 
 
 def test_stops_cleanly_a_run_stopped_before_its_first_turn_replays(toml):
-    folder = saved_game.play_saved(toml, 0, models=Models(FakeModel()))
+    models = Models(FakeModel(), cap_usd=0.0, agree=yes)
+    folder = saved_game.play_saved(toml, 0, models=models)
     assert (folder / "events.jsonl").read_text() == ""
     assert saved_game.differences(folder) == []
 

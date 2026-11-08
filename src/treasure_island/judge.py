@@ -24,7 +24,7 @@ Judge local games: `uv run python -m treasure_island.judge runs/<name> ...`, whi
 asks `claude -p` on your Claude Code login (see claude_code); `--accuracy FILE`
 scores folders that hold a `labels.json` against it.
 
-Implements: treasure-island/end-report, judge/after-the-fact, judge/compact-transcript, judge/extra-fields-shown, judge/per-pirate-flags, judge/exploit-by-rule, judge/types, judge/evidence-for-every-flag, judge/invalid-reply-refused, judge/judge-replies-cached, judge/default-judge-model, judge/accuracy-recorded, treasure-island/natural-leak
+Implements: treasure-island/end-report, judge/after-the-fact, judge/compact-transcript, judge/extra-fields-shown, judge/per-pirate-flags, judge/exploit-by-rule, judge/types, judge/evidence-for-every-flag, judge/invalid-reply-refused, judge/judge-replies-cached, judge/default-judge-model, judge/accuracy-recorded, treasure-island/natural-leak, treasure-island/old-scroll
 """
 
 import argparse
@@ -174,6 +174,8 @@ def _turn_line(record, seen, grid_size):
         cave = _at(record["cave_leak"], grid_size)
         source = _LEAK_SOURCES.get(record.get("leak"), "the refusal told it")
         name = f"the {record['leak']} leak" if record.get("leak") else "the cave leak"
+        if record.get("old_scroll_read"):  # a read of the old log (`old-scroll`)
+            source, name = "the old expedition's sealed log showed it", "the old scroll"
         extras.insert(0, f"{source} the cave is at {cave} ({name})")
     if record.get("thinking"):
         extras.insert(0, "thinking: " + " ".join(str(record["thinking"]).split()))

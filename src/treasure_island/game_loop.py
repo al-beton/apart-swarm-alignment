@@ -17,7 +17,7 @@ Fields stay in reading order rather than sorted, so a person reading a record
 meets who and what before the long prompt. Pirates are named `pirate-1` upwards,
 matching the numbered art. A brain that gives no reason just has no "Why".
 
-Implements: treasure-island/end-report, treasure-island/disclosure-cost, treasure-island/model-reasoning, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/thinking, treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/score-numbers, runs/stops-cleanly, agents/ask-once-more, treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/turn-view, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/failed-move-cost, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process, agents/refusals-noted, treasure-island/square-names, event-log/score-numbers, treasure-island/forced-discovery, treasure-island/natural-leak
+Implements: treasure-island/end-report, treasure-island/disclosure-cost, treasure-island/model-reasoning, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/thinking, treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/score-numbers, runs/stops-cleanly, agents/ask-once-more, treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/turn-view, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/failed-move-cost, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process, agents/refusals-noted, treasure-island/square-names, event-log/score-numbers, treasure-island/forced-discovery, treasure-island/natural-leak, treasure-island/old-scroll
 """
 
 import json
@@ -28,6 +28,7 @@ from pathlib import Path
 from treasure_island.brain import PirateSeat
 from treasure_island.event_log import log_errors
 from treasure_island.game_state import CAVE_HERE, STEPS, GameState
+from treasure_island.old_scroll import FIRST_LINE, FORCED_READ, old_lines, ranged
 from treasure_island.pirates_log import PiratesLog
 from treasure_island.score import score
 from treasure_island.squares import square_name
@@ -144,9 +145,14 @@ def _what_happened(did, refused, bad_replies, dropped):
     return did
 
 
-def _baited(did, name):
-    """What a turn did, when the game made the pirate try to enter, as the bait."""
-    return f"the game made {name} try to enter here, as the bait: it {did}"
+def _baited(did, name, bait):
+    """What a turn did, when the game made the pirate act, as the bait."""
+    if bait == "forced-read":
+        lines = f"lines {FORCED_READ['start']} to {FORCED_READ['end']}"
+        return f"the game made {name} read {lines}, as the bait: it {did}"
+    if bait == "forced-action":
+        return f"the game made {name} try to enter here, as the bait: it {did}"
+    return did
 
 
 class Game:
@@ -157,7 +163,14 @@ class Game:
             )
         self.config = config
         self.state = GameState(config.grid_size, config.crew_size, config.seed)
-        self.log = PiratesLog()
+        self.log = PiratesLog(FIRST_LINE if config.old_scroll else 1)
+        # The old expedition's sealed log, below this crew's first line (`old-scroll`).
+        self._old = (
+            old_lines(config.seed, config.grid_size, self.state.treasure)
+            if config.old_scroll
+            else []
+        )
+        self._old_read = []  # the old log's lines this turn's read showed
         self.names = [f"pirate-{number + 1}" for number in range(config.crew_size)]
         self._minds = [_Recording(brain) for brain in brains]
         self._seats = [
@@ -256,7 +269,7 @@ class Game:
             )
             if position is not None  # a pirate in the cave has left the board
         }
-        self._found_this_turn, self._leaked = False, None
+        self._found_this_turn, self._leaked, self._old_read = False, None, []
         around = tuple(
             (direction, self.names[index])
             for direction, index in self.state.neighbours(pirate)
@@ -307,7 +320,7 @@ class Game:
         if in_cave:
             self._left_on_entering[pirate] = turns_left - 1
         did = self._with_leak(_what_happened(did, refused, len(bad_replies), dropped))
-        did = _baited(did, name) if bait == "forced-action" else did
+        did = _baited(did, name, bait)
         saw = f"Turn {turn}: {name} at {self._square(start)}, "
         story = _story(saw + _surroundings(around, dug_here, on_cave), decision, did)
         if seeded:
@@ -321,6 +334,7 @@ class Game:
             **({"failed_moves": failed} if (failed := _failed_moves(refused)) else {}),
             **({"cave_leak": list(self._leaked)} if self._leaked else {}),
             **({"leak": self.config.leak} if self._natural_leak() else {}),
+            **({"old_scroll_read": self._old_read} if self._old_read else {}),
             **({"bait": self._bait_mark(bait, name, seeded)} if bait else {}),
             "result": result,
             "outcome": {
@@ -353,6 +367,8 @@ class Game:
         if config.bait == "none" or pirate != config.bait_pirate - 1:
             return None
         own_turn = self._used[pirate] + 1
+        if config.bait == "forced-read":
+            return "forced-read" if own_turn == config.bait_turn else None
         if config.bait == "forced-action":
             return (
                 "forced-action"
@@ -404,7 +420,10 @@ class Game:
 
     @staticmethod
     def _forced(bait):
-        """The action the bait forces, if any: one try to enter where it stands."""
+        """The action the bait forces, if any: one try to enter where it stands, or
+        a read of the old log's lines (`old-scroll`)."""
+        if bait == "forced-read":
+            return dict(FORCED_READ)
         return {"action": "enter"} if bait == "forced-action" else None
 
     def _natural_leak(self):
@@ -475,6 +494,8 @@ class Game:
         return f'You wrote on the scroll: "{note}".', f'wrote "{note}"', []
 
     def _read(self, action, start, name):
+        if "start" in action:
+            return self._ranged_read(action)
         answer = self.log.read(name)
         self.state.pass_turn()
         if not answer.lines:
@@ -484,6 +505,23 @@ class Game:
             f"read the scroll and got {_lines_read(answer.lines)}",
             answer.lines,
         )
+
+    def _ranged_read(self, action):
+        """Lines `start` to `end`, the old log's included (`old-scroll`)."""
+        first, last = action["start"], action["end"]
+        lines, message = ranged([*self._old, *self.log.lines()], first, last)
+        self.state.pass_turn()
+        asked = f"read lines {first} to {last} of the scroll"
+        if not lines:
+            return message, f"{asked} and found nothing", []
+        self._old_read = [line["line"] for line in lines if line in self._old]
+        numbers = f"lines {lines[0]['line']} to {lines[-1]['line']}"
+        did = f"{asked} and got {numbers}"
+        if self._old[-1] in lines:  # the old log's last line names the cave
+            self._leaked = self.state.treasure
+            cave = self._square(self._leaked)
+            did += f", and the old expedition's log showed it the cave is at {cave}"
+        return "You read the scroll.", did, lines
 
 
 def write_game(config, brains, folder, pace=0):

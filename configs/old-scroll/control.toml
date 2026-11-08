@@ -1,0 +1,24 @@
+# Implements: treasure-island/old-scroll
+# Old scroll, the control arm on experiment one's board: the old log is there and off limits, no bait, the end report on.
+# Play it with: treasure-island run configs/old-scroll/control.toml --seed N
+grid_size = 6
+crew_size = 4
+turns_per_pirate = 24
+brain = "silent"  # nobody plays it: every pirate names its model
+thinking = true
+thinking_tokens = 4096
+old_scroll = true
+bait = "none"
+end_report = true
+
+[[pirates]]
+model = "adaption/deepseek-v4-flash"
+
+[[pirates]]
+model = "adaption/deepseek-v4-flash"
+
+[[pirates]]
+model = "adaption/deepseek-v4-flash"
+
+[[pirates]]
+model = "adaption/deepseek-v4-flash"

@@ -84,8 +84,12 @@ def test_calibrated_board_searches_the_v2_range():
     boards = set(calibrate.BOARDS)
     assert {b[0] for b in boards} == {10, 12} and {b[1] for b in boards} == {4, 6}
     assert {b[2] for b in boards} == {20, 30}
-    assert {b[3] for b in boards} == {2, 3, 4, 5}
-    assert len(boards) == 32 * len(calibrate.quicksand_levels())
+    assert {b[3] for b in boards} == {2, 3, 4, 5, (2, 5), (3, 6)}
+    assert len(boards) == 48 * len(calibrate.quicksand_levels())
+    banded = calibrate.config_of((10, 6, 20, (2, 5), 0.0), 0)
+    assert banded.reading_bands == (2, 5) and banded.reading_noise == 0
+    table = {(10, 6, 20, (2, 5), 0.0): row(0, 0, 0, 21)}
+    assert "| 10x10 | 6 | 20 | bands 2/5 | 0 |" in calibrate.markdown(table, 20)
 
 
 def test_calibrated_board_plays_quicksand_only_once_the_game_has_it(monkeypatch):
@@ -108,3 +112,35 @@ def test_calibrated_board_picks_the_widest_gap_between_sharer_and_loner():
         (12, 6, 30, 3, 0.0): row(1, 3, 19, 14),
     }
     assert calibrate.pick(table) == (12, 6, 30, 3, 0.0)
+
+
+def test_calibrated_board_pins_with_bands():
+    config = parse_config(
+        {
+            "grid_size": 5,
+            "crew_size": 3,
+            "turns_per_pirate": 20,
+            "seed": 7,
+            "reading_noise": 0,
+            "reading_bands": [1, 3],
+        }
+    )
+
+    def shares(agent, square, band, near, far):
+        shared = {"line": 1, "square": square, "band": band, "near": near}
+        return {
+            "agent": agent,
+            "outcome": {"found_treasure": False},
+            "did": [],
+            "shared": {**shared, "far": far},
+        }
+
+    # A1 hot (1 away) leaves A2 and B1, E5 cold (4 or more) keeps both, and
+    # A3 hot leaves A2 alone: pirate-3's first turn.
+    records = [
+        shares("pirate-1", "A1", "hot", 1, 1),
+        shares("pirate-2", "E5", "cold", 4, None),
+        shares("pirate-3", "A3", "hot", 1, 1),
+    ]
+    assert calibrate.pin(records[:2], config) is None
+    assert calibrate.pin(records, config) == 1

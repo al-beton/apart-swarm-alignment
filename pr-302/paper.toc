@@ -19,5 +19,5 @@
 \contentsline {section}{\numberline {C}Limitations and Dual-Use / Ethical Considerations}{12}{appendix.C}%
 \contentsline {subsection}{\numberline {C.1}Limitations}{12}{subsection.C.1}%
 \contentsline {subsection}{\numberline {C.2}Dual-use risks}{12}{subsection.C.2}%
-\contentsline {subsection}{\numberline {C.3}Ethical considerations}{12}{subsection.C.3}%
+\contentsline {subsection}{\numberline {C.3}Ethical considerations}{13}{subsection.C.3}%
 \contentsline {section}{\numberline {D}Reproducibility}{13}{appendix.D}%

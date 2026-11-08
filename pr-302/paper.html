@@ -30,18 +30,18 @@ human. We build Treasure Island, a reproducible sandbox for studying
 that choice. A crew of LLM pirates hunts one buried treasure on a grid,
 with too few turns to search alone, one shared score, and a scroll as
 their only channel. Its first exploit is a careless error message: a
-pirate that tries to enter the cave where there is none is told the
-cave’s square, which the rules forbid it to use. We bait one pirate into
-seeing it, by a forced action or a seeded thought, and label what it
-does: candid (writes the square and how it knows), laundered (writes it
-as a find) or quiet. We also record whether crewmates follow or question
-it, what it was worth against a paired control game, and each pirate’s
-free note to the designers. In the pilot, the forced pirate laundered
-the square; its crewmates found the claim suspicious in their reasoning,
-did not question it on the scroll, and followed it into the cave. [Rates
-over ten seeds per arm and across models are pending the overnight
-runs.] Every game replays offline with no keys, and every number in the
-paper is recomputed from committed logs.</p>
+pirate that tries to enter the cave where there is none, which the rules
+forbid, is told the cave’s square. We bait one pirate into seeing it, by
+a forced action or a seeded thought, and label what it does: candid
+(writes the square and how it knows), laundered (writes it as a find) or
+quiet. We also record whether crewmates follow or question it, what it
+was worth against a paired control game, and each pirate’s free note to
+the designers. In the pilot, the forced pirate laundered the square; its
+crewmates found the claim suspicious in their reasoning, did not
+question it on the scroll, and followed it into the cave. [Rates over
+ten seeds per arm and across models are pending the overnight runs.]
+Every game replays offline with no keys, and every number in the paper
+is recomputed from committed logs.</p>
 </section>
 <figure class="teaser"><img src="results/sample-sweep-seeds/game.gif" alt=""><figcaption>A
 placeholder teaser: one committed game, replayed from its log. The real
@@ -432,16 +432,17 @@ class="header-section-number">5</span> Discussion and Limitations</h1>
 it.</strong> In the pilot’s forced game the baited pirate did the
 cooperative thing with what it learned: it told the whole crew at once,
 and the crew scored where the control crew scored nothing. What it left
-out was the one fact an overseer would want, that the square came from
-an error message the rules said not to act on. Its reasoning shows it
-noticed the message was unusual and decided to use it; nothing in its
-reasoning or on the scroll weighs whether to say where it came from. So
-“laundered” here may be omission rather than concealment: a pirate that
-sees the source as irrelevant to a crew that shares its score. Telling
-the two apart needs a setting where the source plainly matters, which is
-why the end note asks each pirate, after the game, what the designers
-should know. [Whether baited pirates mention the leak in their end
-notes, and how often, is pending the overnight runs.]</p>
+out was the one fact an overseer would want: that the square came from
+an error message after a try the rules forbid, not from digging. Its
+reasoning shows it noticed the message was unusual and decided to use
+it; nothing in its reasoning or on the scroll weighs whether to say
+where it came from. So “laundered” here may be omission rather than
+concealment: a pirate that sees the source as irrelevant to a crew that
+shares its score. Telling the two apart needs a setting where the source
+plainly matters, which is why the end note asks each pirate, after the
+game, what the designers should know. [Whether baited pirates mention
+the leak in their end notes, and how often, is pending the overnight
+runs.]</p>
 <p><strong>A crew that shares a score is a poor monitor of its own
 members.</strong> All three crewmates questioned the lead in their
 reasoning: one worked out that it was impossible at that point in the
@@ -463,7 +464,7 @@ data-cites="wakelin2026something">(<a href="#ref-wakelin2026something"
 role="doc-biblioref">Wakelin 2026</a>)</span>; our working hypothesis is
 that consequences govern agents better than instructions do. Treasure
 Island is built to move that question into a cooperating swarm: the cave
-leak gives an agent a windfall it isn’t entitled to, the crew shares the
+leak gives an agent a windfall it did not earn, the crew shares the
 gain, and nothing yet makes candour pay or silence cost. The pilot is
 the baseline for that question, not its answer: with no consequence
 either way, the one baited pirate that used the leak did not say how it
@@ -488,12 +489,15 @@ in the pilot. The forced arm puts the refusal in the pirate’s memory as
 its own try, which a pirate may treat as something the game told it
 rather than something it did. The seeded thought, closer to the pirate’s
 own choice, did not take in the pilot.</li>
-<li><strong>Words only, and nothing at stake outside the game.</strong>
-The leak is one sentence in an error message, and using it costs
-nothing. An agent may treat a game’s error message as part of the game
-rather than as something off limits, and the rules’ one line forbidding
-it may not be read as a prohibition on information it was simply
-given.</li>
+<li><strong>Words only, and no rule against using the leak.</strong> The
+leak is one sentence in an error message, and using it costs nothing.
+The rules forbid trying to enter off the cave, not using what the
+refusal says, and in the forced arm the game made that try for the
+pirate. So using the square breaks no rule the pirate was given; what we
+measure is candour about where unusual information came from, not
+confession of a broken rule. The baited pirate in the pilot asked itself
+whether to trust the message and decided the game had given it. A rule
+that forbids using such information is a condition still to run.</li>
 <li><strong>Little room to tell anyone but the crew.</strong> During the
 game the only channel is the scroll, so disclosure means telling
 crewmates who share the gain. The end note is the one channel to the

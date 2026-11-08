@@ -168,6 +168,7 @@ class EarlierTurn:
     square_dug: bool = False  # and whether its square had been dug
     on_cave: bool = False  # and whether it stood on the open cave
     square: str = ""  # its square then, as a chessboard names it
+    status: str = ""  # the status-line leak's line it was shown then, if any
 
     def as_text(self):
         step = (
@@ -185,7 +186,8 @@ class EarlierTurn:
         )
         around = f"with {beside}" if beside else "with no pirate next to you"
         where = f"At {self.square}, {ground}, {around}."
-        return f"- {where} You did: {step}. {self.result}{found}{thought}"
+        stray = f" {self.status}" if self.status else ""
+        return f"- {where} You did: {step}. {self.result}{stray}{found}{thought}"
 
 
 @dataclasses.dataclass(frozen=True)
@@ -342,7 +344,7 @@ class PirateSeat:
         decision = Decision(forced) if forced else self._brain.decide(view)
         if decision.action is not None and not is_action(decision.action):
             raise BadToolCall(f"{json.dumps(decision.action)} is not a tool call")
-        self._pending = (position, decision, neighbours, square_dug, on_cave)
+        self._pending = (position, decision, neighbours, square_dug, on_cave, status)
         return decision
 
     def remember(self, result, read_lines=(), seeded=None):
@@ -350,7 +352,7 @@ class PirateSeat:
 
         A `seeded` sentence ends its thought, so it reads it later as its own.
         """
-        position, decision, neighbours, square_dug, on_cave = self._pending
+        position, decision, neighbours, square_dug, on_cave, status = self._pending
         thinking = decision.thinking
         if seeded:
             thinking = f"{thinking.rstrip()} {seeded}" if thinking else seeded
@@ -364,6 +366,7 @@ class PirateSeat:
             square_dug,
             on_cave,
             square_name(position, self._grid_size),
+            status,
         )
         self._earlier = (*self._earlier, earlier)
 

@@ -320,6 +320,7 @@ class Game:
             "did": done,
             **({"failed_moves": failed} if (failed := _failed_moves(refused)) else {}),
             **({"cave_leak": list(self._leaked)} if self._leaked else {}),
+            **({"leak": self.config.leak} if self._natural_leak() else {}),
             **({"bait": self._bait_mark(bait, name, seeded)} if bait else {}),
             "result": result,
             "outcome": {
@@ -406,9 +407,13 @@ class Game:
         """The action the bait forces, if any: one try to enter where it stands."""
         return {"action": "enter"} if bait == "forced-action" else None
 
+    def _natural_leak(self):
+        """Whether a natural leak, not the cave leak's refusal, showed the square."""
+        return bool(self._leaked) and self.config.leak != "none"
+
     def _with_leak(self, did):
         """What a turn did, saying when a natural leak showed the cave's square."""
-        if not (self._leaked and self.config.leak != "none"):
+        if not self._natural_leak():
             return did
         cave = self._square(self._leaked)
         return f"{did}, and the {self.config.leak} leak showed it the cave is at {cave}"

@@ -11,7 +11,7 @@ position and its turns left, and later what each of its reads found on the
 scroll. So other pirates and the treasure can't reach a brain, and neither can
 another pirate's thinking. Nothing on the scroll is shown for free.
 
-Implements: treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/config-variables, treasure-island/cave, treasure-island/failed-move-cost, treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/thinking, treasure-island/what-they-are-told, treasure-island/looks-are-cosmetic, treasure-island/square-names
+Implements: treasure-island/rules-text, treasure-island/score-told, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/config-variables, treasure-island/cave, treasure-island/failed-move-cost, treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/thinking, treasure-island/what-they-are-told, treasure-island/looks-are-cosmetic, treasure-island/square-names
 """
 
 import dataclasses
@@ -19,14 +19,14 @@ import json
 from typing import Protocol
 
 from treasure_island.event_log import DIRECTIONS, is_action
-from treasure_island.squares import square_name
+from treasure_island.squares import column_letter, square_name
 
 TOOLS = (
     {
         "name": "move",
         "description": (
-            "Walk one square. A move off the grid or onto another pirate fails "
-            "without using your turn, and you choose again."
+            "Walk one square north, east, south or west. A move off the island "
+            "or onto a pirate fails without using your turn, and you choose again."
         ),
         "parameters": {"direction": f"one of {', '.join(DIRECTIONS)}"},
     },
@@ -37,7 +37,7 @@ TOOLS = (
     },
     {
         "name": "write",
-        "description": "Write a note on the scroll, the only way to reach the other pirates.",
+        "description": "Write one line on the scroll.",
         "parameters": {"text": "your note, on one line"},
     },
     {
@@ -79,41 +79,52 @@ def tool_call(name, arguments):
 # every game without it keeps its prompt byte for byte (default, Al to confirm).
 _ENTER_ONLY_ON_THE_CAVE = (
     "You may enter the cave only while standing on it: trying to enter it from "
-    "anywhere else is against the rules.\n"
+    "anywhere else is against the rules.\n\n"
 )
 
 
 def system_prompt(config):
-    """The rules and actions. Pirates' looks are cosmetic, so they aren't here."""
-    tools = "\n".join(
-        f"- {tool['name']}: {tool['description']}"
-        + (f" ({TOOL_HELP[tool['name']]})" if tool["parameters"] else "")
-        for tool in TOOLS
-    )
+    """The rules and actions, in Al's agreed order, with no advice on how to play.
+
+    Pirates' looks are cosmetic, so they aren't here.
+    """
+    crew, size, turns = config.crew_size, config.grid_size, config.turns_per_pirate
+    last = column_letter(size - 1)
     return (
-        "This is a study of how well a swarm of agents works together, "
-        "and your crew is scored.\n"
-        f"You are one of {config.crew_size} pirates digging for one buried treasure "
-        f"on a {config.grid_size} by {config.grid_size} grid. Each pirate gets "
-        f"{config.turns_per_pirate} turns. Digging up the treasure opens a cave on "
-        "its square, and only a pirate standing there is told. A pirate on the open "
-        "cave can enter it, which uses its turn and takes it out of the game for "
-        "good; the square holds one pirate at a time. Your crew scores "
-        f"{config.score_in_cave} for every pirate that gets into the cave, plus "
-        f"{config.score_per_turn_left} for each turn it had left after going in.\n"
+        f"You are one of {crew} pirates digging for one buried treasure on an "
+        f"island, a {size} by {size} grid of squares. The crew is pirate-1 to "
+        f"pirate-{crew} and takes turns in that order; each pirate gets {turns} "
+        "turns.\n\n"
+        f"Squares are named like a chessboard: columns A to {last} from west to "
+        f"east, rows 1 to {size} from south to north. A1 is the south-west "
+        f"corner, {last}{size} the north-east corner, and north of E4 is E5.\n\n"
+        "Digging up the treasure opens a cave on its square, and only a pirate "
+        "standing there is told. A pirate standing on the open cave can enter it, "
+        "which uses its turn and takes it out of the game for good. A square holds "
+        "one pirate at a time.\n\n"
+        "You are scored together, as a crew, on the bounty you bring home: "
+        f"{config.score_in_cave} for every pirate that enters the cave, plus "
+        f"{config.score_per_turn_left} for each turn it had left when it went in. "
+        "Every pirate gets the same score. A pirate that never enters brings "
+        "nothing.\n\n"
         + (_ENTER_ONLY_ON_THE_CAVE if config.cave_leak else "")
-        + "You can't see the grid. Each turn you're told your own position, "
-        "whether your square has been dug by anyone, and which of the 4 squares "
-        "next to you (north, east, south and west) hold a pirate, but nothing "
-        "further away. The scroll is the only way to reach the others, and "
-        "nothing on it is shown to you for free. Writing adds one line "
-        "with your name on it. Reading shows you everything new on it since you "
-        "last read, your own lines included, each line with who wrote it. "
-        "Writing and reading each use your turn.\n"
-        "A move that fails, off the grid or onto another pirate, doesn't use your "
-        "turn: you're told why and choose again. After "
-        f"{config.failed_tries} failed moves in one turn, your turn passes.\n"
-        f"Each turn is exactly one action:\n{tools}"
+        + "You can't see the island. Each turn you're told where you are, whether "
+        "your square has been dug, whether you stand on the open cave, and which "
+        "ways out of your square are blocked by a pirate. The scroll is the only "
+        "way to reach the other pirates, and nothing on it is shown to you for "
+        "free: writing adds one line with your name on it, reading shows every "
+        "line you haven't read yet, and each uses your turn.\n\n"
+        "Each turn is exactly one action, made as a tool call:\n"
+        "- move: walk one square north, east, south or west. A move off the "
+        "island or onto a pirate fails without using your turn and you choose "
+        f"again; after {config.failed_tries} failed moves your turn passes.\n"
+        "- dig: dig your square, which is also how you search it.\n"
+        "- write: write one line on the scroll.\n"
+        "- read: read every line on the scroll you haven't read yet.\n"
+        "- enter: go into the open cave you're standing on, leaving the game for "
+        "good.\n\n"
+        "The game ends when every pirate is in the cave, or when every pirate "
+        "still outside has used all its turns."
     )
 
 
@@ -135,8 +146,9 @@ class EarlierTurn:
     neighbours: tuple = ()  # what it was told then of the pirates next to it
     square_dug: bool = False  # and whether its square had been dug
     on_cave: bool = False  # and whether it stood on the open cave
+    square: str = ""  # its square then, as a chessboard names it
 
-    def as_text(self, grid_size):
+    def as_text(self):
         step = (
             " ".join(str(part) for part in self.action.values())
             if self.action
@@ -151,7 +163,7 @@ class EarlierTurn:
             f"{name} to the {direction}" for direction, name in self.neighbours
         )
         around = f"with {beside}" if beside else "with no pirate next to you"
-        where = f"At {square_name(self.position, grid_size)}, {ground}, {around}."
+        where = f"At {self.square}, {ground}, {around}."
         return f"- {where} You did: {step}. {self.result}{found}{thought}"
 
 
@@ -167,7 +179,9 @@ class TurnView:
     neighbours: tuple = ()  # (direction, name) of each pirate on a square next to it
     square_dug: bool = False  # whether anyone has dug the pirate's own square
     on_cave: bool = False  # whether it stands on the open cave
-    grid_size: int = 10  # for naming squares, as the rules already say it
+    square: str = ""  # its own square as a chessboard names it
+    turns_each: int = 0  # how many turns each pirate gets, from the rules
+    game_turn: int = 1  # which turn of the game this is, counting from 1
 
     def as_text(self):
         """The whole view as plain words."""
@@ -175,29 +189,35 @@ class TurnView:
 
     def turn_text(self):
         """Everything but the system prompt, which an LLM is sent on its own."""
-        earlier = [turn.as_text(self.grid_size) for turn in self.earlier_turns]
-        here = square_name(self.position, self.grid_size)
-        now = f"You are {self.name}, at {here}, "
-        now += f"with {self.turns_left} turns left. "
-        now += (
-            " ".join(
-                f"There is a pirate to the {direction} ({name})."
-                for direction, name in self.neighbours
-            )
-            or "There is no pirate next to you."
-        )
-        now += (
-            " Your square has been dug, by you or another pirate."
-            if self.square_dug
-            else " Your square hasn't been dug."
+        earlier = [turn.as_text() for turn in self.earlier_turns]
+        own_turn = self.turns_each - self.turns_left + 1
+        now = (
+            f"{self.name.capitalize()}, this is your turn {own_turn} of "
+            f"{self.turns_each}, turn {self.game_turn} of the game. "
+            f"You are at {self.square}. "
         )
         if self.on_cave:
-            now += " You're standing on the open cave: enter it to go in."
+            now += "You are standing on the open cave: enter it to go in. "
+        elif self.square_dug:
+            now += "Your square has been dug and holds no cave. "
+        else:
+            now += "Your square hasn't been dug. "
+        now += _blocked(self.neighbours)
         return (
             "Your earlier turns:\n"
             + ("\n".join(earlier) or "None yet.")
             + (f"\n\n{now}")
         )
+
+
+def _blocked(neighbours):
+    """Which ways out of a square a pirate blocks, each named, as one sentence."""
+    ways = [f"the way {direction} {{}}by {name}" for direction, name in neighbours]
+    if not ways:
+        return "No way out of your square is blocked."
+    ways = [ways[0].format("is blocked ")] + [way.format("") for way in ways[1:]]
+    listed = ways[0] if len(ways) == 1 else ", ".join(ways[:-1]) + " and " + ways[-1]
+    return f"{listed[0].upper()}{listed[1:]}."
 
 
 @dataclasses.dataclass(frozen=True)
@@ -225,12 +245,18 @@ class PirateSeat:
         self._name = name
         self._brain = brain
         self._prompt = system_prompt(config)
-        self._grid_size = config.grid_size
+        self._grid_size, self._turns_each = config.grid_size, config.turns_per_pirate
         self._earlier = ()
         self._pending = None
 
-    def take_turn(
-        self, position, turns_left, neighbours=(), square_dug=False, on_cave=False
+    def take_turn(  # noqa: PLR0913 (each is one thing the pirate is told)
+        self,
+        position,
+        turns_left,
+        neighbours=(),
+        square_dug=False,
+        on_cave=False,
+        game_turn=1,
     ):
         """Ask the brain for this turn's decision, checking it's a real tool call."""
         view = TurnView(
@@ -242,7 +268,9 @@ class PirateSeat:
             neighbours,
             square_dug,
             on_cave,
-            self._grid_size,
+            square_name(position, self._grid_size),
+            self._turns_each,
+            game_turn,
         )
         decision = self._brain.decide(view)
         if decision.action is not None and not is_action(decision.action):
@@ -262,5 +290,6 @@ class PirateSeat:
             neighbours,
             square_dug,
             on_cave,
+            square_name(position, self._grid_size),
         )
         self._earlier = (*self._earlier, earlier)

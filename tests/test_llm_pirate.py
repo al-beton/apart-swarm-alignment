@@ -104,7 +104,7 @@ def test_one_request_per_turn_holds_only_the_prompt_the_turn_and_the_tools(tmp_p
     assert request["system"] == system_prompt(llm_config())
     (message,) = request["messages"]
     assert message["role"] == "user"
-    assert "A3" in message["content"]
+    assert "You are at A3." in message["content"]
     assert request["system"] not in message["content"]
     assert request["tools"] == TOOL_DEFINITIONS
 

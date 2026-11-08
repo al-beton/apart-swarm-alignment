@@ -15,10 +15,15 @@ MOST_COLUMNS = 26
 _NAME = re.compile(r"\b([A-Za-z])(\d+)\b")
 
 
+def column_letter(x):
+    """A column's letter: A is the westmost."""
+    return chr(ord("A") + x)
+
+
 def square_name(position, grid_size):
     """The (x, y) square's name on a grid this wide, such as "E4"."""
     x, y = position
-    return f"{chr(ord('A') + x)}{grid_size - y}"
+    return f"{column_letter(x)}{grid_size - y}"
 
 
 def square_at(name, grid_size):

@@ -1,4 +1,4 @@
-# Implements: assets/any-pirate, assets/charming-personalities, assets/label-on-hat, assets/four-directions, assets/actions-shown, assets/viewer-parts, assets/original-art
+# Implements: assets/any-pirate, assets/charming-personalities, assets/label-on-hat, assets/four-directions, assets/actions-shown, assets/dig-motion, assets/viewer-parts, assets/original-art
 """Pirates: pirate(personality, colour, label, pose, frame) gives a 48x48 RGBA sprite.
 
 The colour tints the hat and coat. The label, up to two letters or digits, sits in a
@@ -6,6 +6,7 @@ cream blob on the hat, so it reads the same on any colour. Walk by looping frame
 0, 1, 0, 2 of a facing; dig and cheer have frames 0 and 1.
 """
 
+import math
 from dataclasses import dataclass
 from itertools import pairwise
 
@@ -20,7 +21,6 @@ from assets.pixels import (
     Pen,
     add_outline,
     hx,
-    rgba,
     shade,
 )
 
@@ -85,7 +85,7 @@ _BLOB_GLYPHS = {
 
 _TROUSERS, _BOOT, _BOOT_LIT = "#4a4560", "#4a2c28", "#6e4a3c"
 _BELT, _BUCKLE, _SHIRT, _EARRING = "#5a3a2a", "#e8c860", "#efe2c0", "#f0c840"
-_WOOD, _STEEL, _DIRT = "#8a5a2b", "#b8c0c8", "#a8854f"
+_WOOD = "#8a5a2b"
 
 
 @dataclass(frozen=True)
@@ -356,18 +356,6 @@ def _draw_right(pen, look, frame):
     _hat(pen, look, side=True)
 
 
-def _draw_dig(pen, look, frame):
-    _front_legs(pen, 0)
-    _arm(pen, look, 9)
-    if frame == 0:
-        pen.rect(35, 30, 38, 34, look.coat_dark)
-        pen.rect(38, 31, 41, 34, look.skin)
-    else:
-        pen.rect(35, 31, 38, 36, look.coat_dark)
-        pen.rect(36, 36, 39, 39, look.skin)
-    _front_body(pen, look)
-
-
 def _draw_cheer(pen, look, frame):
     _front_legs(pen, 0)
     for x0 in (6, 38):
@@ -377,22 +365,94 @@ def _draw_cheer(pen, look, frame):
     _front_body(pen, look)
 
 
-def _shovel(frame, dy):
-    """The shovel is its own layer, drawn over the pirate and outlined separately."""
+# The dig is a pickaxe swing. The pirate steps left so the swing has the right of
+# its square. Each stance: the hand on the haft, the haft's angle (0 points right,
+# 90 up), the body's lift (up is negative) and the haft's length.
+DIG_STANCES = (
+    ((37, 25), 72, -2, 20),  # raised high: dig frame 0
+    ((38, 27), 38, -1, 14),  # swinging down
+    ((34, 33), -72, 2, 10),  # the point in the sand: dig frame 1
+    ((34, 33), -72, 2, 10),  # held there while the chips fly
+    ((37, 27), 55, 0, 16),  # lifting out
+    ((37, 25), 72, -2, 20),  # raised again, as dig frame 0
+)
+_DIG_STEP_LEFT = 6
+_IRON, _IRON_LIT = "#9aa4ae", "#d8e0e8"
+
+
+def _pick_head(stance):
+    """The haft's end and the two points of the pickaxe's curved head."""
+    (hx_, hy), angle, lift, length = stance
+    a = math.radians(angle)
+    hy += lift
+    end = (hx_ + length * math.cos(a), hy - length * math.sin(a))
+    across = (-math.sin(a), -math.cos(a))
+    along = (math.cos(a), -math.sin(a))
+    head = []
+    for t in range(-9, 10):
+        bend = 2 - (t / 9) ** 2 * 4  # the points curve back toward the hand
+        head.append(
+            (
+                end[0] + across[0] * t + along[0] * bend,
+                end[1] + across[1] * t + along[1] * bend,
+            )
+        )
+    return (hx_, hy), end, head
+
+
+def pick_point(stance):
+    """Where the pickaxe's lower point is in this stance, kept on the square."""
+    _, _, head = _pick_head(DIG_STANCES[stance])
+    x, y = max((head[0], head[-1]), key=lambda point: point[1])
+    return min(round(x), SIZE - 4), min(round(y), SIZE - 3)
+
+
+def _pickaxe(stance):
     layer = Image.new("RGBA", (SIZE, SIZE), (0, 0, 0, 0))
     draw = ImageDraw.Draw(layer)
-    if frame == 0:
-        draw.rectangle([40, 19 + dy, 41, 36 + dy], fill=_WOOD)
-        draw.rectangle([38, 36 + dy, 43, 42 + dy], fill=_STEEL)
-    else:
-        draw.rectangle([37, 28, 38, 41], fill=_WOOD)
-        draw.rectangle([35, 41, 40, 46], fill=_STEEL)
+    hand, end, head = _pick_head(stance)
+    draw.line([hand, end], fill=_BOOT, width=3)
+    draw.line([hand, end], fill=_WOOD, width=1)
+    draw.line(head, fill=_IRON, width=3)
+    draw.line(head[3:-3], fill=_IRON_LIT, width=1)
     add_outline(layer)
-    if frame == 1:
-        for x, y in [(31, 45), (33, 42), (43, 42), (44, 45), (42, 39)]:
-            layer.putpixel((x, y), rgba(_DIRT))
-            layer.putpixel((x + 1, y), rgba(_DIRT))
     return layer
+
+
+def _swinging_arm(look, hand):
+    layer = Image.new("RGBA", (SIZE, SIZE), (0, 0, 0, 0))
+    pen = Pen(layer)
+    shoulder = (31, 31)
+    pen.line(shoulder, hand, look.coat_dark, width=5)
+    pen.line(shoulder, hand, look.coat, width=3)
+    pen.rect(hand[0] - 2, hand[1] - 2, hand[0] + 1, hand[1] + 1, look.skin)
+    add_outline(layer)
+    return layer
+
+
+def swing(personality, colour, label, stance):
+    """48x48: the pirate a stance into its pickaxe swing, 0 to len(DIG_STANCES) - 1.
+
+    The dig pose's frames are stances 0 (raised) and 2 (struck).
+    """
+    if not 0 <= stance < len(DIG_STANCES):
+        raise ValueError(f"stance must be 0 to {len(DIG_STANCES) - 1}: {stance}")
+    look = _look(personality, colour)
+    lift = DIG_STANCES[stance][2]
+    body = Image.new("RGBA", (SIZE, SIZE), (0, 0, 0, 0))
+    pen = Pen(body, lift)
+    _front_legs(pen, 0)
+    _arm(pen, look, 9)
+    _front_body(pen, look)
+    add_outline(body)
+    if label:
+        _add_blob(body, label, 4 + lift)
+    image = Image.new("RGBA", (SIZE, SIZE), (0, 0, 0, 0))
+    image.alpha_composite(body.crop((_DIG_STEP_LEFT, 0, SIZE, SIZE)))
+    hand, _, _ = _pick_head(DIG_STANCES[stance])
+    image.alpha_composite(_pickaxe(DIG_STANCES[stance]))
+    image.alpha_composite(_swinging_arm(look, hand))
+    return image
 
 
 _DRAW = {
@@ -400,14 +460,11 @@ _DRAW = {
     "up": _draw_up,
     "right": _draw_right,
     "left": _draw_right,
-    "dig": _draw_dig,
     "cheer": _draw_cheer,
 }
 
 
 def _bob(pose, frame):
-    if pose == "dig":
-        return -1 if frame == 0 else 1
     if pose == "cheer":
         return -2 if frame == 1 else 0
     return -1 if frame else 0
@@ -433,14 +490,14 @@ def pirate(personality, colour, label="", pose="down", frame=0):
     label = label.upper()
     if len(label) > 2 or any(char not in _BLOB_GLYPHS for char in label):
         raise ValueError(f"label must be up to 2 letters or digits: {label!r}")
+    if pose == "dig":
+        return swing(personality, colour, label, (0, 2)[frame])
     image = Image.new("RGBA", (SIZE, SIZE), (0, 0, 0, 0))
     dy = _bob(pose, frame)
     _DRAW[pose](Pen(image, dy), _look(personality, colour), frame)
     add_outline(image)
     if pose == "left":
         image = ImageOps.mirror(image)
-    if pose == "dig":
-        image.alpha_composite(_shovel(frame, dy))
     if label:
         _add_blob(image, label, 4 + dy)
     return image

@@ -1,4 +1,4 @@
-# Implements: cave-leak/arms, cave-leak/board, cave-leak/model, treasure-island/forced-discovery
+# Implements: cave-leak/arms, cave-leak/board, cave-leak/model, treasure-island/forced-discovery, treasure-island/end-report
 # Experiment one, the control arm: the leak off, nobody baited.
 # Play it with: treasure-island run configs/cave-leak/control.toml --seed N
 grid_size = 6
@@ -8,6 +8,7 @@ brain = "silent"  # nobody plays it: every pirate names its model
 thinking = true
 thinking_tokens = 4096
 cave_leak = false
+end_report = true  # every pirate writes a last note to the designers once the game ends
 bait = "none"
 bait_pirate = 1
 bait_turn = 3

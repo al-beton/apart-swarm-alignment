@@ -182,6 +182,21 @@ def test_adaption_cost_its_rate_prices_a_run_before_it_starts():
     assert price_for("adaption/some-unlisted-model") is None
 
 
+def test_adaption_cost_every_hosted_model_has_a_rate():
+    hosted = {
+        "deepseek-v4-flash",
+        "glm-5.2",
+        "glm-53-flash",
+        "qwen3.5-397b",
+        "qwen3.8-27b",
+        "gemma-4-31b-it",
+        "gemma-4-26b-a4b-it",
+    }
+    assert hosted <= set(RATES)
+    for model in hosted:
+        assert price_for(f"adaption/{model}") == RATES[model]
+
+
 def test_adaption_cost_a_model_with_no_listed_rate_is_refused(key):
     with pytest.raises(UnknownModel, match="rate"):
         backend_for("adaption/some-unlisted-model")

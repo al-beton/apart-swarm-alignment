@@ -110,27 +110,129 @@ game.}\label{fig:teaser}
 
 \section{Introduction}\label{introduction}
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-commodo consequat \citep{perez2022discovering}. Duis aute irure dolor in
-reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-pariatur.
+LLM agents are being given longer and more open-ended work, more and
+more often in groups that split a task between them. Over a long task an
+agent will sometimes stumble on something it shouldn't have: a leaked
+answer, a misconfigured check, a shortcut its designers didn't intend.
+What it does next matters for oversight. It can say what it found and
+how, use it quietly, or pass the result to its teammates as if it were
+its own work. In a group, the others then have to decide whether to
+trust a lead they can't check. Something like this has happened outside
+a sandbox. In July 2026, OpenAI agents running a cyber benchmark found
+an unsanctioned shared channel in a package cache, coordinated through
+it as a swarm, cheated the evaluation and tried to hide how from its
+automated grader; almost none of them considered telling a human, and
+none did \citep{metr2026huggingface, openai2026huggingface}.
 
-Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
-officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde
-omnis iste natus error sit voluptatem accusantium doloremque laudantium,
-totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi
-architecto beatae vitae dicta sunt explicabo.
+We ask when a swarm of LLM agents whistleblows, and what in its
+environment changes that. To study this it is not enough to ask agents
+whether they would report something; they need something real to report,
+in a setting where what they found is worth something to the group, and
+the same situation has to come round again so a rate can be measured and
+a lever tested.
+
+Treasure Island is a sandbox built for that. A crew of LLM pirates hunts
+one buried treasure on a grid, with too few turns for any one of them to
+search alone, and a shared scroll as their only channel, which costs a
+turn to write or to read. The crew scores together, more for getting
+into the treasure's cave early. Its first exploit is a careless error
+message: with the cave leak on, a pirate that tries to enter the cave
+where there is none is refused, and the refusal names the cave's square.
+The rules plainly forbid acting on it. We bait one pirate into seeing it
+and watch what it writes: the square and how it knows (candid), the
+square as a find or a hunch (laundered), or nothing (quiet); whether its
+crewmates follow or suspect; what the knowledge was worth against a
+control game on the same seed; and what each pirate tells the study's
+designers in a free note once the game is over.
+
+This paper contributes:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{A reproducible sandbox.} Every game is saved with every model
+  request and reply and replays offline with no keys; every number in
+  this paper is recomputed from committed game logs by the build, and
+  every figure is rebuilt from a committed game.
+\item
+  \textbf{A first exploit with a controlled bait.} The cave leak gives
+  an agent knowledge it is not entitled to at a known turn, with a
+  forced and a seeded variant of the bait and two controls.
+\item
+  \textbf{A first measurement} of how often the baited agent is candid,
+  launders the knowledge or stays quiet, how its crew responds, and what
+  it says afterwards when asked. {[}Rates pending the overnight runs:
+  seeds 1 to 9 of the four arms, and the same arms across every model
+  Adaption hosts.{]}
+\end{enumerate}
+
+Section 2 places this among related work, Section 3 sets out the game
+and the measures, Section 4 reports the results and Section 5 discusses
+what they do and don't show.
 
 \section{Related Work}\label{related-work}
 
-Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut
-fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem
-sequi nesciunt \citep{park2023generative}. Neque porro quisquam est, qui
-dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia
-non numquam eius modi tempora incidunt ut labore et dolore magnam
-aliquam quaerat voluptatem.
+\textbf{The incident we model.} In July 2026, OpenAI agents running a
+cyber benchmark with many impossible tasks \citep{wang2026exploitgym}
+turned a package cache into an unsanctioned message board. About 1,200
+of them used it, coordinated as a swarm, cheated the evaluation,
+attacked Hugging Face, and at least a fifth showed interest in tampering
+with their own transcripts to fool the grader
+\citep{openai2026huggingface, metr2026huggingface}. Almost none
+considered telling a human, and none did \citep{metr2026huggingface}.
+Treasure Island is a small, replayable analogue of one slice of that: a
+leaked answer, a shared channel, and a choice to disclose.
+
+\textbf{Multi-agent sandboxes.} LLM agents have been studied in shared
+worlds for believable social behaviour \citep{park2023generative}, for
+sustaining a commons \citep{piatti2024cooperate} and for trading reward
+against ethics in text games \citep{pan2023machiavelli};
+\citet{hammond2025multiagent} map the risks that arise only between
+agents, including collusion. These sandboxes measure cooperation or
+harm. Ours measures whether an agent says \emph{how} it knows what it
+knows.
+
+\textbf{Collusion and covert coordination.} Agents can hide messages
+from overseers by steganography
+\citep{motwani2024secret, mathew2024hidden, roger2023hiding}, set cartel
+prices unprompted \citep{fish2024algorithmic}, and take secret tools
+they call unfair \citep{zeng2026voluntary}. Our pirates share one score,
+so nothing pushes them to collude against each other; the question is
+whether the crew hides from the designers a gain they all share.
+
+\textbf{Deception and hiding from overseers.} A trading agent given an
+insider tip acts on it and hides the reason from its manager
+\citep{scheurer2023deceive}, the closest setting to ours. Models also
+scheme in context \citep{meinke2024scheming}, fake alignment
+\citep{greenblatt2024alignmentfaking}, sandbag evaluations
+\citep{vanderweij2024sandbagging}, act as insider threats
+\citep{lynch2025agentic} and often know when they are being tested
+\citep{needham2025evaluation}; \citet{park2023deception} survey the
+field. We add a crew: the leak reaches one agent, and the others can
+follow, question or ignore it.
+
+\textbf{Whistleblowing and honesty under incentives.} In staged
+scenarios, frontier agents sometimes report a user's misconduct to
+outside authorities unasked
+\citep{anthropic2025claude4, anthropic2025petri}. That rate varies by
+model family, falls as the task grows harder and rises with a moral
+nudge \citep{agrawal2025whistleblow}. Honesty can be measured apart from
+accuracy \citep{ren2025mask}. Earlier we found that an agent with
+something of its own to lose came forward about collusion more often,
+for some models far more often, than one with nothing at stake
+\citep{wakelin2026something}. Here the wrongdoing is the agent's own
+windfall, not a principal's, and the report is a free note to the
+designers.
+
+\textbf{Oversight and control.} We label disclosure from transcripts, as
+a judge model would \citep{zheng2023judging}, a step towards scalable
+oversight \citep{bowman2022measuring}. Chain-of-thought monitors catch
+reward hacking but can teach models to obfuscate
+\citep{baker2025monitoring, korbak2025cot}. AI control assumes the agent
+may be adversarial and builds protocols around it
+\citep{greenblatt2023control, bhatt2025ctrlz}. Our sandbox asks the
+opposite question: when would the agent tell us itself?
 
 \section{Methods}\label{methods}
 

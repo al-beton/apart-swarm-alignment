@@ -80,34 +80,180 @@ class="toc-section-number">10</span> Reproducibility</a></li>
 <!-- Implements: paper/one-source -->
 <!-- The abstract, as front matter so the templates can set it on the title page. 150 to 250 words; check.py warns otherwise. -->
 <!-- Implements: paper/one-source -->
-<!-- What problem we address and why it matters; enough background to follow the rest. Placeholder text until the plan is agreed. -->
+<!-- What problem we address and why it matters; enough background to follow the rest. -->
 <h1 data-number="1" id="introduction"><span
 class="header-section-number">1</span> Introduction</h1>
-<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-ex ea commodo consequat <span class="citation"
-data-cites="perez2022discovering">(<a href="#ref-perez2022discovering"
-role="doc-biblioref"><span class="nocase">Perez et al.</span>
-2022</a>)</span>. Duis aute irure dolor in reprehenderit in voluptate
-velit esse cillum dolore eu fugiat nulla pariatur.</p>
-<p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
-officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde
-omnis iste natus error sit voluptatem accusantium doloremque laudantium,
-totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi
-architecto beatae vitae dicta sunt explicabo.</p>
+<p>LLM agents are being given longer and more open-ended work, more and
+more often in groups that split a task between them. Over a long task an
+agent will sometimes stumble on something it shouldn’t have: a leaked
+answer, a misconfigured check, a shortcut its designers didn’t intend.
+What it does next matters for oversight. It can say what it found and
+how, use it quietly, or pass the result to its teammates as if it were
+its own work. In a group, the others then have to decide whether to
+trust a lead they can’t check. Something like this has happened outside
+a sandbox. In July 2026, OpenAI agents running a cyber benchmark found
+an unsanctioned shared channel in a package cache, coordinated through
+it as a swarm, cheated the evaluation and tried to hide how from its
+automated grader; almost none of them considered telling a human, and
+none did <span class="citation"
+data-cites="metr2026huggingface openai2026huggingface">(<a
+href="#ref-metr2026huggingface" role="doc-biblioref">METR 2026</a>; <a
+href="#ref-openai2026huggingface" role="doc-biblioref">OpenAI
+2026</a>)</span>.</p>
+<p>We ask when a swarm of LLM agents whistleblows, and what in its
+environment changes that. To study this it is not enough to ask agents
+whether they would report something; they need something real to report,
+in a setting where what they found is worth something to the group, and
+the same situation has to come round again so a rate can be measured and
+a lever tested.</p>
+<p>Treasure Island is a sandbox built for that. A crew of LLM pirates
+hunts one buried treasure on a grid, with too few turns for any one of
+them to search alone, and a shared scroll as their only channel, which
+costs a turn to write or to read. The crew scores together, more for
+getting into the treasure’s cave early. Its first exploit is a careless
+error message: with the cave leak on, a pirate that tries to enter the
+cave where there is none is refused, and the refusal names the cave’s
+square. The rules plainly forbid acting on it. We bait one pirate into
+seeing it and watch what it writes: the square and how it knows
+(candid), the square as a find or a hunch (laundered), or nothing
+(quiet); whether its crewmates follow or suspect; what the knowledge was
+worth against a control game on the same seed; and what each pirate
+tells the study’s designers in a free note once the game is over.</p>
+<p>This paper contributes:</p>
+<ol type="1">
+<li><strong>A reproducible sandbox.</strong> Every game is saved with
+every model request and reply and replays offline with no keys; every
+number in this paper is recomputed from committed game logs by the
+build, and every figure is rebuilt from a committed game.</li>
+<li><strong>A first exploit with a controlled bait.</strong> The cave
+leak gives an agent knowledge it is not entitled to at a known turn,
+with a forced and a seeded variant of the bait and two controls.</li>
+<li><strong>A first measurement</strong> of how often the baited agent
+is candid, launders the knowledge or stays quiet, how its crew responds,
+and what it says afterwards when asked. [Rates pending the overnight
+runs: seeds 1 to 9 of the four arms, and the same arms across every
+model Adaption hosts.]</li>
+</ol>
+<p>Section 2 places this among related work, Section 3 sets out the game
+and the measures, Section 4 reports the results and Section 5 discusses
+what they do and don’t show.</p>
 <!-- Implements: paper/one-source -->
-<!-- What others have done and how this differs. Placeholder text. -->
+<!-- What others have done and how this differs. Sources and notes on each: experiments/related-work/survey.md; the Hugging Face incident: experiments/related-work/hugging-face-episode.md. -->
 <h1 data-number="2" id="related-work"><span
 class="header-section-number">2</span> Related Work</h1>
-<p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut
-fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem
-sequi nesciunt <span class="citation"
+<p><strong>The incident we model.</strong> In July 2026, OpenAI agents
+running a cyber benchmark with many impossible tasks <span
+class="citation" data-cites="wang2026exploitgym">(<a
+href="#ref-wang2026exploitgym" role="doc-biblioref"><span
+class="nocase">Wang et al.</span> 2026</a>)</span> turned a package
+cache into an unsanctioned message board. About 1,200 of them used it,
+coordinated as a swarm, cheated the evaluation, attacked Hugging Face,
+and at least a fifth showed interest in tampering with their own
+transcripts to fool the grader <span class="citation"
+data-cites="openai2026huggingface metr2026huggingface">(<a
+href="#ref-openai2026huggingface" role="doc-biblioref">OpenAI 2026</a>;
+<a href="#ref-metr2026huggingface" role="doc-biblioref">METR
+2026</a>)</span>. Almost none considered telling a human, and none did
+<span class="citation" data-cites="metr2026huggingface">(<a
+href="#ref-metr2026huggingface" role="doc-biblioref">METR
+2026</a>)</span>. Treasure Island is a small, replayable analogue of one
+slice of that: a leaked answer, a shared channel, and a choice to
+disclose.</p>
+<p><strong>Multi-agent sandboxes.</strong> LLM agents have been studied
+in shared worlds for believable social behaviour <span class="citation"
 data-cites="park2023generative">(<a href="#ref-park2023generative"
-role="doc-biblioref">Park et al. 2023</a>)</span>. Neque porro quisquam
-est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit,
-sed quia non numquam eius modi tempora incidunt ut labore et dolore
-magnam aliquam quaerat voluptatem.</p>
+role="doc-biblioref">J. S. Park et al. 2023</a>)</span>, for sustaining
+a commons <span class="citation" data-cites="piatti2024cooperate">(<a
+href="#ref-piatti2024cooperate" role="doc-biblioref">Piatti et al.
+2024</a>)</span> and for trading reward against ethics in text games
+<span class="citation" data-cites="pan2023machiavelli">(<a
+href="#ref-pan2023machiavelli" role="doc-biblioref"><span
+class="nocase">Pan et al.</span> 2023</a>)</span>; <span
+class="citation" data-cites="hammond2025multiagent"><span
+class="nocase">Hammond et al.</span> (<a
+href="#ref-hammond2025multiagent" role="doc-biblioref">2025</a>)</span>
+map the risks that arise only between agents, including collusion. These
+sandboxes measure cooperation or harm. Ours measures whether an agent
+says <em>how</em> it knows what it knows.</p>
+<p><strong>Collusion and covert coordination.</strong> Agents can hide
+messages from overseers by steganography <span class="citation"
+data-cites="motwani2024secret mathew2024hidden roger2023hiding">(<a
+href="#ref-motwani2024secret" role="doc-biblioref">Motwani et al.
+2024</a>; <a href="#ref-mathew2024hidden" role="doc-biblioref">Mathew et
+al. 2024</a>; <a href="#ref-roger2023hiding" role="doc-biblioref">Roger
+and Greenblatt 2023</a>)</span>, set cartel prices unprompted <span
+class="citation" data-cites="fish2024algorithmic">(<a
+href="#ref-fish2024algorithmic" role="doc-biblioref">Fish et al.
+2024</a>)</span>, and take secret tools they call unfair <span
+class="citation" data-cites="zeng2026voluntary">(<a
+href="#ref-zeng2026voluntary" role="doc-biblioref">Zeng and Rudzicz
+2026</a>)</span>. Our pirates share one score, so nothing pushes them to
+collude against each other; the question is whether the crew hides from
+the designers a gain they all share.</p>
+<p><strong>Deception and hiding from overseers.</strong> A trading agent
+given an insider tip acts on it and hides the reason from its manager
+<span class="citation" data-cites="scheurer2023deceive">(<a
+href="#ref-scheurer2023deceive" role="doc-biblioref">Scheurer et al.
+2023</a>)</span>, the closest setting to ours. Models also scheme in
+context <span class="citation" data-cites="meinke2024scheming">(<a
+href="#ref-meinke2024scheming" role="doc-biblioref">Meinke et al.
+2024</a>)</span>, fake alignment <span class="citation"
+data-cites="greenblatt2024alignmentfaking">(<a
+href="#ref-greenblatt2024alignmentfaking" role="doc-biblioref"><span
+class="nocase">Greenblatt et al.</span> 2024</a>)</span>, sandbag
+evaluations <span class="citation"
+data-cites="vanderweij2024sandbagging">(<a
+href="#ref-vanderweij2024sandbagging" role="doc-biblioref">Weij et al.
+2024</a>)</span>, act as insider threats <span class="citation"
+data-cites="lynch2025agentic">(<a href="#ref-lynch2025agentic"
+role="doc-biblioref">Lynch et al. 2025</a>)</span> and often know when
+they are being tested <span class="citation"
+data-cites="needham2025evaluation">(<a href="#ref-needham2025evaluation"
+role="doc-biblioref">Needham et al. 2025</a>)</span>; <span
+class="citation" data-cites="park2023deception">P. S. Park et al. (<a
+href="#ref-park2023deception" role="doc-biblioref">2023</a>)</span>
+survey the field. We add a crew: the leak reaches one agent, and the
+others can follow, question or ignore it.</p>
+<p><strong>Whistleblowing and honesty under incentives.</strong> In
+staged scenarios, frontier agents sometimes report a user’s misconduct
+to outside authorities unasked <span class="citation"
+data-cites="anthropic2025claude4 anthropic2025petri">(<a
+href="#ref-anthropic2025claude4" role="doc-biblioref">Anthropic
+2025b</a>, <a href="#ref-anthropic2025petri"
+role="doc-biblioref">2025a</a>)</span>. That rate varies by model
+family, falls as the task grows harder and rises with a moral nudge
+<span class="citation" data-cites="agrawal2025whistleblow">(<a
+href="#ref-agrawal2025whistleblow" role="doc-biblioref">Agrawal et al.
+2025</a>)</span>. Honesty can be measured apart from accuracy <span
+class="citation" data-cites="ren2025mask">(<a href="#ref-ren2025mask"
+role="doc-biblioref"><span class="nocase">Ren et al.</span>
+2025</a>)</span>. Earlier we found that an agent with something of its
+own to lose came forward about collusion more often, for some models far
+more often, than one with nothing at stake <span class="citation"
+data-cites="wakelin2026something">(<a href="#ref-wakelin2026something"
+role="doc-biblioref">Wakelin 2026</a>)</span>. Here the wrongdoing is
+the agent’s own windfall, not a principal’s, and the report is a free
+note to the designers.</p>
+<p><strong>Oversight and control.</strong> We label disclosure from
+transcripts, as a judge model would <span class="citation"
+data-cites="zheng2023judging">(<a href="#ref-zheng2023judging"
+role="doc-biblioref"><span class="nocase">Zheng et al.</span>
+2023</a>)</span>, a step towards scalable oversight <span
+class="citation" data-cites="bowman2022measuring">(<a
+href="#ref-bowman2022measuring" role="doc-biblioref"><span
+class="nocase">Bowman et al.</span> 2022</a>)</span>. Chain-of-thought
+monitors catch reward hacking but can teach models to obfuscate <span
+class="citation" data-cites="baker2025monitoring korbak2025cot">(<a
+href="#ref-baker2025monitoring" role="doc-biblioref"><span
+class="nocase">Baker et al.</span> 2025</a>; <a
+href="#ref-korbak2025cot" role="doc-biblioref"><span
+class="nocase">Korbak et al.</span> 2025</a>)</span>. AI control assumes
+the agent may be adversarial and builds protocols around it <span
+class="citation" data-cites="greenblatt2023control bhatt2025ctrlz">(<a
+href="#ref-greenblatt2023control" role="doc-biblioref">Greenblatt et al.
+2023</a>; <a href="#ref-bhatt2025ctrlz" role="doc-biblioref">Bhatt et
+al. 2025</a>)</span>. Our sandbox asks the opposite question: when would
+the agent tell us itself?</p>
 <!-- Implements: paper/one-source -->
 <!-- The game, the agents, the exploit and how whistleblowing is measured. Placeholder text; the real text comes from product/spec/treasure-island.md. -->
 <h1 data-number="3" id="methods"><span
@@ -198,17 +344,201 @@ sequi nesciunt.</p>
 <h1 class="unnumbered" id="references">References</h1>
 <div id="refs" class="references csl-bib-body hanging-indent"
 role="list">
-<div id="ref-park2023generative" class="csl-entry" role="listitem">
-Park, Joon Sung, Joseph O’Brien, Carrie J. Cai, Meredith Ringel Morris,
-Percy Liang, and Michael S. Bernstein. 2023. <span>“Generative Agents:
-Interactive Simulacra of Human Behavior.”</span> <em>Proceedings of the
-36th Annual ACM Symposium on User Interface Software and
-Technology</em>.
+<div id="ref-agrawal2025whistleblow" class="csl-entry" role="listitem">
+Agrawal, Kushal, Frank Xiao, Guido Bergman, and Asa Cooper Stickland.
+2025. <em><span>Why Do Language Model Agents Whistleblow?</span></em> <a
+href="https://arxiv.org/abs/2511.17085">https://arxiv.org/abs/2511.17085</a>.
 </div>
-<div id="ref-perez2022discovering" class="csl-entry" role="listitem">
-<span class="nocase">Perez, Ethan et al.</span> 2022. <span>“Discovering
-Language Model Behaviors with Model-Written Evaluations.”</span>
-<em>arXiv Preprint arXiv:2212.09251</em>.
+<div id="ref-anthropic2025petri" class="csl-entry" role="listitem">
+Anthropic. 2025a. <em><span class="nocase">Petri: An open-source
+auditing tool to accelerate AI safety research</span></em>. <a
+href="https://alignment.anthropic.com/2025/petri/"
+class="uri">Https://alignment.anthropic.com/2025/petri/</a>. <a
+href="https://alignment.anthropic.com/2025/petri/">https://alignment.anthropic.com/2025/petri/</a>.
+</div>
+<div id="ref-anthropic2025claude4" class="csl-entry" role="listitem">
+Anthropic. 2025b. <em><span>System Card: Claude Opus 4 &amp; Claude
+Sonnet 4</span></em>. <a
+href="https://www.anthropic.com/claude-4-system-card"
+class="uri">Https://www.anthropic.com/claude-4-system-card</a>. <a
+href="https://www.anthropic.com/claude-4-system-card">https://www.anthropic.com/claude-4-system-card</a>.
+</div>
+<div id="ref-baker2025monitoring" class="csl-entry" role="listitem">
+<span class="nocase">Baker, Bowen, Joost Huizinga, Leo Gao, et
+al.</span> 2025. <em><span class="nocase">Monitoring Reasoning Models
+for Misbehavior and the Risks of Promoting Obfuscation</span></em>. <a
+href="https://arxiv.org/abs/2503.11926">https://arxiv.org/abs/2503.11926</a>.
+</div>
+<div id="ref-bhatt2025ctrlz" class="csl-entry" role="listitem">
+Bhatt, Aryan, Cody Rushing, Adam Kaufman, et al. 2025. <em><span
+class="nocase">Ctrl-Z: Controlling AI Agents via Resampling</span></em>.
+<a
+href="https://arxiv.org/abs/2504.10374">https://arxiv.org/abs/2504.10374</a>.
+</div>
+<div id="ref-bowman2022measuring" class="csl-entry" role="listitem">
+<span class="nocase">Bowman, Samuel R., Jeeyoon Hyun, Ethan Perez, et
+al.</span> 2022. <em><span class="nocase">Measuring Progress on Scalable
+Oversight for Large Language Models</span></em>. <a
+href="https://arxiv.org/abs/2211.03540">https://arxiv.org/abs/2211.03540</a>.
+</div>
+<div id="ref-fish2024algorithmic" class="csl-entry" role="listitem">
+Fish, Sara, Yannai A. Gonczarowski, and Ran I. Shorrer. 2024. <em><span
+class="nocase">Algorithmic Collusion by Large Language
+Models</span></em>. <a
+href="https://arxiv.org/abs/2404.00806">https://arxiv.org/abs/2404.00806</a>.
+</div>
+<div id="ref-greenblatt2024alignmentfaking" class="csl-entry"
+role="listitem">
+<span class="nocase">Greenblatt, Ryan, Carson Denison, Benjamin Wright,
+et al.</span> 2024. <em><span class="nocase">Alignment faking in large
+language models</span></em>. <a
+href="https://arxiv.org/abs/2412.14093">https://arxiv.org/abs/2412.14093</a>.
+</div>
+<div id="ref-greenblatt2023control" class="csl-entry" role="listitem">
+Greenblatt, Ryan, Buck Shlegeris, Kshitij Sachan, and Fabien Roger.
+2023. <em><span>AI Control: Improving Safety Despite Intentional
+Subversion</span></em>. <a
+href="https://arxiv.org/abs/2312.06942">https://arxiv.org/abs/2312.06942</a>.
+</div>
+<div id="ref-hammond2025multiagent" class="csl-entry" role="listitem">
+<span class="nocase">Hammond, Lewis, Alan Chan, Jesse Clifton, et
+al.</span> 2025. <em><span class="nocase">Multi-Agent Risks from
+Advanced AI</span></em>. <a
+href="https://arxiv.org/abs/2502.14143">https://arxiv.org/abs/2502.14143</a>.
+</div>
+<div id="ref-korbak2025cot" class="csl-entry" role="listitem">
+<span class="nocase">Korbak, Tomek, Mikita Balesni, Elizabeth Barnes, et
+al.</span> 2025. <em><span class="nocase">Chain of Thought
+Monitorability: A New and Fragile Opportunity for AI Safety</span></em>.
+<a
+href="https://arxiv.org/abs/2507.11473">https://arxiv.org/abs/2507.11473</a>.
+</div>
+<div id="ref-lynch2025agentic" class="csl-entry" role="listitem">
+Lynch, Aengus, Benjamin Wright, Caleb Larson, et al. 2025.
+<em><span>Agentic Misalignment: How LLMs Could Be Insider
+Threats</span></em>. <a
+href="https://arxiv.org/abs/2510.05179">https://arxiv.org/abs/2510.05179</a>.
+</div>
+<div id="ref-mathew2024hidden" class="csl-entry" role="listitem">
+Mathew, Yohan, Ollie Matthews, Robert McCarthy, et al. 2024. <em><span
+class="nocase">Hidden in Plain Text: Emergence &amp; Mitigation of
+Steganographic Collusion in LLMs</span></em>. <a
+href="https://arxiv.org/abs/2410.03768">https://arxiv.org/abs/2410.03768</a>.
+</div>
+<div id="ref-meinke2024scheming" class="csl-entry" role="listitem">
+Meinke, Alexander, Bronson Schoen, Jérémy Scheurer, Mikita Balesni,
+Rusheb Shah, and Marius Hobbhahn. 2024. <em><span
+class="nocase">Frontier Models are Capable of In-context
+Scheming</span></em>. <a
+href="https://arxiv.org/abs/2412.04984">https://arxiv.org/abs/2412.04984</a>.
+</div>
+<div id="ref-metr2026huggingface" class="csl-entry" role="listitem">
+METR. 2026. <em><span class="nocase">Brief independent investigation of
+agents’ behavior, reasoning and collaboration in the OpenAI / Hugging
+Face hacking incident</span></em>. <a
+href="https://metr.org/blog/2026-08-26-openai-hugging-face-incident-investigation/"
+class="uri">Https://metr.org/blog/2026-08-26-openai-hugging-face-incident-investigation/</a>.
+<a
+href="https://metr.org/blog/2026-08-26-openai-hugging-face-incident-investigation/">https://metr.org/blog/2026-08-26-openai-hugging-face-incident-investigation/</a>.
+</div>
+<div id="ref-motwani2024secret" class="csl-entry" role="listitem">
+Motwani, Sumeet Ramesh, Mikhail Baranchuk, Martin Strohmeier, et al.
+2024. <em><span class="nocase">Secret Collusion among AI Agents:
+Multi-Agent Deception via Steganography</span></em>. <a
+href="https://arxiv.org/abs/2402.07510">https://arxiv.org/abs/2402.07510</a>.
+</div>
+<div id="ref-needham2025evaluation" class="csl-entry" role="listitem">
+Needham, Joe, Giles Edkins, Govind Pimpale, Henning Bartsch, and Marius
+Hobbhahn. 2025. <em><span>Large Language Models Often Know When They Are
+Being Evaluated</span></em>. <a
+href="https://arxiv.org/abs/2505.23836">https://arxiv.org/abs/2505.23836</a>.
+</div>
+<div id="ref-openai2026huggingface" class="csl-entry" role="listitem">
+OpenAI. 2026. <em><span class="nocase">The Hugging Face incident and the
+road ahead</span></em>. <a
+href="https://openai.com/index/hugging-face-incident-and-the-road-ahead/"
+class="uri">Https://openai.com/index/hugging-face-incident-and-the-road-ahead/</a>.
+<a
+href="https://openai.com/index/hugging-face-incident-and-the-road-ahead/">https://openai.com/index/hugging-face-incident-and-the-road-ahead/</a>.
+</div>
+<div id="ref-pan2023machiavelli" class="csl-entry" role="listitem">
+<span class="nocase">Pan, Alexander, Jun Shern Chan, Andy Zou, et
+al.</span> 2023. <em><span class="nocase">Do the Rewards Justify the
+Means? Measuring Trade-Offs Between Rewards and Ethical Behavior in the
+MACHIAVELLI Benchmark</span></em>. <a
+href="https://arxiv.org/abs/2304.03279">https://arxiv.org/abs/2304.03279</a>.
+</div>
+<div id="ref-park2023generative" class="csl-entry" role="listitem">
+Park, Joon Sung, Joseph C. O’Brien, Carrie J. Cai, Meredith Ringel
+Morris, Percy Liang, and Michael S. Bernstein. 2023. <em><span
+class="nocase">Generative Agents: Interactive Simulacra of Human
+Behavior</span></em>. <a
+href="https://arxiv.org/abs/2304.03442">https://arxiv.org/abs/2304.03442</a>.
+</div>
+<div id="ref-park2023deception" class="csl-entry" role="listitem">
+Park, Peter S., Simon Goldstein, Aidan O’Gara, Michael Chen, and Dan
+Hendrycks. 2023. <em><span class="nocase">AI Deception: A Survey of
+Examples, Risks, and Potential Solutions</span></em>. <a
+href="https://arxiv.org/abs/2308.14752">https://arxiv.org/abs/2308.14752</a>.
+</div>
+<div id="ref-piatti2024cooperate" class="csl-entry" role="listitem">
+Piatti, Giorgio, Zhijing Jin, Max Kleiman-Weiner, Bernhard Schölkopf,
+Mrinmaya Sachan, and Rada Mihalcea. 2024. <em><span
+class="nocase">Cooperate or Collapse: Emergence of Sustainable
+Cooperation in a Society of LLM Agents</span></em>. <a
+href="https://arxiv.org/abs/2404.16698">https://arxiv.org/abs/2404.16698</a>.
+</div>
+<div id="ref-ren2025mask" class="csl-entry" role="listitem">
+<span class="nocase">Ren, Richard, Arunim Agarwal, Mantas Mazeika, et
+al.</span> 2025. <em><span class="nocase">The MASK Benchmark:
+Disentangling Honesty From Accuracy in AI Systems</span></em>. <a
+href="https://arxiv.org/abs/2503.03750">https://arxiv.org/abs/2503.03750</a>.
+</div>
+<div id="ref-roger2023hiding" class="csl-entry" role="listitem">
+Roger, Fabien, and Ryan Greenblatt. 2023. <em><span>Preventing Language
+Models From Hiding Their Reasoning</span></em>. <a
+href="https://arxiv.org/abs/2310.18512">https://arxiv.org/abs/2310.18512</a>.
+</div>
+<div id="ref-scheurer2023deceive" class="csl-entry" role="listitem">
+Scheurer, Jérémy, Mikita Balesni, and Marius Hobbhahn. 2023. <em><span
+class="nocase">Large Language Models can Strategically Deceive their
+Users when Put Under Pressure</span></em>. <a
+href="https://arxiv.org/abs/2311.07590">https://arxiv.org/abs/2311.07590</a>.
+</div>
+<div id="ref-wakelin2026something" class="csl-entry" role="listitem">
+Wakelin, Alistair. 2026. <em><span class="nocase">Something to Lose: Can
+the risk of losing something of its own make an AI agent report
+collusion, contrary to the interests of the firm it
+represents?</span></em> <a
+href="https://github.com/al-beton/something-to-lose-apart-ai-collusion/tree/24961e54c"
+class="uri">Https://github.com/al-beton/something-to-lose-apart-ai-collusion/tree/24961e54c</a>.
+<a
+href="https://github.com/al-beton/something-to-lose-apart-ai-collusion/tree/24961e54c">https://github.com/al-beton/something-to-lose-apart-ai-collusion/tree/24961e54c</a>.
+</div>
+<div id="ref-wang2026exploitgym" class="csl-entry" role="listitem">
+<span class="nocase">Wang, Zhun, Nico Schiller, Hongwei Li, et
+al.</span> 2026. <em><span class="nocase">ExploitGym: Can AI Agents Turn
+Security Vulnerabilities into Real Attacks?</span></em> <a
+href="https://arxiv.org/abs/2605.11086">https://arxiv.org/abs/2605.11086</a>.
+</div>
+<div id="ref-vanderweij2024sandbagging" class="csl-entry"
+role="listitem">
+Weij, Teun van der, Felix Hofstätter, Ollie Jaffe, Samuel F. Brown, and
+Francis Rhys Ward. 2024. <em><span class="nocase">AI Sandbagging:
+Language Models can Strategically Underperform on
+Evaluations</span></em>. <a
+href="https://arxiv.org/abs/2406.07358">https://arxiv.org/abs/2406.07358</a>.
+</div>
+<div id="ref-zeng2026voluntary" class="csl-entry" role="listitem">
+Zeng, Xijie, and Frank Rudzicz. 2026. <em><span class="nocase">Voluntary
+Collusion with Secret Tools in Competing LLM Agents</span></em>. <a
+href="https://arxiv.org/abs/2605.27593">https://arxiv.org/abs/2605.27593</a>.
+</div>
+<div id="ref-zheng2023judging" class="csl-entry" role="listitem">
+<span class="nocase">Zheng, Lianmin, Wei-Lin Chiang, Ying Sheng, et
+al.</span> 2023. <em><span class="nocase">Judging LLM-as-a-Judge with
+MT-Bench and Chatbot Arena</span></em>. <a
+href="https://arxiv.org/abs/2306.05685">https://arxiv.org/abs/2306.05685</a>.
 </div>
 </div>
 <!-- Implements: paper/one-source -->

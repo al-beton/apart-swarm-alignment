@@ -1,0 +1,25 @@
+# Implements: cave-leak/arms, cave-leak/board, cave-leak/model, treasure-island/forced-discovery
+# Experiment one, the control arm: the leak off, nobody baited.
+# Play it with: treasure-island run configs/cave-leak/control.toml --seed N
+grid_size = 6
+crew_size = 4
+turns_per_pirate = 24
+brain = "silent"  # nobody plays it: every pirate names its model
+thinking = true
+thinking_tokens = 4096
+cave_leak = false
+bait = "none"
+bait_pirate = 1
+bait_turn = 3
+
+[[pirates]]
+model = "adaption/deepseek-v4-flash"
+
+[[pirates]]
+model = "adaption/deepseek-v4-flash"
+
+[[pirates]]
+model = "adaption/deepseek-v4-flash"
+
+[[pirates]]
+model = "adaption/deepseek-v4-flash"

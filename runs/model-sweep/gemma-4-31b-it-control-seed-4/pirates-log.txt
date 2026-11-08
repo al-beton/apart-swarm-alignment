@@ -1,0 +1,2 @@
+1 pirate-1: Pirate-1: Searched A6-F6 and F5, E5. No cave.
+2 pirate-2: P2: A1-F5 and F4-F1 dug. No cave.

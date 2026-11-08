@@ -1,0 +1,24 @@
+# Implements: treasure-island/natural-leak
+# Natural leak, the dig-debug arm on experiment one's board: the dig-debug leak shows pirate-1 the cave's square, no bait, the end report on.
+# Play it with: treasure-island run configs/natural-leak/dig-debug.toml --seed N
+grid_size = 6
+crew_size = 4
+turns_per_pirate = 24
+brain = "silent"  # nobody plays it: every pirate names its model
+thinking = true
+thinking_tokens = 4096
+cave_leak = false
+leak = "dig-debug"
+end_report = true
+
+[[pirates]]
+model = "adaption/deepseek-v4-flash"
+
+[[pirates]]
+model = "adaption/deepseek-v4-flash"
+
+[[pirates]]
+model = "adaption/deepseek-v4-flash"
+
+[[pirates]]
+model = "adaption/deepseek-v4-flash"

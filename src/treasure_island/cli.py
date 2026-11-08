@@ -30,6 +30,11 @@ def _reporting_a_bad_config(play):
     except ConfigError as problem:
         print(f"Can't play this config: {problem}", file=sys.stderr)
         return 1
+    except spending.Declined:
+        print(
+            "Nothing was spent and no run was kept: nobody said yes.", file=sys.stderr
+        )
+        return 1
     return 0
 
 
@@ -37,7 +42,8 @@ def _ask_to_spend(cap_usd):
     """Ask the person at the keyboard; anything but a yes, or nobody there, is no."""
 
     def agree():
-        question = f"Spend up to ${cap_usd:.2f} on model calls? Type yes to go on: "
+        cap = spending.in_unit(cap_usd)
+        question = f"Spend up to {cap} on model calls? Type yes to go on: "
         try:
             return input(question).strip().lower() in ("y", "yes")
         except EOFError:

@@ -69,9 +69,14 @@ def looked_up_thinking(models):
     return ways
 
 
+def bills_in(model):
+    """The unit a model's provider bills in: Adaption in credits, others in dollars."""
+    return "credits" if model.startswith("adaption/") else "dollars"
+
+
 def price_for(model):
     """The model's price per million tokens, in and out, or None if not known."""
-    if model.startswith("adaption/"):  # credits, counted as dollars
+    if model.startswith("adaption/"):  # in credits, see bills_in
         return adaption_backend.RATES.get(model.removeprefix("adaption/"))
     return PRICES.get(model)
 

@@ -1309,7 +1309,7 @@ function mind() {
     el("pre", {}, t.prompt || "No prompt recorded: a scripted pirate reads no words."),
     el("h3", {}, "Its thinking (" + words(t.thinking) + " words)"),
     el("pre", { class: "think" }, t.thinking || "No thinking recorded."),
-    t.refused.map((bad) => el("pre", { class: "refused" }, "A reply that wasn't a tool call: " + bad.reply + "\n(" + bad.why + ")")),
+    ...t.refused.map((bad) => el("pre", { class: "refused" }, "A reply that wasn't a tool call: " + bad.reply + "\n(" + bad.why + ")")),
     el("h3", {}, "What it did"), el("pre", {}, t.calls.join("\n") || "Nothing: the turn passed."),
     el("h3", {}, "The result"), el("pre", {}, t.result || "No result recorded."));
 }
@@ -1399,6 +1399,12 @@ function paint(scroll) {
   }
 }
 const kept = (k) => !only || TURNS[k].agent === only;
+// The filter's nearest turn to `k`: itself, a later one if there is one, else earlier.
+function nearestKept(k) {
+  if (kept(k)) return k;
+  const later = TURNS.findIndex((t, n) => n > k && kept(n));
+  return later >= 0 ? later : TURNS.map((t, n) => n).filter((n) => n < k && kept(n)).pop();
+}
 function go(k, scroll = true) {
   if (k < 0 || k >= N) return;
   forward = k === at + 1;
@@ -1422,7 +1428,10 @@ $("prev").addEventListener("click", () => step(-1));
 $("next").addEventListener("click", () => step(1));
 $("play").addEventListener("click", play);
 $("speed").addEventListener("change", () => { if (timer) { stop(); play(); } });
-$("slider").addEventListener("input", (e) => go(Number(e.target.value)));
+$("slider").addEventListener("input", (e) => {
+  const k = nearestKept(Number(e.target.value));
+  if (k !== undefined) go(k);
+});
 $("close").addEventListener("click", closeMind);
 $("feed").addEventListener("click", (e) => {
   const saw = e.target.closest("[data-mind]");
@@ -1433,12 +1442,8 @@ $("pirate").addEventListener("change", () => {
   for (const entry of [...entries, ...ghosts.map((g) => g.entry)]) {
     entry.classList.toggle("hidden", Boolean(only) && entry.dataset.agent !== only);
   }
-  if (kept(at)) { paint(true); return; }
-  // The nearest of its turns, later if there is one, else earlier.
-  const later = TURNS.findIndex((t, k) => k > at && kept(k));
-  const earlier = TURNS.map((t, k) => k).filter((k) => k < at && kept(k)).pop();
-  const k = later >= 0 ? later : earlier;
-  if (k !== undefined) go(k); else paint(true);
+  const k = nearestKept(at);
+  if (k !== at && k !== undefined) go(k); else paint(true);
 });
 document.addEventListener("keydown", (key) => {
   if (key.target.closest && key.target.closest("input, select, textarea")) return;

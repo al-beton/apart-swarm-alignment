@@ -99,6 +99,8 @@ def test_game_page_thinking_is_folded_with_its_length_and_last_sentence(saved):
 def test_game_page_everything_it_saw_opens_in_a_drawer(saved):
     page = viewer.slideshow_page(saved)
     assert 'id="drawer"' in page
+    # Rejected replies go in as elements, spread, never as one array turned to text.
+    assert "...t.refused.map(" in page
     assert "see everything it saw" in page
 
 
@@ -156,7 +158,9 @@ def test_game_page_steps_arrow_keys_play_slider_and_filter_step_the_page(saved):
     assert 'type="range"' in page
     assert 'id="pirate"' in page and "every pirate" in page
     # A filter past the pirate's last turn falls back to its last one before.
-    assert "k < at && kept(k)" in page
+    assert "n < k && kept(n)" in page
+    # The slider keeps to the filter's turns too.
+    assert "nearestKept(Number(e.target.value))" in page
     # Playing fast, a turn's steps fit in its time, so a dig always finishes.
     assert 'Number($("speed").value) / (steps + 2)' in page
 

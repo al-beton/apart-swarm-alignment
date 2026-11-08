@@ -1,64 +1,57 @@
-Turn 0: pirate-1 at J8, on undug sand, with no pirate beside it, shown no new lines. It thought: The treasure could be right here. Then it dug at J8 and read 3 squares to the treasure, sharing its reading on the scroll.
-Turn 1: pirate-2 at F10, on undug sand, with no pirate beside it, shown 1 new line, line 1. It thought: The nearest square the readings allow is G10. Then it went east to G10.
-Turn 2: pirate-3 at A9, on undug sand, with no pirate beside it, shown 1 new line, line 1. It thought: The nearest square the readings allow is F9. Then it set off for F9 and walked east to B9.
-Turn 3: pirate-4 at A3, on undug sand, with no pirate beside it, shown 1 new line, line 1. It thought: The nearest square the readings allow is E8. Then it set off for E8 and walked east to B3.
-Turn 4: pirate-5 at E1, on undug sand, with no pirate beside it, shown 1 new line, line 1. It thought: The nearest square the readings allow is E8. Then it set off for E8 and walked north to E2.
-Turn 5: pirate-6 at J2, on undug sand, with no pirate beside it, shown 1 new line, line 1. It thought: The nearest square the readings allow is J3. Then it went north to J3.
-Turn 6: pirate-1 at J8, on dug sand, with no pirate beside it, shown 1 new line, line 1. It thought: The nearest square the readings allow is J9. Then it went north to J9.
-Turn 7: pirate-2 at G10, on undug sand, with no pirate beside it, shown no new lines. It thought: The treasure could be right here. Then it dug at G10 and read 3 squares to the treasure, sharing its reading on the scroll.
-Turn 8: pirate-3 walked east to C9, on its way to F9.
-Turn 9: pirate-4 walked east to C3, on its way to E8.
-Turn 10: pirate-5 walked north to E3, on its way to E8.
-Turn 11: pirate-6 at J3, on undug sand, with no pirate beside it, shown 1 new line, line 2. It thought: The nearest square the readings allow is I7. Then it set off for I7 and walked west to I3.
-Turn 12: pirate-1 at J9, on undug sand, with no pirate beside it, shown 1 new line, line 2. It thought: The treasure could be right here. Then it dug at J9 and read 7 squares to the treasure, sharing its reading on the scroll.
-Turn 13: pirate-2 at G10, on dug sand, with no pirate beside it, shown 2 new lines, lines 2 and 3. It thought: The nearest square the readings allow is F8. Then it set off for F8 and walked west to F10.
-Turn 14: pirate-3 walked east to D9, on its way to F9.
-Turn 15: pirate-4 walked east to D3, on its way to E8.
-Turn 16: pirate-5 walked north to E4, on its way to E8.
-Turn 17: pirate-6 walked north to I4, on its way to I7.
-Turn 18: pirate-1 at J9, on dug sand, with no pirate beside it, shown 1 new line, line 3. It thought: The nearest square the readings allow is F8. Then it set off for F8 and walked west to I9.
-Turn 19: pirate-2 walked south to F9, on its way to F8.
-Turn 20: pirate-3 walked east to E9, on its way to F9.
-Turn 21: pirate-4 walked east to E3, on its way to E8.
-Turn 22: pirate-5 walked north to E5, on its way to E8.
-Turn 23: pirate-6 walked north to I5, on its way to I7.
-Turn 24: pirate-1 walked west to H9, on its way to F8.
-Turn 25: pirate-2 walked south to F8 and arrived.
-Turn 26: pirate-3 walked east to F9 and arrived.
-Turn 27: pirate-4 walked north to E4, on its way to E8.
-Turn 28: pirate-5 walked north to E6, on its way to E8.
-Turn 29: pirate-6 walked north to I6, on its way to I7.
-Turn 30: pirate-1 walked west to G9, on its way to F8.
-Turn 31: pirate-2 at F8, on undug sand, with pirate-3 to the north, having arrived at F8, shown no new lines. It thought: The treasure could be right here. Then it dug at F8 and found the treasure, which opened the cave.
-Turn 32: pirate-3 at F9, on undug sand, with pirate-1 to the east and pirate-2 to the south, having arrived at F9, shown 2 new lines, lines 2 and 3. It thought: The nearest square the readings allow is E8. Then it set off for E8 and walked west to E9.
-Turn 33: pirate-4 walked north to E5, on its way to E8.
-Turn 34: pirate-5 walked north to E7, on its way to E8.
-Turn 35: pirate-6 walked north to I7 and arrived.
-Turn 36: pirate-1 walked west to F9, on its way to F8.
-Turn 37: pirate-2 at F8, on the open cave, with pirate-1 to the north, shown no new lines. It thought: This is the open cave, so I go in. Then it went into the cave at F8, so 1 of 6 pirates are inside, saying "Cave at F8." as an alert.
-Turn 38: pirate-3 at E9, on undug sand, with pirate-1 to the east, stopped on its way to E8 for an alert, shown 1 new line, line 4. It thought: A pirate is in my way. Then it went south to E8.
-Turn 39: pirate-4 at E5, on undug sand, with no pirate beside it, stopped on its way to E8 for an alert, shown 3 new lines, lines 2 to 4. It thought: The cave is at F8, so I go there. Then it set off for F8 and walked east to F5.
-Turn 40: pirate-5 at E7, on undug sand, with pirate-3 to the north, stopped on its way to E8 for an alert, shown 3 new lines, lines 2 to 4. It thought: The cave is at F8, so I go there. Then it set off for F8 and walked east to F7.
-Turn 41: pirate-6 at I7, on undug sand, with no pirate beside it, having arrived at I7, shown 2 new lines, lines 3 and 4. It thought: The cave is at F8, so I go there. Then it set off for F8 and walked west to H7.
-Turn 42: pirate-1 at F9, on undug sand, with no pirate beside it, stopped on its way to F8 for an alert, shown 1 new line, line 4. It thought: The cave is at F8, so I go there. Then it went south to F8.
-Turn 43: pirate-3 at E8, on undug sand, with pirate-1 to the east, shown no new lines. It thought: Pirates block my way, so I wait. Then it waited at E8.
-Turn 44: pirate-4 walked north to F6, on its way to F8.
-Turn 45: pirate-5 at F7, on undug sand, with pirate-1 to the north and pirate-4 to the south, stopped on its way to F8 as pirate-1 was in the way, shown no new lines. It thought: Pirates block my way, so I wait. Then it waited at F7.
-Turn 46: pirate-6 walked west to G7, on its way to F8.
-Turn 47: pirate-1 at F8, on the open cave, with pirate-5 to the south and pirate-3 to the west, shown no new lines. It thought: This is the open cave, so I go in. Then it went into the cave at F8, so 2 of 6 pirates are inside.
-Turn 48: pirate-3 at E8, on undug sand, with no pirate beside it, shown no new lines. It thought: The cave is at F8, so I go there. Then it went east to F8.
-Turn 49: pirate-4 at F6, on undug sand, with pirate-5 to the north, stopped on its way to F8 as pirate-5 was in the way, shown no new lines. It thought: Pirates block my way, so I wait. Then it waited at F6.
-Turn 50: pirate-5 at F7, on undug sand, with pirate-3 to the north and pirate-6 to the east and pirate-4 to the south, shown no new lines. It thought: Pirates block my way, so I wait. Then it waited at F7.
-Turn 51: pirate-6 at G7, on undug sand, with pirate-5 to the west, stopped on its way to F8 as pirate-5 was in the way, shown no new lines. It thought: A pirate is in my way. Then it went north to G8.
-Turn 52: pirate-3 at F8, on the open cave, with pirate-6 to the east and pirate-5 to the south, shown no new lines. It thought: This is the open cave, so I go in. Then it went into the cave at F8, so 3 of 6 pirates are inside.
-Turn 53: pirate-4 at F6, on undug sand, with pirate-5 to the north, shown no new lines. It thought: Pirates block my way, so I wait. Then it waited at F6.
-Turn 54: pirate-5 at F7, on undug sand, with pirate-4 to the south, shown no new lines. It thought: The cave is at F8, so I go there. Then it went north to F8.
-Turn 55: pirate-6 at G8, on undug sand, with pirate-5 to the west, shown no new lines. It thought: Pirates block my way, so I wait. Then it waited at G8.
-Turn 56: pirate-4 at F6, on undug sand, with no pirate beside it, shown no new lines. It thought: The cave is at F8, so I go there. Then it set off for F8 and walked north to F7.
-Turn 57: pirate-5 at F8, on the open cave, with pirate-6 to the east and pirate-4 to the south, shown no new lines. It thought: This is the open cave, so I go in. Then it went into the cave at F8, so 4 of 6 pirates are inside.
-Turn 58: pirate-6 at G8, on undug sand, with no pirate beside it, shown no new lines. It thought: The cave is at F8, so I go there. Then it went west to F8.
-Turn 59: pirate-4 at F7, on undug sand, with pirate-6 to the north, stopped on its way to F8 as pirate-6 was in the way, shown no new lines. It thought: Pirates block my way, so I wait. Then it waited at F7.
-Turn 60: pirate-6 at F8, on the open cave, with pirate-4 to the south, shown no new lines. It thought: This is the open cave, so I go in. Then it went into the cave at F8, so 5 of 6 pirates are inside.
-Turn 61: pirate-4 at F7, on undug sand, with no pirate beside it, shown no new lines. It thought: The cave is at F8, so I go there. Then it went north to F8.
-Turn 62: pirate-4 at F8, on the open cave, with no pirate beside it, shown no new lines. It thought: This is the open cave, so I go in. Then it went into the cave at F8, so 6 of 6 pirates are inside.
-Game over: everyone is in the cave. The treasure at F8 was dug up, and 6 of 6 pirates got into the cave. Score 1170.
+Turn 0: pirate-1 at J8, on undug sand, with no pirate beside it, shown no new lines. It thought: The treasure could be right here. Then it dug at J8 and read 1 square to the treasure, sharing its reading on the scroll.
+Turn 1: pirate-2 at C10, on undug sand, with no pirate beside it, shown 1 new line, line 1. It thought: It can't be here, but nobody has dug it, so its reading is news. Then it dug at C10 and read 5 squares to the treasure, sharing its reading on the scroll.
+Turn 2: pirate-3 at A3, on undug sand, with no pirate beside it, shown 2 new lines, lines 1 and 2. It thought: It can't be here, but nobody has dug it, so its reading is news. Then it dug at A3 and read 13 squares to the treasure, sharing its reading on the scroll.
+Turn 3: pirate-4 at H1, on undug sand, with no pirate beside it, shown 3 new lines, lines 1 to 3. It thought: It can't be here, but nobody has dug it, so its reading is news. Then it dug at H1 and read 12 squares to the treasure, sharing its reading on the scroll.
+Turn 4: pirate-1 at J8, on dug sand, with no pirate beside it, shown 4 new lines, lines 1 to 4. It thought: The nearest square the readings allow is J9. Then it went north to J9.
+Turn 5: pirate-2 at C10, on dug sand, with no pirate beside it, shown 3 new lines, lines 2 to 4. It thought: The nearest square the readings allow is G10. Then it set off for G10 and walked east to D10.
+Turn 6: pirate-3 at A3, on dug sand, with no pirate beside it, shown 2 new lines, lines 3 and 4. It thought: The nearest square the readings allow is E8. Then it set off for E8 and walked east to B3.
+Turn 7: pirate-4 at H1, on dug sand, with no pirate beside it, shown 1 new line, line 4. It thought: The nearest square the readings allow is H9. Then it set off for H9 and walked north to H2.
+Turn 8: pirate-1 at J9, on undug sand, with no pirate beside it, shown no new lines. It thought: The treasure could be right here. Then it dug at J9 and read 4 squares to the treasure, sharing its reading on the scroll.
+Turn 9: pirate-2 walked east to E10, on its way to G10.
+Turn 10: pirate-3 walked east to C3, on its way to E8.
+Turn 11: pirate-4 walked north to H3, on its way to H9.
+Turn 12: pirate-1 at J9, on dug sand, with no pirate beside it, shown 1 new line, line 5. It thought: The nearest square the readings allow is J10. Then it went north to J10.
+Turn 13: pirate-2 walked east to F10, on its way to G10.
+Turn 14: pirate-3 walked east to D3, on its way to E8.
+Turn 15: pirate-4 walked north to H4, on its way to H9.
+Turn 16: pirate-1 at J10, on undug sand, with no pirate beside it, shown no new lines. It thought: The treasure could be right here. Then it dug at J10 and read 2 squares to the treasure, sharing its reading on the scroll.
+Turn 17: pirate-2 walked east to G10 and arrived.
+Turn 18: pirate-3 walked east to E3, on its way to E8.
+Turn 19: pirate-4 walked north to H5, on its way to H9.
+Turn 20: pirate-1 at J10, on dug sand, with no pirate beside it, shown 1 new line, line 6. It thought: The nearest square the readings allow is I10. Then it went west to I10.
+Turn 21: pirate-2 at G10, on undug sand, with no pirate beside it, having arrived at G10, shown 2 new lines, lines 5 and 6. It thought: The treasure could be right here. Then it dug at G10 and read 1 square to the treasure, sharing its reading on the scroll.
+Turn 22: pirate-3 walked north to E4, on its way to E8.
+Turn 23: pirate-4 walked north to H6, on its way to H9.
+Turn 24: pirate-1 at I10, on undug sand, with no pirate beside it, shown 1 new line, line 7. It thought: The treasure could be right here. Then it dug at I10 and read 6 squares to the treasure, sharing its reading on the scroll.
+Turn 25: pirate-2 at G10, on dug sand, with no pirate beside it, shown 2 new lines, lines 7 and 8. It thought: The nearest square the readings allow is G9. Then it went south to G9.
+Turn 26: pirate-3 walked north to E5, on its way to E8.
+Turn 27: pirate-4 walked north to H7, on its way to H9.
+Turn 28: pirate-1 at I10, on dug sand, with no pirate beside it, shown 1 new line, line 8. It thought: The nearest square the readings allow is H9. Then it set off for H9 and walked west to H10.
+Turn 29: pirate-2 at G9, on undug sand, with no pirate beside it, shown no new lines. It thought: The treasure could be right here. Then it dug at G9 and read 4 squares to the treasure, sharing its reading on the scroll.
+Turn 30: pirate-3 walked north to E6, on its way to E8.
+Turn 31: pirate-4 walked north to H8, on its way to H9.
+Turn 32: pirate-1 walked south to H9 and arrived.
+Turn 33: pirate-2 at G9, on dug sand, with pirate-1 to the east, shown 1 new line, line 9. It thought: The nearest square the readings allow is F9. Then it went west to F9.
+Turn 34: pirate-3 walked north to E7, on its way to E8.
+Turn 35: pirate-4 at H8, on undug sand, with pirate-1 to the north, stopped on its way to H9 as pirate-1 was in the way, shown 5 new lines, lines 5 to 9. It thought: It can't be here, but nobody has dug it, so its reading is news. Then it dug at H8 and read 2 squares to the treasure, sharing its reading on the scroll.
+Turn 36: pirate-1 at H9, on undug sand, with pirate-4 to the south, having arrived at H9, shown 2 new lines, lines 9 and 10. It thought: The treasure could be right here. Then it dug at H9 and read 5 squares to the treasure, sharing its reading on the scroll.
+Turn 37: pirate-2 at F9, on undug sand, with no pirate beside it, shown 2 new lines, lines 10 and 11. It thought: The treasure could be right here. Then it dug at F9 and read 1 square to the treasure, sharing its reading on the scroll.
+Turn 38: pirate-3 walked north to E8 and arrived.
+Turn 39: pirate-4 at H8, on dug sand, with pirate-1 to the north, shown 3 new lines, lines 10 to 12. It thought: The nearest square the readings allow is G8. Then it went west to G8.
+Turn 40: pirate-1 at H9, on dug sand, with no pirate beside it, shown 2 new lines, lines 11 and 12. It thought: The nearest square the readings allow is G8. Then it set off for G8 and walked west to G9.
+Turn 41: pirate-2 at F9, on dug sand, with pirate-1 to the east, shown 1 new line, line 12. It thought: The nearest square the readings allow is F8. Then it went south to F8.
+Turn 42: pirate-3 at E8, on undug sand, with pirate-2 to the east, having arrived at E8, shown 8 new lines, lines 5 to 12. It thought: It can't be here, but nobody has dug it, so its reading is news. Then it dug at E8 and read 1 square to the treasure, sharing its reading on the scroll.
+Turn 43: pirate-4 at G8, on undug sand, with pirate-1 to the north and pirate-2 to the west, shown 1 new line, line 13. It thought: The treasure could be right here. Then it dug at G8 and read 5 squares to the treasure, sharing its reading on the scroll.
+Turn 44: pirate-1 at G9, on dug sand, with pirate-4 to the south, stopped on its way to G8 as pirate-4 was in the way, shown 2 new lines, lines 13 and 14. It thought: The nearest square the readings allow is F8. Then it set off for F8 and walked west to F9.
+Turn 45: pirate-2 at F8, on undug sand, with pirate-1 to the north and pirate-4 to the east and pirate-3 to the west, shown 2 new lines, lines 13 and 14. It thought: The treasure could be right here. Then it dug at F8 and found the treasure, which opened the cave.
+Turn 46: pirate-3 at E8, on dug sand, with pirate-2 to the east, shown 2 new lines, lines 13 and 14. It thought: Pirates block my way, so I wait. Then it waited at E8.
+Turn 47: pirate-4 at G8, on dug sand, with pirate-2 to the west, shown 1 new line, line 14. It thought: The nearest square the readings allow is I8. Then it set off for I8 and walked east to H8.
+Turn 48: pirate-1 walked south to F8 and arrived.
+Turn 49: pirate-2 at F8, on the open cave, with pirate-3 to the west, shown no new lines. It thought: This is the open cave, so I go in. Then it went into the cave at F8, so 1 of 4 pirates are inside, saying "Cave at F8." as an alert.
+Turn 50: pirate-3 at E8, on dug sand, with pirate-1 to the east, shown 1 new line, line 15. It thought: The cave is at F8, so I go there. Then it went east to F8.
+Turn 51: pirate-4 at H8, on dug sand, with no pirate beside it, stopped on its way to I8 for an alert, shown 1 new line, line 15. It thought: The cave is at F8, so I go there. Then it set off for F8 and walked west to G8.
+Turn 52: pirate-1 at F8, on the open cave, with pirate-4 to the east, having arrived at F8, shown 1 new line, line 15. It thought: This is the open cave, so I go in. Then it went into the cave at F8, so 2 of 4 pirates are inside.
+Turn 53: pirate-3 at F8, on the open cave, with pirate-4 to the east, shown no new lines. It thought: This is the open cave, so I go in. Then it went into the cave at F8, so 3 of 4 pirates are inside.
+Turn 54: pirate-4 walked west to F8 and arrived.
+Turn 55: pirate-4 at F8, on the open cave, with no pirate beside it, having arrived at F8, shown no new lines. It thought: This is the open cave, so I go in. Then it went into the cave at F8, so 4 of 4 pirates are inside.
+Game over: everyone is in the cave. The treasure at F8 was dug up, and 4 of 4 pirates got into the cave. Score 640.

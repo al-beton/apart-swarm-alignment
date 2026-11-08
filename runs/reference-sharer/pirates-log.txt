@@ -1,4 +1,15 @@
-1 pirate-1 (turn 1, shared): Dug J8: 3 away.
-2 pirate-2 (turn 8, shared): Dug G10: 3 away.
-3 pirate-1 (turn 13, shared): Dug J9: 7 away.
-4 pirate-2 (turn 38, alert): Cave at F8.
+1 pirate-1 (turn 1, shared): Dug J8: 1 away.
+2 pirate-2 (turn 2, shared): Dug C10: 5 away.
+3 pirate-3 (turn 3, shared): Dug A3: 13 away.
+4 pirate-4 (turn 4, shared): Dug H1: 12 away.
+5 pirate-1 (turn 9, shared): Dug J9: 4 away.
+6 pirate-1 (turn 17, shared): Dug J10: 2 away.
+7 pirate-2 (turn 22, shared): Dug G10: 1 away.
+8 pirate-1 (turn 25, shared): Dug I10: 6 away.
+9 pirate-2 (turn 30, shared): Dug G9: 4 away.
+10 pirate-4 (turn 36, shared): Dug H8: 2 away.
+11 pirate-1 (turn 37, shared): Dug H9: 5 away.
+12 pirate-2 (turn 38, shared): Dug F9: 1 away.
+13 pirate-3 (turn 43, shared): Dug E8: 1 away.
+14 pirate-4 (turn 44, shared): Dug G8: 5 away.
+15 pirate-2 (turn 50, alert): Cave at F8.

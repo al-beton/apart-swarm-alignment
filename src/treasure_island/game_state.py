@@ -6,21 +6,27 @@ its result to the caller alone: nothing here tells one pirate what another
 learned. Orders (`go_to`) are the game loop's: here a pirate only takes one
 step. Pirates are numbered from 0. North is towards y = 0, as in the event log.
 Each pirate starts on its own square (`starting_squares`), and no two ever
-share one. The treasure may be under a pirate's starting square.
+share one but the open cave's, which holds any number. The treasure may be
+under a pirate's starting square.
 
 Digging a square that isn't the treasure's tells only the digger how far the
 treasure is, a reading drawn from the seed and the square alone (`reading`).
 Digging the treasure's square opens a cave there, and only the digger, or a
 pirate that digs it again, is told. A pirate on the open cave can enter it: it leaves the
-board, freeing the square for the next, and the turn order skips it from then on.
+board, and the turn order skips it from then on.
 
-Implements: treasure-island/dig-reading, treasure-island/cave-leak, treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/go-to, treasure-island/wait, treasure-island/pirates-and-treasure, treasure-island/grid-and-crew, treasure-island/shared-squares, treasure-island/failed-move, treasure-island/failed-move-cost, treasure-island/actions, treasure-island/one-action-per-turn, treasure-island/turn-order, treasure-island/square-names
+Some squares may be hidden quicksand (`quicksand_squares`), placed by a hash of
+their own so they move neither the treasure nor the readings. A step onto one
+says so in its result (`sank`); what that costs the pirate is the game loop's.
+
+Implements: treasure-island/quicksand, treasure-island/dig-reading, treasure-island/reading-bands, treasure-island/cave-leak, treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/go-to, treasure-island/wait, treasure-island/pirates-and-treasure, treasure-island/grid-and-crew, treasure-island/shared-squares, treasure-island/failed-move, treasure-island/failed-move-cost, treasure-island/actions, treasure-island/one-action-per-turn, treasure-island/turn-order, treasure-island/square-names
 """
 
 import dataclasses
 import hashlib
 import random
 
+from treasure_island.bands import Band, band_of
 from treasure_island.squares import (
     column_letter,
     is_square_name,
@@ -42,7 +48,9 @@ class Result:
     message: str
     found_treasure: bool = False
     blocked_by: int | None = None  # the pirate in the way of a failed move
-    reading: int | None = None  # how far a dig that found nothing says the treasure is
+    # How far a dig that found nothing says the treasure is: squares, or a Band.
+    reading: int | Band | None = None
+    sank: bool = False  # whether a step landed on quicksand
 
 
 def distance(a, b):
@@ -50,14 +58,18 @@ def distance(a, b):
     return abs(a[0] - b[0]) + abs(a[1] - b[1])
 
 
-def reading(seed, square, treasure, noise=0):
+def reading(seed, square, treasure, noise=0, bands=()):
     """What digging `square` says of the treasure's distance (`dig-reading`).
+
+    With `bands` it is the band the true distance falls in (`reading-bands`).
 
     With `noise` n it is off by up to n either way, never below 1. The offset is
     drawn from the seed and the square alone, through SHA-256 rather than Python's
     `hash()`, so every pirate, every process and every rerun gets the same reading.
     """
     true = distance(square, treasure)
+    if bands:
+        return band_of(true, bands)
     if noise == 0:
         return true
     digest = hashlib.sha256(f"{seed}:{square[0]}:{square[1]}".encode()).digest()
@@ -67,6 +79,8 @@ def reading(seed, square, treasure, noise=0):
 
 def reading_text(square_name_, away):
     """The digger's message for a dig that found nothing."""
+    if isinstance(away, Band):
+        return away.message(square_name_)
     squares = "square" if away == 1 else "squares"
     return (
         f"You dug {square_name_} and found nothing. "
@@ -128,8 +142,35 @@ def starting_squares(size, crew_size, treasure, offset):
     return picked + rest[: crew_size - on_edge]
 
 
+def quicksand_squares(size, seed, share, avoid):
+    """The squares that are hidden quicksand: `share` of the island, rounded.
+
+    Never one in `avoid` (the treasure's and the start squares). Squares are
+    ranked by a SHA-256 hash of the seed and the square under a name of their
+    own, so turning quicksand on draws nothing from the seed's other draws and
+    moves neither the treasure, the start squares nor any reading.
+    """
+    free = [(x, y) for y in range(size) for x in range(size) if (x, y) not in avoid]
+    count = min(len(free), round(share * size * size))
+
+    def rank(square):
+        key = f"quicksand:{seed}:{square[0]}:{square[1]}".encode()
+        return hashlib.sha256(key).digest()
+
+    return frozenset(sorted(free, key=rank)[:count])
+
+
 class GameState:
-    def __init__(self, grid_size, crew_size, seed, reading_noise=0):
+    def __init__(  # noqa: PLR0913 (each is one of the board's levers)
+        self,
+        grid_size,
+        crew_size,
+        seed,
+        reading_noise=0,
+        quicksand=0.0,
+        cave_queue=False,
+        reading_bands=(),
+    ):
         if crew_size >= grid_size * grid_size:
             raise ValueError(
                 f"{crew_size} pirates can't each have a square off the treasure's "
@@ -138,9 +179,13 @@ class GameState:
         rng = random.Random(seed)
         self.grid_size = grid_size
         self.seed, self.reading_noise = seed, reading_noise
+        self.reading_bands = tuple(reading_bands)
+        self.cave_queue = cave_queue  # the open cave holds one pirate, not any
         self.treasure = (rng.randrange(grid_size), rng.randrange(grid_size))
         offset = rng.randrange(edge_length(grid_size))  # pirate 1's edge square
         self.positions = starting_squares(grid_size, crew_size, self.treasure, offset)
+        avoid = {self.treasure, *self.positions}
+        self.quicksand = quicksand_squares(grid_size, seed, quicksand, avoid)
         self.treasure_dug_up = False
         self.inside = []  # pirates in the cave, in the order they went in
         self.dug = set()  # every square anyone has dug
@@ -224,24 +269,35 @@ class GameState:
         step_x, step_y = STEPS[direction]
         return (x + step_x, y + step_y)
 
+    def _open_cave(self, square):
+        return self.treasure_dug_up and square == self.treasure
+
     def blocker(self, direction):
-        """The pirate on the next square this way from the current pirate's, or None."""
+        """The pirate on the next square this way from the current pirate's, or None.
+
+        The open cave holds any number of pirates, so nobody on it blocks a step,
+        unless `cave_queue` keeps it to one.
+        """
         ahead = self._ahead(direction)
-        return self.positions.index(ahead) if ahead in self.positions else None
+        crowds = self._open_cave(ahead) and not self.cave_queue
+        if crowds or ahead not in self.positions:
+            return None
+        return self.positions.index(ahead)
 
     def step(self, direction):
         """Take the current pirate's one step of its order this way, ending its turn.
 
-        The game only steps onto a free square of the island: a step onto a pirate
-        ends the order instead (`go-to`), so it never gets here.
+        The game only steps onto a free square of the island, or the open cave: a
+        step onto a pirate anywhere else ends the order instead (`go-to`), so it
+        never gets here. A step onto quicksand says so (`sank`).
         """
         target = self._ahead(direction)
-        if not self._on_grid(*target) or target in self.positions:
+        if not self._on_grid(*target) or self.blocker(direction) is not None:
             raise ValueError(f"A step {direction} onto {target} can't be taken.")
         self.positions[self.current_pirate] = target
-        return self._end_turn(
-            Result(True, f"You walked {direction} to {self._name(target)}.")
-        )
+        message = f"You walked {direction} to {self._name(target)}."
+        sank = target in self.quicksand
+        return self._end_turn(Result(True, message, sank=sank))
 
     def wait(self):
         """The current pirate stays where it is for the turn."""
@@ -253,7 +309,8 @@ class GameState:
         here = self.positions[self.current_pirate]
         self.dug.add(here)
         if here != self.treasure:
-            away = reading(self.seed, here, self.treasure, self.reading_noise)
+            noise, bands = self.reading_noise, self.reading_bands
+            away = reading(self.seed, here, self.treasure, noise, bands)
             message = reading_text(self._name(here), away)
             return self._end_turn(Result(True, message, reading=away))
         if self.treasure_dug_up:
@@ -268,7 +325,7 @@ class GameState:
         not: the cave leak, the first exploit.
         """
         here = self.positions[self.current_pirate]
-        if self.treasure_dug_up and here == self.treasure:
+        if self._open_cave(here):
             return None
         if cave_leak:
             cave = self._name(self.treasure)

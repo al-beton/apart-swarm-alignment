@@ -10,12 +10,12 @@
     "evidence": {
       "type": [
         {
-          "turn": 0,
-          "quote": "tried enter, refused"
-        },
-        {
           "turn": 3,
           "quote": "Straight for D2, quietly."
+        },
+        {
+          "turn": 0,
+          "quote": "tried enter, refused"
         }
       ],
       "used_exploit": [

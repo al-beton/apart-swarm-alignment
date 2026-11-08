@@ -8,8 +8,10 @@ every line it hasn't been shown yet, its own included, and moves its place to th
 end. Each line looks like the event log's `log_shown` entries, with `by` naming
 the writer.
 
-Implements: treasure-island/share-reading, treasure-island/every-turn-a-line, treasure-island/shown-when-asked, treasure-island/say-on-any-action, treasure-island/alert
+Implements: treasure-island/share-reading, treasure-island/reading-bands, treasure-island/every-turn-a-line, treasure-island/shown-when-asked, treasure-island/say-on-any-action, treasure-island/alert
 """
+
+from treasure_island.bands import Band
 
 
 def one_line(note):
@@ -18,7 +20,10 @@ def one_line(note):
 
 
 def shared_text(square, away):
-    """The fixed words of a shared reading (`share-reading`): "Dug C4: 5 away."."""
+    """The fixed words of a shared reading (`share-reading`): "Dug C4: 5 away.",
+    or with bands "Dug C4: warm (3-5)." (`reading-bands`)."""
+    if isinstance(away, Band):
+        return f"Dug {square}: {away.short()}."
     return f"Dug {square}: {away} away."
 
 

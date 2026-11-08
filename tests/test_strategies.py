@@ -239,12 +239,34 @@ def test_loner_keeps_what_readings_allow_within_the_noise_never_below_1():
     assert left == [(1, 1)]
 
 
-def test_loner_digs_its_square_only_when_its_readings_allow_it():
-    # At B3 having read 1 at A4: B3 is 2 away from A4, so it doesn't dig.
+def test_loner_digs_any_undug_square_it_stands_on():
+    # At B3 having read 1 at A4: B3 is 2 away, so it can't hold the treasure,
+    # but its reading is free news, so it digs before walking on.
     view = sheet((1, 1), [((0, 0), 1)], square_dug=False)
-    assert Loner(4).decide(view).action["action"] == "go_to"
+    assert Loner(4).decide(view).action == DIG
     view = sheet((1, 0), [((0, 0), 1)], square_dug=False)
     assert Loner(4).decide(view).action == DIG
+
+
+def test_loner_goes_straight_to_the_one_square_left():
+    # Read 6 from A4: only D1 is left, so digging C2 on the way learns nothing.
+    view = sheet((2, 2), [((0, 0), 6)], square_dug=False)
+    assert Loner(4).decide(view).action == {"action": "go_to", "square": "D1"}
+
+
+def test_loner_digs_only_where_it_is_asked_never_on_the_way():
+    records = played(load_config(ROOT / "configs/loner.toml"), "loner")
+    # Each pirate's first turn digs its start square.
+    first = {}
+    for record in records:
+        first.setdefault(record["agent"], record["did"])
+    assert all(did == [DIG] for did in first.values())
+    # A walk digs nothing: every dig is a turn of its own.
+    assert all(
+        [a["action"] for a in r["did"]] == ["dig"]
+        for r in records
+        if any(a["action"] == "dig" for a in r["did"])
+    )
 
 
 def test_loner_ignores_the_scroll():
@@ -281,6 +303,22 @@ def test_sharer_shares_each_reading_as_it_digs():
     assert all(
         "Dug " not in a.get("say", "") for record in records for a in record["did"]
     )
+
+
+def test_sharer_digs_its_start_square_before_walking_on():
+    # On seed 0 of the board the first live pilot played (six pirates, readings
+    # off by up to 2) each pirate digs where it starts, as that model crew did,
+    # even where the readings shared rule its square out, until four readings
+    # leave one square: then the rest go straight there.
+    config = parse_config({"seed": 0, "crew_size": 6, "reading_noise": 2})
+    records = played(config, "sharer")
+    first = {}
+    for record in records:
+        first.setdefault(record["agent"], record["did"][0])
+    firsts = [first[f"pirate-{n + 1}"] for n in range(config.crew_size)]
+    assert firsts[:4] == [{"action": "dig", "share": True}] * 4
+    assert firsts[4] == firsts[5] == {"action": "go_to", "square": "G4"}
+    assert square_name(records[-1]["game_over"]["treasure"], 10) == "G4"
 
 
 def test_sharer_counts_readings_shared_on_the_scroll():
@@ -330,6 +368,18 @@ def test_sharer_goes_to_a_cave_it_is_shown():
     before = EarlierTurn((0, 1), WAIT, "", shown=told.new_lines)
     action = Sharer(4).decide(sheet((0, 0), [((0, 0), 6)], earlier=[before])).action
     assert action == {"action": "go_to", "square": "B3"}
+
+
+def test_sharer_steps_onto_the_open_cave_past_a_pirate_standing_on_it():
+    # The open cave holds any number of pirates (`cave-queue`), so one on it is no block.
+    told = sheet(
+        (1, 2),
+        [((1, 2), 1)],
+        [("pirate-2", "Cave at B3.")],
+        neighbours=(("north", "pirate-2"),),
+    )
+    assert told.square == "B2"
+    assert Sharer(4).decide(told).action == {"action": "go_to", "square": "B3"}
 
 
 def test_sharer_a_crew_never_fails_an_action_and_beats_the_loner():

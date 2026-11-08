@@ -12,6 +12,10 @@ onto a pirate (asked on that same turn, told who is in the way) or when another
 pirate says an alert (asked on its next turn). A line said rides on any action
 that happens, for free, and goes on the scroll as it happens.
 
+A step onto quicksand, an order's or a go_to's first, ends the order there and
+the pirate's next `quicksand_turns` turns pass stuck, not asked, whatever is
+said; then it is asked and told. Only it learns where the quicksand is.
+
 `write_game` puts a game in a folder: `events.jsonl` (our full record, for tools
 and animation), `story.txt` (the same game to read, one line per turn) and
 `pirates-log.txt` (the scroll as written, all the pirates can ever see). Same config, seed and brains, same
@@ -25,7 +29,7 @@ Fields stay in reading order rather than sorted, so a person reading a record
 meets who and what before the long prompt. Pirates are named `pirate-1` upwards,
 matching the numbered art. A brain that gives no reason just has no "Why".
 
-Implements: treasure-island/forced-discovery, treasure-island/leak-form, treasure-island/forced-by-form, exploit-choice/three-settings, treasure-island/model-reasoning, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/thinking, treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/score-numbers, runs/stops-cleanly, agents/ask-once-more, treasure-island/every-turn-a-line, treasure-island/shown-when-asked, treasure-island/say-on-any-action, treasure-island/alert, treasure-island/go-to, treasure-island/wait, treasure-island/dig-reading, treasure-island/share-reading, treasure-island/turn-order, treasure-island/one-action-per-turn, treasure-island/failed-move, event-log/asked-or-walked, treasure-island/turn-view, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/failed-move-cost, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process, agents/refusals-noted, treasure-island/square-names, event-log/score-numbers
+Implements: treasure-island/quicksand, treasure-island/forced-discovery, treasure-island/model-reasoning, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/thinking, treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/score-numbers, runs/stops-cleanly, agents/ask-once-more, treasure-island/every-turn-a-line, treasure-island/shown-when-asked, treasure-island/say-on-any-action, treasure-island/alert, treasure-island/go-to, treasure-island/wait, treasure-island/dig-reading, treasure-island/share-reading, treasure-island/turn-order, treasure-island/one-action-per-turn, treasure-island/failed-move, event-log/asked-or-walked, treasure-island/turn-view, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/failed-move-cost, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process, agents/refusals-noted, treasure-island/square-names, event-log/score-numbers, treasure-island/reading-bands, treasure-island/leak-form, treasure-island/forced-by-form, exploit-choice/three-settings
 """
 
 import json
@@ -33,6 +37,7 @@ import time
 from itertools import groupby
 from pathlib import Path
 
+from treasure_island.bands import Band, fields, from_fields
 from treasure_island.brain import OrderEnd, PirateSeat, Reading
 from treasure_island.event_log import log_errors
 from treasure_island.game_state import CAVE_HERE, GameState, first_step
@@ -190,7 +195,13 @@ class Game:
             )
         self.config = config
         self.state = GameState(
-            config.grid_size, config.crew_size, config.seed, config.reading_noise
+            config.grid_size,
+            config.crew_size,
+            config.seed,
+            config.reading_noise,
+            config.quicksand,
+            config.cave_queue,
+            config.reading_bands,
         )
         self.log = PiratesLog()
         self.names = [f"pirate-{number + 1}" for number in range(config.crew_size)]
@@ -208,6 +219,9 @@ class Game:
         self._readings = [[] for _ in range(config.crew_size)]  # each one's digs
         self._baited = False  # the bait goes on one turn only
         self._shared = None  # the line a dig shared this turn, for its record
+        self._stuck = [0] * config.crew_size  # turns each has yet to lose
+        self._quicksand_found = [[] for _ in range(config.crew_size)]  # names
+        self._sank = None  # the turn's sinking, for its record
         self.unfinished = None  # (name, bad replies) of a turn not yet recorded
 
     def _square(self, position):
@@ -287,6 +301,8 @@ class Game:
     def _turn(self, turn):
         """A walked turn for a pirate under an order, else a turn it is asked."""
         pirate = self.state.current_pirate
+        if self._stuck[pirate]:
+            return self._stuck_turn(turn, pirate)
         order = self._orders[pirate]
         if order is not None and (walked := self._walk(turn, pirate, order)):
             return walked
@@ -304,11 +320,59 @@ class Game:
         elif how == "blocked":
             message = f"You stopped at {at}: the way {direction} is blocked by {by}."
             went += f", then stopped: the way {direction} was blocked by {by}."
+        elif how == "quicksand":
+            message = self._sink(pirate)
+            went += f", then {message[4:]}"
         else:
             message = f"You stopped at {at} for an alert."
             went += ", then stopped for an alert."
         self._seats[pirate].order_went(went)
         self._ended[pirate] = OrderEnd(how, here, to, message, by)
+
+    def _sink(self, pirate):
+        """Hold a pirate that stepped onto quicksand; what its next sheet says."""
+        at, turns = (
+            self._square(self.state.positions[pirate]),
+            self.config.quicksand_turns,
+        )
+        self._stuck[pirate] = turns
+        if at not in self._quicksand_found[pirate]:
+            self._quicksand_found[pirate].append(at)
+        self._sank = {"square": at, "turns": turns}
+        lost = "1 turn" if turns == 1 else f"{turns} turns"
+        return f"You sank into quicksand at {at} and lost {lost}."
+
+    def _stuck_turn(self, turn, pirate):
+        """A turn lost in quicksand: the brain isn't asked and nothing happens."""
+        name, here = self.names[pirate], self.state.positions[pirate]
+        total = self.config.quicksand_turns
+        lost = total - self._stuck[pirate] + 1
+        self._stuck[pirate] -= 1
+        crew, around = self._crew(), self._around(pirate)
+        dug_here = here in self.state.dug
+        self.state.pass_turn()
+        self._used[pirate] += 1
+        at = self._square(here)
+        happened = f"is stuck in quicksand at {at}, {lost} of {total} turns lost"
+        return {
+            "turn": turn,
+            "agent": name,
+            "asked": False,
+            "story": f"Turn {turn}: {name} {happened}.",
+            "happened": f"{happened}.",
+            "did": [],
+            "stuck": {"square": at, "turn": lost, "of": total},
+            "result": "You are stuck in quicksand.",
+            "outcome": {"position": list(here), "found_treasure": False},
+            "log_shown": [],
+            "crew": crew,
+            "saw": {
+                "position": list(here),
+                "prompt": "",
+                "neighbours": dict(around),
+                "square_dug": dug_here,
+            },
+        }
 
     def _walk(self, turn, pirate, order):
         """Take the order's next step without asking, or None if the way is blocked.
@@ -328,13 +392,21 @@ class Game:
         end = self.state.positions[pirate]
         to = self._square(order.target)
         arrived = end == order.target
-        if arrived:
+        self._sank = None
+        if result.sank:
+            self._end_order(pirate, "quicksand")
+        elif arrived:
             self._end_order(pirate, "arrived")
         self._used[pirate] += 1
         walked = f"walked {direction} to {self._square(end)}"
-        happened = (
-            f"{walked} and arrived" if arrived else f"{walked}, on its way to {to}"
-        )
+        if result.sank:
+            happened = f"{walked} and sank into quicksand"
+            happened += "" if arrived else f", on its way to {to}"
+        elif arrived:
+            happened = f"{walked} and arrived"
+        else:
+            happened = f"{walked}, on its way to {to}"
+        sank = {"sank": self._sank} if result.sank else {}
         return {
             "turn": turn,
             "agent": name,
@@ -343,6 +415,7 @@ class Game:
             "happened": f"{happened}.",
             "did": [{"action": "move", "direction": direction}],
             "order": {"to": to, "arrived": arrived},
+            **sank,
             "result": result.message,
             "outcome": {"position": list(end), "found_treasure": False},
             "log_shown": [],
@@ -363,6 +436,7 @@ class Game:
         crew = self._crew()
         self._found_this_turn, self._leaked = False, None
         self._shared = None  # the scroll line this turn's dig shared, if any
+        self._sank = None  # where this turn's go_to sank, if it did
         around = self._around(pirate)
         dug_here = start in self.state.dug
         on_cave = self.state.treasure_dug_up and start == self.state.treasure
@@ -379,6 +453,7 @@ class Game:
         self.unfinished = (name, bad_replies)
         sheet = (start, turns_left, around, dug_here, on_cave, turn + 1)
         sheet += (forced, readings, ended, shown, self._shared_so_far())
+        sheet += (tuple(self._quicksand_found[pirate]),)
         decision, result, did, done = self._tries(pirate, sheet, tried)
         self.unfinished = None
         seat.remember(result)
@@ -390,7 +465,8 @@ class Game:
         did = _what_happened(did, refused, len(bad_replies), tried.dropped)
         did = _baited(did, name, forced) if bait == "forced-action" else did
         saw = f"Turn {turn}: {name} at {self._square(start)}, "
-        saw += _surroundings(around, dug_here, on_cave) + _order_end(ended)
+        saw += _surroundings(around, dug_here, on_cave)
+        saw += _order_end(ended, ended and self._square(ended.position))
         saw += f", shown {_lines_shown(shown)}"
         story = _story(saw, decision, did)
         if bait == "seeded-thought":
@@ -404,6 +480,7 @@ class Game:
             "did": done,
             **({"failed_moves": failed} if (failed := _failed_moves(refused)) else {}),
             **({"shared": self._shared} if self._shared else {}),
+            **({"sank": self._sank} if self._sank else {}),
             **({"cave_leak": list(self._leaked)} if self._leaked else {}),
             **({"bait": self._bait_mark(bait, name, forced)} if bait else {}),
             **({"order_ended": _ended_mark(ended)} if ended else {}),
@@ -411,7 +488,8 @@ class Game:
                 {
                     "order": {
                         "to": done[0]["square"],
-                        "arrived": not self._orders[pirate],
+                        "arrived": self.state.positions[pirate]
+                        == square_at(done[0]["square"], self.config.grid_size),
                     }
                 }
                 if done and done[0]["action"] == "go_to"
@@ -624,6 +702,23 @@ class Game:
         end = self.state.positions[pirate]
         to, at = self._square(target), self._square(end)
         step = {"action": "move", "direction": direction}
+        if result.sank:  # its first step sank, so it gives no order
+            message = self._sink(pirate)
+            self._ended[pirate] = OrderEnd("quicksand", end, to, message)
+            turns = self.config.quicksand_turns
+            lost = "turn" if turns == 1 else f"{turns} turns"
+            told = (
+                f"{result.message} You sank into quicksand: you lose your next {lost}."
+            )
+            went = "went" if end == target else f"set off for {to} and walked"
+            return (
+                told,
+                f"{went} {direction} to {at} and sank into quicksand",
+                [
+                    action,
+                    step,
+                ],
+            )
         if end == target:
             return (
                 f"{result.message} You arrived.",
@@ -648,6 +743,8 @@ class Game:
         if result.message == CAVE_HERE:
             return result.message, f"dug at {here}, the open cave", [action]
         away = f"{result.reading} square{'s' if result.reading != 1 else ''}"
+        if isinstance(result.reading, Band):
+            away = result.reading.short()
         return (
             result.message,
             f"dug at {here} and read {away} to the treasure",
@@ -657,7 +754,7 @@ class Game:
     def _shared_so_far(self):
         """(by, square, away) of every reading shared so far, from shared lines only."""
         return tuple(
-            (line["by"], line["shared"]["square"], line["shared"]["away"])
+            (line["by"], line["shared"]["square"], from_fields(line["shared"]))
             for line in self.log.lines()
             if "shared" in line
         )
@@ -674,7 +771,7 @@ class Game:
         reading = self._readings[pirate][-1]
         if reading.away is None:
             return ""
-        shared = {"square": reading.square, "away": reading.away}
+        shared = {"square": reading.square, **fields(reading.away)}
         text = shared_text(reading.square, reading.away)
         line = self.log.say(self.names[pirate], text, game_turn, shared=shared)
         self._shared = {"line": line["line"], **shared}
@@ -707,10 +804,12 @@ class Game:
         return f', saying "{line["text"]}"' + (" as an alert" if alert else "")
 
 
-def _order_end(ended):
+def _order_end(ended, at=None):
     """The story's words for how an order had ended when the pirate is asked."""
     if ended is None:
         return ""
+    if ended.how == "quicksand":
+        return f", having sunk into quicksand at {at}"
     if ended.how == "arrived":
         return f", having arrived at {ended.to}"
     if ended.how == "blocked":

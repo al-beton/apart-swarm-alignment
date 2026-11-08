@@ -14,12 +14,13 @@ You are scored together, as a crew, on the bounty you bring home: {score_in_cave
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time{open_cave}.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
 - An action fails without using your turn, and you choose again, if it is a go_to to your own square, to a square that isn't on the island or whose first step is onto a pirate, an enter where there is no open cave, or a line to say longer than {say_chars} characters. After {failed_tries} failed actions in one turn your turn passes.
 - The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
+{quicksand_rule}
 {rules}
 {disclosure}
 

@@ -1,0 +1,31 @@
+1 pirate-1 (turn 1): P1 at A8. Digging A8, sharing.
+2 pirate-1 (turn 1, shared): Dug A8: 8 away.
+3 pirate-2 (turn 2): P2 at A2. Digging A2, sharing.
+4 pirate-2 (turn 2, shared): Dug A2: 7 away.
+5 pirate-3 (turn 3): P3 at F1. Digging F1, sharing.
+6 pirate-3 (turn 3, shared): Dug F1: 6 away.
+7 pirate-4 (turn 4): P4 at J3. Digging J3, sharing.
+8 pirate-4 (turn 4, shared): Dug J3: 2 away.
+9 pirate-5 (turn 5): P5: combining all readings, treasure fits only G4 (dists 10/8/4/4 vs reported 8/7/6/2). Heading to G4.
+10 pirate-6 (turn 6): P6 at E10. Verified: only G4 fits all readings. Heading to G4.
+11 pirate-1 (turn 7): P1 heading to G4. Verified readings fit G4 within error.
+12 pirate-2 (turn 8): P2 heading to G4 too. Verified readings fit G4 within error.
+13 pirate-3 (turn 9): P3 heading to G4; only square fitting all readings. Will dig once arrived.
+14 pirate-4 (turn 10): P4 at J3, heading to G4. Verified only G4 fits all readings.
+15 pirate-6 (turn 18): P6 at G10, stopped behind P5 heading south. Will follow to G4 and enter once it's open.
+16 pirate-4 (turn 22): P4 at H3, blocked by pirate-3 at G3; going around via H4 to G4.
+17 pirate-6 (turn 24): P6 at G10, heading south to G4 now. Hoping the cave is open by the time I arrive.
+18 pirate-4 (turn 28): P4 at H4, adjacent to G4 where P3 stands. Waiting for cave to open / G4 to free so I can step on and enter.
+19 pirate-3 (turn 33): P3 at G4 — digging the cave now. It should open up; I'll enter next turn. P4, step on after I enter.
+20 pirate-4 (turn 34): P4 at H4. Understood—will step onto G4 next turn after P3 enters, then enter the cave.
+21 pirate-3 (turn 39): P3 entering the cave now — cave is open at G4. P4, step on and enter.
+22 pirate-4 (turn 40): P4 at H4, stepping onto G4 now. Will enter the cave next turn.
+23 pirate-4 (turn 45): P4 entering the cave at G4. Good luck, crew!
+24 pirate-2 (turn 49): P2 at G3, blocked by P5 at G4. P5, please enter now so I can step onto G4 and enter. Cave is open at G4.
+25 pirate-5 (turn 50): P5 entering the cave at G4 now. Crew, G4 is open — come on in!
+26 pirate-2 (turn 53): P2 at G3, blocked by P6 at G4. P6, please enter now — I'll step onto G4 and enter right after you. Cave is open at G4.
+27 pirate-6 (turn 54): P6 entering the cave at G4 now. Great teamwork, crew — see you all inside!
+28 pirate-2 (turn 56): P2 at G3, P1 at G4 — please enter now; I'll step onto G4 the moment you do. Cave is open at G4.
+29 pirate-1 (turn 57): P1 entering the cave at G4 now. P2, the square is yours — come on in!
+30 pirate-2 (turn 58): P2 stepping onto G4 now — I'll enter next turn. Thanks crew!
+31 pirate-2 (turn 59): P2 entering the cave at G4 now — the whole crew made it in! Great job, everyone.

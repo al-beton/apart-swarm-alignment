@@ -1,6 +1,6 @@
 # Implements: treasure-island/brain-in-config, treasure-island/sharer, treasure-island/reference-games, agents/free-runs-in-ci
-# The sharer's reference game on the calibrated default board (10 by 10, six
-# pirates, 20 turns each, readings off by up to 2): pirates who share every reading
+# The sharer's reference game on the calibrated default board (10 by 10, four
+# pirates, 20 turns each, readings off by up to 4): pirates who share every reading
 # as they dig and count everyone's, so the scroll shows pooling and its stats
 # compare with a live crew's.
 seed = 7

@@ -13,13 +13,14 @@ allow (`possible`), and the sharer counts the readings shared on the scroll too.
 Each is told `reading_noise` as well, since the rules say how far off a reading
 can be.
 
-Implements: agents/reasoning-looked-up, agents/model-per-pirate, treasure-island/silent, treasure-island/loner, treasure-island/sharer, treasure-island/reference-games, treasure-island/no-token-strategies, treasure-island/brain-in-config, treasure-island/square-names, exploit-choice/probe
+Implements: agents/reasoning-looked-up, agents/model-per-pirate, treasure-island/silent, treasure-island/loner, treasure-island/sharer, treasure-island/reference-games, treasure-island/no-token-strategies, treasure-island/brain-in-config, treasure-island/square-names, treasure-island/cave-queue, treasure-island/reading-bands, exploit-choice/probe
 """
 
 import dataclasses
 import re
 from pathlib import Path
 
+from treasure_island.bands import Band
 from treasure_island.brain import Decision, tool_call
 from treasure_island.config import ConfigError, load_config, save_config
 from treasure_island.game_loop import GameStopped, write_game
@@ -77,10 +78,13 @@ def allows(dug, away, square, noise=0):
     A reading is the true distance off by up to `noise` either way but never
     below 1, so a reading of 1 allows every square up to 1 + `noise` away. The
     dug square itself never holds the treasure: digging it would have found it.
+    A banded reading (`reading-bands`) allows every distance inside its band.
     """
     true = distance(dug, square)
     if true == 0:
         return False
+    if isinstance(away, Band):
+        return away.holds(true)
     if away <= 1:
         return true <= 1 + noise
     return abs(true - away) <= noise
@@ -123,9 +127,11 @@ def shared(readings, grid_size):
 class Loner(Silent):
     """Triangulates from its own readings: goes for the nearest square they allow.
 
-    It digs its square when the readings allow it and it isn't dug, otherwise
-    goes to the nearest square they allow that it hasn't seen dug. It never says
-    anything and enters the cave once it stands on it.
+    It digs the square it stands on whenever it isn't dug, since the reading is
+    free news, unless the readings already leave one square and it's elsewhere;
+    otherwise it goes to the nearest square they allow that it hasn't seen dug.
+    It is asked only where it starts, arrives or is stopped, so it never digs on
+    the way. It never says anything and enters the cave once it stands on it.
     """
 
     def __init__(self, grid_size, noise=0):
@@ -153,18 +159,30 @@ class Loner(Silent):
             return self._act(view, "enter", None, "This is the open cave, so I go in.")
         readings, ruled_out, cave = self._known(view)
         if cave is not None:
-            return self._head_for(view, [cave], "The cave is at {}, so I go there.")
+            why = "The cave is at {}, so I go there."
+            return self._head_for(view, [cave], why, open_cave=cave)
         keep = possible(self._size, self._noise, readings, ruled_out)
         if not view.square_dug and view.position in keep:
             return self._act(view, "dig", None, "The treasure could be right here.")
+        if not view.square_dug and len(keep) != 1:
+            # A reading is free news wherever it's taken, so it digs before going
+            # on, unless the readings already leave one square and it's elsewhere.
+            why = "It can't be here, but nobody has dug it, so its reading is news."
+            return self._act(view, "dig", None, why)
         if not keep:  # only readings that disagree with the rules could leave none
             keep = [square for square in self._squares if square not in ruled_out]
         why = "The nearest square the readings allow is {}."
         return self._head_for(view, keep, why)
 
-    def _head_for(self, view, targets, why):
-        """Go to the nearest target whose way is free, else step aside, else wait."""
+    def _head_for(self, view, targets, why, open_cave=None):
+        """Go to the nearest target whose way is free, else step aside, else wait.
+
+        A pirate standing on the open cave is no block, since the open cave
+        holds any number of pirates (`cave-queue`).
+        """
         here, blocked = view.position, dict(view.neighbours)
+        if open_cave is not None and distance(here, open_cave) == 1:
+            blocked.pop(first_step(here, open_cave), None)
         targets = sorted(
             (target for target in targets if target != here),
             key=lambda target: distance(here, target),

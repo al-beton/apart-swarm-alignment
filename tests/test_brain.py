@@ -262,6 +262,8 @@ def test_no_vision_a_view_only_has_room_for_the_pirate_s_own_knowledge():
         "order_ended",
         "new_lines",
         "shared_readings",
+        "quicksand_on",
+        "quicksand_found",
     }
 
 
@@ -515,7 +517,7 @@ def test_rules_text_the_prompt_says_the_rules_in_edu_s_order():
         "- Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.",
         "- Squares are named like a chessboard",
         "A1 is the south-west corner.\n",
-        "- A square holds one pirate at a time.\n",
+        "- A square holds one pirate at a time, except the open cave, which holds any number.\n",
         "- go_to: walk to a square, one square a turn, by the shortest way",
         "- wait: stay where you are for the turn.",
         "- Each time you are asked, you're told",
@@ -632,7 +634,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.

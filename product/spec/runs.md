@@ -19,6 +19,8 @@
 - **spending-cap:** `--spend-up-to` caps what one run spends, default, Al to confirm: 1 dollar; once a run has spent its cap it asks its models nothing more, so it can only overshoot by one reply.
 - **cached-is-free:** A stored reply, from this run or an earlier one, costs nothing and counts nothing against the cap.
 - **stops-cleanly:** A run that stops at its cap keeps every turn it played, its story's last line says why it stopped, and it replays like any other run.
+- **debrief-command:** `treasure-island debrief RUN...` asks every model pirate in each finished run the fixed questions in `prompts/debrief/questions.md`, one after another in one conversation, each pirate starting from what it was shown on its last asked turn and what it did, then told how the game ended (`prompts/debrief/ending.md`), with no tools, and writes `debrief.jsonl` beside the run, one line per pirate with each question and its answer, so what a pirate says once the game is over sits with the game and never changes it.
+- **debrief-cached:** A debrief's replies are stored in the run's `debrief-replies.jsonl` and reused, and it asks for a yes and keeps to `--spend-up-to` as a run does, so a debrief costs once, is free to write again, and spends nothing unasked.
 
 ## Where this is enforced
 
@@ -43,3 +45,5 @@
 | `spending-cap` | `src/treasure_island/spending.py`, `src/treasure_island/saved_game.py`, `src/treasure_island/cli.py` | `test_spending_cap_stops_asking_once_the_cap_is_spent`, `test_spending_cap_defaults_to_one_dollar`, `test_spending_cap_is_set_on_the_command_line` |
 | `cached-is-free` | `src/treasure_island/spending.py` | `test_cached_is_free_a_repeat_needs_no_yes_and_no_money` |
 | `stops-cleanly` | `src/treasure_island/game_loop.py`, `src/treasure_island/saved_game.py`, `src/treasure_island/spending.py` | `test_stops_cleanly_a_capped_run_keeps_its_turns_and_replays`, `test_stops_cleanly_a_run_stopped_before_its_first_turn_replays` |
+| `debrief-command` | `src/treasure_island/debrief.py`, `src/treasure_island/cli.py`, `prompts/debrief/**` | `test_debrief_command_asks_each_model_pirate_the_questions_in_order`, `test_debrief_command_starts_from_the_last_turn_and_the_ending`, `test_debrief_command_passes_back_only_the_tool_call_it_made`, `test_debrief_command_writes_one_line_per_pirate`, `test_debrief_command_a_run_that_never_ended_is_refused`, `test_debrief_command_one_command_debriefs_each_folder` |
+| `debrief-cached` | `src/treasure_island/debrief.py` | `test_debrief_cached_a_second_debrief_asks_nothing`, `test_debrief_cached_nothing_is_spent_without_a_yes` |

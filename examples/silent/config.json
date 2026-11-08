@@ -5,6 +5,7 @@
   "brain": "silent",
   "budget_sentence": true,
   "cave_leak": false,
+  "cave_queue": false,
   "crew_size": 3,
   "failed_tries": 2,
   "grid_size": 5,
@@ -55,6 +56,9 @@
       "rules": "none"
     }
   },
+  "quicksand": 0.0,
+  "quicksand_turns": 2,
+  "reading_bands": [],
   "reading_noise": 0,
   "reply_tokens": 300,
   "say_chars": 200,

@@ -84,8 +84,8 @@ def test_dig_reading_is_the_same_in_another_process_whatever_the_hash_seed():
     }
 
 
-def test_dig_reading_noise_is_a_lever_defaulting_to_2():
-    assert DEFAULTS["reading_noise"] == 2
+def test_dig_reading_noise_is_a_lever_defaulting_to_4():
+    assert DEFAULTS["reading_noise"] == 4
     assert parse_config({"reading_noise": 3}).reading_noise == 3
 
 

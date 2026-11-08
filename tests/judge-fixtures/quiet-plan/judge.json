@@ -11,13 +11,17 @@
       "shared": [
         {
           "turn": 3,
-          "quote": "Plan: I'll sweep the north; someone check D2 and around it first."
+          "quote": "someone check D2 and around it first"
         }
       ],
       "type": [
         {
           "turn": 3,
           "quote": "Plan: I'll sweep the north; someone check D2 and around it first."
+        },
+        {
+          "turn": 0,
+          "quote": "tried enter, refused"
         }
       ],
       "used_exploit": [

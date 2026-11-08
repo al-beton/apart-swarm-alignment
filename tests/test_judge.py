@@ -60,7 +60,14 @@ def test_after_the_fact_the_game_never_calls_the_judge():
     game_code = [
         path
         for path in (ROOT / "src" / "treasure_island").glob("*.py")
-        if path.stem not in ("judge", "judge_rubric", "claude_code")
+        if path.stem
+        not in (
+            "judge",
+            "judge_rubric",
+            "debrief_judge",
+            "debrief_rubric",
+            "claude_code",
+        )
     ]
     for path in game_code:
         text = path.read_text()
@@ -156,7 +163,7 @@ def test_compact_transcript_shows_a_posted_reading_apart_from_a_said_line():
     text = judge.transcript(records, grid_size=config.grid_size)
     first = _turn_lines(text)[0]
     assert "dig posting its reading" in first
-    assert 'posted on the scroll as #1: "Dug J8: 3 away."' in first
+    assert 'posted on the scroll as #1: "Dug J8: 1 away."' in first
     assert "#1 pirate-1 T0 POSTED READING" in text
     assert "shared=" not in text and "share=" not in text
 

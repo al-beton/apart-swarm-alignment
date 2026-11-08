@@ -3,7 +3,7 @@
 The format is documented in product/spec/event-log.md. Only required fields are
 checked, so a record may carry more (event-log/room-to-grow).
 
-Implements: treasure-island/share-reading, treasure-island/leak-form, event-log/asked-or-walked, event-log/one-record-per-turn, event-log/who-acted, event-log/what-they-saw, event-log/what-they-did, event-log/what-the-log-showed, event-log/the-outcome, event-log/room-to-grow, event-log/validator
+Implements: treasure-island/quicksand, treasure-island/share-reading, event-log/asked-or-walked, event-log/one-record-per-turn, event-log/who-acted, event-log/what-they-saw, event-log/what-they-did, event-log/what-the-log-showed, event-log/the-outcome, event-log/room-to-grow, event-log/validator, treasure-island/reading-bands, treasure-island/leak-form
 """
 
 import json
@@ -88,17 +88,34 @@ def _did_errors(did):
     ]
 
 
+def _is_band(shared):
+    """A banded reading (`reading-bands`): its `band`, `near` and `far`, if any."""
+    far = shared.get("far")
+    return (
+        _is_text(shared.get("band"))
+        and _is_int(shared.get("near"))
+        and "far" in shared
+        and (far is None or _is_int(far))
+    )
+
+
 def _shared_errors(shared):
-    """A dig's shared reading names its scroll `line`, its `square` and `away`."""
+    """A dig's shared reading names its scroll `line`, its `square` and `away`,
+    or with bands its `band`, `near` and `far`."""
     if shared is None:
         return []
     if not (
         isinstance(shared, dict)
         and _is_int(shared.get("line"))
         and _is_text(shared.get("square"))
-        and _is_int(shared.get("away"))
+        and (_is_int(shared.get("away")) or _is_band(shared))
     ):
-        return ["shared must name the scroll `line`, the `square` and the `away`"]
+        return [
+            (
+                "shared must name the scroll `line`, the `square` and the `away`, "
+                "or the `band`, `near` and `far`"
+            )
+        ]
     return []
 
 
@@ -114,6 +131,7 @@ def _asked_errors(record):
     ):
         return ["order must name the square it is `to` and whether it `arrived`"]
     errors = _order_ended_errors(record.get("order_ended"))
+    errors += _quicksand_errors(record)
     if record.get("asked") is False:
         # A walked turn's brain was shown nothing (first-rules records have no
         # `asked`, so they are never held to this).
@@ -125,7 +143,38 @@ def _asked_errors(record):
     return errors
 
 
-ORDER_ENDS = ("arrived", "blocked", "alert")
+ORDER_ENDS = ("arrived", "blocked", "alert", "quicksand")
+
+
+def _quicksand_errors(record):
+    """A `sank` names its square and turns; a `stuck` turn is lost, doing nothing."""
+    errors = []
+    sank = record.get("sank")
+    if sank is not None and not (
+        isinstance(sank, dict)
+        and _is_text(sank.get("square"))
+        and _is_int(sank.get("turns"))
+        and sank["turns"] >= 1
+    ):
+        errors.append("sank must name the `square` and the `turns` it loses")
+    stuck = record.get("stuck")
+    if stuck is None:
+        return errors
+    if not (
+        isinstance(stuck, dict)
+        and _is_text(stuck.get("square"))
+        and _is_int(stuck.get("turn"))
+        and _is_int(stuck.get("of"))
+        and 1 <= stuck["turn"] <= stuck["of"]
+    ):
+        errors.append(
+            "stuck must name the `square` and which `turn` it is `of` how many"
+        )
+    if record.get("asked") is not False:
+        errors.append("a stuck turn must not be asked (asked: false)")
+    if record.get("did") != []:
+        errors.append("a stuck turn does nothing: its did must be empty")
+    return errors
 
 
 def _order_ended_errors(ended):
@@ -141,7 +190,8 @@ def _order_ended_errors(ended):
         and (ended["how"] != "blocked" or ended.get("by"))
     ):
         why = (
-            "order_ended must say `how` it ended (arrived, blocked or alert), the "
+            "order_ended must say `how` it ended (arrived, blocked, alert or "
+            "quicksand), the "
             "square it was going `to`, where it stopped `at` and, when blocked, "
             "`by` whom"
         )

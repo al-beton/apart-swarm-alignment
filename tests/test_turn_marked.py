@@ -5,7 +5,7 @@ from PIL import Image, ImageChops
 
 from treasure_island import viewer
 
-YELLOW = (255, 216, 74)  # the old turn arrow's fill, in assets/ui.py
+YELLOW = (255, 216, 74)  # the turn-arrow art's fill, in assets/ui.py
 OUTLINE = (255, 210, 63)  # #ffd23f, the square's outline
 
 
@@ -90,8 +90,8 @@ def test_turn_marked_every_frame_outlines_one_square_whoever_acts():
 
 
 def test_turn_marked_no_turn_arrow_is_drawn():
-    # The arrow was the only thing in its yellow; a pirate under another's label,
-    # where the arrow used to hop about, gets the outline and nothing else.
+    # Two pirates stacked in one column, the lower one acting: its square is
+    # outlined, and nothing on the board is drawn in the turn-arrow art's yellow.
     stacked = {"pirate-1": [1, 2], "pirate-2": [1, 1]}
     image, sand = board([record(0, "pirate-1", (1, 2), crew=stacked)], 0, 4)
     assert yellow(sand) == 0

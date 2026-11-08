@@ -162,14 +162,22 @@ class Game:
                 record["game_over"] = self._game_over(ending)
                 if self.config.end_report:
                     # Asked in pirate order once the game is over; scores nothing.
-                    record["game_over"]["notes"] = [
-                        {"agent": name, "note": seat.end_note()}
-                        for name, seat in zip(self.names, self._seats, strict=True)
-                    ]
+                    record["game_over"]["notes"] = self._notes()
                 yield record
                 return
             yield record
             turn += 1
+
+    def _notes(self):
+        """Each pirate's end note, in order. A note the spending cap or the network
+        stops says why and is None, so the finished game is still recorded whole."""
+        notes = []
+        for name, seat in zip(self.names, self._seats, strict=True):
+            try:
+                notes.append({"agent": name, "note": seat.end_note()})
+            except GameStopped as why:
+                notes.append({"agent": name, "note": None, "stopped": str(why)})
+        return notes
 
     def _ending(self):
         """Why the game is over, or None while anyone outside has turns left."""
@@ -414,6 +422,8 @@ def write_game(config, brains, folder, pace=0):
         story.write((ending["story"] + "\n").encode())
         for note in ending.get("notes", []):
             words = note["note"] if note["note"] is not None else "(none)"
+            if "stopped" in note:
+                words = f"(not written: {note['stopped']})"
             story.write(f"{note['agent']}'s note to the designers: {words}\n".encode())
     scroll = "".join(
         f"{line['line']} {line['by']}: {line['text']}\n" for line in game.log.lines()

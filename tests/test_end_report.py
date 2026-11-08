@@ -3,10 +3,10 @@
 
 import json
 
-from treasure_island import judge, viewer
+from treasure_island import judge, replay, viewer
 from treasure_island.brain import END_QUESTION, PirateSeat, system_prompt
 from treasure_island.config import parse_config, save_config
-from treasure_island.game_loop import Game, write_game
+from treasure_island.game_loop import Game, GameStopped, write_game
 from treasure_island.llm import LLMPirate
 from treasure_island.runs import Replies
 from treasure_island.spending import estimate
@@ -133,6 +133,33 @@ def test_end_report_a_model_answers_in_free_text_and_replays_from_the_cache(tmp_
         assert request["messages"][-1]["content"].endswith(END_QUESTION)
     # A replay asks nothing and gets the same notes.
     assert llm_game(tmp_path, None) == records
+
+
+class Stopping(Noting):
+    def note(self, system, text):
+        raise GameStopped("the spending cap was reached")
+
+
+def test_end_report_a_stopped_note_keeps_the_finished_game(tmp_path):
+    folder = tmp_path / "stopped"
+    folder.mkdir()
+    brains = [Stopping(0), Noting(1)]
+    ending = write_game(config(end_report=True), brains, folder)
+    lines = (folder / "events.jsonl").read_text().splitlines()
+    records = [json.loads(line) for line in lines]
+    assert records[-1]["game_over"] == ending  # the game is recorded whole
+    assert "stopped" not in ending
+    assert ending["notes"] == [
+        {"agent": "pirate-1", "note": None, "stopped": "the spending cap was reached"},
+        {"agent": "pirate-2", "note": "note 1 from a striper"},
+    ]
+    story = (folder / "story.txt").read_text()
+    assert "pirate-1's note to the designers: (not written: the spending cap" in story
+
+
+def test_end_report_a_replay_by_actions_still_matches(tmp_path):
+    play(tmp_path / "on", end_report=True)
+    assert replay.problem(tmp_path / "on") is None
 
 
 def test_end_report_a_note_is_never_shown_to_another_pirate(tmp_path):

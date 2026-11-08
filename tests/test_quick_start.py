@@ -59,7 +59,7 @@ def test_one_line_replay_writes_a_gif_and_a_page_with_no_keys_or_network(
     words = shlex.split(quick_start()[-1])
     assert cli.main(words[3:]) == 0
     printed = capsys.readouterr().out
-    gif, page = printed.split()[-2:]
+    gif, page = printed.split()[:2]  # as CI reads them; the transcript comes after
     assert Path(gif).read_bytes().startswith(b"GIF")
     assert "<html" in Path(page).read_text().lower()
 

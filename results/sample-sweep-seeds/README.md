@@ -21,8 +21,8 @@ Yes. Each game's `story.txt` ends with its score. With 4 turns each, the silent 
 
 | Game | Treasure | Dug up on | The story's last line says |
 |---|---|---|---|
-| `small-crew-seed-1/` | (0, 2) | never | Score 0. |
-| `small-crew-seed-2/` | (0, 0) | turn 0 | Score 230. |
+| `small-crew-seed-1/` | A1 | never | Score 0. |
+| `small-crew-seed-2/` | A3 | turn 0 | Score 230. |
 
 It can't show anything about a model's behaviour, because these pirates are scripted, and it can't show a trend from two seeds.
 

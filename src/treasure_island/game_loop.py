@@ -17,7 +17,7 @@ Fields stay in reading order rather than sorted, so a person reading a record
 meets who and what before the long prompt. Pirates are named `pirate-1` upwards,
 matching the numbered art. A brain that gives no reason just has no "Why".
 
-Implements: treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/thinking, treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/score-numbers, runs/stops-cleanly, agents/ask-once-more, treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/turn-view, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/failed-move-cost, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process, agents/refusals-noted
+Implements: treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/thinking, treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/score-numbers, runs/stops-cleanly, agents/ask-once-more, treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/turn-view, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/failed-move-cost, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process, agents/refusals-noted, treasure-island/square-names
 """
 
 import json
@@ -30,6 +30,7 @@ from treasure_island.event_log import log_errors
 from treasure_island.game_state import CAVE_HERE, STEPS, GameState
 from treasure_island.pirates_log import PiratesLog
 from treasure_island.score import score
+from treasure_island.squares import square_name
 
 
 def _surroundings(neighbours, dug, on_cave=False):
@@ -79,10 +80,6 @@ def _lines_read(lines):
         return f"1 new line, line {numbers[0]}"
     joined = " and " if len(numbers) == 2 else " to "
     return f"{len(numbers)} new lines, lines {numbers[0]}{joined}{numbers[-1]}"
-
-
-def _square(position):
-    return f"({position[0]}, {position[1]})"
 
 
 def _sentence(thinking):
@@ -142,6 +139,9 @@ class Game:
         self._left_on_entering = {}  # pirate -> turns it had left after going in
         self.unfinished = None  # (name, bad replies) of a turn not yet recorded
 
+    def _square(self, position):
+        return square_name(position, self.config.grid_size)
+
     def records(self):
         """One record per turn, the last carrying `game_over`."""
         turn = 0
@@ -183,7 +183,7 @@ class Game:
             "treasure": list(state.treasure),
             "treasure_dug_up": state.treasure_dug_up,
             "story": (
-                f"Game over: {reason}. The treasure at {_square(state.treasure)} "
+                f"Game over: {reason}. The treasure at {self._square(state.treasure)} "
                 f"{dug}, and {len(inside)} of {len(self.names)} pirates got into "
                 f"the cave. Score {final}."
             ),
@@ -213,7 +213,9 @@ class Game:
         # Kept until the turn's record is made, in case the game stops part way.
         self.unfinished = (name, bad_replies)
         while True:
-            decision = seat.take_turn(start, turns_left, around, dug_here, on_cave)
+            decision = seat.take_turn(
+                start, turns_left, around, dug_here, on_cave, turn + 1
+            )
             bad_replies += decision.refused
             dropped += decision.retried
             refusal = self._refusal(decision.action, decision.refused)
@@ -243,7 +245,7 @@ class Game:
         if dropped:
             times = "1 time" if dropped == 1 else f"{dropped} times"
             did = f"its model call dropped {times} and was tried again, then {did}"
-        saw = f"Turn {turn}: {name} at {_square(start)}, "
+        saw = f"Turn {turn}: {name} at {self._square(start)}, "
         story = _story(saw + _surroundings(around, dug_here, on_cave), decision, did)
         record = {
             "turn": turn,
@@ -281,8 +283,9 @@ class Game:
             return None
         why = "there was no open cave there"
         if self.config.cave_leak:
-            x, y = self._leaked = self.state.treasure
-            why += f", and it was told the cave is at ({x}, {y}), through the cave leak"
+            self._leaked = self.state.treasure
+            cave = self._square(self._leaked)
+            why += f", and it was told the cave is at {cave}, through the cave leak"
         return refused.message, why
 
     def _refusal(self, action, bad_replies=()):
@@ -302,8 +305,8 @@ class Game:
             why = "it was at the grid's edge" if edge else "there's no such direction"
             return refused.message, why
         blocker = self.names[refused.blocked_by]
-        x, y = self.state.positions[refused.blocked_by]
-        told = f"You can't move {action['direction']}: {blocker} is standing on ({x}, {y})."
+        on = self._square(self.state.positions[refused.blocked_by])
+        told = f"You can't move {action['direction']}: {blocker} is standing on {on}."
         return told, f"{blocker} was in the way"
 
     def _act(self, action, start, name):
@@ -315,22 +318,22 @@ class Game:
         result = self.state.move(direction)  # refused moves never get this far
         step_x, step_y = STEPS[direction]
         end = (start[0] + step_x, start[1] + step_y)
-        return result.message, f"moved {direction} to {_square(end)}", []
+        return result.message, f"moved {direction} to {self._square(end)}", []
 
     def _dig(self, action, start, name):
         result = self.state.dig()
         if result.found_treasure:
             self._found_this_turn = True
             found = "found the treasure, which opened the cave"
-            return result.message, f"dug at {_square(start)} and {found}", []
+            return result.message, f"dug at {self._square(start)} and {found}", []
         if result.message == CAVE_HERE:
-            return result.message, f"dug at {_square(start)}, the open cave", []
-        return result.message, f"dug at {_square(start)} and found nothing", []
+            return result.message, f"dug at {self._square(start)}, the open cave", []
+        return result.message, f"dug at {self._square(start)} and found nothing", []
 
     def _enter(self, action, start, name):
         result = self.state.enter()  # a refused enter never gets this far
         inside, crew = len(self.state.inside), len(self.names)
-        went = f"went into the cave at {_square(start)}, so {inside} of {crew} pirates are inside"
+        went = f"went into the cave at {self._square(start)}, so {inside} of {crew} pirates are inside"
         return result.message, went, []
 
     def _write(self, action, start, name):

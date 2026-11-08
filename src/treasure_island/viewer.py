@@ -24,28 +24,31 @@ A pirate that moves walks there: its turn gets `WALK_FRAMES` frames, steps 1 to
 turn's own frame. `walk_steps` says which steps a turn has, and the GIF and the page
 both draw exactly those.
 
-Implements: viewer/cave-drawn, treasure-island/cave, viewer/turn-marked, viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/walks-between-squares, treasure-island/pokemon-style, viewer/slideshow-file, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process
+Implements: viewer/cave-drawn, treasure-island/cave, viewer/turn-marked, viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/walks-between-squares, treasure-island/pokemon-style, viewer/slideshow-file, viewer/game-page, viewer/score-counter, viewer/transcript, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process, treasure-island/square-names
 """
 
 import base64
 import io
 import json
+import re
 from functools import cache
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from typing import NamedTuple
 
 from PIL import Image, ImageChops
 
 import assets
 from assets.cave import going_in, hat_stack
-from assets.font import draw_text, text_width, wrap
+from assets.font import FONT_HEIGHT, FONT_WIDTH, draw_text, text_width, wrap
 from assets.pirates import pirate, portrait
 from assets.pixels import DARK
 from assets.ui import open_scroll, panel, scroll_note
-from treasure_island.config import parse_config
+from treasure_island.config import DEFAULTS, parse_config
 from treasure_island.game_state import GameState
 from treasure_island.looks import sprite_values
 from treasure_island.pirates_log import one_line
+from treasure_island.squares import square_name
 
 ASSETS = Path(assets.__file__).parent
 SAND_TILES = ("sand", "sand-2", "sand-3")
@@ -79,6 +82,10 @@ FRAME_MS = 600
 WALK_FRAMES = 4  # frames a move takes, its landing included (default, Al to confirm)
 WALK_MS = 120  # how long each in-between frame shows
 _PLACES_THE_TREASURE = ("grid_size", "crew_size", "seed")
+# The board's edges are lettered and numbered like a chessboard, on the sand of
+# the edge squares, under any pirate standing there (default, Al to confirm).
+BOARD_LABEL_INK = DARK
+_LABEL_INSET = 3
 
 
 def records_in(folder):
@@ -246,11 +253,18 @@ def _walk(record):
     return (start, end) if moved and list(start) != list(end) else None
 
 
-def walk_steps(records, turn):
-    """The steps a turn is drawn in: 1 to WALK_FRAMES for a move, else [None]."""
-    if _walk(records[turn]):
-        return list(range(1, WALK_FRAMES + 1))
-    return [None]
+def walk_steps(records, turn, scoring=None):
+    """The steps a turn is drawn in: 1 to WALK_FRAMES for a move, else [None].
+
+    The last turn of a finished game that still owes pirates inside their turns
+    plays them out first: after any walk, one step per round, then its own frame.
+    """
+    walked = _walk(records[turn]) is not None
+    owed = len(_owed_rounds(records, turn, scoring))
+    if not owed:
+        return list(range(1, WALK_FRAMES + 1)) if walked else [None]
+    first = WALK_FRAMES if walked else 1  # the first step that plays a round out
+    return [*range(1, first + owed), None]
 
 
 def _walking(shown, record, step):
@@ -265,7 +279,89 @@ def _walking(shown, record, step):
     return shown
 
 
-def scene(records, turn, size, treasure=None, step=None):
+class Scoring(NamedTuple):
+    """The run's score numbers, as the counter needs them."""
+
+    turns_per_pirate: int
+    in_cave: int
+    per_turn_left: int
+
+
+_DEFAULT_SCORING = Scoring(
+    DEFAULTS["turns_per_pirate"],
+    DEFAULTS["score_in_cave"],
+    DEFAULTS["score_per_turn_left"],
+)
+SCORE_INK = "#ffd23f"  # what the crew earns, in the cave's gold (Al to confirm)
+
+
+def scoring_in(folder):
+    """The score numbers from the run's config.json, or the defaults it would have."""
+    path = Path(folder) / "config.json"
+    saved = json.loads(path.read_text()) if path.exists() else {}
+    fields = ("turns_per_pirate", "score_in_cave", "score_per_turn_left")
+    return Scoring(*(saved.get(field, DEFAULTS[field]) for field in fields))
+
+
+def _passed(seat, before, now, crew):
+    """Whether the turn order went past `seat` going from seat `before` to `now`."""
+    gap = (now - before) % crew or crew  # the same seat again is a whole round
+    return 0 < (seat - before) % crew < gap
+
+
+def score_gains(records, scoring):
+    """The points each turn earned, and the rounds of points still owed at the end.
+
+    A pirate going in earns `in_cave`. After that, each time the turn order passes
+    its seat it earns `per_turn_left`, for as many turns as it had left. A game that
+    ends first still owes it the rest, which the last turn plays out in rounds.
+    """
+    seats = {name: index for index, name in enumerate(_crew_names(records))}
+    used, owed, gains, before = {}, {}, [], None
+    for record in records:
+        name, earned = record["agent"], []
+        for inside, left in owed.items():
+            if left and _passed(seats[inside], before, seats[name], len(seats)):
+                owed[inside] -= 1
+                earned.append(scoring.per_turn_left)
+        used[name] = used.get(name, 0) + 1  # every record is one turn used
+        if record["outcome"].get("in_cave"):
+            owed[name] = max(scoring.turns_per_pirate - used[name], 0)
+            earned.append(scoring.in_cave)
+        gains.append(earned)
+        before = seats[name]
+    rounds = []
+    while any(owed.values()):
+        rounds.append([scoring.per_turn_left for left in owed.values() if left])
+        owed = {inside: max(left - 1, 0) for inside, left in owed.items()}
+    return gains, rounds
+
+
+def _owed_rounds(records, turn, scoring):
+    """The rounds the last turn of a finished game plays out, else none."""
+    if turn != len(records) - 1 or not records[turn].get("game_over"):
+        return []
+    return score_gains(records, scoring or _DEFAULT_SCORING)[1]
+
+
+def _score_now(records, turn, step, scoring):
+    """The count on this step of this turn, and the gains rising from the cave."""
+    gains, rounds = score_gains(records, scoring)
+    score = sum(sum(earned) for earned in gains[: turn + 1])
+    labels = gains[turn]
+    if _owed_rounds(records, turn, scoring):
+        walked = _walk(records[turn]) is not None
+        played = (
+            len(rounds) if step is None else step - (WALK_FRAMES - 1 if walked else 0)
+        )
+        if played > 0:
+            score += sum(sum(owed) for owed in rounds[:played])
+            labels = rounds[played - 1] if step is not None else labels
+    return score, [f"+{points}" for points in labels]
+
+
+# One argument over the limit: `scoring` sits beside the others every caller passes.
+def scene(records, turn, size, treasure=None, step=None, scoring=None):  # noqa: PLR0913
     """What the frame for `turn` shows, from the records up to and including it.
 
     `step`, one of `walk_steps`, is how far along its walk a moving pirate is drawn.
@@ -302,6 +398,9 @@ def scene(records, turn, size, treasure=None, step=None):
         "inside": inside,
         "going_in": going,
     }
+    shown["score"], shown["gains"] = _score_now(
+        records, turn, step, scoring or _DEFAULT_SCORING
+    )
     if step is not None and step < WALK_FRAMES and _walk(current):
         return _walking(shown, current, step)
     return shown
@@ -340,6 +439,29 @@ def _draw_ground(image, size, shown, pirates):
         _draw_mark(image, shown)
     if shown["mark"] and shown["mark"][0] == "cave":
         _draw_cave(image, shown, pirates)
+    _draw_square_names(image, size)
+
+
+def column_label_spot(column, size):
+    """Where a column's letter goes: the bottom-right corner of its bottom square."""
+    return (
+        (column + 1) * TILE - _LABEL_INSET - FONT_WIDTH,
+        size * TILE - _LABEL_INSET - FONT_HEIGHT,
+    )
+
+
+def row_label_spot(row):
+    """Where a row's number goes: the top-left corner of its west square."""
+    return (_LABEL_INSET, row * TILE + _LABEL_INSET)
+
+
+def _draw_square_names(image, size):
+    for column in range(size):
+        letter = square_name((column, size - 1), size)[0]
+        draw_text(image, column_label_spot(column, size), letter, BOARD_LABEL_INK)
+    for row in range(size):
+        number = square_name((0, row), size)[1:]
+        draw_text(image, row_label_spot(row), number, BOARD_LABEL_INK)
 
 
 def _draw_cave(image, shown, pirates):
@@ -575,11 +697,31 @@ def _caption_image(story, width, height):
     return image
 
 
-# One argument over the limit: `step` sits beside the others every caller already passes.
-def frame(records, turn, size, pirates=None, treasure=None, step=None):  # noqa: PLR0913
+def _draw_gains(image, shown):
+    """What this step earned, in a line rising from the cave: above it, else below."""
+    if not shown["gains"] or not shown["mark"]:  # gains come only once there's a cave
+        return
+    x, y = shown["mark"][1]
+    words = " ".join(shown["gains"])
+    room = shown["size"] * TILE - text_width(words)
+    left = min(max(x * TILE + (TILE - text_width(words)) // 2, 0), max(room, 0))
+    above = y * TILE - ARROW_ROOM - LINE  # clear of the turn arrow over the cave
+    top = above if above >= 0 else (y + 1) * TILE + 2
+    draw_text(image, (left + 1, top + 1), words)  # a dark edge, so it reads on sand
+    draw_text(image, (left, top), words, SCORE_INK)
+
+
+def _draw_score(image, shown, grid):
+    """The crew's score so far, at the top of the frame, right of the turn number."""
+    words = f"Score {shown['score']}"
+    draw_text(image, (grid + PANEL - _PANEL_LEFT - text_width(words), 14), words)
+
+
+# Two arguments over the limit: `step` and `scoring` sit beside the others callers pass.
+def frame(records, turn, size, pirates=None, treasure=None, step=None, scoring=None):  # noqa: PLR0913
     """The image for one turn: ground, pirates, turn arrow, note, panel, caption, log."""
     pirates = pirates or _default_pirates(_crew_names(records))
-    shown = scene(records, turn, size, treasure, step)
+    shown = scene(records, turn, size, treasure, step, scoring)
     grid = max(size, 1) * TILE
     board = max(grid, PANEL_HEIGHT)
     width = grid + PANEL
@@ -594,8 +736,10 @@ def frame(records, turn, size, pirates=None, treasure=None, step=None):  # noqa:
     _draw_labels(image, shown, pirates)
     # The note goes over the labels, so what was written always shows in full.
     _draw_note(image, shown, arrow_box)
+    _draw_gains(image, shown)
     side = _panel_image(shown, board, pirates[shown["acting"]])
     image.paste(side, (grid, 0), side)
+    _draw_score(image, shown, grid)
     words = _caption_image(records[turn].get("story", ""), width, caption)
     image.paste(words, (0, board), words)
     strip = _strip_image(shown, width)
@@ -615,7 +759,8 @@ def frame_png(folder, turn, step=None):
     size = grid_size(folder, records)
     pirates = pirates_in(folder, records)
     treasure = treasure_in(folder, records)
-    return _png(frame(records, turn, size, pirates, treasure, step=step))
+    scoring = scoring_in(folder)
+    return _png(frame(records, turn, size, pirates, treasure, step, scoring))
 
 
 def gif(folder):
@@ -624,13 +769,14 @@ def gif(folder):
     size = grid_size(folder, records)
     pirates = pirates_in(folder, records)
     treasure = treasure_in(folder, records)
+    scoring = scoring_in(folder)
     frames, durations = [], []
     for turn in range(len(records)):
-        for step in walk_steps(records, turn):
-            drawn = frame(records, turn, size, pirates, treasure, step=step)
+        steps = walk_steps(records, turn, scoring)
+        for step in steps:
+            drawn = frame(records, turn, size, pirates, treasure, step, scoring)
             frames.append(Image.open(io.BytesIO(_png(drawn))))
-            last = step is None or step == WALK_FRAMES
-            durations.append(FRAME_MS if last else WALK_MS)
+            durations.append(FRAME_MS if step == steps[-1] else WALK_MS)
     out = io.BytesIO()
     frames[0].save(
         out,
@@ -651,14 +797,48 @@ def render(folder, out=None):
     return out
 
 
-def slideshow_page(folder):
-    """One HTML file holding every turn's frame and story, as text."""
-    turns = [
+def _scroll_writes(records):
+    """The lines each turn added to the scroll, numbered as the scroll numbers them."""
+    line, writes = 0, []
+    for record in records:
+        wrote = []
+        for action in record.get("did", []):
+            if action.get("action") == "write":
+                line += 1
+                # As the scroll keeps it, on one line; `did` keeps it as written.
+                text = one_line(action["text"])
+                wrote.append({"line": line, "by": record["agent"], "text": text})
+        writes.append(wrote)
+    return writes
+
+
+def turn_records(records):
+    """Each turn's whole record as the game page and the transcript both show it."""
+    return [
         {
-            "frame": base64.b64encode(frame_png(folder, number)).decode(),
             "story": record.get("story", ""),
+            "turn": record.get("turn", number),
+            "agent": record["agent"],
+            "happened": record.get("happened", ""),
+            "prompt": record.get("saw", {}).get("prompt", ""),
+            "thinking": record.get("thinking") or "",
+            "refused": record.get("refused", []),
+            "did": record.get("did", []),
+            "result": record.get("result", ""),
+            "wrote": wrote,
         }
-        for number, record in enumerate(records_in(folder))
+        for number, (record, wrote) in enumerate(
+            zip(records, _scroll_writes(records), strict=True)
+        )
+    ]
+
+
+def slideshow_page(folder):
+    """The game page: every turn's frame and whole record, as one HTML file's text."""
+    records = records_in(folder)
+    turns = [
+        {"frame": base64.b64encode(frame_png(folder, number)).decode(), **turn}
+        for number, turn in enumerate(turn_records(records))
     ]
     # No raw "<" in the data, which is still the same JSON, so a note can't close the
     # script it's held in or stop it closing. Escaping "</" alone misses "<!-- <script>".
@@ -667,43 +847,223 @@ def slideshow_page(folder):
 
 
 def slideshow(folder, out=None):
-    """Write the slideshow next to the run's folder (or to `out`); return the path."""
+    """Write the game page next to the run's folder (or to `out`); return the path."""
     out = Path(out) if out else Path(folder).with_suffix(".html")
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(slideshow_page(folder), encoding="utf-8")
     return out
 
 
+def call_text(action):
+    """A tool call as one line, as the game page shows it: `write {"text": "..."}`."""
+    rest = {key: value for key, value in action.items() if key != "action"}
+    return action["action"] + (
+        " " + json.dumps(rest, ensure_ascii=False) if rest else ""
+    )
+
+
+def _quoted(text):
+    """Text as a Markdown blockquote that can't open a heading, tag or code span."""
+    text = text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+    text = re.sub(r"([\\`*_\[\]|~#])", r"\\\1", text)
+    lines = text.splitlines() or [""]
+    # A trailing backslash keeps each line its own, as GitHub would otherwise join them.
+    broken = [
+        line + ("\\" if line.strip() and after.strip() else "")
+        for line, after in zip(lines, [*lines[1:], ""], strict=True)
+    ]
+    return "\n".join(f"> {line}".rstrip() for line in broken)
+
+
+def _fenced(text):
+    """Text in a code fence longer than any run of backticks inside it."""
+    fence = "`" * max([3, *(len(run) + 1 for run in re.findall("`+", text))])
+    return f"{fence}text\n{text}\n{fence}"
+
+
+def _transcript_turn(turn):
+    parts = [f"## Turn {turn['turn']}: {turn['agent']}"]
+    if turn["prompt"]:
+        summary = f"What it was shown ({len(turn['prompt'])} characters)"
+        details = f"<details>\n<summary>{summary}</summary>\n\n"
+        parts.append(details + _fenced(turn["prompt"]) + "\n\n</details>")
+    else:
+        parts.append("*No prompt recorded: a scripted pirate reads no words.*")
+    thinking = _quoted(turn["thinking"]) if turn["thinking"] else None
+    parts.append("**Its thinking**\n\n" + (thinking or "*No thinking recorded.*"))
+    for bad in turn["refused"]:
+        refused = f"{bad['reply']}\n({bad['why']})"
+        parts.append("**A reply that wasn't a tool call**\n\n" + _quoted(refused))
+    did = "\n".join(call_text(action) for action in turn["did"])
+    parts.append(
+        "**What it did**\n\n" + (_quoted(did) if did else "*Nothing: the turn passed.*")
+    )
+    result = _quoted(turn["result"]) if turn["result"] else "*No result recorded.*"
+    parts.append("**The result**\n\n" + result)
+    return "\n\n".join(parts)
+
+
+def transcript(folder):
+    """The game's transcript as Markdown: every turn in full, then how it ended."""
+    records = records_in(folder)
+    parts = [f"# Transcript: {Path(folder).name}"]
+    parts += [_transcript_turn(turn) for turn in turn_records(records)]
+    game_over = records[-1].get("game_over") if records else None
+    if game_over:
+        ending = (
+            f"## Game over\n\n{game_over['story']}\n\n**Score:** {game_over['score']}"
+        )
+    else:
+        ending = "*This game has no game over line yet: it stopped or is still going.*"
+    parts.append(ending)
+    return "\n\n".join(parts) + "\n"
+
+
+def write_transcript(folder):
+    """Write `transcript.md` into the run folder; return its path."""
+    out = Path(folder) / "transcript.md"
+    out.write_text(transcript(folder), encoding="utf-8")
+    return out
+
+
+# Every word from the game goes in with textContent, never as markup.
 SLIDESHOW = """<!doctype html>
 <html><head><meta charset="utf-8"><title>Treasure Island</title>
 <style>
-body { background: #1a1a1a; color: #eee; font: 14px sans-serif; text-align: center; }
-img { image-rendering: pixelated; margin-top: 1em; max-width: 100%; }
-#story { max-width: 60em; margin: 1em auto; min-height: 3em; }
+body { background: #1a1a1a; color: #eee; font: 14px sans-serif; margin: 0 16px; }
+header { display: flex; gap: 1em; align-items: baseline; flex-wrap: wrap; }
+h1 { font-size: 18px; } h2 { font-size: 16px; margin: 0 0 .5em; }
+h3 { font-size: 12px; text-transform: uppercase; color: #aaa; margin: 1em 0 .3em; }
+.page { display: grid; grid-template-columns: auto minmax(0, 2fr) minmax(0, 1fr);
+  gap: 16px; align-items: start; }
+.page > section { min-width: 0; }
+@media (max-width: 1100px) { .page { grid-template-columns: minmax(0, 1fr); } }
+img { image-rendering: pixelated; max-width: 100%; display: block; }
+pre, #story, #scroll li { white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; }
+pre { font: 13px/1.45 ui-monospace, Menlo, monospace; background: #222;
+  padding: .6em; border-radius: 4px; }
+.thinking { color: #9a9a9a; font-style: italic; }
+.refused { color: #e0a060; }
+.empty { color: #777; }
+details summary { cursor: pointer; color: #aaa; }
+#prompt { max-height: 40em; overflow: auto; }
+#turns { position: relative; list-style: none; padding: 0; max-height: 18em; overflow: auto; margin: .5em 0; }
+#turns button { all: unset; display: block; width: 100%; cursor: pointer;
+  padding: 2px 4px; overflow-wrap: anywhere; }
+#turns button.now { background: #3a3a5a; }
+#turns button:hover { background: #2c2c2c; }
+#scroll { padding-left: 0; list-style: none; max-height: 40em; overflow: auto; }
+#scroll li { padding: 2px 0; border-bottom: 1px solid #2a2a2a; }
 </style></head>
 <body>
-<p id="status"></p>
-<img id="frame" alt="the current turn">
+<header>
+<h1>Treasure Island</h1>
+<span id="status"></span>
+<label>Show <select id="pirate"><option value="">every pirate</option></select></label>
+<span class="empty">← → step through turns · Home and End jump to the first and last</span>
+</header>
+<main class="page">
+<section>
+<img id="frame" alt="the board on the current turn">
 <p id="story"></p>
-<p>← → step through turns · Home and End jump to the first and the last</p>
+<ol id="turns"></ol>
+</section>
+<section id="record">
+<h2 id="who"></h2>
+<details><summary id="shown">What it was shown</summary><pre id="prompt"></pre></details>
+<h3>Its thinking</h3><pre id="thinking" class="thinking"></pre>
+<div id="refused"></div>
+<h3>What it did</h3><pre id="did"></pre>
+<h3>The result</h3><pre id="result"></pre>
+</section>
+<section>
+<h3>The scroll so far</h3>
+<ol id="scroll"></ol>
+</section>
+</main>
 <script>
 const TURNS = @TURNS@;
-const frame = document.getElementById("frame");
-const story = document.getElementById("story");
-const status = document.getElementById("status");
-let shown = 0;
-function show(turn) {
-  shown = Math.max(0, Math.min(turn, TURNS.length - 1));
-  frame.src = "data:image/png;base64," + TURNS[shown].frame;
-  story.textContent = TURNS[shown].story;
-  status.textContent = "Turn " + shown + " (" + (shown + 1) + " of " + TURNS.length + ")";
+const $ = (id) => document.getElementById(id);
+const filter = $("pirate"), list = $("turns");
+let shown = 0, visible = [];
+function text(id, words, none) {
+  $(id).textContent = words || none;
+  $(id).classList.toggle("empty", !words);
 }
-document.addEventListener("keydown", (key) => {
-  if (key.key === "ArrowLeft") show(shown - 1);
-  if (key.key === "ArrowRight") show(shown + 1);
-  if (key.key === "Home") show(0);
-  if (key.key === "End") show(TURNS.length - 1);
+function call(action) {
+  const { action: name, ...rest } = action;
+  return Object.keys(rest).length ? name + " " + JSON.stringify(rest) : name;
+}
+for (const name of [...new Set(TURNS.map((t) => t.agent))]) {
+  const option = document.createElement("option");
+  option.value = option.textContent = name;
+  filter.appendChild(option);
+}
+function listTurns() {
+  visible = TURNS.map((t, i) => i).filter((i) => !filter.value || TURNS[i].agent === filter.value);
+  list.replaceChildren(...visible.map((i) => {
+    const item = document.createElement("li"), button = document.createElement("button");
+    button.dataset.turn = i;
+    button.textContent = "Turn " + TURNS[i].turn + " · " + TURNS[i].agent + " · " + TURNS[i].happened;
+    item.appendChild(button);
+    return item;
+  }));
+}
+function show(turn) {
+  shown = turn;
+  const t = TURNS[turn];
+  $("frame").src = "data:image/png;base64," + t.frame;
+  $("story").textContent = t.story;
+  $("status").textContent = "Turn " + t.turn + " (" + (turn + 1) + " of " + TURNS.length + ")";
+  $("who").textContent = "Turn " + t.turn + ": " + t.agent;
+  $("shown").textContent = "What it was shown (" + t.prompt.length + " characters)";
+  text("prompt", t.prompt, "No prompt recorded: a scripted pirate reads no words.");
+  text("thinking", t.thinking, "No thinking recorded.");
+  $("refused").replaceChildren(...t.refused.map((bad) => {
+    const line = document.createElement("pre");
+    line.className = "refused";
+    line.textContent = "A reply that wasn't a tool call: " + bad.reply + "\\n(" + bad.why + ")";
+    return line;
+  }));
+  text("did", t.did.map(call).join("\\n"), "Nothing: the turn passed.");
+  text("result", t.result, "No result recorded.");
+  $("scroll").replaceChildren(...TURNS.slice(0, turn + 1).flatMap((each) => each.wrote).map((w) => {
+    const line = document.createElement("li");
+    line.textContent = w.line + " " + w.by + ": " + w.text;
+    return line;
+  }));
+  $("scroll").scrollTop = $("scroll").scrollHeight;  // the newest line in view
+  for (const button of list.querySelectorAll("button")) {
+    const now = Number(button.dataset.turn) === turn;
+    button.classList.toggle("now", now);
+    // Scroll the list alone, never the page, so the board stays where it is.
+    const top = button.offsetTop, bottom = top + button.offsetHeight;
+    if (now && (top < list.scrollTop || bottom > list.scrollTop + list.clientHeight)) {
+      list.scrollTop = top - list.clientHeight / 2;
+    }
+  }
+}
+function step(by) {
+  const at = visible.indexOf(shown);
+  const next = at < 0 ? visible.find((i) => i > shown) ?? visible.at(-1) : visible[at + by];
+  if (next !== undefined) show(next);
+}
+list.addEventListener("click", (click) => {
+  const button = click.target.closest("button");
+  if (button) show(Number(button.dataset.turn));
 });
+filter.addEventListener("change", () => {
+  listTurns();
+  if (!visible.includes(shown) && visible.length) step(1); else show(shown);
+});
+document.addEventListener("keydown", (key) => {
+  if (key.target === filter) return;
+  if (key.key === "ArrowLeft") step(-1);
+  if (key.key === "ArrowRight") step(1);
+  if (key.key === "Home" && visible.length) show(visible[0]);
+  if (key.key === "End" && visible.length) show(visible.at(-1));
+});
+listTurns();
 show(0);
 </script>
 </body></html>
@@ -778,9 +1138,9 @@ class _Handler(BaseHTTPRequestHandler):
             step = int(asked["step"]) if asked.get("step", "0") != "0" else None
             self._reply("image/png", frame_png(self.folder, turn, step))
         elif path.startswith("/steps/"):
-            steps = len(
-                walk_steps(records_in(self.folder), int(path[len("/steps/") :]))
-            )
+            turn = int(path[len("/steps/") :])
+            records, scoring = records_in(self.folder), scoring_in(self.folder)
+            steps = len(walk_steps(records, turn, scoring))
             self._reply("application/json", json.dumps({"steps": steps}).encode())
         else:
             self.send_error(404)

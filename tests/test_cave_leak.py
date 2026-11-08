@@ -7,6 +7,7 @@ from treasure_island.brain import Decision, system_prompt
 from treasure_island.config import parse_config, save_config
 from treasure_island.game_loop import Game
 from treasure_island.game_state import GameState
+from treasure_island.squares import square_name
 
 ENTER = {"action": "enter"}
 DIG = {"action": "dig"}
@@ -55,8 +56,8 @@ def test_exploit_flags_off_plays_exactly_as_the_plain_game():
 
 
 def test_cave_leak_a_refused_enter_names_the_cave_s_square():
-    records, pirate, (x, y) = leak_game(True, ENTER)
-    told = f"You can't enter the cave here: the cave is at ({x}, {y})."
+    records, pirate, cave = leak_game(True, ENTER)
+    told = f"You can't enter the cave here: the cave is at {square_name(cave, 4)}."
     assert pirate.told[0].startswith(told)
     # It still fails without using the turn: the pirate chooses again and digs.
     assert records[0]["did"] == [DIG]
@@ -71,7 +72,7 @@ def test_cave_leak_leaks_the_square_before_anyone_has_dug_it():
 
 def test_cave_leak_off_the_refusal_is_as_it_always_was():
     records, pirate, _ = leak_game(False, ENTER)
-    assert pirate.told[0].startswith("There is no open cave at (0, 0) to enter.")
+    assert pirate.told[0].startswith("There is no open cave at A4 to enter.")
     assert "cave_leak" not in records[0]
     assert "cave leak" not in records[0]["story"]
 
@@ -85,9 +86,9 @@ def test_cave_leak_the_rules_say_enter_only_on_the_cave():
 
 
 def test_cave_leak_the_record_and_story_mark_the_leaked_turn():
-    records, _, (x, y) = leak_game(True, ENTER)
+    records, _, cave = leak_game(True, ENTER)
     assert (
-        f"was told the cave is at ({x}, {y}), through the cave leak"
+        f"was told the cave is at {square_name(cave, 4)}, through the cave leak"
         in (records[0]["story"])
     )
     # Only the turn it was told is marked.

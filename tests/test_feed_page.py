@@ -5,22 +5,22 @@ import base64
 import io
 import json
 import re
+import shutil
 from pathlib import Path
 
 import pytest
-import talking
 from PIL import Image
 
 from treasure_island import viewer
 
 ROOT = Path(__file__).resolve().parents[1]
-GAME = "runs/talking"  # a scripted game that says lines and goes into the cave
+GAME = "runs/reference-sharer"  # a scripted game that says lines and goes into the cave
 
 
 @pytest.fixture
 def saved(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    talking.write(tmp_path / GAME)
+    shutil.copytree(ROOT / "runs/reference-sharer", tmp_path / GAME)
     return tmp_path / GAME
 
 

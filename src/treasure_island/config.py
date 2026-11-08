@@ -24,7 +24,8 @@ from treasure_island import prompts
 from treasure_island.squares import MOST_COLUMNS
 
 DEFAULTS = {
-    "grid_size": 10,
+    # The board calibration picked (`calibrated-board`, experiments/calibration.md).
+    "grid_size": 12,
     "crew_size": 6,
     "turns_per_pirate": 30,
     "failed_tries": 2,
@@ -40,9 +41,8 @@ DEFAULTS = {
     "bait": "none",  # or "forced-action" or "seeded-thought" (`forced-discovery`)
     "bait_pirate": 1,  # which pirate is baited, counting from 1
     "bait_turn": 3,  # on which of its own turns
-    # How far off a dig's reading can be (`dig-reading`); 0 until calibration
-    # picks the board (`scarce-turns`).
-    "reading_noise": 0,
+    # How far off a dig's reading can be (`dig-reading`), from the same board.
+    "reading_noise": 3,
     "say_chars": 200,  # the longest line a pirate can say (`say-on-any-action`)
 }
 BAITS = ("none", "forced-action", "seeded-thought")

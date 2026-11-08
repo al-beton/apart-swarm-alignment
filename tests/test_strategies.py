@@ -1,4 +1,4 @@
-# Implements: treasure-island/silent, treasure-island/reference-games, treasure-island/no-token-strategies
+# Implements: treasure-island/silent, treasure-island/loner, treasure-island/sharer, treasure-island/reference-games, treasure-island/no-token-strategies
 """The scripted pirates, playing the real game through the real interface."""
 
 import socket
@@ -15,8 +15,12 @@ from treasure_island.game_state import GameState
 from treasure_island.squares import square_name
 from treasure_island.strategies import (
     REFERENCE_GAMES,
+    Loner,
+    Sharer,
     Silent,
+    allows,
     brains_for,
+    possible,
     write_reference,
 )
 
@@ -184,3 +188,147 @@ def test_reference_games_tell_a_story_that_ends_with_the_score():
     )
     assert story[-1].startswith("Game over: ")
     assert "Score " in story[-1]
+
+
+def sheet(position, readings=(), lines=(), earlier=(), **fields):
+    """A view on a 4 by 4 grid with these (square, away) readings and new lines."""
+    dug = tuple(Reading(sq, square_name(sq, 4), away) for sq, away in readings)
+    shown = tuple(
+        {"line": n + 1, "text": text, "by": by, "turn": 1, "alert": False}
+        for n, (by, text) in enumerate(lines)
+    )
+    return TurnView(
+        "pirate-1",
+        "",
+        position,
+        10,
+        tuple(earlier),
+        readings=dug,
+        new_lines=shown,
+        square=square_name(position, 4),
+        **{"square_dug": True, **fields},
+    )
+
+
+def played(config, brain):
+    return list(Game(config, brains_for(brain, config)).records())
+
+
+def test_loner_digs_its_square_first_when_it_knows_nothing():
+    assert Loner(4).decide(sheet((2, 2), square_dug=False)).action == DIG
+
+
+def test_loner_goes_to_the_nearest_square_its_readings_allow():
+    # Dug A4 and read 1: only B4 and A3 are left, and the topmost wins.
+    order = Loner(4).decide(sheet((0, 0), [((0, 0), 1)])).action
+    assert order == {"action": "go_to", "square": "B4"}
+    # Read 6 from A4: only the far corner, D1, is that far.
+    order = Loner(4).decide(sheet((0, 0), [((0, 0), 6)])).action
+    assert order == {"action": "go_to", "square": "D1"}
+
+
+def test_loner_keeps_what_readings_allow_within_the_noise_never_below_1():
+    assert allows((0, 0), 3, (0, 2), 1) and allows((0, 0), 3, (2, 2), 1)
+    assert not allows((0, 0), 3, (0, 1), 1)
+    # A reading is never below 1, so 1 allows anything up to 1 + noise away.
+    assert allows((0, 0), 1, (1, 1), 1) and not allows((0, 0), 1, (1, 2), 1)
+    assert not allows((0, 0), 1, (0, 0), 3)  # the dug square never holds it
+    left = possible(4, 0, [((0, 0), 2), ((3, 0), 3)])
+    assert left == [(1, 1)]
+
+
+def test_loner_digs_its_square_only_when_its_readings_allow_it():
+    # At B3 having read 1 at A4: B3 is 2 away from A4, so it doesn't dig.
+    view = sheet((1, 1), [((0, 0), 1)], square_dug=False)
+    assert Loner(4).decide(view).action["action"] == "go_to"
+    view = sheet((1, 0), [((0, 0), 1)], square_dug=False)
+    assert Loner(4).decide(view).action == DIG
+
+
+def test_loner_ignores_the_scroll():
+    quiet = sheet((0, 0), [((0, 0), 1)])
+    told = sheet((0, 0), [((0, 0), 1)], [("pirate-2", "Dug B4: 1 away.")])
+    assert Loner(4).decide(told).action == Loner(4).decide(quiet).action
+
+
+def test_loner_steps_aside_when_a_pirate_blocks_its_row():
+    # Only D1 is left, the way east is blocked: it steps south first.
+    blocked = sheet((0, 0), [((0, 0), 6)], neighbours=(("east", "pirate-2"),))
+    assert Loner(4).decide(blocked).action == {"action": "go_to", "square": "A3"}
+    boxed = (("east", "pirate-2"), ("south", "pirate-3"))
+    view = sheet((0, 0), [((0, 0), 6)], neighbours=boxed)
+    assert Loner(4).decide(view).action == WAIT
+
+
+def test_loner_never_says_anything_and_enters_the_cave_once_on_it():
+    assert Loner(4).decide(sheet((1, 1), on_cave=True)).action == {"action": "enter"}
+    records = played(load_config(ROOT / "configs/loner.toml"), "loner")
+    assert all("say" not in a for record in records for a in record["did"])
+    assert records[-1]["game_over"]["reason"] == "everyone is in the cave"
+
+
+def test_sharer_says_each_reading_once_with_its_next_action():
+    view = sheet((0, 0), [((0, 0), 1)])
+    action = Sharer(4).decide(view).action
+    assert action == {"action": "go_to", "square": "B4", "say": "Dug A4: 1 away."}
+    # Once its own line is on the scroll it doesn't say it again.
+    view = sheet((0, 0), [((0, 0), 1)], [("pirate-1", "Dug A4: 1 away.")])
+    assert "say" not in Sharer(4).decide(view).action
+
+
+def test_sharer_counts_readings_said_on_the_scroll():
+    # Its own A4 reads 1 (B4 or A3); pirate-2 read 1 at C4 too, which leaves B4.
+    heard = [("pirate-2", "Dug C4: 1 away.")]
+    action = Sharer(4).decide(sheet((0, 1), [((0, 0), 1)], heard)).action
+    assert action["square"] == "B4"
+    # Lines it was shown on earlier turns count as much as new ones.
+    before = EarlierTurn((0, 1), WAIT, "", shown=sheet((0, 0), (), heard).new_lines)
+    action = Sharer(4).decide(sheet((0, 1), [((0, 0), 1)], earlier=[before])).action
+    assert action["square"] == "B4"
+
+
+def test_sharer_never_digs_a_square_said_dug():
+    # Read 1 at A4: B4 and A3 are left, and B4 was said dug, so A3.
+    heard = [("pirate-2", "Dug B4: 2 away.")]
+    action = Sharer(4).decide(sheet((0, 0), [((0, 0), 1)], heard)).action
+    assert action["square"] == "A3"
+
+
+def test_sharer_passes_over_lines_in_any_other_form():
+    heard = [("pirate-2", "dug B4: 2 away"), ("pirate-3", "Cave at Z9."), ("x", "hi")]
+    quiet = Sharer(4).decide(sheet((0, 0), [((0, 0), 1)])).action
+    assert Sharer(4).decide(sheet((0, 0), [((0, 0), 1)], heard)).action == quiet
+
+
+def test_sharer_says_where_the_cave_is_as_an_alert_as_it_enters():
+    dug_it = TurnView(
+        "pirate-1",
+        "",
+        (1, 1),
+        10,
+        (),
+        on_cave=True,
+        square="B3",
+        readings=(Reading((1, 1), "B3", None),),
+    )
+    action = Sharer(4).decide(dug_it).action
+    assert action == {"action": "enter", "say": "Cave at B3.", "alert": True}
+    # On a cave someone else dug, it just goes in.
+    told = sheet((1, 1), (), [("pirate-2", "Cave at B3.")], on_cave=True)
+    assert Sharer(4).decide(told).action == {"action": "enter"}
+
+
+def test_sharer_goes_to_a_cave_it_is_shown():
+    told = sheet((0, 0), [((0, 0), 6)], [("pirate-2", "Cave at B3.")])
+    action = Sharer(4).decide(told).action
+    assert action == {"action": "go_to", "square": "B3", "say": "Dug A4: 6 away."}
+
+
+@pytest.mark.parametrize("seed", range(6))
+def test_sharer_a_crew_never_fails_an_action_and_beats_the_loner(seed):
+    settings = {"grid_size": 8, "crew_size": 6, "turns_per_pirate": 20}
+    config = parse_config({**settings, "seed": seed, "reading_noise": 1})
+    records = played(config, "sharer")
+    assert not any("failed_moves" in record for record in records)
+    loner = played(config, "loner")[-1]["game_over"]["score"]
+    assert records[-1]["game_over"]["score"] >= loner

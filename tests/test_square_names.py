@@ -4,7 +4,6 @@
 import re
 
 import pytest
-import talking
 
 from assets.board import EDGE_LEFT, board_edges
 from treasure_island import viewer
@@ -13,6 +12,7 @@ from treasure_island.config import ConfigError, parse_config
 from treasure_island.game_loop import Game
 from treasure_island.game_state import GameState
 from treasure_island.squares import square_at, square_name
+from treasure_island.strategies import Sharer
 
 # A square written the game's inside way, as "(x, y)", must never reach a pirate.
 COORDINATES = re.compile(r"\(\d+, \d+\)")
@@ -101,7 +101,7 @@ def test_square_names_the_story_names_squares_like_a_chessboard():
 
 def test_square_names_scripted_notes_name_squares_like_a_chessboard():
     config = parse_config({"grid_size": 5, "crew_size": 1, "turns_per_pirate": 60})
-    for brain in (talking.Talker(5),):
+    for brain in (Sharer(5),):
         records = list(Game(config, [brain]).records())
         notes = [
             action["say"]

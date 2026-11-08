@@ -3,21 +3,21 @@
 
 import json
 import re
+import shutil
 from pathlib import Path
 
 import pytest
-import talking
 
 from treasure_island import cli, viewer
 
 ROOT = Path(__file__).resolve().parents[1]
-GAME = "runs/talking"  # a finished game whose pirates think and say lines
+GAME = "runs/reference-sharer"  # a finished game whose pirates think and say lines
 
 
 @pytest.fixture
 def saved(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    talking.write(tmp_path / "game")
+    shutil.copytree(ROOT / "runs/reference-sharer", tmp_path / "game")
     return tmp_path / "game"
 
 

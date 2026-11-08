@@ -74,7 +74,8 @@ def test_named_runs_save_every_lever_even_the_defaults(tmp_path, monkeypatch, ca
     path.write_text('brain = "silent"\nturns_per_pirate = 2\n')
     folder = played(path, capsys, seed=1)
     saved = json.loads((folder / "config.json").read_text())
-    assert saved["grid_size"] == 10
+    assert saved["grid_size"] == 12
+    assert saved["reading_noise"] == 3
     assert saved["crew_size"] == 6
     assert saved["turns_per_pirate"] == 2
     assert len(saved["pirates"]) == 6

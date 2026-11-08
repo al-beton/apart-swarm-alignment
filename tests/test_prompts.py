@@ -14,6 +14,7 @@ from treasure_island.config import ConfigError, parse_config
 
 ROOT = Path(__file__).resolve().parents[1]
 GAME = {"grid_size": 9, "crew_size": 4, "turns_per_pirate": 20, "failed_tries": 3}
+GAME |= {"reading_noise": 0}
 SHIPPED = {
     "framing": ["competition"],
     "rules": ["tools-only"],

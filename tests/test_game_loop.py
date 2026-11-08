@@ -49,6 +49,7 @@ def config(**settings):
             "crew_size": 2,
             "turns_per_pirate": 6,
             "seed": 3,
+            "reading_noise": 0,
             **settings,
         }
     )

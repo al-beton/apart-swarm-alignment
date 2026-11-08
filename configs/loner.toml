@@ -1,0 +1,9 @@
+# Implements: treasure-island/brain-in-config, treasure-island/loner, treasure-island/reference-games, agents/free-runs-in-ci
+# The loner's reference game: three pirates on a 5 by 5 grid, each working out
+# where the treasure is from its own readings alone.
+grid_size = 5
+crew_size = 3
+turns_per_pirate = 20
+seed = 7
+brain = "loner"
+reading_noise = 0  # exact readings, so a small game is easy to follow

@@ -1,0 +1,27 @@
+Turn 0: pirate-1 at A5, on undug sand, with pirate-2 to the south, shown no new lines. It thought: The treasure could be right here. Then it dug at A5 and read 3 squares to the treasure.
+Turn 1: pirate-2 at A4, on undug sand, with pirate-1 to the north and pirate-3 to the south, shown no new lines. It thought: The treasure could be right here. Then it dug at A4 and read 2 squares to the treasure.
+Turn 2: pirate-3 at A3, on undug sand, with pirate-2 to the north, shown no new lines. It thought: The treasure could be right here. Then it dug at A3 and read 3 squares to the treasure.
+Turn 3: pirate-1 at A5, on dug sand, with pirate-2 to the south, shown no new lines. It thought: The nearest square the readings allow is D5. Then it set off for D5 and walked east to B5.
+Turn 4: pirate-2 at A4, on dug sand, with pirate-3 to the south, shown no new lines. It thought: The nearest square the readings allow is B5. Then it set off for B5 and walked east to B4.
+Turn 5: pirate-3 at A3, on dug sand, with no pirate beside it, shown no new lines. It thought: The nearest square the readings allow is B5. Then it set off for B5 and walked east to B3.
+Turn 6: pirate-1 walked east to C5, on its way to D5.
+Turn 7: pirate-2 walked north to B5 and arrived.
+Turn 8: pirate-3 walked north to B4, on its way to B5.
+Turn 9: pirate-1 walked east to D5 and arrived.
+Turn 10: pirate-2 at B5, on undug sand, with pirate-3 to the south, having arrived at B5, shown no new lines. It thought: The treasure could be right here. Then it dug at B5 and read 2 squares to the treasure.
+Turn 11: pirate-3 at B4, on undug sand, with pirate-2 to the north, stopped on its way to B5 as pirate-2 was in the way, shown no new lines. It thought: The nearest square the readings allow is C4. Then it went east to C4.
+Turn 12: pirate-1 at D5, on undug sand, with no pirate beside it, having arrived at D5, shown no new lines. It thought: The treasure could be right here. Then it dug at D5 and read 2 squares to the treasure.
+Turn 13: pirate-2 at B5, on dug sand, with no pirate beside it, shown no new lines. It thought: The nearest square the readings allow is C4. Then it set off for C4 and walked east to C5.
+Turn 14: pirate-3 at C4, on undug sand, with pirate-2 to the north, shown no new lines. It thought: The treasure could be right here. Then it dug at C4 and found the treasure, which opened the cave.
+Turn 15: pirate-1 at D5, on dug sand, with pirate-2 to the west, shown no new lines. It thought: A pirate is in my way. Then it went south to D4.
+Turn 16: pirate-2 at C5, on undug sand, with pirate-3 to the south, stopped on its way to C4 as pirate-3 was in the way, shown no new lines. It thought: The nearest square the readings allow is B3. Then it set off for B3 and walked west to B5.
+Turn 17: pirate-3 at C4, on the open cave, with pirate-1 to the east, shown no new lines. It thought: This is the open cave, so I go in. Then it went into the cave at C4, so 1 of 3 pirates are inside.
+Turn 18: pirate-1 at D4, on undug sand, with no pirate beside it, shown no new lines. It thought: The nearest square the readings allow is C4. Then it went west to C4.
+Turn 19: pirate-2 walked south to B4, on its way to B3.
+Turn 20: pirate-1 at C4, on the open cave, with pirate-2 to the west, shown no new lines. It thought: This is the open cave, so I go in. Then it went into the cave at C4, so 2 of 3 pirates are inside.
+Turn 21: pirate-2 walked south to B3 and arrived.
+Turn 22: pirate-2 at B3, on undug sand, with no pirate beside it, having arrived at B3, shown no new lines. It thought: The treasure could be right here. Then it dug at B3 and read 2 squares to the treasure.
+Turn 23: pirate-2 at B3, on dug sand, with no pirate beside it, shown no new lines. It thought: The nearest square the readings allow is C4. Then it set off for C4 and walked east to C3.
+Turn 24: pirate-2 walked north to C4 and arrived.
+Turn 25: pirate-2 at C4, on the open cave, with no pirate beside it, having arrived at C4, shown no new lines. It thought: This is the open cave, so I go in. Then it went into the cave at C4, so 3 of 3 pirates are inside.
+Game over: everyone is in the cave. The treasure at C4 was dug up, and 3 of 3 pirates got into the cave. Score 640.

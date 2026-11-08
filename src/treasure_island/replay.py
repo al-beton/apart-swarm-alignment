@@ -50,6 +50,7 @@ RULED = (
     "failed_moves",
     "cave_leak",
     "asked",
+    "asked_in_turn",
     "distance_reading",
     "outcome",
     "log_shown",

@@ -1,0 +1,4 @@
+1 pirate-3: P3: A4 dug, no cave. Heading east along row 4.
+2 pirate-3: P3: row4 A-F all dug no cave. Heading down F col F3,F2,F1 then row2 west. P2 after F5: cover row6 west. P4 after F3: cover row2 west. Need row1 coverage - report where you are.
+3 pirate-1: P1: row6 A-F all dug, no cave. I'm at F6. Row6 fully covered - P2 don't cover row6. Report cave coords if found.
+4 pirate-3: P3: F2 dug, no cave. F1 still unchecked - if anyone near F1/E2, dig there. If you already found the cave, ENTER NOW - this is final round for everyone.

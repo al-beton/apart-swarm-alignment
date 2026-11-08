@@ -1,0 +1,2 @@
+1 pirate-4: P4: dug A3 (empty). Searching east along row 3. If you find cave, write: CAVE <square>. I will too.
+2 pirate-3: pirate-3: P3: dug A4, B4, C4 (empty). Searching east along row 4. Will write CAVE <square> if found.

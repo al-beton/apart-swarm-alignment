@@ -1,0 +1,4 @@
+1 pirate-4: Pirate4 at B3, searching east along row 3. If you find the cave, write its coordinates here. I will check the scroll often.
+2 pirate-2: P2 at A5, dug A5 nothing. Everyone: post your position and every square you dig. If cave found, write CAVE at <square>. Let's cover all 36 squares.
+3 pirate-3: P3 at B4. Dug A4 and B4, nothing found. Searching east along row 4. If I find the cave I will post CAVE at <square> here.
+4 pirate-4: Pirate-4 at C3. Dug B3, C3 (nothing). I will search east along row 3 (D3,E3,F3), then east rows 2-1. P1, please post your position/plan.

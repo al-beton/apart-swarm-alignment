@@ -1,0 +1,1 @@
+1 pirate-4: P4: dug A3 B3 C3 nothing. Now at C3. Plan: sweep C2 B2 A2 then D3 D2 E3 E2 F3 F2. report cave/dug coords plz.

@@ -1,0 +1,3 @@
+1 pirate-1: P1: plan - P1 row6, P2 row5, P3 row4, P4 row3. Dig every sq on your route. If cave found, write coords.
+2 pirate-1: P1: FOUND cave at A6 (northwest corner). Cave is open. Go to A6 and enter.
+3 pirate-4: P4: dug all row3 A3-F3, plus F2,E2; no cave found; ending at E2 with no entry.

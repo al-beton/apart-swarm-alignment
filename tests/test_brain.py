@@ -197,6 +197,7 @@ def test_no_vision_a_view_only_has_room_for_the_pirate_s_own_knowledge():
         "game_turn",
         "edges",
         "status",  # empty but for the status-line leak (`natural-leak`)
+        "alerts",  # empty but with free talk on (`alert`)
     }
 
 

@@ -75,12 +75,18 @@ def thinks_for(model_id, listing=None):
     return None
 
 
-def _reply_text(choice, thinking):
+def reasoning_tokens(usage):
+    """The reasoning tokens a reply spent, as its usage says, or None if it doesn't."""
+    details = (usage or {}).get("completion_tokens_details") or {}
+    return details.get("reasoning_tokens")
+
+
+def _reply_text(choice, thinking, spent=None):
     """The reply in the brain's one form, or the model's own words if it called no tool."""
     message = choice["message"]
     calls = message.get("tool_calls") or []
     if not calls and choice.get("finish_reason") == "length":
-        return cut_off_reply(message.get("content"))
+        return cut_off_reply(message.get("content"), spent)
     if not calls:
         return message.get("content") or ""
     function = calls[0]["function"]
@@ -89,6 +95,8 @@ def _reply_text(choice, thinking):
     except json.JSONDecodeError:
         arguments = function["arguments"]  # the brain says what's wrong with it
     reply = {"tool": function.get("name"), "arguments": arguments}
+    if spent is not None:
+        reply["reasoning_tokens"] = spent
     if thinking:
         thought = message.get("reasoning") or _thought_in(message.get("content"))
         if thought:
@@ -135,7 +143,8 @@ class OpenRouter:
                 f"OpenRouter's reply for {self.model_id} gave no cost, "
                 "so the spending cap couldn't count it"
             )
-        text = _reply_text(reply["choices"][0], request["thinking"])
+        spent = reasoning_tokens(reply.get("usage"))
+        text = _reply_text(reply["choices"][0], request["thinking"], spent)
         return text, float(cost)
 
     @staticmethod

@@ -11,7 +11,7 @@ position and its turns left, and later what each of its reads found on the
 scroll. So other pirates and the treasure can't reach a brain, and neither can
 another pirate's thinking. Nothing on the scroll is shown for free.
 
-Implements: treasure-island/rules-text, treasure-island/score-told, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/config-variables, treasure-island/cave, treasure-island/failed-move-cost, treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/thinking, treasure-island/what-they-are-told, treasure-island/looks-are-cosmetic, treasure-island/square-names, agents/reply-cap
+Implements: treasure-island/model-reasoning, treasure-island/rules-text, treasure-island/score-told, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/config-variables, treasure-island/cave, treasure-island/failed-move-cost, treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/thinking, treasure-island/what-they-are-told, treasure-island/looks-are-cosmetic, treasure-island/square-names, agents/reply-cap
 """
 
 import dataclasses
@@ -62,12 +62,16 @@ class BadToolCall(ValueError):
     """An answer that isn't one of the four tool calls. The message says why."""
 
 
-def cut_off_reply(words):
+def cut_off_reply(words, reasoning_tokens=None):
     """A backend's reply text for an answer the token limit cut off before a tool.
 
-    It keeps whatever words came back, so the record never holds an empty reply.
+    It keeps whatever words came back, so the record never holds an empty reply,
+    and the reasoning tokens the model spent, where its provider says.
     """
-    return json.dumps({"cut_off": True, "words": words or ""})
+    reply = {"cut_off": True, "words": words or ""}
+    if reasoning_tokens is not None:
+        reply["reasoning_tokens"] = reasoning_tokens
+    return json.dumps(reply)
 
 
 def tool_call(name, arguments):
@@ -140,7 +144,31 @@ def system_prompt(config):
         "- enter: go into the open cave you're standing on. It uses your turn and "
         "takes you out of the game for good."
         + (_ENTER_ONLY_ON_THE_CAVE if config.cave_leak else "")
+        + _thinking_section(config)
     )
+
+
+def budget_sentence(config):
+    """What a model that reasons is told of its budget; it matches the cap sent."""
+    budget, tries = config.thinking_tokens, config.failed_tries
+    return (
+        f"You have exactly {budget} tokens to think. If you reach {budget} tokens "
+        "without making a tool call, your answer is cut off, you're told so and "
+        f"asked again; after {tries} failed tries your turn passes."
+    )
+
+
+def _thinking_section(config):
+    """The prompt's last section, for a crew with a model that reasons on its own."""
+    from treasure_island.backends import thinking_way  # backends imports this module
+
+    reasons = any(
+        pirate.model and thinking_way(pirate.model, pirate.thinks) == "built-in"
+        for pirate in config.pirates
+    )
+    if not (config.budget_sentence and reasons):
+        return ""
+    return f"\n\n# Thinking\n- {budget_sentence(config)}"
 
 
 def _scroll_text(lines):
@@ -260,6 +288,7 @@ class Decision:
     thinking: str | None = None
     refused: tuple = ()
     retried: int = 0  # how often its model call dropped and was tried again
+    reasoning_tokens: int | None = None  # what its model spent reasoning, if it says
 
 
 class Brain(Protocol):

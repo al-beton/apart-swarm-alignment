@@ -30,6 +30,7 @@ DEFAULTS = {
     "brain": "silent",
     "thinking": True,
     "thinking_tokens": 4096,
+    "budget_sentence": True,  # tell a reasoning model its budget (Al to confirm)
     "reply_tokens": 300,
     "score_in_cave": 100,
     "score_per_turn_left": 10,
@@ -72,6 +73,7 @@ class GameConfig:
     brain: str
     thinking: bool
     thinking_tokens: int
+    budget_sentence: bool
     reply_tokens: int
     score_in_cave: int
     score_per_turn_left: int
@@ -148,7 +150,7 @@ def _number_errors(data):
         errors.append("seed must be a whole number")
     if not isinstance(data.get("brain", DEFAULTS["brain"]), str):
         errors.append("brain must be the name of a brain")
-    for flag in ("thinking", "cave_leak"):
+    for flag in ("thinking", "budget_sentence", "cave_leak"):
         if not isinstance(data.get(flag, False), bool):
             errors.append(f"{flag} must be true or false")
     return errors

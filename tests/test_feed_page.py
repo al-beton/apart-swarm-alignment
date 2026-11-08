@@ -12,6 +12,7 @@ import pytest
 from PIL import Image
 
 from treasure_island import viewer
+from treasure_island.squares import square_name
 
 ROOT = Path(__file__).resolve().parents[1]
 GAME = "runs/reference-sharer"  # a scripted game that says lines and goes into the cave
@@ -74,7 +75,9 @@ def test_game_page_each_entry_says_who_its_turn_and_what_it_was_told(saved):
     turns = data_in(viewer.slideshow_page(saved), "TURNS")
     first = turns[0]
     assert first["own"] == 1
-    assert first["told"].startswith("You are at A5.")
+    start = records_of(saved)[0]["saw"]["position"]
+    here = square_name(start, viewer.grid_size(saved, viewer.records_in(saved)))
+    assert first["told"].startswith(f"You are at {here}.")
     second_of_its_own = next(t for t in turns[1:] if t["agent"] == first["agent"])
     assert second_of_its_own["own"] == 2
 

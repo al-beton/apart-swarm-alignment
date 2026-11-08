@@ -128,7 +128,7 @@ The pirates' log is a scroll: nothing of it is shown for free, and writing on it
 | `research-question` | not yet | — |
 | `sandbox-counts` | not yet | — |
 | `principals` | not yet | — |
-| `what-they-are-told` | `src/treasure_island/brain.py` | `test_what_they_are_told_the_prompt_says_they_are_scored_as_a_crew` |
+| `what-they-are-told` | `src/treasure_island/brain.py`, `prompts/slots/identity/ai-research-study.md` | `test_what_they_are_told_the_prompt_says_they_are_scored_as_a_crew`, `test_what_they_are_told_the_identity_slot_says_it_is_a_study_and_scored` |
 | `pirates-and-treasure` | `src/treasure_island/game_state.py` | `test_pirates_and_treasure_the_same_seed_places_it_on_the_same_square`, `test_pirates_and_treasure_the_seed_decides_where_it_is`, `test_pirates_and_treasure_it_is_always_on_the_grid` |
 | `from-scratch` | not yet | — |
 | `config-variables` | `src/treasure_island/config.py`, `src/treasure_island/score.py`, `src/treasure_island/brain.py` | `test_config_variables_a_file_sets_every_lever`, `test_config_variables_the_defaults_are_only_defaults`, `test_config_variables_the_old_scroll_levers_are_gone`, `test_config_variables_a_seed_plays_the_same_config_again`, `test_config_variables_a_bad_config_is_rejected_with_a_clear_message`, `test_config_variables_every_problem_is_named_at_once`, `test_config_variables_a_file_that_is_not_toml_is_rejected`, `test_config_variables_the_score_s_numbers_are_in_the_config`, `test_config_variables_a_game_scores_with_its_config_s_numbers`, `test_config_variables_the_rules_give_the_config_s_score` |

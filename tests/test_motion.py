@@ -51,16 +51,31 @@ def test_dig_motion_turns_sand_to_dug_and_ends_on_the_still_pose():
     look = (2, "#2f6fc0", "2")
     assert same(digging(*look, DIG_STEPS - 1), pirate(*look, "dig", 0))
     steps = [digging(*look, step) for step in range(DIG_STEPS)]
-    assert len({image.tobytes() for image in steps}) == DIG_STEPS
+    assert same(steps[0], steps[-1]), "it starts and ends with the pickaxe raised"
+    assert len({image.tobytes() for image in steps}) == DIG_STEPS - 1
     with pytest.raises(ValueError):
         digging(*look, DIG_STEPS)
 
 
-def test_dig_motion_throws_sand_above_the_pirate():
+def iron_rows(image):
+    """The rows of the square where the pickaxe's iron head shows."""
+    iron = (0x9A, 0xA4, 0xAE)
+    return [
+        y
+        for y in range(SIZE)
+        for x in range(SIZE)
+        if image.getpixel((x, y))[:3] == iron and image.getpixel((x, y))[3]
+    ]
+
+
+def test_dig_motion_swings_a_pickaxe_from_overhead_into_the_sand():
     look = (2, "#2f6fc0", "2")
-    still = pirate(*look, "dig", 0)
-    high = digging(*look, 3)
-    assert high.getbbox()[1] <= still.getbbox()[1], "the sand flies over its hat"
+    raised, struck = pirate(*look, "dig", 0), pirate(*look, "dig", 1)
+    assert min(iron_rows(raised)) < 12, "raised, the head is up by the hat"
+    assert max(iron_rows(struck)) > 40, "struck, the head is down in the sand"
+    burst = (0xFF, 0xF4, 0xC8)
+    strike = digging(*look, 2)
+    assert burst in {p[:3] for _, p in strike.getcolors(SIZE * SIZE) if p[3]}
 
 
 def test_enter_motion_sinks_then_flies_the_hat_onto_the_stack():

@@ -414,7 +414,9 @@ def scene(records, turn, size, treasure=None, step=None, scoring=None):  # noqa:
     kind, steps = _motion(current)
     between = step is not None and step < steps  # before the turn's own frame
     # Going in ends on its hat on the stack, which is the turn's own frame too.
-    shown["entering"] = (step - 1 if between else steps - 1) if kind == "enter" else None
+    shown["entering"] = (
+        (step - 1 if between else steps - 1) if kind == "enter" else None
+    )
     shown["digging"] = None
     if kind == "dig" and between:
         here = tuple(current["saw"]["position"])

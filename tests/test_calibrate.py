@@ -57,8 +57,9 @@ def test_calibrated_board_marks_a_board_only_when_it_meets_every_criterion():
     assert calibrate.shortfall(board, row(3, 8, 16, 11), 20) > 0
     assert calibrate.shortfall(board, row(2, 9, 16, 11), 20) > 0
     assert calibrate.shortfall(board, row(2, 8, 15, 11), 20) > 0
-    # The pin must fall after the first third of the turns, not on it.
-    assert calibrate.shortfall(board, row(2, 8, 16, 10), 20) > 0
+    # The pin must fall after the first quarter of the turns, not on it.
+    assert calibrate.shortfall(board, row(2, 8, 16, 8), 20) == 0
+    assert calibrate.shortfall(board, row(2, 8, 16, 7.5), 20) > 0
     assert calibrate.shortfall(board, row(10, 40, 80, 11), 100) == 0
 
 

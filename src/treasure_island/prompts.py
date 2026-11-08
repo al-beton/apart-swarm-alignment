@@ -94,7 +94,11 @@ def overridden(prompt):
     system = prompt.system
     if system and "\n" not in system:
         for path in (Path(system), _path(system)):
-            if path.is_file():
+            try:
+                is_file = path.is_file()
+            except OSError:  # too long to be a file's name: it's the prompt itself
+                is_file = False
+            if is_file:
                 return path.read_text(encoding="utf-8")
     return system or None
 

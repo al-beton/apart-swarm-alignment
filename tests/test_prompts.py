@@ -151,6 +151,11 @@ def test_system_override_a_file_path_is_read(tmp_path):
     assert prompt_for(system=str(path)) == "You are a pirate.\nFind the cave.\n"
 
 
+def test_system_override_a_long_one_line_prompt_is_the_prompt_itself():
+    words = "You are a pirate. " * 30  # longer than any file's name can be
+    assert prompt_for(system=words) == words
+
+
 def test_system_override_is_told_word_for_word():
     words = "A crew of {crew_size}, nothing filled in.\nA second line."
     config = parse_config({**GAME, "cave_leak": True, "prompt": {"system": words}})

@@ -105,6 +105,25 @@ def test_examples_stay_true_a_page_differing_only_in_png_bytes_is_the_same(tmp_p
     assert (copy / "game.html").read_text() == repacked  # left alone, not rewritten
 
 
+def test_examples_stay_true_replaying_keeps_a_page_that_shows_the_same(tmp_path):
+    # make examples replays stripes from nothing; a page whose PNGs another machine
+    # packed differently must come through unchanged, or CI's check sees a change.
+    shutil.copytree(ROOT / "configs", tmp_path / "configs")
+    shutil.copytree(FOLDER / "stripes", tmp_path / "examples/stripes")
+    page = tmp_path / "examples/stripes/game.html"
+
+    def repack(match):
+        image = Image.open(io.BytesIO(base64.b64decode(match.group(1))))
+        out = io.BytesIO()
+        image.save(out, format="PNG", compress_level=1)
+        return f'"{base64.b64encode(out.getvalue()).decode()}"'
+
+    repacked = re.sub(r'"(iVBORw0KGgo[A-Za-z0-9+/=]+)"', repack, page.read_text())
+    page.write_text(repacked)
+    examples.remake("stripes", tmp_path)
+    assert page.read_text() == repacked
+
+
 def test_examples_stay_true_the_llm_game_is_redrawn_not_replayed(tmp_path, monkeypatch):
     shutil.copytree(FOLDER / "llm-crew", tmp_path / "examples/llm-crew")
     (tmp_path / "examples/llm-crew/game.gif").write_bytes(b"old")

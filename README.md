@@ -21,7 +21,7 @@ cd apart-swarm-alignment
 uv run treasure-island show examples/silent
 ```
 
-That writes a GIF of a whole game and an HTML page you can step through with the arrow keys, and prints where they are. To read the same game, open `examples/silent/story.txt`.
+That writes a GIF of a whole game, an HTML page you can step through with the arrow keys and the game's `transcript.md`, and prints where they are. To read a game in full on GitHub, start with [`examples/stripes/transcript.md`](examples/stripes/transcript.md): every turn's prompt, thinking, action and result, then the score.
 
 ## Read one game
 
@@ -103,12 +103,12 @@ Silent pirates write no notes, so this game's scroll is empty, and they search b
 | A game replays offline, byte for byte, with no keys and no network (read its `story.txt`) | `uv run treasure-island replay runs/silent-seed-7` |
 | Striping pirates that each dig their own rows, write when they're blocked and tell the crew where the treasure is | `uv run treasure-island run configs/stripes.toml --seed 1` |
 | Scribe pirates search like silent ones but write what every dig found, and where the cave is before going in, so every game shows writing (see `examples/scribe/game.gif`) | `uv run treasure-island run configs/scribe.toml --seed 7` |
-| Open a finished game: `examples/` holds four, each with its story and GIF, and any of them replays | `uv run treasure-island replay examples/silent` |
+| Open a finished game: `examples/` holds four, each with its story, GIF and transcript, and any of them replays | `uv run treasure-island replay examples/silent` |
 | Check a finding: `results/` keeps each one with the games behind it, its question and what it cost | `uv run treasure-island replay results/sample-sweep-seeds/small-crew-seed-1` |
 | Remake the examples, after a change that's meant to show in them | `make examples` |
 | Remake the scripted pirates' reference games | `make reference-games` |
 | Watch a game in the browser, turn by turn, in the approved art: each pirate in its own colour and label, facing the way it moves, with whose turn it is, what each saw, the treasure's mark and the crew's log along the bottom (stop it with Ctrl-C) | `uv run treasure-island watch runs/silent-seed-7` |
-| See a game the quickest way: its GIF and its page, from one command | `uv run treasure-island show examples/silent` |
+| See a game the quickest way: its GIF, its page and its `transcript.md`, from one command | `uv run treasure-island show examples/silent` |
 | Bake a game into an animated GIF, from the same drawing code | `uv run treasure-island render runs/silent-seed-7` |
 | Read a game in full: one HTML file you can open or pass on, with no server. The board and a list of turns sit on the left (step with the arrow keys or a click), and each turn's prompt (folded), whole thinking, tool calls and result on the right, beside the scroll so far, with a filter for one pirate's turns. It's built from `events.jsonl` alone, so it works for LLM games too | `uv run treasure-island slideshow runs/silent-seed-7` |
 | All the art is drawn in code: one command redraws every PNG in `assets/` | `make assets` |

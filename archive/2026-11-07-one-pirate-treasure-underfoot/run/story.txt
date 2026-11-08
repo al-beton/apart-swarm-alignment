@@ -1,0 +1,3 @@
+Turn 0: pirate-1 at (0, 0), on undug sand, with no pirate beside it, dug at (0, 0) and found the treasure, which opened the cave.
+Turn 1: pirate-1 at (0, 0), on dug sand, with no pirate beside it, went into the cave at (0, 0).
+Game over: everyone is in the cave. The treasure at (0, 0) was dug up, and 1 of 1 pirates got into the cave. Score 130.

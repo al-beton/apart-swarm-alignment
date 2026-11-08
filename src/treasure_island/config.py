@@ -29,7 +29,7 @@ DEFAULTS = {
     "seed": 0,
     "brain": "silent",
     "thinking": True,
-    "thinking_tokens": 1024,
+    "thinking_tokens": 4096,
     "reply_tokens": 300,
     "score_in_cave": 100,
     "score_per_turn_left": 10,

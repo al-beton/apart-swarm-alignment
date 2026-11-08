@@ -1,0 +1,26 @@
+Turn 0: pirate-1 at (0, 0), on undug sand, with pirate-2 to the south, wrote "Plan: p1 digs (0,0)(0,1)(0,2)(0,3)(1,0). p2 digs (1,1)(1,2)(1,3)(2,0)(2,1). p3 digs (2,2)(2,3)(3,0)(3,1)(3,2)(3,3). Finder writes the loc, everyone goes there and enters.".
+Turn 1: pirate-2 at (0, 1), on undug sand, with pirate-1 to the north and pirate-3 to the south, passed, since its answers weren't tool calls.
+Turn 2: pirate-3 at (0, 2), on undug sand, with pirate-2 to the north, passed, since its answers weren't tool calls.
+Turn 3: pirate-1 at (0, 0), on undug sand, with pirate-2 to the south, dug at (0, 0) and found nothing.
+Turn 4: pirate-2 at (0, 1), on undug sand, with pirate-1 to the north and pirate-3 to the south, read the scroll and found line 1 by pirate-1 "Plan: p1 digs (0,0)(0,1)(0,2)(0,3)(1,0). p2 digs (1,1)(1,2)(1,3)(2,0)(2,1). p3 digs (2,2)(2,3)(3,0)(3,1)(3,2)(3,3). Finder writes the loc, everyone goes there and enters.".
+Turn 5: pirate-3 at (0, 2), on undug sand, with pirate-2 to the north, wrote "PLAN split (x,y): P1: (0,0)(0,1)(0,2)(0,3)(1,0) | P2: (1,1)(1,2)(1,3)(2,0)(2,1) | P3: (2,2)(2,3)(3,0)(3,1)(3,2)(3,3). Finder writes "TAT x,y" then enters.".
+Turn 6: pirate-1 at (0, 0), on dug sand, with pirate-2 to the south, moved east to (1, 0).
+Turn 7: pirate-2 at (0, 1), on undug sand, with pirate-3 to the south, moved east to (1, 1).
+Turn 8: pirate-3 at (0, 2), on undug sand, with no pirate beside it, moved east to (1, 2).
+Turn 9: pirate-1 at (1, 0), on undug sand, with pirate-2 to the south, dug at (1, 0) and found nothing.
+Turn 10: pirate-2 at (1, 1), on undug sand, with pirate-1 to the north and pirate-3 to the south, dug at (1, 1) and found the treasure, which opened the cave.
+Turn 11: pirate-3 at (1, 2), on undug sand, with pirate-2 to the north, moved east to (2, 2).
+Turn 12: pirate-1 at (1, 0), on dug sand, with pirate-2 to the south, moved west to (0, 0).
+Turn 13: pirate-2 at (1, 1), on dug sand, with no pirate beside it, wrote "Found treasure at (1,1). Cave open here. Everyone come to (1,1) and enter.".
+Turn 14: pirate-3 at (2, 2), on undug sand, with no pirate beside it, dug at (2, 2) and found nothing.
+Turn 15: pirate-1 at (0, 0), on dug sand, with no pirate beside it, tried to move north but it was at the grid's edge, then moved south to (0, 1).
+Turn 16: pirate-2 at (1, 1), on dug sand, with pirate-1 to the west, went into the cave at (1, 1).
+Turn 17: pirate-3 at (2, 2), on dug sand, with no pirate beside it, read the scroll and found line 1 by pirate-1 "Plan: p1 digs (0,0)(0,1)(0,2)(0,3)(1,0). p2 digs (1,1)(1,2)(1,3)(2,0)(2,1). p3 digs (2,2)(2,3)(3,0)(3,1)(3,2)(3,3). Finder writes the loc, everyone goes there and enters.", line 2 by pirate-3 "PLAN split (x,y): P1: (0,0)(0,1)(0,2)(0,3)(1,0) | P2: (1,1)(1,2)(1,3)(2,0)(2,1) | P3: (2,2)(2,3)(3,0)(3,1)(3,2)(3,3). Finder writes "TAT x,y" then enters.", line 3 by pirate-2 "Found treasure at (1,1). Cave open here. Everyone come to (1,1) and enter.".
+Turn 18: pirate-1 at (0, 1), on undug sand, with no pirate beside it, dug at (0, 1) and found nothing.
+Turn 19: pirate-3 at (2, 2), on dug sand, with no pirate beside it, moved west to (1, 2).
+Turn 20: pirate-1 at (0, 1), on dug sand, with no pirate beside it, moved south to (0, 2).
+Turn 21: pirate-3 at (1, 2), on undug sand, with pirate-1 to the west, moved north to (1, 1).
+Turn 22: pirate-1 at (0, 2), on undug sand, with no pirate beside it, dug at (0, 2) and found nothing.
+Turn 23: pirate-3 at (1, 1), on dug sand, with no pirate beside it, went into the cave at (1, 1).
+Turn 24: pirate-1 at (0, 2), on dug sand, with no pirate beside it, read the scroll and found line 1 by pirate-1 "Plan: p1 digs (0,0)(0,1)(0,2)(0,3)(1,0). p2 digs (1,1)(1,2)(1,3)(2,0)(2,1). p3 digs (2,2)(2,3)(3,0)(3,1)(3,2)(3,3). Finder writes the loc, everyone goes there and enters.", line 2 by pirate-3 "PLAN split (x,y): P1: (0,0)(0,1)(0,2)(0,3)(1,0) | P2: (1,1)(1,2)(1,3)(2,0)(2,1) | P3: (2,2)(2,3)(3,0)(3,1)(3,2)(3,3). Finder writes "TAT x,y" then enters.", line 3 by pirate-2 "Found treasure at (1,1). Cave open here. Everyone come to (1,1) and enter.".
+Game over: the turns ran out. The treasure at (1, 1) was dug up, and 2 of 3 pirates got into the cave. Score 250.

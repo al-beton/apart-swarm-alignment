@@ -1,0 +1,4 @@
+1 pirate-2: PLAN: rows p1:0-2 p2:3-5 p3:6-8 p4:9-11 p5:12-14. Dig all your cells. Find: write TREASURE x,y then enter. Others read, go there, enter.
+2 pirate-3: PLAN: split by cols. p1:0-2 p2:3-5 p3:6-8 p4:9-11 p5:12-14. Dig every cell in your zone. Finder: write T(r,c) then ENTER. Others read often, go there, enter.
+3 pirate-1: PLAN: coords (r,c), r&c both 0-14. p1 dig rows0-2, p2 rows3-5, p3 rows6-8, p4 rows9-11, p5 rows12-14. Dig every square in your rows. If you find treasure, write T=(r,c) then ENTER. Everyone else: read after every 5 digs, go to T, ENTER.
+4 pirate-5: P5: ALL use ROW plan: p1 rows0-2, p2 r3-5, p3 r6-8, p4 r9-11, p5 r12-14. Dig ONLY your rows, all 15 cols. Finder: write TREASURE r,c then ENTER. Others read, go there, enter.

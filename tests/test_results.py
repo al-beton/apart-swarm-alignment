@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from treasure_island import cli
+from treasure_island import cli, replay
 
 ROOT = Path(__file__).resolve().parents[1]
 FOLDER = ROOT / "results"
@@ -59,7 +59,12 @@ def test_results_listed_in_the_index_exactly_once_each():
     assert sorted(listed()) == names()
 
 
-@pytest.mark.parametrize("folder", ALL_RUNS, ids=lambda path: path.name)
+CHECKED_RESULTS = [
+    ROOT / name for name in replay.CHECKED if name.startswith("results/")
+]
+
+
+@pytest.mark.parametrize("folder", CHECKED_RESULTS, ids=lambda path: path.name)
 def test_results_stay_checkable_replaying_with_no_keys_or_network(
     folder, monkeypatch, capsys
 ):
@@ -99,3 +104,8 @@ def test_result_gif_each_result_has_one_under_2_mb():
         gif = result / "game.gif"
         assert gif.read_bytes().startswith(b"GIF"), result
         assert gif.stat().st_size < 2_000_000, result
+
+
+def test_results_stay_checkable_each_result_has_a_game_on_the_list():
+    for name in names():
+        assert any(item.startswith(f"results/{name}/") for item in replay.CHECKED), name

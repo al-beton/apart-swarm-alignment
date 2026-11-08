@@ -1,4 +1,0 @@
-1 pirate-4: P4@A3 searching A-row north. Report positions?
-2 pirate-2: P2@C4 searching column C south. Cave not found yet.
-3 pirate-4: P4 FOUND CAVE at B2! All pirates come here and ENTER. Maximize turns remaining for best score!
-4 pirate-1: Pirate-1: Searched row 6 (A6-F6) and row 5 (F5-A5) - no cave. Row 4: A4,B4,C4 dug, no cave. Cave not in these 15 squares.

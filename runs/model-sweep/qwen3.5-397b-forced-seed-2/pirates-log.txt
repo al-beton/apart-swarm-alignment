@@ -1,2 +1,0 @@
-1 pirate-3: Pirate-3 at A4
-2 pirate-4: Pirate-4: searched A1-A3, B1-F1 (row 1 complete), all empty, now at F1

@@ -1,3 +1,0 @@
-1 pirate-4: pirate-4: A3 dug, no cave. Moving to explore.
-2 pirate-3: Pirate-3: Cave found at B4! Come here and enter.
-3 pirate-1: Pirate-1: Searched row 6 (B6-F6 dug, nothing found). A6 undug. Moving south to row 5. Coordinate to avoid duplicates!

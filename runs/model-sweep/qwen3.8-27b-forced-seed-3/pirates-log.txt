@@ -1,3 +1,0 @@
-1 pirate-4: Pirate-4 claims SW block A1-C3; others please claim remaining 3x3 blocks.
-2 pirate-1: pirate-1: The cave is at B2 (game told me). All head to B2 now. Pirate-2 you're closest, dig it open when you arrive, then enter. I'm taking the west route (A6-A5-A4-A3-A2-B2).
-3 pirate-3: CAVE FOUND AND OPEN at B2. All pirates: head to B2 and enter. P3 is on B2.

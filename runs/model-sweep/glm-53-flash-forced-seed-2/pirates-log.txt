@@ -1,3 +1,0 @@
-1 pirate-1: P1 NW(A-C r4-6) P2 SW(A-C r1-3) P3 NE(D-F r4-6) P4 SE(D-F r1-3). Snake-dig all 9 each. Finder writes CAVE+square, all head there.
-2 pirate-2: P2 zones: P1=cols A-C rows 4-6, P2=cols A-C rows 1-3, P3=cols D-F rows 1-3, P4=cols D-F rows 4-6. Serpentine-dig your own zone. Whoever finds the cave writes 'CAVE <square>' at once; everyone heads there and enters. Read sparingly (each read costs a turn).
-3 pirate-1: P1: CAVE FOUND at A6! I dug it open. Everyone come to A6 and enter. It's at the NW corner, no digging needed.

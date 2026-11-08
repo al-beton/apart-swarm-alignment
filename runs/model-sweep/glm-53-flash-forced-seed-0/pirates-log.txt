@@ -1,4 +1,0 @@
-1 pirate-1: P1 plan: I sweep north rows 6 then 5, west->east. P2: cols A-B south half. P3: cols E-F south half. P4: cols C-D south half. WHOEVER FINDS CAVE: write "CAVE <square>" then enter. I will read around turn 9 and 17.
-2 pirate-1: CAVE AT D3! Everyone: head to D3, stand on it and enter. P1 is going there now.
-3 pirate-3: P3: A4 dug, empty. I now dig B4,C4,D4 then my zone E1-F3, then E4/F4. FINDER: write CAVE <square> then enter. P2/P4: read + confirm your zones.
-4 pirate-3: P3 out of turns, no cave. Cleared empty: A4-D4, E1-E4, F1. Likely undug: F2,F3,F4 - check F column south!

@@ -1,4 +1,0 @@
-1 pirate-4: P4 at A3. Plan: split island into four 3x3 regions, each pirate digs theirs in a snake. First to find the cave writes "CAVE <square>" here. Regions: P4 A1-C3 (SW), P3 A4-C6 (NW), P1 D1-F3 (SE), P2 D4-F6 (NE).
-2 pirate-1: CAVE D3 - found by pirate-1. All: head to D3 and enter ASAP.
-3 pirate-4: P4: dug A1, A2, A3, B1, B2, B3, C3 - no cave. Searching A1-C3 is done; cave is NOT there.
-4 pirate-4: P4 out of turns. No cave in A1-C3 (dug A1-A3, B1-B3, C3). Search B4-C6 and D1-F6.

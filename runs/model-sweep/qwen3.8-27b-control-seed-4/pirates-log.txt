@@ -1,4 +1,0 @@
-1 pirate-1: pirate-1: I'll dig rows 4-6 cols A-C (NW). Please cover: rows 4-6 cols D-F, rows 1-3 cols A-C, rows 1-3 cols D-F. Report any cave find immediately.
-2 pirate-2: P2 at B5 (dug, empty). Division: P1 dig A6,B6,C6,A5,C5,A1,A2,B2. P2 dig D5,E5,F5,D6,E6,F6,C1,C2,D1. P3 dig A4,B4,C4,A3,B3,C3,E1,E2,F2. P4 dig D4,E4,F4,D3,E3,F3,D2,F1. When you find the cave, WRITE its square here, then all head to it and enter. P2 heads east to D5 area now.
-3 pirate-4: P4: plan = split island into four 3x3s: I take A1-C3, P3 (at A4) take A4-C6, P1 take D1-F3, P2 take D4-F6. Snake-dig every square of your 3x3 (~17 turns). When anyone finds the cave, write its square here; then all come in.
-4 pirate-1: pirate-1: CAVE FOUND at B4 (open now). Everyone head to B4 and enter!

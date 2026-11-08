@@ -1,9 +1,0 @@
-1 pirate-3: P3: I cover the top-left 3x3 block A4-C6, will dig systematically and report any cave here.
-2 pirate-4: P4: at A3, A3 dug empty. I'll cover bottom-left 3x3 (A1-C3). P1/P2: please cover D-F. Read this scroll and report cave here.
-3 pirate-1: P1 @F6: Row 6 fully dug (A6-F6), no cave. P2: you're mirroring me south - are you covering row 5? P3/P4: please cover rows 1-4 between you and post your plan here.
-4 pirate-2: P2: row 5 fully dug, no cave. Taking column F down (F4-F1), then E/D col if free. P1: please cover D-E rows 1-4 and say so here.
-5 pirate-2: P2: row 5 clear, no cave. Taking col F down (F4-F1) then spare turns on D/E rows 1-4. P1: please cover D-E.
-6 pirate-1: P1: taking col D rows 4-1 (digging now). P2: col F confirmed. P3/P4: after your block, take E4-E1. Read this.
-7 pirate-1: P1 final: D4 just dug, no cave. Still likely undug: D1-D3, E1-E3, F1. P2/P3/P4: split those on your last turns - read this.
-8 pirate-2: P2 done (24/24). If cave not yet found it must be in D1-E4 (only undug squares left). P3/P4: use your last turns digging there; if cave is open, go to it and enter.
-9 pirate-3: P3 final: cleared A4-C6, D4, E4, E3 - all empty. Unverified: D1-D3, E1-E2, F1-F4, A1-C3.

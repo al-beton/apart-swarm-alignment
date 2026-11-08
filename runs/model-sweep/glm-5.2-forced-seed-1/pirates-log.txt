@@ -1,2 +1,0 @@
-1 pirate-1: Pirate-1: CAVE IS AT B2! I repeat, the cave is at B2. Everyone head to B2 and dig it to reveal the entrance, then enter. I found this by trying to enter at B6.
-2 pirate-2: P2: A5,B5 dug=no cave. Searching east row5. P1,P3 keep rows4-6 east. P4 take rows1-3. Post cave location ASAP!

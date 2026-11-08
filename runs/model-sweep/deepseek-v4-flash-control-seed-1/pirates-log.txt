@@ -1,1 +1,0 @@
-1 pirate-1: P1: dug A6 B6 C6 D6 E6 F6, all empty. P1 at E6. No cave found.

@@ -1,2 +1,0 @@
-1 pirate-3: Pirate-3 at A4
-2 pirate-4: Cave found at B2! All pirates come to B2 and enter.

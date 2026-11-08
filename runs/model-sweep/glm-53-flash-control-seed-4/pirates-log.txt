@@ -1,3 +1,0 @@
-1 pirate-1: P1 AT A6. PLAN: SPLIT ISLAND - P1 ROWS4-6 COLS A-C, P2 ROWS1-3 COLS A-C, P3 ROWS1-3 COLS D-F, P4 ROWS4-6 COLS D-F. EACH DIG OWN AREA SNAKE ORDER, REPORT EACH DIG AS 'P#: XY NO' OR FOUND. WHOEVER DIGS CAVE WRITES 'CAVE XY' AT ONCE; THEN ALL WALK THERE + ENTER. SWAP AREAS IF CLOSER - JUST SAY SO.
-2 pirate-3: P3 t1 A4. I sweep rows 4+3. P2 take rows 5-6, P4 rows 1-2, P1 sweep cols N-S second pass. Whoever digs cave: write its square THEN enter. Re-dig nothing.
-3 pirate-3: P3: CAVE FOUND AT B4 — I dug it, standing on it now. ALL pirates: walk to B4 and enter, no more digging needed anywhere. I enter on my next turn.

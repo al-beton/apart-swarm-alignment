@@ -1,3 +1,0 @@
-1 pirate-3: pirate-3: at A4, dug A4 (no cave), moving to search
-2 pirate-2: pirate-2: searched A5, A6, B6 (all clear), currently at B6
-3 pirate-4: Pirate-4: dug B3, C3 (no cave), now at C3

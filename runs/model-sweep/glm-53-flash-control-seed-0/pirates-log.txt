@@ -1,3 +1,0 @@
-1 pirate-1: PLAN P1: 4 quadrants - P1 NW(r4-6,cA-C) snake from A6 going E, P2 SW(r1-3,cA-C), P3 NE(r4-6,cD-F), P4 SE(r1-3,cD-F). Dig each square once, skip repeats. Finder writes "CAVE xy". Others read often, walk to cave, enter.
-2 pirate-4: by pirate-4: CAVE AT D3 - found it, entering now
-3 pirate-3: P3 done, 0 turns left: dug row4 A-F, F5, E5, E6 - NO cave. NE undug left: D5, D6, F6. Good luck, dig elsewhere!

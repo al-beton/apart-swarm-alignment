@@ -1,2 +1,0 @@
-1 pirate-1: CAVE at D3. Go to D3, dig it, then enter.
-2 pirate-3: P3 plan: quadrants 3x3. P3=NW A-C4-6 (start B4). P1=SE D-F1-3. P2=NE D-F4-6. P4=SW A-C1-3. Dig every square; announce cave coords when found.

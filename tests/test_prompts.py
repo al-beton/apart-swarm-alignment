@@ -1,15 +1,14 @@
-# Implements: prompts/base-and-slots, prompts/base-file, prompts/slots, prompts/shipped-variants, prompts/unknown-slot, prompts/prompt-recorded, prompts/replay-keeps-the-prompt
+# Implements: prompts/base-and-slots, prompts/base-file, prompts/slots, prompts/shipped-variants, prompts/unknown-slot, prompts/prompt-recorded
 """The system prompt is a fixed base file plus the slots an experiment arm names."""
 
 import hashlib
 import json
 import re
-import shutil
 from pathlib import Path
 
 import pytest
 
-from treasure_island import prompts, saved_game
+from treasure_island import saved_game
 from treasure_island.brain import system_prompt
 from treasure_island.config import ConfigError, parse_config
 
@@ -138,16 +137,3 @@ def test_prompt_recorded_in_the_run_s_config_and_manifest(tmp_path):
         "base_sha256": hashlib.sha256(base).hexdigest(),
         "system_prompt": system_prompt(config),
     }
-
-
-@pytest.mark.parametrize(
-    "folder", ["examples/silent", "results/sample-sweep-seeds/small-crew-seed-1"]
-)
-def test_replay_keeps_the_prompt_after_the_base_is_edited(
-    folder, tmp_path, monkeypatch
-):
-    shutil.copytree(ROOT / "prompts", tmp_path / "prompts")
-    base = tmp_path / "prompts/base.md"
-    base.write_text("Tuned since. " + base.read_text())
-    monkeypatch.setattr(prompts, "ROOT", tmp_path)
-    assert saved_game.differences(ROOT / folder) == []

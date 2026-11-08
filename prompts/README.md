@@ -12,4 +12,4 @@ disclosure = "free"          # or "zeroes-score"
 identity = "ai-research-study"
 ```
 
-A new variant is a new file; no code changes. A run's manifest keeps the prompt it rendered, and replay uses that, so editing `base.md` never changes an old game. This guide has no `Implements:` line because nothing under `prompts/` may carry one; rows in `product/spec/prompts.md` home these files.
+A new variant is a new file; no code changes. A run's manifest keeps the prompt it rendered, so a reader sees what the pirates were told. This guide has no `Implements:` line because nothing under `prompts/` may carry one; rows in `product/spec/prompts.md` home these files.

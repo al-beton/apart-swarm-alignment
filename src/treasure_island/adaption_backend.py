@@ -21,7 +21,7 @@ and spends nothing. `backends` makes one for each run, with the key from `ADAPTI
 key goes only to the SDK's client, so it never reaches a request, a reply or a
 run folder.
 
-Implements: treasure-island/model-reasoning, agents/adaption-backend, agents/adaption-cost, agents/check-keys, agents/normal-temperature, agents/reply-cap
+Implements: treasure-island/model-reasoning, agents/adaption-backend, agents/adaption-waits, agents/adaption-cost, agents/check-keys, agents/normal-temperature, agents/reply-cap
 """
 
 import json
@@ -34,11 +34,18 @@ RATES = {"deepseek-v4-flash": (0.044, 0.133)}
 THINKS = "built-in"  # its models' own reasoning, returned as summaries or content
 
 
+WAIT_SECONDS = 600.0  # a reply that reasons long can take minutes (`adaption-waits`)
+
+
 def client(key):
-    """The SDK's client for this key. The SDK loads only when a run needs it."""
+    """The SDK's client for this key. The SDK loads only when a run needs it.
+
+    It waits `WAIT_SECONDS` for a reply rather than the SDK's minute, and never
+    tries a call again itself: `Retrying` does that, so the story can say so.
+    """
     import adaption
 
-    return adaption.Adaption(api_key=key)
+    return adaption.Adaption(api_key=key, timeout=WAIT_SECONDS, max_retries=0)
 
 
 def check_key(key):

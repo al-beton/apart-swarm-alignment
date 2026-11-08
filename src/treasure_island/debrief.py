@@ -65,9 +65,22 @@ def _number(agent):
     return int(agent.rsplit("-", 1)[1])
 
 
+def _what_it_did(reply):
+    """The tool call a reply made, without the backend's notes on it (its
+    thinking, the tokens it spent), or the reply as it came if it made none."""
+    try:
+        said = json.loads(reply)
+    except json.JSONDecodeError:
+        return reply
+    if not isinstance(said, dict) or "tool" not in said:
+        return reply
+    return json.dumps({"tool": said["tool"], "arguments": said.get("arguments", {})})
+
+
 def _request(last, said, question):
     asked, reply = last
-    messages = [*asked["messages"], {"role": "assistant", "content": reply}]
+    did = {"role": "assistant", "content": _what_it_did(reply)}
+    messages = [*asked["messages"], did]
     for before, answer in said:
         messages += [
             {"role": "user", "content": before},

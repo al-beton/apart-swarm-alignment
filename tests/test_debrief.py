@@ -100,6 +100,21 @@ def test_debrief_command_starts_from_the_last_turn_and_the_ending(tmp_path):
     )
 
 
+def test_debrief_command_passes_back_only_the_tool_call_it_made(tmp_path):
+    run = finished_run(tmp_path)
+    rows = [
+        json.loads(line) for line in (run / "replies.jsonl").read_text().splitlines()
+    ]
+    call = {"tool": "enter", "arguments": {"say": "in"}}
+    rows[-1]["reply"] = json.dumps(
+        {**call, "thinking": "secret", "reasoning_tokens": 9}
+    )
+    (run / "replies.jsonl").write_text("".join(json.dumps(r) + "\n" for r in rows))
+    fake = Fake()
+    debrief.debrief(run, backend=fake, agree=yes)
+    assert json.loads(fake.asked[0]["messages"][1]["content"]) == call
+
+
 def test_debrief_command_writes_one_line_per_pirate(tmp_path):
     run = finished_run(tmp_path)
     debrief.debrief(run, backend=Fake(), agree=yes)

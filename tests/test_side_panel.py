@@ -4,7 +4,7 @@
 from PIL import Image, ImageChops
 
 from assets.pirates import portrait
-from assets.ui import open_scroll, scroll_note
+from assets.ui import scroll_note
 from treasure_island import viewer
 from treasure_island.brain import Decision
 from treasure_island.config import parse_config
@@ -204,31 +204,35 @@ def test_side_panel_says_how_many_lines_a_read_got_and_never_their_words():
     assert one.tobytes() == other.tobytes()
 
 
-def held_spot(position):
-    """Where a pirate on board `position` holds the open scroll: over its lower half."""
-    held = open_scroll()
+def holding(image, position, pose, frame):
+    """Whether the pirate at board `position` is drawn in its scroll-holding pose."""
+    look = viewer._default_pirates(["pirate-1", "pirate-2"])["pirate-1"]
+    sprite = viewer._sprite(look, pose, frame)
     x, y = (value * viewer.TILE for value in position)
-    return x + (viewer.TILE - held.width) // 2, y + viewer.TILE - held.height - 2
+    rim = 3  # the acting pirate's outline goes round the edge of its square
+    tile = image.crop(
+        (viewer.EDGE_LEFT + x, y, viewer.EDGE_LEFT + x + viewer.TILE, y + viewer.TILE)
+    )
+    solid = sprite.getchannel("A").point(lambda value: 255 if value == 255 else 0)
+    wanted = Image.composite(sprite.convert("RGB"), tile.convert("RGB"), solid)
+    inner = (rim, rim, viewer.TILE - rim, viewer.TILE - rim)
+    return tile.convert("RGB").crop(inner).tobytes() == wanted.crop(inner).tobytes()
 
 
 def test_frame_shows_the_swarm_a_reader_holds_the_scroll_in_front_of_it():
-    crew = {"pirate-1": [0, 0], "pirate-2": [0, 1]}
-    for reader in ("pirate-1", "pirate-2"):
-        made = record(0, agent=reader, did=[{"action": "read"}], at=crew[reader])
-        records = [{**made, "crew": crew}]
-        assert viewer.scene(records, 0, 4)["reading"] is True
-        image = viewer.frame(records, 0, 4)
-        assert drawn_at(image, open_scroll(), held_spot(crew[reader]))
+    made = record(0, did=[{"action": "read"}], at=[1, 1])
+    assert viewer.scene([made], 0, 4)["reading"] is True
+    assert holding(viewer.frame([made], 0, 4), (1, 1), "read", 1)
     assert shown([record(0)])["reading"] is False
 
 
 def test_frame_shows_the_swarm_a_writer_holds_the_scroll_and_its_line_shows_beside_it():
-    records, crew = stacked("pirate-2")
-    image = viewer.frame(records, 0, 4)
-    assert drawn_at(image, open_scroll(), held_spot(crew["pirate-2"]))
+    made = record(0, did=[{"action": "write", "text": "Over here, crew!"}], at=[1, 1])
+    image = viewer.frame([made], 0, 4)
+    assert holding(image, (1, 1), "write", 2)
     note = scroll_note("Over here, crew!")
     assert drawn_at(
-        image, note, viewer.note_spot(viewer.scene(records, 0, 4), note.size)
+        image, note, viewer.note_spot(viewer.scene([made], 0, 4), note.size)
     )
 
 

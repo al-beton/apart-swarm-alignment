@@ -43,5 +43,5 @@ def test_scroll_held_the_face_and_label_stay_above_the_scroll(pose):
     for frame in range(3 if pose == "write" else 2):
         sprite = pirate(5, "#2f6fc0", "12", pose, frame)
         standing = pirate(5, "#2f6fc0", "12", "down", 0)
-        head = (12, 0, 36, 23)  # the quill's feather may cross the chin
+        head = (12, 0, 36, 22)  # above the chin, which the quill's feather may cross
         assert sprite.crop(head).tobytes() == standing.crop(head).tobytes()

@@ -28,7 +28,7 @@ GIF and the page both draw exactly those.
 The board is drawn in board pixels and set into the art's wooden frame at
 `(EDGE_LEFT, 0)`, whose letters and numbers name the squares like a chessboard.
 
-Implements: viewer/cave-drawn, treasure-island/cave, viewer/turn-marked, viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/walks-between-squares, treasure-island/pokemon-style, viewer/slideshow-file, viewer/game-page, viewer/score-counter, viewer/transcript, viewer/board-framed, viewer/dig-steps, viewer/enter-steps, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process, treasure-island/square-names
+Implements: viewer/cave-drawn, treasure-island/cave, viewer/turn-marked, viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/walks-between-squares, treasure-island/pokemon-style, viewer/slideshow-file, viewer/game-page, viewer/scroll-steps, viewer/score-counter, viewer/transcript, viewer/board-framed, viewer/dig-steps, viewer/enter-steps, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process, treasure-island/square-names
 """
 
 import base64
@@ -49,7 +49,7 @@ from assets.dig import DIG_STEPS, dig_ground, digging
 from assets.font import draw_text, text_width, wrap
 from assets.pirates import pirate, portrait
 from assets.pixels import DARK
-from assets.ui import open_scroll, panel, scroll_note
+from assets.ui import panel, scroll_note
 from treasure_island.config import DEFAULTS, parse_config
 from treasure_island.game_state import GameState
 from treasure_island.looks import sprite_values
@@ -60,8 +60,7 @@ SAND_TILES = ("sand", "sand-2", "sand-3")
 TILE = 48
 # Where a label sits on a sprite: (left, top, right, bottom).
 _LABEL_BOX = (14, 2, 34, 16)
-# The gap a note keeps above a pirate's hat, so it never covers the label. (The
-# turn arrow once sat in it; the acting pirate's square is outlined instead.)
+# The gap a note keeps above a pirate's hat, so it never covers the label.
 ARROW_ROOM = 14
 _FACING = {"north": "up", "south": "down", "east": "right", "west": "left"}
 PANEL = 260
@@ -253,6 +252,9 @@ def _walk(record):
     return (start, end) if moved and list(start) != list(end) else None
 
 
+SCROLL_STEPS = {"read": 2, "write": 3}  # frames of the reading and writing poses
+
+
 def _motion(record):
     """What a turn plays out and in how many steps: a walk, a dig, going in, or none."""
     if _walk(record):
@@ -261,11 +263,14 @@ def _motion(record):
         return "enter", ENTER_STEPS
     if any(action["action"] == "dig" for action in record["did"]):
         return "dig", DIG_STEPS
+    for kind, steps in SCROLL_STEPS.items():  # the held scroll's frames (assets)
+        if any(action["action"] == kind for action in record["did"]):
+            return kind, steps
     return None, 1
 
 
 def turn_steps(records, turn, scoring=None):
-    """The steps a turn is drawn in: 1 to N for a walk, dig or going in, else [None].
+    """The steps a turn is drawn in: 1 to N for a walk, dig, read, write or going in.
 
     The last turn of a finished game that still owes pirates inside their turns
     plays them out first: after its own steps, one step per round, then its own frame.
@@ -435,6 +440,9 @@ def scene(records, turn, size, treasure=None, step=None, scoring=None):  # noqa:
         shown["digging"] = (step - 1, before)
         if current["outcome"]["found_treasure"]:  # the cave opens on the last step
             shown["mark"] = _mark(records, treasure, None)
+    if kind in SCROLL_STEPS:  # the scroll held in front, its last frame the turn's own
+        frame = step - 1 if between else steps - 1
+        shown["poses"][current["agent"]] = (kind, frame)
     if kind == "walk" and between:
         return _walking(shown, current, step)
     return shown
@@ -572,19 +580,6 @@ def outline(image, spot):
 def _draw_outline(image, shown):
     """The acting pirate's square, outlined; during a walk it moves with the pirate."""
     outline(image, dict(_placed(shown))[shown["acting"]])
-
-
-def _draw_held(image, shown):
-    """A pirate reading or writing holds the open scroll in front of its body.
-
-    A stand-in until Visual assets draws the holding pose: the scroll over the
-    lower half of the sprite.
-    """
-    if not (shown["reading"] or shown["note"] is not None):
-        return
-    held = open_scroll()
-    x, y = dict(_placed(shown))[shown["acting"]]
-    image.paste(held, (x + (TILE - held.width) // 2, y + TILE - held.height - 2), held)
 
 
 def note_spot(shown, note_size):
@@ -772,7 +767,6 @@ def frame(records, turn, size, pirates=None, treasure=None, step=None, scoring=N
     _draw_outline(sand, shown)  # under the pirates: a pirate is exactly its sprite
     _draw_pirates(sand, shown, pirates)
     _draw_labels(sand, shown, pirates)
-    _draw_held(sand, shown)
     # The note goes over the labels, so what was written always shows in full.
     _draw_note(sand, shown)
     _draw_gains(sand, shown)

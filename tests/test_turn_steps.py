@@ -199,3 +199,37 @@ def test_dig_steps_the_open_cave_and_its_hats_stay_over_the_ground_on_every_step
         image = viewer.frame(game, 3, 4, None, CAVE, step)
         expected = drawn_dig(game, 3, step, "dug", cave)
         assert inside(square(image, *CAVE)) == inside(expected)
+
+
+READ = [record(0, "pirate-2", FAR, ["read"], crew=BOTH)]
+WRITE = [
+    {
+        **record(0, "pirate-2", FAR, ["dig"], crew=BOTH),
+        "did": [{"action": "write", "text": "Over here"}],
+    }
+]
+
+
+def test_scroll_steps_a_read_takes_2_steps_and_a_write_3():
+    assert viewer.turn_steps(READ, 0) == [1, 2]
+    assert viewer.turn_steps(WRITE, 0) == [1, 2, 3]
+
+
+def test_scroll_steps_each_step_shows_the_next_frame_of_the_pose():
+    for records, pose, frames in ((READ, "read", 2), (WRITE, "write", 3)):
+        poses = [
+            viewer.scene(records, 0, 4, step=step)["poses"]["pirate-2"]
+            for step in range(1, frames + 1)
+        ]
+        assert poses == [(pose, frame) for frame in range(frames)]
+        drawn = {
+            inside(square(viewer.frame(records, 0, 4, step=step), *FAR))
+            for step in range(1, frames + 1)
+        }
+        assert len(drawn) == frames  # the scroll moves, step by step
+
+
+def test_scroll_steps_the_last_step_is_the_turn_s_own_frame():
+    for records, frames in ((READ, 2), (WRITE, 3)):
+        last = viewer.frame(records, 0, 4, step=frames)
+        assert last.tobytes() == viewer.frame(records, 0, 4).tobytes()

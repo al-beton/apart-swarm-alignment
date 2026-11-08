@@ -281,8 +281,8 @@ def test_sprite_follows_action_a_pirate_faces_the_way_it_moves(direction, pose):
 
 def test_sprite_follows_action_it_keeps_facing_that_way_and_stands_still():
     moved = alone(0, [{"action": "move", "direction": "west"}])
-    wrote = alone(1, [{"action": "write", "text": "hello"}])
-    assert viewer.scene([moved, wrote], 1, 3)["poses"]["pirate-1"] == ("left", 0)
+    passed = alone(1, [])  # a turn that passed, with no action
+    assert viewer.scene([moved, passed], 1, 3)["poses"]["pirate-1"] == ("left", 0)
 
 
 def test_sprite_follows_action_walking_alternates_its_feet():

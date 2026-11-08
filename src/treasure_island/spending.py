@@ -14,7 +14,7 @@ for a yes before the first call, and stops the game once the run has spent its c
 so a run overshoots by one reply at most; the cap counts a credit as a dollar.
 Anything but a yes raises `Declined`, and the run's folder is removed.
 
-Implements: cave-leak/cap, agents/adaption-cost, runs/cost-before-run, runs/yes-before-spending, runs/spending-cap, runs/cached-is-free, runs/stops-cleanly
+Implements: treasure-island/end-report, agents/adaption-cost, runs/cost-before-run, runs/yes-before-spending, runs/spending-cap, runs/cached-is-free, runs/stops-cleanly, cave-leak/cap
 """
 
 import dataclasses
@@ -80,7 +80,7 @@ def estimate(config):
     ]
     # A failed action, a bad reply included, asks again in the same turn.
     tries = config.turns_per_pirate * config.failed_tries
-    per_pirate = tries
+    per_pirate = tries + (1 if config.end_report else 0)  # the end report's note
     fixed = len(system_prompt(config)) + len(json.dumps(TOOL_DEFINITIONS))
     # Each reply, and the model's own reasoning on top, thinking on or off.
     out = config.reply_tokens + config.thinking_tokens
@@ -109,6 +109,8 @@ def estimate(config):
 
 class Declined(GameStopped):
     """Nobody said yes to spending, so the run stopped before it spent anything."""
+
+    declined = True  # a stop the whole run honours, end notes included
 
 
 class Guard:

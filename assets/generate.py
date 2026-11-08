@@ -234,7 +234,7 @@ def contact_sheet():
         sheet, 546, "Treasure cave", "hats stack by the door, first in at the bottom"
     )
     _labelled_row(sheet, 574, _cave_row())
-    _heading(sheet, 694, "Digging", "a dig turn's steps, sand thrown over the shoulder")
+    _heading(sheet, 694, "Digging", "a dig turn's steps, a pickaxe swung into the sand")
     _labelled_row(sheet, 722, _dig_row())
     _heading(sheet, 842, "Going in", "it sinks, then its hat flies onto the stack")
     _labelled_row(sheet, 870, _enter_row())

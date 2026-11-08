@@ -18,7 +18,7 @@ A reply that isn't a valid tool call, one the token limit cut off included, is k
 failed action, so the game tells the pirate why and asks again, and after
 `failed_tries` failed actions in one turn the turn passes.
 
-Implements: treasure-island/retries-dropped-calls, agents/reasoning-looked-up, treasure-island/model-reasoning, agents/one-request-per-turn, agents/reply-is-a-tool-call, agents/ask-once-more, agents/reply-cap, agents/plays-then-replays, treasure-island/thinking, treasure-island/pluggable-pirate, treasure-island/model-backends
+Implements: treasure-island/end-report, treasure-island/retries-dropped-calls, agents/reasoning-looked-up, treasure-island/model-reasoning, agents/one-request-per-turn, agents/reply-is-a-tool-call, agents/ask-once-more, agents/reply-cap, agents/plays-then-replays, treasure-island/thinking, treasure-island/pluggable-pirate, treasure-island/model-backends
 """
 
 import json
@@ -112,6 +112,21 @@ class LLMPirate:
             # reasons gets its budget even with thinking off.
             "thinking_tokens": self._config.thinking_tokens if self._built_in else 0,
         }
+
+    def note(self, system, text):
+        """A free-text answer with no tools: the end report's note, cached like a turn."""
+        request = {
+            "agent": self._name,
+            "model": self._model,
+            "seed": self._config.seed,
+            "system": system,
+            "messages": [{"role": "user", "content": text}],
+            "tools": [],
+            "max_tokens": self._config.reply_tokens,
+            "thinking": self._config.thinking,
+            "thinking_tokens": self._config.thinking_tokens if self._built_in else 0,
+        }
+        return self._replies.ask(request).strip()
 
     def decide(self, view):
         text = self._replies.ask(self._request(view))

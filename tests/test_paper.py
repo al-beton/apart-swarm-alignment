@@ -22,9 +22,9 @@ ABSTRACT = "---\nabstract: |\n  Lorem ipsum dolor sit amet consectetur.\n---\n"
 
 
 def fake_repo(tmp_path, *, marker="<!-- result: known -->", image="figures/fig.gif"):
-    """A tiny repository with one known experiment, one known result, one
+    """A tiny git repository with one known experiment, one known result, one
     committed image and a paper whose results section carries `marker` and
-    shows `image`; return the skeleton's path."""
+    shows `image`, all tracked; return the skeleton's path."""
     (tmp_path / "experiments/spec").mkdir(parents=True)
     (tmp_path / "experiments/spec/known.md").write_text("# Known\n")
     (tmp_path / "results/known").mkdir(parents=True)
@@ -44,7 +44,14 @@ def fake_repo(tmp_path, *, marker="<!-- result: known -->", image="figures/fig.g
     (paper / "one.md").write_text(
         f"<!-- Implements: paper/one-source -->\n{marker}\n\n## One\n\n![a]({image})\n"
     )
+    git(tmp_path, "init", "-q")
+    git(tmp_path, "add", "-A")
+    check.committed.cache_clear()
     return tmp_path / "paper/paper.md"
+
+
+def git(root, *arguments):
+    subprocess.run(["git", *arguments], cwd=root, check=True, capture_output=True)
 
 
 def problems(skeleton):
@@ -146,6 +153,24 @@ def test_sections_bind_to_evidence_an_unregistered_figure_fails(tmp_path):
     assert problems(skeleton) == ["figures/nope.gif: no named figure called 'nope'"]
     skeleton = fake_repo(tmp_path / "again", image="results/known/missing.png")
     assert problems(skeleton) == ["results/known/missing.png: not a committed file"]
+
+
+def test_sections_bind_to_evidence_an_untracked_file_is_not_committed(tmp_path):
+    # It exists on this disk and nowhere else: a clean clone wouldn't have it.
+    skeleton = fake_repo(tmp_path, image="results/known/local.png")
+    (tmp_path / "results/known/local.png").write_bytes(b"PNG")
+    check.committed.cache_clear()
+    assert problems(skeleton) == ["results/known/local.png: not a committed file"]
+    # The same for a result folder or an experiment spec that isn't tracked.
+    (tmp_path / "results/local").mkdir()
+    (tmp_path / "results/local/README.md").write_text("# Local\n")
+    (tmp_path / "paper/sections/results/one.md").write_text(
+        "<!-- result: local -->\n## One\n"
+    )
+    check.committed.cache_clear()
+    assert [
+        "result 'local' isn't in the repository" in p for p in problems(skeleton)
+    ] == [True]
 
 
 def test_sections_bind_to_evidence_the_paper_passes(tmp_path):

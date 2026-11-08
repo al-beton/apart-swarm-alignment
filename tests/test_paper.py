@@ -1,7 +1,8 @@
-# Implements: paper/one-source, paper/built-two-ways, paper/sections-bind-to-evidence, paper/sprint-rules-checked, paper/preview-on-every-pr, paper/paper-plan
+# Implements: paper/one-source, paper/built-two-ways, paper/sections-bind-to-evidence, paper/sprint-rules-checked, paper/numbers-from-logs, paper/preview-on-every-pr, paper/paper-plan
 """The paper is one Markdown source whose results sections can only report
 committed evidence, built two ways and previewed on every pull request."""
 
+import json
 import re
 import shutil
 import subprocess
@@ -213,3 +214,88 @@ def test_paper_plan_names_each_results_section():
         "## What each results section rests on",
     ):
         assert heading in plan
+
+
+def with_results(tmp_path, text):
+    """The fake repository's results section saying `text`, with two games
+    and a manifest under results/known/ to take its numbers from."""
+    skeleton = fake_repo(tmp_path)
+    for seed, score, dug in ((1, 0, False), (2, 230, True)):
+        game = tmp_path / f"results/known/seed-{seed}"
+        game.mkdir()
+        end = {"game_over": {"score": score, "treasure_dug_up": dug}}
+        (game / "events.jsonl").write_text('{"turn": 0}\n' + json.dumps(end) + "\n")
+        (game / "manifest.json").write_text(json.dumps({"cost_usd": seed * 0.25}))
+    part = tmp_path / "paper/sections/results/one.md"
+    part.write_text(part.read_text() + "\n" + text + "\n")
+    return skeleton
+
+
+GAMES = "results/known/*/events.jsonl"
+
+
+def test_numbers_from_logs_a_number_that_matches_its_logs_passes(tmp_path):
+    skeleton = with_results(
+        tmp_path,
+        f"The crew scored 230<!-- from {GAMES}: data[1][-1]['game_over']['score'] -->.",
+    )
+    assert problems(skeleton) == []
+
+
+def test_numbers_from_logs_a_mismatch_fails_naming_the_section_and_number(tmp_path):
+    skeleton = with_results(
+        tmp_path,
+        f"The crew scored 250<!-- from {GAMES}: data[1][-1]['game_over']['score'] -->.",
+    )
+    found = problems(skeleton)
+    assert len(found) == 1
+    assert "one.md" in found[0] and "250" in found[0] and "230" in found[0]
+
+
+def test_numbers_from_logs_a_number_with_no_source_fails(tmp_path):
+    skeleton = with_results(tmp_path, "The crew scored 230 in the second game.")
+    found = problems(skeleton)
+    assert len(found) == 1
+    assert "one.md" in found[0] and "230" in found[0] and "no source" in found[0]
+
+
+def test_numbers_from_logs_a_count_a_mean_and_a_percentage(tmp_path):
+    dug = "sum(1 for game in data if game_over(game)['treasure_dug_up'])"
+    text = (
+        f"In 1<!-- from {GAMES}: {dug} --> of 2<!-- from {GAMES}: len(data) --> games"
+        f" (50%<!-- from {GAMES}: percent({dug}, len(data)) -->) the treasure was dug up,"
+        f" and the crew scored 115.0<!-- from {GAMES}: mean(game_over(game)['score'] for game in data) -->"
+        " on average."
+    )
+    assert problems(with_results(tmp_path, text)) == []
+
+
+def test_numbers_from_logs_reads_a_manifest_too(tmp_path):
+    costs = "results/known/*/manifest.json"
+    text = (
+        f"The games cost $0.75<!-- from {costs}: sum(m['cost_usd'] for m in data) -->."
+    )
+    assert problems(with_results(tmp_path, text)) == []
+
+
+def test_numbers_from_logs_a_source_outside_results_fails(tmp_path):
+    outside = with_results(tmp_path, "It was 2<!-- from paper/paper.md: len(data) -->.")
+    assert any("results/" in p for p in problems(outside))
+
+
+def test_numbers_from_logs_a_source_matching_nothing_fails(tmp_path):
+    none = with_results(
+        tmp_path, "It was 2<!-- from results/known/*/nothing.jsonl: len(data) -->."
+    )
+    assert any("matches no committed file" in p for p in problems(none))
+
+
+def test_numbers_from_logs_names_and_code_are_not_numbers(tmp_path):
+    text = "pirate-1 dug at A5; `seed 7` replays it, as `runs/silent-seed-7` shows."
+    assert problems(with_results(tmp_path, text)) == []
+
+
+def test_numbers_from_logs_the_sample_section_reports_a_real_number():
+    sample = ROOT / "paper/sections/results/sample-sweep-seeds.md"
+    assert check.SOURCED.search(sample.read_text())
+    assert check.number_problems(sample, ROOT) == []

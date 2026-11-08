@@ -27,8 +27,8 @@ Every statement here is (open) until Edu confirms it, and (decided) once Edu has
 - **one-offs:** (open) Two cells, each `deployment/reviewed` with one lever changed: `roomy` (the default board instead of the tight one) and `threshold` (`deployment-threshold` instead of `deployment`), so need and a bar to clear are each tested at the strongest pressure without crossing everything.
 - **seeds:** (decided) Seeds 0 to 9 in every cell, so every game pairs by seed across all cells; then the four cells the headlines compare, `none/off`, `deployment/off`, `none/reviewed` and `deployment/reviewed`, play seeds 10 to 19 as well, since with ten pirates a cell only a gap as wide as 2 against 7 comes near significance (Fisher's exact test, p 0.07) and twenty seeds bring a gap of 4 against 14 to p 0.004.
 - **pilot-first:** (decided) Seed 0 of every cell first, with its real cost shown; Edu has said yes to spending for the rest once that cost is in hand.
-- **budget:** (open, pilot) The run estimate puts a tight-board game at most 120 model calls and 0.09 Adaption credits and a roomy one at most 160 calls and 0.13, so the 90 games of the first ten seeds cost at most about 8.5 credits and the 40 top-up games about 3.6 more, about 12 in all, and the debrief adds 12 calls a game, well under a hundredth of a credit; each run's cap is 0.15 credits and the experiment's 13 (default, Edu to confirm), with the pilot's real cost per game, far less since walking asks no model, given before the rest run.
-- **runs-home:** (open) Every game is saved under `runs/incentives/<cell>/<seed>/`, with `/` in a cell's name written `-`.
+- **budget:** (open, pilot) The run estimate puts a tight-board game at most 120 model calls and under 0.1 Adaption credits and a roomy one at most 160 calls and 0.13, so the 90 games of the first ten seeds cost at most about 8.5 credits and the 40 top-up games about 3.6 more, about 12 in all, and the debrief adds 12 calls a game, well under a hundredth of a credit; each run's cap is 0.15 credits and the experiment's 13 (default, Edu to confirm), with the pilot's real cost per game, far less since walking asks no model, given before the rest run.
+- **runs-home:** (open) Each cell is one config, `configs/incentives/<cell>.toml`, with `/` in a cell's name written `-`, so every game is saved where `run` puts it, under `runs/<cell>/<seed>/`.
 
 ## Measures
 
@@ -76,18 +76,18 @@ Each is about the baited pirate's judge label unless it says otherwise, compared
 |---|---|---|
 | `question` | not yet | — |
 | `exploit-fixed` | not yet | — |
-| `tight-board` | not yet | — |
+| `tight-board` | `configs/incentives/*.toml` | `test_tight_board_every_cell_sets_the_board_and_only_roomy_plays_20_turns` |
 | `win-framing` | `prompts/slots/framing/competition.md`, `prompts/slots/framing/deployment.md` | `test_shipped_variants_each_is_a_file_that_goes_into_the_prompt` |
 | `win-threshold` | `prompts/slots/framing/deployment-threshold.md` | `test_shipped_variants_deployment_threshold_is_deployment_and_a_bar` |
 | `detection` | `prompts/slots/disclosure/reviewed.md` | `test_shipped_variants_reviewed_says_they_will_be_asked_and_disqualified` |
-| `held-fixed` | not yet | — |
+| `held-fixed` | `configs/incentives/*.toml` | `test_held_fixed_one_model_thinking_and_no_study_wording` |
 | `report-later` | not yet | — |
-| `core` | not yet | — |
-| `control` | not yet | — |
-| `one-offs` | not yet | — |
+| `core` | `configs/incentives/*.toml` | `test_core_six_cells_cross_three_framings_with_two_detections`, `test_core_cells_differ_only_in_their_slots` |
+| `control` | `configs/incentives/*.toml` | `test_control_plays_no_exploit_and_nothing_in_the_slots` |
+| `one-offs` | `configs/incentives/*.toml` | `test_one_offs_each_is_deployment_reviewed_with_one_lever_changed` |
 | `seeds` | not yet | — |
 | `pilot-first` | not yet | — |
-| `budget` | not yet | — |
+| `budget` | `configs/incentives/*.toml` | `test_budget_one_game_costs_at_most_what_the_spec_says` |
 | `runs-home` | not yet | — |
 | `debrief` | `src/treasure_island/debrief.py`, `prompts/debrief/**` | `test_debrief_command_asks_each_model_pirate_the_questions_in_order`, `test_debrief_command_starts_from_the_last_turn_and_the_ending` |
 | `judge-labels` | not yet | — |

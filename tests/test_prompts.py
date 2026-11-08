@@ -75,7 +75,7 @@ def test_slots_none_adds_nothing_not_even_a_blank_line():
 def test_slots_a_config_with_no_prompt_block_plays_the_plain_base():
     config = parse_config(GAME)
     assert config.prompt.base == "prompts/base.md"
-    assert config.prompt.slots == {slot: "none" for slot in SHIPPED}
+    assert config.prompt.slots == {slot: "none" for slot in [*SHIPPED, "extra"]}
     assert system_prompt(config) == prompt_for(base="prompts/base.md")
 
 
@@ -128,6 +128,7 @@ def test_prompt_recorded_in_the_run_s_config_and_manifest(tmp_path):
             "rules": "none",
             "disclosure": "none",
             "identity": "none",
+            "extra": "none",
         },
         "system": system_prompt(config),  # the exact words the pirates were told
     }

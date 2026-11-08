@@ -4,10 +4,12 @@ The base (`prompts/base.md` by default) is the rules and actions, written once
 and tuned on its own. It holds the game's numbers as `{crew_size}`,
 `{grid_size}`, `{turns_per_pirate}`, `{last_column}`, `{score_in_cave}`,
 `{score_per_turn_left}` and `{failed_tries}`, and each
-slot as `{framing}`, `{rules}`, `{disclosure}` or `{identity}` alone on its own
-line. An experiment arm picks one variant per slot, the file
-`prompts/slots/<slot>/<variant>.md`; `none` drops the slot's line entirely, so
-an unset slot leaves no blank line behind.
+slot as `{framing}`, `{rules}`, `{disclosure}`, `{identity}` or `{extra}` alone
+on its own line; `{extra}` is a paragraph of its own at the very end. An
+experiment arm picks one variant per slot, the file
+`prompts/slots/<slot>/<variant>.md`, which may use the same numbers; `none` drops
+the slot's line entirely, so an unset slot leaves no blank line behind, and an
+unset `{extra}` leaves none at the end either.
 
 A config's `system`, text or a file's path, replaces all of that: the pirates
 are told it word for word. A run records the prompt it used there, so running
@@ -16,7 +18,7 @@ its `config.json` again tells the pirates the same words.
 Relative paths are read from the repository root, not the working directory, so
 a game plays the same prompt wherever it's started from.
 
-Implements: prompts/base-and-slots, prompts/base-file, prompts/slots, prompts/unknown-slot, prompts/system-override, prompts/prompt-recorded
+Implements: treasure-island/extra-paragraph, prompts/base-and-slots, prompts/base-file, prompts/slots, prompts/unknown-slot, prompts/system-override, prompts/prompt-recorded
 """
 
 import dataclasses
@@ -26,7 +28,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 BASE = "prompts/base.md"
-SLOTS = ("framing", "rules", "disclosure", "identity")
+SLOTS = ("framing", "rules", "disclosure", "identity", "extra")
 NONE = "none"
 _VARIANT = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 
@@ -108,15 +110,25 @@ def base_sha256(prompt):
     return hashlib.sha256(_path(prompt.base).read_bytes()).hexdigest()
 
 
-def render(prompt, **numbers):
-    """The base with its numbers and slots filled in, ready for a pirate to read."""
+def render(prompt, tail="", **numbers):
+    """The base with its numbers and slots filled in, ready for a pirate to read.
+
+    `tail` is what the game adds after the base (the cave leak's rule, the thinking
+    budget); the `extra` paragraph comes after even that, so it's always last.
+    """
     texts = {
         slot: ""
         if variant == NONE
-        else _variant_path(slot, variant).read_text(encoding="utf-8").strip()
+        else _variant_path(slot, variant)
+        .read_text(encoding="utf-8")
+        .strip()
+        .format(**numbers)
         for slot, variant in prompt.slots.items()
     }
+    extra = texts.get("extra", "")
+    texts["extra"] = ""  # its spot in the base only marks the end; it goes last
     empty = {f"{{{slot}}}" for slot, text in texts.items() if not text}
     base = _path(prompt.base).read_text(encoding="utf-8")
     lines = [line for line in base.splitlines() if line.strip() not in empty]
-    return "\n".join(lines).format(**numbers, **texts)
+    rules = "\n".join(lines).format(**numbers, **texts).rstrip() + tail
+    return f"{rules}\n\n{extra}" if extra else rules

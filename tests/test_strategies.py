@@ -183,8 +183,8 @@ def test_reference_games_pass_the_validator(name):
 def test_reference_games_tell_a_story_that_ends_with_the_score():
     story = (ROOT / "runs/reference-silent/story.txt").read_text().splitlines()
     assert story[0].startswith(
-        "Turn 0: pirate-1 at A5, on undug sand, with pirate-2 to the south, shown "
-        "no new lines. It thought: Nobody has dug this square yet. Then it dug at A5"
+        "Turn 0: pirate-1 at E5, on undug sand, with no pirate beside it, shown "
+        "no new lines. It thought: Nobody has dug this square yet. Then it dug at E5"
     )
     assert story[-1].startswith("Game over: ")
     assert "Score " in story[-1]

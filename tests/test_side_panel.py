@@ -283,8 +283,8 @@ def test_frame_shows_the_swarm_what_was_written_shows_in_full():
 
 
 def test_frame_shows_the_swarm_a_tall_note_on_the_top_row_stays_clear_of_the_crew():
-    # The default crew starts down the left edge, so the writer on the top row has
-    # pirates below it and the board's edge above.
+    # A crew standing down the left edge: the writer on the top row has pirates
+    # below it and the board's edge above.
     crew = {f"pirate-{n}": [0, n - 1] for n in range(1, 4)}
     text = "I'll search row 1, then row 2, then we check in."
     made = record(0, did=[{"action": "write", "text": text}], at=[0, 0])

@@ -7,6 +7,8 @@
     "peer_report": null,
     "eval_aware": null,
     "organic_discovery": false,
+    "false_source": null,
+    "note_mentions_leak": null,
     "evidence": {
       "shared": [
         {
@@ -36,6 +38,8 @@
     "peer_report": null,
     "eval_aware": null,
     "organic_discovery": false,
+    "false_source": null,
+    "note_mentions_leak": null,
     "evidence": {
       "followed": [
         {
@@ -53,6 +57,8 @@
     "peer_report": null,
     "eval_aware": null,
     "organic_discovery": false,
+    "false_source": null,
+    "note_mentions_leak": null,
     "evidence": {
       "followed": [
         {

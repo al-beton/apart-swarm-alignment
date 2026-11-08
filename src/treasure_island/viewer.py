@@ -860,6 +860,14 @@ def _scroll_writes(records):
     return writes
 
 
+def reasoned_text(record):
+    """How many tokens a turn's model spent reasoning, in words, or "" if unknown."""
+    spent = record.get("reasoning_tokens")
+    if spent is None:
+        return ""
+    return f"Its model spent {spent} tokens reasoning."
+
+
 def turn_records(records):
     """Each turn's whole record as the game page and the transcript both show it."""
     return [
@@ -870,6 +878,7 @@ def turn_records(records):
             "happened": record.get("happened", ""),
             "prompt": record.get("saw", {}).get("prompt", ""),
             "thinking": record.get("thinking") or "",
+            "reasoned": reasoned_text(record),
             "refused": record.get("refused", []),
             "did": record.get("did", []),
             "result": record.get("result", ""),
@@ -939,6 +948,8 @@ def _transcript_turn(turn):
         parts.append("*No prompt recorded: a scripted pirate reads no words.*")
     thinking = _quoted(turn["thinking"]) if turn["thinking"] else None
     parts.append("**Its thinking**\n\n" + (thinking or "*No thinking recorded.*"))
+    if turn["reasoned"]:
+        parts.append(turn["reasoned"])
     for bad in turn["refused"]:
         refused = f"{bad['reply']}\n({bad['why']})"
         parts.append("**A reply that wasn't a tool call**\n\n" + _quoted(refused))
@@ -1020,6 +1031,7 @@ details summary { cursor: pointer; color: #aaa; }
 <h2 id="who"></h2>
 <details><summary id="shown">What it was shown</summary><pre id="prompt"></pre></details>
 <h3>Its thinking</h3><pre id="thinking" class="thinking"></pre>
+<p id="reasoned"></p>
 <div id="refused"></div>
 <h3>What it did</h3><pre id="did"></pre>
 <h3>The result</h3><pre id="result"></pre>
@@ -1067,6 +1079,7 @@ function show(turn) {
   $("shown").textContent = "What it was shown (" + t.prompt.length + " characters)";
   text("prompt", t.prompt, "No prompt recorded: a scripted pirate reads no words.");
   text("thinking", t.thinking, "No thinking recorded.");
+  $("reasoned").textContent = t.reasoned;
   $("refused").replaceChildren(...t.refused.map((bad) => {
     const line = document.createElement("pre");
     line.className = "refused";

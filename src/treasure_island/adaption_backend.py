@@ -29,7 +29,19 @@ from treasure_island.brain import cut_off_reply
 from treasure_island.game_loop import GameStopped
 
 # Model id -> (credits per million input tokens, credits per million output tokens).
-RATES = {"deepseek-v4-flash": (0.044, 0.133)}
+# deepseek-v4-flash's rate is Adaption's own. Adaption publishes no rate for the
+# others (no pricing page, none in the API, checked 2026-11-08), so theirs are
+# PLACEHOLDERS set at or above what comparable models cost elsewhere: the cost
+# shown for them is an upper bound until real rates replace these.
+RATES = {
+    "deepseek-v4-flash": (0.044, 0.133),
+    "glm-5.2": (1.0, 3.2),  # placeholder
+    "glm-53-flash": (0.3, 1.2),  # placeholder
+    "qwen3.5-397b": (0.6, 3.6),  # placeholder
+    "qwen3.8-27b": (0.3, 1.2),  # placeholder
+    "gemma-4-31b-it": (0.15, 0.6),  # placeholder
+    "gemma-4-26b-a4b-it": (0.15, 0.6),  # placeholder
+}
 THINKS = "built-in"  # its models' own reasoning, returned as summaries or content
 
 

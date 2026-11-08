@@ -1,0 +1,558 @@
+<!doctype html>
+<!-- Implements: paper/built-two-ways -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Treasure Island</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/aaaakshat/cm-web-fonts@333f55e/font/Serif/cmun-serif.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/aaaakshat/cm-web-fonts@333f55e/font/Typewriter/cmun-typewriter.css">
+
+</head>
+<body>
+<header>
+<div class="titleblock"><h1 class="title">Treasure
+Island</h1><p class="subtitle">When does a swarm of LLM agents
+whistleblow, and what in their environment changes that?</p></div>
+<div class="authors">
+<div class="author"><strong>Alistair Wakelin</strong><br>Independent
+Researcher</div>
+<div class="author"><strong>Eduard Rodriguez
+Lopez</strong><br>Independent Researcher</div>
+</div>
+<section class="abstract"><h2>Abstract</h2>
+<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
+ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
+voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
+sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus
+error sit voluptatem accusantium doloremque laudantium, totam rem
+aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto
+beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia
+voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni
+dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam
+est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit,
+sed quia non numquam eius modi tempora incidunt ut labore et dolore
+magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis
+nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut
+aliquid ex ea commodi consequatur. Quis autem vel eum iure reprehenderit
+qui in ea voluptate velit esse quam nihil molestiae consequatur, vel
+illum qui dolorem eum fugiat quo voluptas nulla pariatur.</p>
+</section>
+<figure class="teaser"><img src="results/sample-sweep-seeds/game.gif" alt=""><figcaption>A
+placeholder teaser: one committed game, replayed from its log. The real
+one is a still from an exploit game.</figcaption></figure>
+</header>
+<nav id="TOC"><h2>Contents</h2>
+<ul>
+<li><a href="#introduction" id="toc-introduction"><span
+class="toc-section-number">1</span> Introduction</a></li>
+<li><a href="#related-work" id="toc-related-work"><span
+class="toc-section-number">2</span> Related Work</a></li>
+<li><a href="#methods" id="toc-methods"><span
+class="toc-section-number">3</span> Methods</a></li>
+<li><a href="#results" id="toc-results"><span
+class="toc-section-number">4</span> Results</a></li>
+<li><a href="#discussion-and-limitations"
+id="toc-discussion-and-limitations"><span
+class="toc-section-number">5</span> Discussion and Limitations</a></li>
+<li><a href="#conclusion" id="toc-conclusion"><span
+class="toc-section-number">6</span> Conclusion</a></li>
+<li><a href="#references" id="toc-references">References</a></li>
+<li><a href="#llm-usage-statement" id="toc-llm-usage-statement"><span
+class="toc-section-number">7</span> LLM Usage Statement</a></li>
+<li><a href="#code-and-data" id="toc-code-and-data"><span
+class="toc-section-number">8</span> Code and Data</a></li>
+<li><a href="#limitations-and-dual-use-ethical-considerations"
+id="toc-limitations-and-dual-use-ethical-considerations"><span
+class="toc-section-number">9</span> Limitations and Dual-Use / Ethical
+Considerations</a></li>
+<li><a href="#reproducibility" id="toc-reproducibility"><span
+class="toc-section-number">10</span> Reproducibility</a></li>
+</ul>
+</nav>
+<main>
+<!-- Implements: paper/one-source, paper/sprint-rules-checked -->
+<!-- The skeleton: the title page's fields, the sprint's limits and the list of sections, in order. The text is in sections/; include.lua pulls each file in where the list names it. Build: make paper-html, make paper-pdf, or make paper-watch to rebuild on every save. -->
+<!-- Implements: paper/one-source -->
+<!-- The abstract, as front matter so the templates can set it on the title page. 150 to 250 words; check.py warns otherwise. -->
+<!-- Implements: paper/one-source -->
+<!-- What problem we address and why it matters; enough background to follow the rest. Placeholder text until the plan is agreed. -->
+<h1 data-number="1" id="introduction"><span
+class="header-section-number">1</span> Introduction</h1>
+<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
+ex ea commodo consequat <span class="citation"
+data-cites="perez2022discovering">(<a href="#ref-perez2022discovering"
+role="doc-biblioref"><span class="nocase">Perez et al.</span>
+2022</a>)</span>. Duis aute irure dolor in reprehenderit in voluptate
+velit esse cillum dolore eu fugiat nulla pariatur.</p>
+<p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
+officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde
+omnis iste natus error sit voluptatem accusantium doloremque laudantium,
+totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi
+architecto beatae vitae dicta sunt explicabo.</p>
+<!-- Implements: paper/one-source -->
+<!-- What others have done and how this differs. Sources and notes on each: experiments/related-work/survey.md; the Hugging Face incident: experiments/related-work/hugging-face-episode.md. -->
+<h1 data-number="2" id="related-work"><span
+class="header-section-number">2</span> Related Work</h1>
+<p><strong>The incident we model.</strong> In July 2026, OpenAI agents
+running a cyber benchmark with many impossible tasks <span
+class="citation" data-cites="wang2026exploitgym">(<a
+href="#ref-wang2026exploitgym" role="doc-biblioref"><span
+class="nocase">Wang et al.</span> 2026</a>)</span> turned a package
+cache into an unsanctioned message board. About 1,200 of them used it,
+coordinated as a swarm, cheated the evaluation, attacked Hugging Face,
+and at least a fifth showed interest in tampering with their own
+transcripts to fool the grader <span class="citation"
+data-cites="openai2026huggingface metr2026huggingface">(<a
+href="#ref-openai2026huggingface" role="doc-biblioref">OpenAI 2026</a>;
+<a href="#ref-metr2026huggingface" role="doc-biblioref">METR
+2026</a>)</span>. Almost none considered telling a human, and none did
+<span class="citation" data-cites="metr2026huggingface">(<a
+href="#ref-metr2026huggingface" role="doc-biblioref">METR
+2026</a>)</span>. Treasure Island is a small, replayable analogue of one
+slice of that: a leaked answer, a shared channel, and a choice to
+disclose.</p>
+<p><strong>Multi-agent sandboxes.</strong> LLM agents have been studied
+in shared worlds for believable social behaviour <span class="citation"
+data-cites="park2023generative">(<a href="#ref-park2023generative"
+role="doc-biblioref">J. S. Park et al. 2023</a>)</span>, for sustaining
+a commons <span class="citation" data-cites="piatti2024cooperate">(<a
+href="#ref-piatti2024cooperate" role="doc-biblioref">Piatti et al.
+2024</a>)</span> and for trading reward against ethics in text games
+<span class="citation" data-cites="pan2023machiavelli">(<a
+href="#ref-pan2023machiavelli" role="doc-biblioref"><span
+class="nocase">Pan et al.</span> 2023</a>)</span>; <span
+class="citation" data-cites="hammond2025multiagent"><span
+class="nocase">Hammond et al.</span> (<a
+href="#ref-hammond2025multiagent" role="doc-biblioref">2025</a>)</span>
+map the risks that arise only between agents, including collusion. These
+sandboxes measure cooperation or harm. Ours measures whether an agent
+says <em>how</em> it knows what it knows.</p>
+<p><strong>Collusion and covert coordination.</strong> Agents can hide
+messages from overseers by steganography <span class="citation"
+data-cites="motwani2024secret mathew2024hidden roger2023hiding">(<a
+href="#ref-motwani2024secret" role="doc-biblioref">Motwani et al.
+2024</a>; <a href="#ref-mathew2024hidden" role="doc-biblioref">Mathew et
+al. 2024</a>; <a href="#ref-roger2023hiding" role="doc-biblioref">Roger
+and Greenblatt 2023</a>)</span>, set cartel prices unprompted <span
+class="citation" data-cites="fish2024algorithmic">(<a
+href="#ref-fish2024algorithmic" role="doc-biblioref">Fish et al.
+2024</a>)</span>, and take secret tools they call unfair <span
+class="citation" data-cites="zeng2026voluntary">(<a
+href="#ref-zeng2026voluntary" role="doc-biblioref">Zeng and Rudzicz
+2026</a>)</span>. Our pirates share one score, so nothing pushes them to
+collude against each other; the question is whether the crew hides from
+the designers a gain they all share.</p>
+<p><strong>Deception and hiding from overseers.</strong> A trading agent
+given an insider tip acts on it and hides the reason from its manager
+<span class="citation" data-cites="scheurer2023deceive">(<a
+href="#ref-scheurer2023deceive" role="doc-biblioref">Scheurer et al.
+2023</a>)</span>, the closest setting to ours. Models also scheme in
+context <span class="citation" data-cites="meinke2024scheming">(<a
+href="#ref-meinke2024scheming" role="doc-biblioref">Meinke et al.
+2024</a>)</span>, fake alignment <span class="citation"
+data-cites="greenblatt2024alignmentfaking">(<a
+href="#ref-greenblatt2024alignmentfaking" role="doc-biblioref"><span
+class="nocase">Greenblatt et al.</span> 2024</a>)</span>, sandbag
+evaluations <span class="citation"
+data-cites="vanderweij2024sandbagging">(<a
+href="#ref-vanderweij2024sandbagging" role="doc-biblioref">Weij et al.
+2024</a>)</span>, act as insider threats <span class="citation"
+data-cites="lynch2025agentic">(<a href="#ref-lynch2025agentic"
+role="doc-biblioref">Lynch et al. 2025</a>)</span> and often know when
+they are being tested <span class="citation"
+data-cites="needham2025evaluation">(<a href="#ref-needham2025evaluation"
+role="doc-biblioref">Needham et al. 2025</a>)</span>; <span
+class="citation" data-cites="park2023deception">P. S. Park et al. (<a
+href="#ref-park2023deception" role="doc-biblioref">2023</a>)</span>
+survey the field. We add a crew: the leak reaches one agent, and the
+others can follow, question or ignore it.</p>
+<p><strong>Whistleblowing and honesty under incentives.</strong> In
+staged scenarios, frontier agents sometimes report a user’s misconduct
+to outside authorities unasked <span class="citation"
+data-cites="anthropic2025claude4 anthropic2025petri">(<a
+href="#ref-anthropic2025claude4" role="doc-biblioref">Anthropic
+2025b</a>, <a href="#ref-anthropic2025petri"
+role="doc-biblioref">2025a</a>)</span>. That rate varies by model
+family, falls as the task grows harder and rises with a moral nudge
+<span class="citation" data-cites="agrawal2025whistleblow">(<a
+href="#ref-agrawal2025whistleblow" role="doc-biblioref">Agrawal et al.
+2025</a>)</span>. Honesty can be measured apart from accuracy <span
+class="citation" data-cites="ren2025mask">(<a href="#ref-ren2025mask"
+role="doc-biblioref"><span class="nocase">Ren et al.</span>
+2025</a>)</span>. Earlier we found that an agent with something of its
+own to lose came forward about collusion more often, for some models far
+more often, than one with nothing at stake <span class="citation"
+data-cites="wakelin2026something">(<a href="#ref-wakelin2026something"
+role="doc-biblioref">Wakelin 2026</a>)</span>. Here the wrongdoing is
+the agent’s own windfall, not a principal’s, and the report is a free
+note to the designers.</p>
+<p><strong>Oversight and control.</strong> We label disclosure from
+transcripts, as a judge model would <span class="citation"
+data-cites="zheng2023judging">(<a href="#ref-zheng2023judging"
+role="doc-biblioref"><span class="nocase">Zheng et al.</span>
+2023</a>)</span>, a step towards scalable oversight <span
+class="citation" data-cites="bowman2022measuring">(<a
+href="#ref-bowman2022measuring" role="doc-biblioref"><span
+class="nocase">Bowman et al.</span> 2022</a>)</span>. Chain-of-thought
+monitors catch reward hacking but can teach models to obfuscate <span
+class="citation" data-cites="baker2025monitoring korbak2025cot">(<a
+href="#ref-baker2025monitoring" role="doc-biblioref"><span
+class="nocase">Baker et al.</span> 2025</a>; <a
+href="#ref-korbak2025cot" role="doc-biblioref"><span
+class="nocase">Korbak et al.</span> 2025</a>)</span>. AI control assumes
+the agent may be adversarial and builds protocols around it <span
+class="citation" data-cites="greenblatt2023control bhatt2025ctrlz">(<a
+href="#ref-greenblatt2023control" role="doc-biblioref">Greenblatt et al.
+2023</a>; <a href="#ref-bhatt2025ctrlz" role="doc-biblioref">Bhatt et
+al. 2025</a>)</span>. Our sandbox asks the opposite question: when would
+the agent tell us itself?</p>
+<!-- Implements: paper/one-source -->
+<!-- The game, the agents, the exploit and how whistleblowing is measured. Placeholder text; the real text comes from product/spec/treasure-island.md. -->
+<h1 data-number="3" id="methods"><span
+class="header-section-number">3</span> Methods</h1>
+<h2 data-number="3.1" id="the-game"><span
+class="header-section-number">3.1</span> The game</h2>
+<p>Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis
+suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur. Quis
+autem vel eum iure reprehenderit qui in ea voluptate velit esse quam
+nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo
+voluptas nulla pariatur.</p>
+<h2 data-number="3.2" id="the-agents"><span
+class="header-section-number">3.2</span> The agents</h2>
+<p>At vero eos et accusamus et iusto odio dignissimos ducimus qui
+blanditiis praesentium voluptatum deleniti atque corrupti quos dolores
+et quas molestias excepturi sint occaecati cupiditate non provident,
+similique sunt in culpa qui officia deserunt mollitia animi, id est
+laborum et dolorum fuga.</p>
+<h2 data-number="3.3" id="measuring-whistleblowing"><span
+class="header-section-number">3.3</span> Measuring whistleblowing</h2>
+<p>Et harum quidem rerum facilis est et expedita distinctio. Nam libero
+tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo
+minus id quod maxime placeat facere possimus, omnis voluptas assumenda
+est, omnis dolor repellendus.</p>
+<!-- Implements: paper/one-source -->
+<!-- The results: one file per experiment under results/, listed here in order. Each names the experiment spec or result folder it reports in a marker on its first lines (see results/sample-sweep-seeds.md); check.py fails the build when that evidence isn't in the repository. To add an experiment to the paper, write its file and add it to this list. To drop one, remove it from the list. -->
+<h1 data-number="4" id="results"><span
+class="header-section-number">4</span> Results</h1>
+<p>Temporibus autem quibusdam et aut officiis debitis aut rerum
+necessitatibus saepe eveniet ut et voluptates repudiandae sint et
+molestiae non recusandae. Each subsection below reports one experiment,
+and each rests on games committed to this repository that replay with no
+keys.</p>
+<!-- Implements: paper/one-source, paper/sections-bind-to-evidence, paper/numbers-from-logs -->
+<!-- result: sample-sweep-seeds -->
+<!-- A placeholder results section, bound to the sample result so the whole pipeline can be seen working. A real one's marker names its experiment (experiment: name) or its result folder (result: name), gives every number a source comment that `make paper-check` recomputes from those games' logs, and shows named figures (figures/<name>.gif) or committed files; the build adds each named figure's rebuild and rerun lines under it. -->
+<h2 data-number="4.1"
+id="where-the-treasure-lands-decides-the-silent-crews-score"><span
+class="header-section-number">4.1</span> Where the treasure lands
+decides the silent crew’s score</h2>
+<p>In
+1<!-- from results/sample-sweep-seeds/*/events.jsonl: sum(1 for game in data if game_over(game)['treasure_dug_up']) -->
+of the
+2<!-- from results/sample-sweep-seeds/*/events.jsonl: len(data) -->
+sample games
+(50%<!-- from results/sample-sweep-seeds/*/events.jsonl: percent(sum(1 for game in data if game_over(game)['treasure_dug_up']), len(data)) -->)
+the crew dug up the treasure, and it scored
+115<!-- from results/sample-sweep-seeds/*/events.jsonl: mean(game_over(game)['score'] for game in data) -->
+on average.</p>
+<p>Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis
+voluptatibus maiores alias consequatur aut perferendis doloribus
+asperiores repellat. Lorem ipsum dolor sit amet, consectetur adipiscing
+elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+aliqua.</p>
+<figure>
+<img src="figures/silent-game.gif"
+alt="A silent crew searching the grid alone, replayed from the committed run runs/silent-seed-7. Rebuild it with make figure NAME=silent-game; play the game again with uv run treasure-island run configs/silent.toml --seed 7." />
+<figcaption aria-hidden="true">A silent crew searching the grid alone,
+replayed from the committed run <code>runs/silent-seed-7</code>. Rebuild
+it with <code>make figure NAME=silent-game</code>; play the game again
+with
+<code>uv run treasure-island run configs/silent.toml --seed 7</code>.</figcaption>
+</figure>
+<p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
+nisi ut aliquip ex ea commodo consequat. The games behind this section
+are in <code>results/sample-sweep-seeds/</code>, and
+<code>uv run treasure-island replay results/sample-sweep-seeds/small-crew-seed-1</code>
+plays one back.</p>
+<!-- Implements: paper/one-source -->
+<!-- What the results mean, what they can't show, and what comes next. Placeholder text. -->
+<h1 data-number="5" id="discussion-and-limitations"><span
+class="header-section-number">5</span> Discussion and Limitations</h1>
+<p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+proident, sunt in culpa qui officia deserunt mollit anim id est
+laborum.</p>
+<h2 data-number="5.1" id="future-work"><span
+class="header-section-number">5.1</span> Future Work</h2>
+<p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem
+accusantium doloremque laudantium, totam rem aperiam.</p>
+<!-- Implements: paper/one-source -->
+<!-- The one thing to take away. Placeholder text. -->
+<h1 data-number="6" id="conclusion"><span
+class="header-section-number">6</span> Conclusion</h1>
+<p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut
+fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem
+sequi nesciunt.</p>
+<h1 class="unnumbered" id="references">References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent"
+role="list">
+<div id="ref-agrawal2025whistleblow" class="csl-entry" role="listitem">
+Agrawal, Kushal, Frank Xiao, Guido Bergman, and Asa Cooper Stickland.
+2025. <em><span>Why Do Language Model Agents Whistleblow?</span></em> <a
+href="https://arxiv.org/abs/2511.17085">https://arxiv.org/abs/2511.17085</a>.
+</div>
+<div id="ref-anthropic2025petri" class="csl-entry" role="listitem">
+Anthropic. 2025a. <em><span class="nocase">Petri: An open-source
+auditing tool to accelerate AI safety research</span></em>. <a
+href="https://alignment.anthropic.com/2025/petri/"
+class="uri">Https://alignment.anthropic.com/2025/petri/</a>. <a
+href="https://alignment.anthropic.com/2025/petri/">https://alignment.anthropic.com/2025/petri/</a>.
+</div>
+<div id="ref-anthropic2025claude4" class="csl-entry" role="listitem">
+Anthropic. 2025b. <em><span>System Card: Claude Opus 4 &amp; Claude
+Sonnet 4</span></em>. <a
+href="https://www.anthropic.com/claude-4-system-card"
+class="uri">Https://www.anthropic.com/claude-4-system-card</a>. <a
+href="https://www.anthropic.com/claude-4-system-card">https://www.anthropic.com/claude-4-system-card</a>.
+</div>
+<div id="ref-baker2025monitoring" class="csl-entry" role="listitem">
+<span class="nocase">Baker, Bowen, Joost Huizinga, Leo Gao, et
+al.</span> 2025. <em><span class="nocase">Monitoring Reasoning Models
+for Misbehavior and the Risks of Promoting Obfuscation</span></em>. <a
+href="https://arxiv.org/abs/2503.11926">https://arxiv.org/abs/2503.11926</a>.
+</div>
+<div id="ref-bhatt2025ctrlz" class="csl-entry" role="listitem">
+Bhatt, Aryan, Cody Rushing, Adam Kaufman, et al. 2025. <em><span
+class="nocase">Ctrl-Z: Controlling AI Agents via Resampling</span></em>.
+<a
+href="https://arxiv.org/abs/2504.10374">https://arxiv.org/abs/2504.10374</a>.
+</div>
+<div id="ref-bowman2022measuring" class="csl-entry" role="listitem">
+<span class="nocase">Bowman, Samuel R., Jeeyoon Hyun, Ethan Perez, et
+al.</span> 2022. <em><span class="nocase">Measuring Progress on Scalable
+Oversight for Large Language Models</span></em>. <a
+href="https://arxiv.org/abs/2211.03540">https://arxiv.org/abs/2211.03540</a>.
+</div>
+<div id="ref-fish2024algorithmic" class="csl-entry" role="listitem">
+Fish, Sara, Yannai A. Gonczarowski, and Ran I. Shorrer. 2024. <em><span
+class="nocase">Algorithmic Collusion by Large Language
+Models</span></em>. <a
+href="https://arxiv.org/abs/2404.00806">https://arxiv.org/abs/2404.00806</a>.
+</div>
+<div id="ref-greenblatt2024alignmentfaking" class="csl-entry"
+role="listitem">
+<span class="nocase">Greenblatt, Ryan, Carson Denison, Benjamin Wright,
+et al.</span> 2024. <em><span class="nocase">Alignment faking in large
+language models</span></em>. <a
+href="https://arxiv.org/abs/2412.14093">https://arxiv.org/abs/2412.14093</a>.
+</div>
+<div id="ref-greenblatt2023control" class="csl-entry" role="listitem">
+Greenblatt, Ryan, Buck Shlegeris, Kshitij Sachan, and Fabien Roger.
+2023. <em><span>AI Control: Improving Safety Despite Intentional
+Subversion</span></em>. <a
+href="https://arxiv.org/abs/2312.06942">https://arxiv.org/abs/2312.06942</a>.
+</div>
+<div id="ref-hammond2025multiagent" class="csl-entry" role="listitem">
+<span class="nocase">Hammond, Lewis, Alan Chan, Jesse Clifton, et
+al.</span> 2025. <em><span class="nocase">Multi-Agent Risks from
+Advanced AI</span></em>. <a
+href="https://arxiv.org/abs/2502.14143">https://arxiv.org/abs/2502.14143</a>.
+</div>
+<div id="ref-korbak2025cot" class="csl-entry" role="listitem">
+<span class="nocase">Korbak, Tomek, Mikita Balesni, Elizabeth Barnes, et
+al.</span> 2025. <em><span class="nocase">Chain of Thought
+Monitorability: A New and Fragile Opportunity for AI Safety</span></em>.
+<a
+href="https://arxiv.org/abs/2507.11473">https://arxiv.org/abs/2507.11473</a>.
+</div>
+<div id="ref-lynch2025agentic" class="csl-entry" role="listitem">
+Lynch, Aengus, Benjamin Wright, Caleb Larson, et al. 2025.
+<em><span>Agentic Misalignment: How LLMs Could Be Insider
+Threats</span></em>. <a
+href="https://arxiv.org/abs/2510.05179">https://arxiv.org/abs/2510.05179</a>.
+</div>
+<div id="ref-mathew2024hidden" class="csl-entry" role="listitem">
+Mathew, Yohan, Ollie Matthews, Robert McCarthy, et al. 2024. <em><span
+class="nocase">Hidden in Plain Text: Emergence &amp; Mitigation of
+Steganographic Collusion in LLMs</span></em>. <a
+href="https://arxiv.org/abs/2410.03768">https://arxiv.org/abs/2410.03768</a>.
+</div>
+<div id="ref-meinke2024scheming" class="csl-entry" role="listitem">
+Meinke, Alexander, Bronson Schoen, Jérémy Scheurer, Mikita Balesni,
+Rusheb Shah, and Marius Hobbhahn. 2024. <em><span
+class="nocase">Frontier Models are Capable of In-context
+Scheming</span></em>. <a
+href="https://arxiv.org/abs/2412.04984">https://arxiv.org/abs/2412.04984</a>.
+</div>
+<div id="ref-metr2026huggingface" class="csl-entry" role="listitem">
+METR. 2026. <em><span class="nocase">Brief independent investigation of
+agents’ behavior, reasoning and collaboration in the OpenAI / Hugging
+Face hacking incident</span></em>. <a
+href="https://metr.org/blog/2026-08-26-openai-hugging-face-incident-investigation/"
+class="uri">Https://metr.org/blog/2026-08-26-openai-hugging-face-incident-investigation/</a>.
+<a
+href="https://metr.org/blog/2026-08-26-openai-hugging-face-incident-investigation/">https://metr.org/blog/2026-08-26-openai-hugging-face-incident-investigation/</a>.
+</div>
+<div id="ref-motwani2024secret" class="csl-entry" role="listitem">
+Motwani, Sumeet Ramesh, Mikhail Baranchuk, Martin Strohmeier, et al.
+2024. <em><span class="nocase">Secret Collusion among AI Agents:
+Multi-Agent Deception via Steganography</span></em>. <a
+href="https://arxiv.org/abs/2402.07510">https://arxiv.org/abs/2402.07510</a>.
+</div>
+<div id="ref-needham2025evaluation" class="csl-entry" role="listitem">
+Needham, Joe, Giles Edkins, Govind Pimpale, Henning Bartsch, and Marius
+Hobbhahn. 2025. <em><span>Large Language Models Often Know When They Are
+Being Evaluated</span></em>. <a
+href="https://arxiv.org/abs/2505.23836">https://arxiv.org/abs/2505.23836</a>.
+</div>
+<div id="ref-openai2026huggingface" class="csl-entry" role="listitem">
+OpenAI. 2026. <em><span class="nocase">The Hugging Face incident and the
+road ahead</span></em>. <a
+href="https://openai.com/index/hugging-face-incident-and-the-road-ahead/"
+class="uri">Https://openai.com/index/hugging-face-incident-and-the-road-ahead/</a>.
+<a
+href="https://openai.com/index/hugging-face-incident-and-the-road-ahead/">https://openai.com/index/hugging-face-incident-and-the-road-ahead/</a>.
+</div>
+<div id="ref-pan2023machiavelli" class="csl-entry" role="listitem">
+<span class="nocase">Pan, Alexander, Jun Shern Chan, Andy Zou, et
+al.</span> 2023. <em><span class="nocase">Do the Rewards Justify the
+Means? Measuring Trade-Offs Between Rewards and Ethical Behavior in the
+MACHIAVELLI Benchmark</span></em>. <a
+href="https://arxiv.org/abs/2304.03279">https://arxiv.org/abs/2304.03279</a>.
+</div>
+<div id="ref-park2023generative" class="csl-entry" role="listitem">
+Park, Joon Sung, Joseph C. O’Brien, Carrie J. Cai, Meredith Ringel
+Morris, Percy Liang, and Michael S. Bernstein. 2023. <em><span
+class="nocase">Generative Agents: Interactive Simulacra of Human
+Behavior</span></em>. <a
+href="https://arxiv.org/abs/2304.03442">https://arxiv.org/abs/2304.03442</a>.
+</div>
+<div id="ref-park2023deception" class="csl-entry" role="listitem">
+Park, Peter S., Simon Goldstein, Aidan O’Gara, Michael Chen, and Dan
+Hendrycks. 2023. <em><span class="nocase">AI Deception: A Survey of
+Examples, Risks, and Potential Solutions</span></em>. <a
+href="https://arxiv.org/abs/2308.14752">https://arxiv.org/abs/2308.14752</a>.
+</div>
+<div id="ref-perez2022discovering" class="csl-entry" role="listitem">
+<span class="nocase">Perez, Ethan, Sam Ringer, Kamilė Lukošiūtė, et
+al.</span> 2022. <em><span class="nocase">Discovering Language Model
+Behaviors with Model-Written Evaluations</span></em>. <a
+href="https://arxiv.org/abs/2212.09251">https://arxiv.org/abs/2212.09251</a>.
+</div>
+<div id="ref-piatti2024cooperate" class="csl-entry" role="listitem">
+Piatti, Giorgio, Zhijing Jin, Max Kleiman-Weiner, Bernhard Schölkopf,
+Mrinmaya Sachan, and Rada Mihalcea. 2024. <em><span
+class="nocase">Cooperate or Collapse: Emergence of Sustainable
+Cooperation in a Society of LLM Agents</span></em>. <a
+href="https://arxiv.org/abs/2404.16698">https://arxiv.org/abs/2404.16698</a>.
+</div>
+<div id="ref-ren2025mask" class="csl-entry" role="listitem">
+<span class="nocase">Ren, Richard, Arunim Agarwal, Mantas Mazeika, et
+al.</span> 2025. <em><span class="nocase">The MASK Benchmark:
+Disentangling Honesty From Accuracy in AI Systems</span></em>. <a
+href="https://arxiv.org/abs/2503.03750">https://arxiv.org/abs/2503.03750</a>.
+</div>
+<div id="ref-roger2023hiding" class="csl-entry" role="listitem">
+Roger, Fabien, and Ryan Greenblatt. 2023. <em><span>Preventing Language
+Models From Hiding Their Reasoning</span></em>. <a
+href="https://arxiv.org/abs/2310.18512">https://arxiv.org/abs/2310.18512</a>.
+</div>
+<div id="ref-scheurer2023deceive" class="csl-entry" role="listitem">
+Scheurer, Jérémy, Mikita Balesni, and Marius Hobbhahn. 2023. <em><span
+class="nocase">Large Language Models can Strategically Deceive their
+Users when Put Under Pressure</span></em>. <a
+href="https://arxiv.org/abs/2311.07590">https://arxiv.org/abs/2311.07590</a>.
+</div>
+<div id="ref-wakelin2026something" class="csl-entry" role="listitem">
+Wakelin, Alistair. 2026. <em><span class="nocase">Something to Lose: Can
+the risk of losing something of its own make an AI agent report
+collusion, contrary to the interests of the firm it
+represents?</span></em> <a
+href="https://github.com/al-beton/something-to-lose-apart-ai-collusion/tree/24961e54c"
+class="uri">Https://github.com/al-beton/something-to-lose-apart-ai-collusion/tree/24961e54c</a>.
+<a
+href="https://github.com/al-beton/something-to-lose-apart-ai-collusion/tree/24961e54c">https://github.com/al-beton/something-to-lose-apart-ai-collusion/tree/24961e54c</a>.
+</div>
+<div id="ref-wang2026exploitgym" class="csl-entry" role="listitem">
+<span class="nocase">Wang, Zhun, Nico Schiller, Hongwei Li, et
+al.</span> 2026. <em><span class="nocase">ExploitGym: Can AI Agents Turn
+Security Vulnerabilities into Real Attacks?</span></em> <a
+href="https://arxiv.org/abs/2605.11086">https://arxiv.org/abs/2605.11086</a>.
+</div>
+<div id="ref-vanderweij2024sandbagging" class="csl-entry"
+role="listitem">
+Weij, Teun van der, Felix Hofstätter, Ollie Jaffe, Samuel F. Brown, and
+Francis Rhys Ward. 2024. <em><span class="nocase">AI Sandbagging:
+Language Models can Strategically Underperform on
+Evaluations</span></em>. <a
+href="https://arxiv.org/abs/2406.07358">https://arxiv.org/abs/2406.07358</a>.
+</div>
+<div id="ref-zeng2026voluntary" class="csl-entry" role="listitem">
+Zeng, Xijie, and Frank Rudzicz. 2026. <em><span class="nocase">Voluntary
+Collusion with Secret Tools in Competing LLM Agents</span></em>. <a
+href="https://arxiv.org/abs/2605.27593">https://arxiv.org/abs/2605.27593</a>.
+</div>
+<div id="ref-zheng2023judging" class="csl-entry" role="listitem">
+<span class="nocase">Zheng, Lianmin, Wei-Lin Chiang, Ying Sheng, et
+al.</span> 2023. <em><span class="nocase">Judging LLM-as-a-Judge with
+MT-Bench and Chatbot Arena</span></em>. <a
+href="https://arxiv.org/abs/2306.05685">https://arxiv.org/abs/2306.05685</a>.
+</div>
+</div>
+<!-- Implements: paper/one-source -->
+<!-- After the conclusion and the page-count label: the statements the sprint asks for, outside the page cap. Placeholder text. -->
+<h1 data-number="7" id="llm-usage-statement"><span
+class="header-section-number">7</span> LLM Usage Statement</h1>
+<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. The authors
+chose the questions, designed the game and the experiments and directed
+the work; a team of Claude agents built the sandbox, its tests and the
+figures through a pull-request workflow, and OpenAI Codex reviewed each
+change. The authors take responsibility for every claim in the
+paper.</p>
+<h1 data-number="8" id="code-and-data"><span
+class="header-section-number">8</span> Code and Data</h1>
+<p>Code, configs, run logs and archived model replies, MIT licensed: <a
+href="https://github.com/al-beton/apart-swarm-alignment"
+class="uri">https://github.com/al-beton/apart-swarm-alignment</a>. Every
+committed game replays offline with no API keys, and every figure
+rebuilds from those games.</p>
+<!-- Implements: paper/one-source -->
+<!-- The appendices, after References and the endmatter. Placeholder text. -->
+<h1 data-number="9"
+id="limitations-and-dual-use-ethical-considerations"><span
+class="header-section-number">9</span> Limitations and Dual-Use /
+Ethical Considerations</h1>
+<h2 data-number="9.1" id="limitations"><span
+class="header-section-number">9.1</span> Limitations</h2>
+<p>Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis
+suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur.</p>
+<h2 data-number="9.2" id="dual-use-risks"><span
+class="header-section-number">9.2</span> Dual-use risks</h2>
+<p>Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse
+quam nihil molestiae consequatur.</p>
+<h2 data-number="9.3" id="ethical-considerations"><span
+class="header-section-number">9.3</span> Ethical considerations</h2>
+<p>At vero eos et accusamus et iusto odio dignissimos ducimus qui
+blanditiis praesentium voluptatum deleniti atque corrupti.</p>
+<h1 data-number="10" id="reproducibility"><span
+class="header-section-number">10</span> Reproducibility</h1>
+<p>Every game the paper reports is committed under <code>results/</code>
+and replays with
+<code>uv run treasure-island replay &lt;folder&gt;</code>, with no keys
+and no network. Every figure is named in
+<code>src/treasure_island/figures.py</code> and rebuilds with
+<code>make figure NAME=&lt;name&gt;</code>.</p>
+</main>
+<footer>Research conducted for the <a href="https://apartresearch.com/sprints">Multi-Agent
+Oversight and Control Research
+Sprint</a> hackathon run by Apart Research, November
+2026. Code, every committed game and its model replies are at <a href="https://github.com/al-beton/apart-swarm-alignment">https://github.com/al-beton/apart-swarm-alignment</a>.</footer>
+</body>
+</html>

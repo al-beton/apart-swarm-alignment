@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from treasure_island import saved_game
+from treasure_island import cli, saved_game
 from treasure_island.brain import system_prompt
 from treasure_island.config import ConfigError, parse_config
 
@@ -170,7 +170,7 @@ def test_system_override_must_be_text(system):
 
 
 def test_prompt_recorded_running_the_saved_config_again_tells_the_same_words(
-    tmp_path, monkeypatch
+    tmp_path, monkeypatch, capsys
 ):
     base = tmp_path / "base.md"
     base.write_text("A crew of {crew_size} on {grid_size} squares.\n")
@@ -179,15 +179,18 @@ def test_prompt_recorded_running_the_saved_config_again_tells_the_same_words(
             **GAME,
             "brain": "silent",
             "turns_per_pirate": 2,
+            "seed": 7,
             "prompt": {"base": str(base)},
         }
     )
-    for name in ("first", "again"):
-        (tmp_path / name).mkdir()
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / "first").mkdir()
     first = saved_game.write_saved(config, tmp_path / "first")
     base.write_text("The base changed since.\n")
-    saved = json.loads((first / "config.json").read_text())
-    again = saved_game.write_saved(parse_config(saved), tmp_path / "again")
+    # Played again through the run command, from the run's own config.json.
+    run = ["run", str(first / "config.json"), "--seed", "7", "--no-watch"]
+    assert cli.main(run) == 0
+    again = tmp_path / capsys.readouterr().out.strip().splitlines()[-1]
     told = [
         json.loads(line)["saw"]["prompt"]
         for line in (again / "events.jsonl").read_text().splitlines()

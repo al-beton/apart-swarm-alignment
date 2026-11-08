@@ -125,8 +125,14 @@ def _with_thinking_looked_up(config):
 
 
 def config_with_seed(config_path, seed):
-    """The config a game of this file and seed plays; it must name a brain."""
-    data = tomllib.loads(Path(config_path).read_text(encoding="utf-8"))
+    """The config a game of this file and seed plays; it must name a brain.
+
+    The file is TOML, or a run's own `config.json`, so a run can be played again.
+    """
+    text = Path(config_path).read_text(encoding="utf-8")
+    data = (
+        json.loads(text) if Path(config_path).suffix == ".json" else tomllib.loads(text)
+    )
     if "brain" not in data:
         raise ConfigError(f"{Path(config_path).name} names no brain to play with.")
     return parse_config({**data, "seed": seed})

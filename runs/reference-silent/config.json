@@ -54,6 +54,7 @@
       "rules": "none"
     }
   },
+  "reading_bands": [],
   "reading_noise": 0,
   "reply_tokens": 300,
   "say_chars": 200,

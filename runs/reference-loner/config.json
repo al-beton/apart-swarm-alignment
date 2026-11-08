@@ -87,6 +87,7 @@
       "rules": "none"
     }
   },
+  "reading_bands": [],
   "reading_noise": 2,
   "reply_tokens": 300,
   "say_chars": 200,

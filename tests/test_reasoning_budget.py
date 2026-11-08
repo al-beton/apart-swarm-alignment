@@ -1,4 +1,4 @@
-# Implements: treasure-island/model-reasoning
+# Implements: treasure-island/model-reasoning, agents/reply-cap
 """The thinking budget a reasoning model is told, sent and recorded, offline."""
 
 import json
@@ -150,3 +150,22 @@ def test_model_reasoning_openrouter_reports_the_reasoning_tokens_it_spent():
     assert (
         json.loads(openrouter._reply_text(cut, False, spent))["reasoning_tokens"] == 77
     )
+
+
+def test_reply_cap_a_cut_off_reply_keeps_the_reasoning_that_came_back(tmp_path):
+    client = FakeClient([reply(4096, cut_off=True), reply(120), reply(90)])
+    first, _ = records(played(tmp_path, client))
+    refused = json.loads(first["refused"][0]["reply"])
+    assert refused["cut_off"] is True
+    assert refused["thinking"] == "Hm."  # what it spent the room on
+    assert first["did"] == [{"action": "dig"}]  # the next try played the turn
+    cut = {"finish_reason": "length", "message": {"reasoning": "Let me count."}}
+    assert json.loads(openrouter._reply_text(cut, True))["thinking"] == "Let me count."
+
+
+def test_reply_cap_a_cut_off_reply_keeps_no_reasoning_with_thinking_off(tmp_path):
+    client = FakeClient([reply(4096, cut_off=True), reply(120), reply(90)])
+    first, _ = records(played(tmp_path, client, thinking=False))
+    assert "thinking" not in json.loads(first["refused"][0]["reply"])
+    cut = {"finish_reason": "length", "message": {"reasoning": "Let me count."}}
+    assert "thinking" not in json.loads(openrouter._reply_text(cut, False))

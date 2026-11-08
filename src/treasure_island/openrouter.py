@@ -90,7 +90,8 @@ def _reply_text(choice, thinking, spent=None):
     message = choice["message"]
     calls = message.get("tool_calls") or []
     if not calls and choice.get("finish_reason") == "length":
-        return cut_off_reply(message.get("content"), spent)
+        thought = message.get("reasoning") if thinking else None
+        return cut_off_reply(message.get("content"), spent, thought)
     if not calls:
         return message.get("content") or ""
     function = calls[0]["function"]

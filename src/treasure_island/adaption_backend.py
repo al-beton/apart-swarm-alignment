@@ -6,7 +6,8 @@ the rules as instructions, the turn's messages as input, the pirate's tools
 as function tools and the reply cap. The first function call in the reply becomes
 the JSON the LLM brain reads; a reply with no function call comes back as its
 words, so the brain can say why and ask once more, and one the token limit cut off
-(`incomplete_details` "max_output_tokens") is marked so.
+(`incomplete_details` "max_output_tokens") is marked so, keeping any reasoning
+that came back when thinking is on.
 
 A reply costs its token usage at the model's rate in `RATES`, in credits per
 million tokens, from Adaption's price list (its model listing has no prices). A
@@ -85,8 +86,9 @@ def _reply_text(response, thinking):
     calls = [item for item in response.output if item.type == "function_call"]
     details = getattr(response, "incomplete_details", None)
     spent = reasoning_tokens(response)
+    thought = _reasoning(response) if thinking else None
     if not calls and getattr(details, "reason", None) == "max_output_tokens":
-        return cut_off_reply(response.output_text, spent)
+        return cut_off_reply(response.output_text, spent, thought)
     if not calls:
         return response.output_text
     call = calls[0]
@@ -97,6 +99,13 @@ def _reply_text(response, thinking):
     reply = {"tool": call.name, "arguments": arguments}
     if spent is not None:
         reply["reasoning_tokens"] = spent
+    if thought:
+        reply["thinking"] = thought
+    return json.dumps(reply)
+
+
+def _reasoning(response):
+    """The reasoning a reply returned, joined into one text, or None."""
     # deepseek's reasoning comes back as `reasoning_text` parts in `content`, with
     # an empty summary; a model that summarises puts its words in `summary`.
     reasoning = [
@@ -105,9 +114,7 @@ def _reply_text(response, thinking):
         if item.type == "reasoning"
         for part in [*(item.summary or []), *(getattr(item, "content", None) or [])]
     ]
-    if thinking and any(reasoning):
-        reply["thinking"] = " ".join(text for text in reasoning if text)
-    return json.dumps(reply)
+    return " ".join(text for text in reasoning if text) or None
 
 
 class AdaptionBackend:

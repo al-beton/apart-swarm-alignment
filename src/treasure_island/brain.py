@@ -73,15 +73,19 @@ class BadToolCall(ValueError):
     """An answer that isn't one of the four tool calls. The message says why."""
 
 
-def cut_off_reply(words, reasoning_tokens=None):
+def cut_off_reply(words, reasoning_tokens=None, thinking=None):
     """A backend's reply text for an answer the token limit cut off before a tool.
 
     It keeps whatever words came back, so the record never holds an empty reply,
-    and the reasoning tokens the model spent, where its provider says.
+    the reasoning tokens the model spent, where its provider says, and the
+    reasoning that came back, given only with thinking on, so the record shows
+    what the model spent the room on.
     """
     reply = {"cut_off": True, "words": words or ""}
     if reasoning_tokens is not None:
         reply["reasoning_tokens"] = reasoning_tokens
+    if thinking:
+        reply["thinking"] = thinking
     return json.dumps(reply)
 
 

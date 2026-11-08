@@ -68,7 +68,8 @@ def test_slots_none_adds_nothing_not_even_a_blank_line():
     plain = prompt_for()
     none = prompt_for(slots={slot: "none" for slot in SHIPPED})
     assert plain == none
-    assert "\n\n" not in plain
+    # The only blank lines are the ones before each heading.
+    assert all(part.startswith("# ") for part in plain.split("\n\n"))
     assert plain == plain.strip()
 
 

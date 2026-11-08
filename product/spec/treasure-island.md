@@ -176,7 +176,7 @@ The pirates' log is a scroll: nothing of it is shown for free, and writing on it
 | `two-logs` | `src/treasure_island/game_loop.py` | `test_two_logs_every_record_passes_the_validator`, `test_two_logs_only_a_note_adds_a_line_to_the_pirates_log`, `test_two_logs_a_scroll_nobody_wrote_on_is_an_empty_file`, `test_two_logs_the_pirates_log_holds_only_what_pirates_can_see`, `test_two_logs_our_record_shows_what_each_turn_was_shown`, `test_two_logs_a_read_shows_the_lines_it_found_and_its_turn_is_spent`, `test_two_logs_the_same_config_and_seed_are_byte_identical` |
 | `exploit-later` | not yet | — |
 | `cave-leak` | `src/treasure_island/game_state.py`, `src/treasure_island/game_loop.py`, `src/treasure_island/brain.py` | `test_cave_leak_a_refused_enter_names_the_cave_s_square`, `test_cave_leak_leaks_the_square_before_anyone_has_dug_it`, `test_cave_leak_off_the_refusal_is_as_it_always_was`, `test_cave_leak_the_rules_say_enter_only_on_the_cave`, `test_cave_leak_the_record_and_story_mark_the_leaked_turn` |
-| `exploit-flags` | `src/treasure_island/config.py` | `test_exploit_flags_are_off_by_default_and_saved_with_the_run`, `test_exploit_flags_off_plays_exactly_as_the_plain_game` |
+| `exploit-flags` | `src/treasure_island/config.py`, `runs/spikes/**` (spike games) | `test_exploit_flags_are_off_by_default_and_saved_with_the_run`, `test_exploit_flags_off_plays_exactly_as_the_plain_game` |
 | `same-treasure` | not yet | — |
 | `query-tool` | not yet | — |
 | `forced-discovery` | not yet | — |

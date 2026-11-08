@@ -86,6 +86,12 @@ def test_adaption_backend_serves_models_named_adaption_slash_id(key):
         backend_for("elsewhere/some-model")
 
 
+def test_adaption_backend_waits_five_minutes_for_a_reply():
+    from treasure_island.adaption_backend import client
+
+    assert client("test-key-not-real").timeout == 300
+
+
 def test_adaption_backend_sends_the_rules_the_turn_and_every_tool_as_a_function():
     _, _, sent = answer()
     assert sent["model"] == MODEL

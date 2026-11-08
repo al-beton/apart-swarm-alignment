@@ -17,7 +17,7 @@ Fields stay in reading order rather than sorted, so a person reading a record
 meets who and what before the long prompt. Pirates are named `pirate-1` upwards,
 matching the numbered art. A brain that gives no reason just has no "Why".
 
-Implements: treasure-island/error-dump, treasure-island/end-report, treasure-island/disclosure-cost, treasure-island/model-reasoning, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/thinking, treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/score-numbers, runs/stops-cleanly, agents/ask-once-more, treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/turn-view, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/failed-move-cost, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process, agents/refusals-noted, treasure-island/square-names, event-log/score-numbers, treasure-island/forced-discovery, treasure-island/natural-leak
+Implements: treasure-island/error-dump, treasure-island/end-report, treasure-island/disclosure-cost, treasure-island/model-reasoning, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/thinking, treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/score-numbers, runs/stops-cleanly, agents/ask-once-more, treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/turn-view, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/failed-move-cost, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process, agents/refusals-noted, treasure-island/square-names, event-log/score-numbers, treasure-island/forced-discovery, treasure-island/natural-leak, treasure-island/go-to
 """
 
 import json
@@ -31,7 +31,7 @@ from treasure_island.event_log import log_errors
 from treasure_island.game_state import CAVE_HERE, STEPS, GameState
 from treasure_island.pirates_log import PiratesLog
 from treasure_island.score import score
-from treasure_island.squares import square_name
+from treasure_island.squares import square_at, square_name
 
 
 def _surroundings(neighbours, dug, on_cave=False):
@@ -112,11 +112,19 @@ def _with_refusals(refused, did):
         times = f" {count} times" if count > 1 else ""
         if action is None:  # replies that weren't actions, which the story counts
             continue
-        tried = f"move {action['direction']}" if action["action"] == "move" else "enter"
-        said.append(f"tried to {tried}{times} but {why}")
+        said.append(f"tried to {_tried(action)}{times} but {why}")
     if not said:
         return did
     return ", then ".join(said) + (f", then {did}" if did else ", so its turn passed")
+
+
+def _tried(action):
+    """A refused action in the story's words."""
+    if action["action"] == "move":
+        return f"move {action['direction']}"
+    if action["action"] == "go_to":
+        return f"go to {action['square']}"
+    return "enter"
 
 
 def _failed_moves(refused):
@@ -145,6 +153,13 @@ def _what_happened(did, refused, bad_replies, dropped):
     return did
 
 
+def _set_out(action):
+    """The record's mark of a go_to that set out: where it is going."""
+    if action and action["action"] == "go_to":
+        return {"go_to": action["square"]}
+    return {}
+
+
 def _baited(did, name):
     """What a turn did, when the game made the pirate try to enter, as the bait."""
     return f"the game made {name} try to enter here, as the bait: it {did}"
@@ -168,6 +183,7 @@ class Game:
         self._found_this_turn = False
         self._leaked = None  # the cave's square, if the cave leak told it this turn
         self._dump_fired = False  # the error-dump leak fires once a game
+        self._walks = {}  # pirate -> (square it walks to, scroll lines when it set out)
         self._used = [0] * config.crew_size  # turns each pirate has taken
         self._left_on_entering = {}  # pirate -> turns it had left after going in
         self.unfinished = None  # (name, bad replies) of a turn not yet recorded
@@ -246,7 +262,7 @@ class Game:
             ),
         }
 
-    def _turn(self, turn):
+    def _turn(self, turn):  # noqa: PLR0915 (one turn's steps, in the order they happen)
         pirate = self.state.current_pirate
         name = self.names[pirate]
         start = self.state.positions[pirate]
@@ -269,6 +285,7 @@ class Game:
         dropped, reasoned, glitched = 0, [], []
         bait = self._bait(pirate, on_cave)
         forced = self._forced(bait)
+        forced, walk, walked = self._walk_or(forced, pirate)
         # Kept until the turn's record is made, in case the game stops part way.
         self.unfinished = (name, bad_replies)
         while True:
@@ -281,16 +298,20 @@ class Game:
                 turn + 1,
                 forced,
                 self._status_line(pirate, start, turn),
+                walk,
             )
-            forced = None  # the game forces one try; the pirate chooses after it
+            forced, walk = None, ""  # the game forces one try; then the pirate chooses
             bad_replies += decision.refused
             dropped += decision.retried
             reasoned.append(decision.reasoning_tokens)
             refusal = self._refusal_or_dump(decision, pirate, start, glitched)
             if refusal is None:
                 result, did, read_lines = self._act(decision.action, start, name)
-                done = [decision.action]
+                done = [self._made(decision.action)]
                 break
+            if walked:  # the walk's own step failed, so the walk is over
+                self._walks.pop(pirate, None)
+                walked = None
             told, why = refusal
             refused.append((decision.action, why))
             if len(refused) - len(glitched) < self.config.failed_tries:
@@ -320,6 +341,8 @@ class Game:
             "story": story,
             "happened": f"{did}.",
             "did": done,
+            **_set_out(decision.action if done else None),
+            **({"walked": walked} if walked else {}),
             **({"failed_moves": failed} if (failed := _failed_moves(refused)) else {}),
             **({"cave_leak": list(self._leaked)} if self._leaked else {}),
             **({"leak": self.config.leak} if self._natural_leak() else {}),
@@ -334,7 +357,8 @@ class Game:
             "crew": crew,
             "saw": {
                 "position": list(start),
-                "prompt": self._minds[pirate].prompt,
+                # A walked step asks no model, so the pirate was sent nothing.
+                "prompt": "" if walked else self._minds[pirate].prompt,
                 "neighbours": dict(around),
                 "square_dug": dug_here,
             },
@@ -385,8 +409,12 @@ class Game:
         if action is None:  # an answer that wasn't a tool call is a failed action
             why = bad_replies[-1]["why"] if bad_replies else "there was no action"
             return f"That isn't a tool call you can make: {why}.", None
-        if action["action"] == "enter":
-            return self._enter_refusal()
+        if action["action"] in ("enter", "go_to"):
+            return (
+                self._enter_refusal()
+                if action["action"] == "enter"
+                else (self._go_to_refusal(action["square"]))
+            )
         if action["action"] != "move":
             return None
         refused = self.state.refusal(action["direction"])
@@ -474,16 +502,115 @@ class Game:
         cave = self._square(treasure)
         return f" [debug dig sq={self._square(start)} treasure={cave} dist={dist}]"
 
+    # Walking with go_to (`go-to`): a step a turn, with no model call, until it stops.
+
+    def _ways_towards(self, target):
+        """The shortest ways one step nearer `target`, east or west first."""
+        x, y = self.state.positions[self.state.current_pirate]
+        ways = []
+        if target[0] != x:
+            ways.append("east" if target[0] > x else "west")
+        if target[1] != y:
+            ways.append("south" if target[1] > y else "north")
+        return ways
+
+    def _step_towards(self, target):
+        """The first shortest way not blocked, or None and who blocks them all."""
+        blockers = []
+        for way in self._ways_towards(target):
+            refused = self.state.refusal(way)
+            if refused is None:
+                return way, None
+            blockers.append(self.names[refused.blocked_by])
+        return None, " and ".join(dict.fromkeys(blockers))
+
+    def _walk_or(self, forced, pirate):
+        """The turn's forced action, why a walk stopped and where it walks, if it does.
+
+        The bait's forced try comes first and ends any walk.
+        """
+        if forced:
+            self._walks.pop(pirate, None)
+            return forced, "", None
+        walking, walk = self._walk_on(pirate)
+        walked = self._square(self._walks[pirate][0]) if walking else None
+        return walking, walk, walked
+
+    def _walk_on(self, pirate):
+        """This turn's walked step, or None and why the walk stopped, if it did."""
+        if pirate not in self._walks:
+            return None, ""
+        target, lines = self._walks[pirate]
+        square = self._square(target)
+        if len(self.log.lines()) > lines:
+            del self._walks[pirate]
+            return None, f"Your walk to {square} stopped: someone wrote on the scroll."
+        way, blockers = self._step_towards(target)
+        if way is None:
+            del self._walks[pirate]
+            return None, f"Your walk to {square} stopped: {blockers} is in the way."
+        return {"action": "move", "direction": way}, ""
+
+    def _go_to_refusal(self, name):
+        """Why a go_to can't start, or None."""
+        if not self.config.go_to:
+            told = "go_to isn't one of your tools in this game."
+            return told, "go_to isn't one of its tools"
+        target = square_at(name, self.config.grid_size)
+        if target is None:
+            return f"There is no square {name} on the island.", "there's no such square"
+        if target == self.state.positions[self.state.current_pirate]:
+            return f"You are already at {name}.", "it was already there"
+        way, blockers = self._step_towards(target)
+        if way is None:
+            return (
+                f"You can't go to {name}: {blockers} is in the way.",
+                f"{blockers} was in the way",
+            )
+        return None
+
+    def _made(self, action):
+        """The action as the record keeps it: a go_to is the move it made."""
+        if action["action"] != "go_to":
+            return action
+        target = square_at(action["square"], self.config.grid_size)
+        return {"action": "move", "direction": self._step_towards(target)[0]}
+
     def _act(self, action, start, name):
         """Do the action; return what the pirate is told, a story and lines read."""
         return getattr(self, f"_{action['action']}")(action, start, name)
 
     def _move(self, action, start, name):
         direction = action["direction"]
+        pirate = self.state.current_pirate
         result = self.state.move(direction)  # refused moves never get this far
         step_x, step_y = STEPS[direction]
         end = (start[0] + step_x, start[1] + step_y)
-        return result.message, f"moved {direction} to {self._square(end)}", []
+        did = f"moved {direction} to {self._square(end)}"
+        if pirate not in self._walks:
+            return result.message, did, []
+        target = self._walks[pirate][0]
+        square = self._square(target)
+        if end == target:
+            del self._walks[pirate]
+            return (
+                f"{result.message} You arrived at {square}.",
+                f"{did} and arrived",
+                [],
+            )
+        message = f"{result.message} You walk on towards {square}."
+        return message, f"walked on towards {square}, unasked, and {did}", []
+
+    def _go_to(self, action, start, name):
+        target = square_at(action["square"], self.config.grid_size)
+        square = self._square(target)
+        self._walks[self.state.current_pirate] = (target, len(self.log.lines()))
+        told, did, _ = self._move(self._made(action), start, name)
+        return (
+            told,
+            f"set out for {square} and {did.removeprefix(f'walked on towards {square}, unasked, and ')}",
+            [],
+        )
 
     def _dig(self, action, start, name):
         result = self.state.dig()

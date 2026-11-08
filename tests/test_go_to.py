@@ -1,6 +1,7 @@
 # Implements: treasure-island/go-to, treasure-island/status-sheet
 """Walking with go_to, with no model call per step, and the status sheet."""
 
+import dataclasses
 import json
 
 from treasure_island.brain import Decision, PirateSeat, system_prompt
@@ -117,7 +118,8 @@ def test_go_to_is_a_tool_and_a_rule_only_while_it_is_on():
     assert "go_to" not in system_prompt(off)
 
     class Replies:
-        sent = []
+        def __init__(self):
+            self.sent = []
 
         def ask(self, request):
             self.sent.append(request)
@@ -127,7 +129,8 @@ def test_go_to_is_a_tool_and_a_rule_only_while_it_is_on():
 
     for config, offered in ((on, True), (off, False)):
         replies = Replies()
-        brain = LLMPirate("pirate-1", config.pirates[0], replies, config)
+        pirate = dataclasses.replace(config.pirates[0], model="fake/model")
+        brain = LLMPirate("pirate-1", pirate, replies, config)
         Game(config, [brain] + [Script()] * (config.crew_size - 1)).records().__next__()
         names = [tool["name"] for tool in replies.sent[-1]["tools"]]
         assert ("go_to" in names) is offered

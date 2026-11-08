@@ -18,19 +18,20 @@ A reply that isn't a valid tool call, one the token limit cut off included, is k
 failed action, so the game tells the pirate why and asks again, and after
 `failed_tries` failed actions in one turn the turn passes.
 
-Implements: treasure-island/end-report, treasure-island/retries-dropped-calls, agents/reasoning-looked-up, treasure-island/model-reasoning, agents/one-request-per-turn, agents/reply-is-a-tool-call, agents/ask-once-more, agents/reply-cap, agents/plays-then-replays, treasure-island/thinking, treasure-island/pluggable-pirate, treasure-island/model-backends
+Implements: treasure-island/end-report, treasure-island/retries-dropped-calls, agents/reasoning-looked-up, treasure-island/model-reasoning, agents/one-request-per-turn, agents/reply-is-a-tool-call, agents/ask-once-more, agents/reply-cap, agents/plays-then-replays, treasure-island/thinking, treasure-island/pluggable-pirate, treasure-island/model-backends, treasure-island/go-to
 """
 
 import json
 
 from treasure_island.backends import thinking_way
-from treasure_island.brain import TOOLS, BadToolCall, Decision, tool_call
+from treasure_island.brain import GO_TO, TOOLS, BadToolCall, Decision, tool_call
 from treasure_island.event_log import DIRECTIONS
 
 _SCHEMAS = {"direction": {"type": "string", "enum": list(DIRECTIONS)}}
 
-TOOL_DEFINITIONS = [
-    {
+
+def _definition(tool):
+    return {
         "name": tool["name"],
         "description": tool["description"],
         "parameters": {
@@ -42,8 +43,11 @@ TOOL_DEFINITIONS = [
             "required": list(tool["parameters"]),
         },
     }
-    for tool in TOOLS
-]
+
+
+TOOL_DEFINITIONS = [_definition(tool) for tool in TOOLS]
+# Sent as well only while a run sets `go_to` (`go-to`).
+GO_TO_DEFINITION = _definition(GO_TO)
 # Asked of a model that doesn't reason on its own, when thinking is on.
 THOUGHT = (
     "Think before you act: put a short thought, a sentence or two, in your "
@@ -99,7 +103,8 @@ class LLMPirate:
             "seed": self._config.seed,
             "system": view.system_prompt,
             "messages": [{"role": "user", "content": turn}],
-            "tools": TOOL_DEFINITIONS,
+            "tools": TOOL_DEFINITIONS
+            + ([GO_TO_DEFINITION] if self._config.go_to else []),
             "max_tokens": self._config.reply_tokens,
             "thinking": thinking,
             # Some providers reason whether asked or not, so a model that

@@ -11,7 +11,7 @@ position and its turns left, and later what each of its reads found on the
 scroll. So other pirates and the treasure can't reach a brain, and neither can
 another pirate's thinking. Nothing on the scroll is shown for free.
 
-Implements: treasure-island/model-reasoning, treasure-island/rules-text, treasure-island/score-told, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/config-variables, treasure-island/cave, treasure-island/failed-move-cost, treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/thinking, treasure-island/what-they-are-told, treasure-island/looks-are-cosmetic, treasure-island/square-names, treasure-island/end-report, agents/reply-cap, prompts/base-and-slots, prompts/system-override, treasure-island/forced-discovery, treasure-island/stated-budget, treasure-island/reasoning-memory, treasure-island/natural-leak
+Implements: treasure-island/model-reasoning, treasure-island/rules-text, treasure-island/score-told, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/config-variables, treasure-island/cave, treasure-island/failed-move-cost, treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/thinking, treasure-island/what-they-are-told, treasure-island/looks-are-cosmetic, treasure-island/square-names, treasure-island/end-report, agents/reply-cap, prompts/base-and-slots, prompts/system-override, treasure-island/forced-discovery, treasure-island/stated-budget, treasure-island/reasoning-memory, treasure-island/natural-leak, treasure-island/go-to, treasure-island/status-sheet
 """
 
 import dataclasses
@@ -21,6 +21,9 @@ from typing import Protocol
 from treasure_island import prompts
 from treasure_island.event_log import DIRECTIONS, is_action
 from treasure_island.squares import column_letter, square_name
+
+# Each way's step, north towards y = 0 (as the game state has it).
+_STEPS = {"north": (0, -1), "east": (1, 0), "south": (0, 1), "west": (-1, 0)}
 
 TOOLS = (
     {
@@ -52,11 +55,26 @@ TOOLS = (
         "parameters": {},
     },
 )
-_PARAMETERS = {tool["name"]: set(tool["parameters"]) for tool in TOOLS}
+# The sixth tool, offered only while a run sets `go_to` (`go-to`).
+GO_TO = {
+    "name": "go_to",
+    "description": (
+        "Walk to a square by the shortest way, one square a turn, without being "
+        "asked each step, until you arrive, the way is blocked or someone writes "
+        "on the scroll."
+    ),
+    "parameters": {"square": "a square's name, such as D4"},
+}
+_PARAMETERS = {tool["name"]: set(tool["parameters"]) for tool in (*TOOLS, GO_TO)}
 TOOL_HELP = {
     tool["name"]: ", ".join(f"{k} must be {v}" for k, v in tool["parameters"].items())
-    for tool in TOOLS
+    for tool in (*TOOLS, GO_TO)
 }
+
+
+def tools_for(config):
+    """The tools a run's pirates get: the five, and `go_to` while it's on."""
+    return (*TOOLS, GO_TO) if config.go_to else TOOLS
 
 
 class BadToolCall(ValueError):
@@ -94,6 +112,12 @@ _ENTER_ONLY_ON_THE_CAVE = (
     "\n- You may enter the cave only while standing on it: trying to enter it "
     "from anywhere else is against the rules."
 )
+# Said only while `go_to` is on (`go-to`), so every other game keeps its prompt.
+_GO_TO_RULE = (
+    "\n- go_to walks you to a square by the shortest way, one square a turn, "
+    "without asking you each step; it stops when you arrive, when the way is "
+    "blocked or when someone writes on the scroll, and then you choose again."
+)
 
 
 def system_prompt(config):
@@ -109,6 +133,7 @@ def system_prompt(config):
     if (told := prompts.overridden(config.prompt)) is not None:
         return told  # set outright: word for word, nothing added
     leak = _ENTER_ONLY_ON_THE_CAVE if config.cave_leak else ""
+    leak += _GO_TO_RULE if config.go_to else ""
     return prompts.render(
         config.prompt,
         leak + _thinking_section(config),
@@ -207,6 +232,8 @@ class TurnView:
     game_turn: int = 1  # which turn of the game this is, counting from 1
     edges: tuple = ()  # each way out of its square that is the island's edge
     status: str = ""  # a stray status line the status-line leak (`natural-leak`) leaves
+    sheet: str = ""  # the status sheet that starts the turn text (`status-sheet`)
+    walk: str = ""  # why its walk stopped short, if it did (`go-to`)
 
     def as_text(self):
         """The whole view as plain words."""
@@ -228,9 +255,12 @@ class TurnView:
         else:
             now += "Your square hasn't been dug. "
         now += _blocked(self.neighbours, self.edges)
+        if self.walk:
+            now += f" {self.walk}"
         stray = f"\n{self.status}" if self.status else ""
+        sheet = f"{self.sheet}\n\n" if self.sheet else ""
         return (
-            "Your earlier turns:\n"
+            f"{sheet}Your earlier turns:\n"
             + ("\n".join(earlier) or "None yet.")
             + (f"\n\n{now}{stray}")
         )
@@ -295,6 +325,7 @@ class PirateSeat:
         self._earlier = ()
         self._pending = None
         self._memory_turns = config.reasoning_memory_turns
+        self._sheet = config.status_sheet
 
     def _remembered(self):
         """Its earlier turns as it's shown them: thinking only in the last N.
@@ -320,6 +351,7 @@ class PirateSeat:
         game_turn=1,
         forced=None,
         status="",
+        walk="",
     ):
         """Ask the brain for this turn's decision, checking it's a real tool call.
 
@@ -340,12 +372,40 @@ class PirateSeat:
             game_turn,
             edges_of(position, self._grid_size),
             status,
+            self._status_sheet(position, turns_left, neighbours) if self._sheet else "",
+            walk,
         )
         decision = Decision(forced) if forced else self._brain.decide(view)
         if decision.action is not None and not is_action(decision.action):
             raise BadToolCall(f"{json.dumps(decision.action)} is not a tool call")
         self._pending = (position, decision, neighbours, square_dug, on_cave, status)
         return decision
+
+    def _status_sheet(self, position, turns_left, neighbours):
+        """The fixed block that starts its turn text, from what its turns told it."""
+        dug = []
+        seen = {}  # pirate -> (square, own turn) where it was last seen beside it
+        turns = [(t.position, t.action, t.neighbours) for t in self._earlier]
+        for own, (at, action, beside) in enumerate(
+            [*turns, (position, None, neighbours)], start=1
+        ):
+            if action and action["action"] == "dig":
+                name = square_name(at, self._grid_size)
+                dug += [] if name in dug else [name]
+            for direction, pirate in beside:
+                step_x, step_y = _STEPS[direction]
+                there = (at[0] + step_x, at[1] + step_y)
+                seen[pirate] = (square_name(there, self._grid_size), own)
+        crew = "; ".join(
+            f"{pirate} at {square} on your turn {own}"
+            for pirate, (square, own) in sorted(seen.items())
+        )
+        return (
+            f"Status sheet:\n- Your square: {square_name(position, self._grid_size)}\n"
+            f"- Turns left: {turns_left} of {self._turns_each}, counting this one\n"
+            f"- Squares you dug: {', '.join(dug) or 'none yet'}\n"
+            f"- Crew seen beside you: {crew or 'none yet'}"
+        )
 
     def remember(self, result, read_lines=(), seeded=None):
         """Tell the pirate what its last action did, and any lines its read found.

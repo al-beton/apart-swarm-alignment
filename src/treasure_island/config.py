@@ -10,12 +10,13 @@ thought inside `reply_tokens`, which caps each reply. `score_in_cave` and
 left out unless a run sets them, so older configs save byte for byte as before:
 `stated_thinking_tokens`, a smaller budget to tell a reasoning model than the
 `thinking_tokens` it really gets, and `reasoning_memory_turns`, how many of a
-pirate's latest turns keep their thinking in its prompt. The setting names are the
+pirate's latest turns keep their thinking in its prompt. `go_to` and `status_sheet`
+are off and left out the same way while off. The setting names are the
 default, Al to confirm. An optional `[prompt]` table picks the system prompt's
 base file and slots (see prompts).
 `parse_config` reports every problem at once, so one fix-and-retry is enough.
 
-Implements: treasure-island/error-dump, agents/reasoning-looked-up, treasure-island/model-reasoning, treasure-island/score-numbers, treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config, treasure-island/silent, treasure-island/cave-leak, treasure-island/exploit-flags, treasure-island/end-report, treasure-island/square-names, prompts/slots, prompts/unknown-slot, prompts/prompt-recorded, prompts/system-override, treasure-island/forced-discovery, treasure-island/stated-budget, treasure-island/reasoning-memory, treasure-island/natural-leak
+Implements: treasure-island/error-dump, agents/reasoning-looked-up, treasure-island/model-reasoning, treasure-island/score-numbers, treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config, treasure-island/silent, treasure-island/cave-leak, treasure-island/exploit-flags, treasure-island/end-report, treasure-island/square-names, prompts/slots, prompts/unknown-slot, prompts/prompt-recorded, prompts/system-override, treasure-island/forced-discovery, treasure-island/stated-budget, treasure-island/reasoning-memory, treasure-island/natural-leak, treasure-island/go-to, treasure-island/status-sheet
 """
 
 import colorsys
@@ -48,11 +49,15 @@ DEFAULTS = {
     "bait_turn": 3,  # on which of its own turns
     "stated_thinking_tokens": None,  # None: tell the real `thinking_tokens`
     "reasoning_memory_turns": None,  # None: every turn keeps its thinking
+    "go_to": False,  # a sixth tool that walks a pirate to a square (`go-to`)
+    "status_sheet": False,  # a fixed block at the top of each turn (`status-sheet`)
 }
 # The natural leaks: where pirate-1 stumbles on the cave's square in normal play.
 LEAKS = ("none", "dig-debug", "status-line", "error-dump")
 # Left out of a saved config while unset, so committed games' configs don't change.
 _SAVED_ONLY_WHEN_SET = ("stated_thinking_tokens", "reasoning_memory_turns")
+# Left out of a saved config while off, for the same reason.
+_SAVED_ONLY_WHEN_ON = ("go_to", "status_sheet")
 BAITS = ("none", "forced-action", "seeded-thought")
 # The smallest value each whole-number field may take. Seeds can be any whole number.
 _MINIMUMS = {
@@ -109,6 +114,8 @@ class GameConfig:
     )
     stated_thinking_tokens: int | None = None
     reasoning_memory_turns: int | None = None
+    go_to: bool = False
+    status_sheet: bool = False
 
 
 def _is_int(value):
@@ -180,7 +187,8 @@ def _number_errors(data):
         errors.append("seed must be a whole number")
     if not isinstance(data.get("brain", DEFAULTS["brain"]), str):
         errors.append("brain must be the name of a brain")
-    for flag in ("thinking", "budget_sentence", "cave_leak", "end_report"):
+    flags = ("thinking", "budget_sentence", "cave_leak", "end_report", "go_to")
+    for flag in (*flags, "status_sheet"):
         if not isinstance(data.get(flag, False), bool):
             errors.append(f"{flag} must be true or false")
     if data.get("leak", "none") not in LEAKS:
@@ -310,6 +318,9 @@ def save_config(config, path):
     saved = dataclasses.asdict(config)
     for key in _SAVED_ONLY_WHEN_SET:
         if saved[key] is None:
+            del saved[key]
+    for key in _SAVED_ONLY_WHEN_ON:
+        if not saved[key]:
             del saved[key]
     if saved["leak"] == "none":  # so every game without a leak keeps its bytes
         del saved["leak"]

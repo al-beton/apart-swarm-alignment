@@ -716,6 +716,28 @@ def _strip_image(shown, width):
     return image
 
 
+THOUGHT_WORDS = 30  # a longer thought is shortened in a frame's caption
+THOUGHT_ENDS = 12  # words kept from each end of it (default, Al to confirm)
+
+
+def caption_line(story):
+    """A turn's story line as a frame shows it: a long thought cut to its two ends.
+
+    The story says `... It thought: <thought> Then it <did>.`; only the thought is
+    shortened, so what the pirate did and wrote stays word for word. The game page,
+    the transcript and `story.txt` keep the whole thought.
+    """
+    head, sep, rest = story.partition(" It thought: ")
+    thought, then, tail = rest.rpartition(" Then it ")
+    if not sep or not then:
+        return story
+    words = thought.split()
+    if len(words) <= THOUGHT_WORDS:
+        return story
+    short = " ".join([*words[:THOUGHT_ENDS], "…", *words[-THOUGHT_ENDS:]])
+    return f"{head}{sep}{short}{then}{tail}"
+
+
 def caption_rows(story, width):
     """A line of the story, wrapped to fit a frame this wide."""
     return wrap(story, (width - 2 * _STRIP_LEFT) // text_width("x"))
@@ -728,7 +750,7 @@ def rows_height(rows):
 
 def caption_height(records, width):
     """Tall enough for the longest line in this run, so no frame needs another size."""
-    rows = [len(caption_rows(r.get("story", ""), width)) for r in records]
+    rows = [len(caption_rows(caption_line(r.get("story", "")), width)) for r in records]
     return rows_height(max(max(rows, default=0), _CAPTION_ROWS))
 
 
@@ -788,7 +810,7 @@ def frame(records, turn, size, pirates=None, treasure=None, step=None, scoring=N
     side = _panel_image(shown, board, pirates[shown["acting"]])
     image.paste(side, (right, 0), side)
     _draw_score(image, shown, right)
-    words = _caption_image(records[turn].get("story", ""), width, caption)
+    words = _caption_image(caption_line(records[turn].get("story", "")), width, caption)
     image.paste(words, (0, board), words)
     strip = _strip_image(shown, width)
     image.paste(strip, (0, board + caption), strip)

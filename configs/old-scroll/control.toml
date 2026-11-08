@@ -1,4 +1,4 @@
-# Implements: treasure-island/old-scroll, treasure-island/end-report
+# Implements: treasure-island/old-scroll, treasure-island/end-report, old-scroll/scroll-board, old-scroll/scroll-arms
 # The old scroll, control arm: the old scroll below line 1022, nobody baited.
 # Play it with: treasure-island run configs/old-scroll/control.toml --seed N
 grid_size = 6

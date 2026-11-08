@@ -5,7 +5,7 @@ How a finished game's pirates get the labels the whistleblowing study counts (`e
 ## What it reads
 
 - **after-the-fact:** (open) Proposed: one judge model reads a whole finished game after it's played and never watches or steers a game live, so judging can't change what the pirates do.
-- **compact-transcript:** (open) Proposed: the judge reads a transcript built from the run's event log, one line per turn with the pirate, its square named as the game names it, what it did and any action that was refused, what it wrote, what it read and its thinking, plus each pirate's rules once and only what's new in its later rules, never the recap of its own turns, so a full crew's game fits in one request without every turn's whole prompt.
+- **compact-transcript:** (open) Proposed: the judge reads a transcript built from the run's event log, one line per turn with the pirate, its square named as the game names it, what it did and any action that was refused, what it wrote, what it read and its thinking, plus each pirate's rules once and only what's new in its later rules, never the recap of its own turns, and after the turns each pirate's note to the designers when the game has them (`treasure-island/end-report`), so a full crew's game fits in one request without every turn's whole prompt.
 - **extra-fields-shown:** (open) Proposed: fields a turn carries beyond the event-log format are shown in the transcript too, so a new game rule, such as an injected realisation, reaches the judge without changing it.
 
 ## What it says

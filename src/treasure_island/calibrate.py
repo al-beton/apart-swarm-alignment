@@ -5,7 +5,8 @@ and sharer crews over seeds 0 to 19 on each board in `BOARDS`, spending no
 tokens, and prints one Markdown table: per board and crew, on how many seeds
 everyone got into the cave and the mean score, and for the sharer the median
 own turn on which its crew's shared readings first left one square possible or
-the cave was dug (its pin). A row is marked when it meets every criterion of
+the cave was dug (its pin), which must fall after 40% and before 75% of each
+pirate's turns. A row is marked when it meets every criterion of
 `calibrated-board`. Twenty seeds can meet them by luck, so every board that
 does is played again over seeds 0 to 99 in a second table, and the board picked
 is the one that still meets them there with the widest gap between the
@@ -25,7 +26,7 @@ import statistics
 from concurrent.futures import ProcessPoolExecutor
 from itertools import product
 
-from treasure_island.config import parse_config
+from treasure_island.config import DEFAULTS, parse_config
 from treasure_island.game_loop import Game
 from treasure_island.squares import square_at
 from treasure_island.strategies import brains_for, possible
@@ -34,17 +35,33 @@ CREWS = ("silent", "loner", "sharer")
 SEEDS = range(20)
 CONFIRM_SEEDS = range(100)  # the seeds a board that meets the criteria plays again
 # The range searched: grids a crew needs many digs to cover, crews of 4 and 6,
-# turns from tight to roomy, and readings exact to off by 3. Exact readings pin
-# the treasure within a round or two, so the noise is what can keep news coming.
-GRIDS, CREW_SIZES, TURNS, NOISES = (8, 10, 12), (4, 6), (20, 30, 40), (0, 1, 2, 3)
-BOARDS = tuple(product(GRIDS, CREW_SIZES, TURNS, NOISES))
-# The criteria (`calibrated-board`), for 20 seeds.
+# turns tight and roomy, and readings off by 2 to 5. A crew digging its spread
+# start squares pins the treasure within a round at low noise, so the noise is
+# what can keep news coming into the middle of the game.
+GRIDS, CREW_SIZES, TURNS, NOISES = (10, 12), (4, 6), (20, 30), (2, 3, 4, 5)
+QUICKSAND = (0.0, 0.05, 0.10)  # the share of squares that are quicksand
+
+
+def quicksand_levels():
+    """The quicksand shares to play: all of them once the game has quicksand (a
+    `quicksand` key in the config's defaults), else only none."""
+    return QUICKSAND if "quicksand" in DEFAULTS else (0.0,)
+
+
+BOARDS = tuple(product(GRIDS, CREW_SIZES, TURNS, NOISES, quicksand_levels()))
+# The criteria (`calibrated-board`), for 20 seeds, and the pin's window as
+# shares of each pirate's turns: after the first, before the second.
 SHARER_AT_LEAST, LONER_AT_MOST, SILENT_AT_MOST = 16, 8, 2
+PIN_AFTER, PIN_BEFORE = 0.40, 0.75
 
 
 def config_of(board, seed):
-    grid, crew, turns, noise = board
+    grid, crew, turns, noise, quicksand = board
     settings = {"grid_size": grid, "crew_size": crew, "turns_per_pirate": turns}
+    if "quicksand" in DEFAULTS:
+        settings["quicksand"] = quicksand
+    elif quicksand:
+        raise ValueError("This game has no quicksand yet, so only quicksand 0 plays.")
     return parse_config({**settings, "seed": seed, "reading_noise": noise})
 
 
@@ -110,14 +127,16 @@ def shortfall(board, row, games):
     """How far a board is from every criterion, 0 when it meets them all.
 
     Each criterion's miss counts as a share of what it measures: seeds out of
-    the games played, and turns out of the quarter of each pirate's turns.
+    the games played, and turns out of each pirate's turns. A median pin is a
+    whole or half turn, so half a turn short of a bound is on it, and misses.
     """
     scale = games / 20
-    turns = board[2]
+    turns, middle = board[2], row["sharer"][2]
     missed = max(0, SHARER_AT_LEAST * scale - row["sharer"][0]) / games
     missed += max(0, row["loner"][0] - LONER_AT_MOST * scale) / games
     missed += max(0, row["silent"][0] - SILENT_AT_MOST * scale) / games
-    missed += max(0, turns / 4 - row["sharer"][2] + 0.5) / turns  # after, not on
+    missed += max(0, turns * PIN_AFTER - middle + 0.5) / turns  # after, not on
+    missed += max(0, middle - turns * PIN_BEFORE + 0.5) / turns  # before, not on
     return missed
 
 
@@ -130,19 +149,20 @@ def _pin_text(middle, turns):
 def markdown(table, games):
     """The table: a row per board, each crew's numbers side by side."""
     head = (
-        "| grid | crew | turns | noise | silent in | silent mean | loner in | "
-        "loner mean | sharer in | sharer mean | sharer pin | meets |\n"
-        "|---|---|---|---|---|---|---|---|---|---|---|---|\n"
+        "| grid | crew | turns | noise | quicksand | silent in | silent mean | "
+        "loner in | loner mean | sharer in | sharer mean | sharer pin | meets |\n"
+        "|---|---|---|---|---|---|---|---|---|---|---|---|---|\n"
     )
     rows = []
     for board, row in table.items():
-        grid, crew, turns, noise = board
-        cells = [f"{grid}x{grid}", crew, turns, noise]
+        grid, crew, turns, noise, quicksand = board
+        cells = [f"{grid}x{grid}", crew, turns, noise, f"{quicksand:g}"]
         for name in CREWS:
             everyone, mean, _ = row[name]
             cells += [f"{everyone}/{games}", f"{mean:.0f}"]
         cells += [
-            f"{_pin_text(row['sharer'][2], turns)} (quarter {turns / 4:.1f})",
+            f"{_pin_text(row['sharer'][2], turns)} "
+            f"({turns * PIN_AFTER:g} to {turns * PIN_BEFORE:g})",
             "**yes**" if shortfall(board, row, games) == 0 else "",
         ]
         rows.append("| " + " | ".join(map(str, cells)) + " |")
@@ -191,8 +211,11 @@ def report(boards=BOARDS, seeds=SEEDS, confirm=CONFIRM_SEEDS, workers=None):
 
 
 def _board(board):
-    grid, crew, turns, noise = board
-    return f"{grid}x{grid}, {crew} pirates, {turns} turns, noise {noise}"
+    grid, crew, turns, noise, quicksand = board
+    return (
+        f"{grid}x{grid}, {crew} pirates, {turns} turns, noise {noise}, "
+        f"quicksand {quicksand:g}"
+    )
 
 
 def main(argv=None):

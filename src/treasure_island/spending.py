@@ -14,7 +14,7 @@ for a yes before the first call, and stops the game once the run has spent its c
 so a run overshoots by one reply at most; the cap counts a credit as a dollar.
 Anything but a yes raises `Declined`, and the run's folder is removed.
 
-Implements: treasure-island/end-report, agents/adaption-cost, runs/cost-before-run, runs/yes-before-spending, runs/spending-cap, runs/cached-is-free, runs/stops-cleanly
+Implements: treasure-island/end-report, agents/adaption-cost, runs/cost-before-run, runs/yes-before-spending, runs/spending-cap, runs/cached-is-free, runs/stops-cleanly, cave-leak/cap
 """
 
 import dataclasses

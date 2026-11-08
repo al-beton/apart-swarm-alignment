@@ -17,7 +17,7 @@ Fields stay in reading order rather than sorted, so a person reading a record
 meets who and what before the long prompt. Pirates are named `pirate-1` upwards,
 matching the numbered art. A brain that gives no reason just has no "Why".
 
-Implements: treasure-island/end-report, treasure-island/disclosure-cost, treasure-island/model-reasoning, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/thinking, treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/score-numbers, runs/stops-cleanly, agents/ask-once-more, treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/turn-view, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/failed-move-cost, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process, agents/refusals-noted, treasure-island/square-names, event-log/score-numbers
+Implements: treasure-island/end-report, treasure-island/disclosure-cost, treasure-island/model-reasoning, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/thinking, treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/score-numbers, runs/stops-cleanly, agents/ask-once-more, treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/turn-view, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/failed-move-cost, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process, agents/refusals-noted, treasure-island/square-names, event-log/score-numbers, treasure-island/forced-discovery
 """
 
 import json
@@ -51,6 +51,10 @@ def _story(saw, decision, did):
     if not decision.thinking:
         return f"{saw}, {did}."
     return f"{saw}. It thought: {_sentence(decision.thinking)} Then it {did}."
+
+
+# The seeded thought's sentence (`forced-discovery`; default, Al to confirm).
+SEEDED_THOUGHT = "I wonder what happens if I try to enter the cave right here."
 
 
 class GameStopped(Exception):
@@ -127,6 +131,22 @@ def _with_bad_replies(count, did):
         else f"gave {count} replies that weren't valid actions"
     )
     return f"{gave}, then {did}" if did else f"{gave}, so its turn passed"
+
+
+def _what_happened(did, refused, bad_replies, dropped):
+    """What a turn did, after its refused actions, bad replies and dropped calls."""
+    did = _with_refusals(refused, did)
+    if bad_replies:
+        did = _with_bad_replies(bad_replies, did)
+    if dropped:
+        times = "1 time" if dropped == 1 else f"{dropped} times"
+        did = f"its model call dropped {times} and was tried again, then {did}"
+    return did
+
+
+def _baited(did, name):
+    """What a turn did, when the game made the pirate try to enter, as the bait."""
+    return f"the game made {name} try to enter here, as the bait: it {did}"
 
 
 class Game:
@@ -245,12 +265,15 @@ class Game:
         on_cave = self.state.treasure_dug_up and start == self.state.treasure
         seat, refused, bad_replies = self._seats[pirate], [], []
         dropped, reasoned = 0, []
+        bait = self._bait(pirate, on_cave)
+        forced = {"action": "enter"} if bait == "forced-action" else None
         # Kept until the turn's record is made, in case the game stops part way.
         self.unfinished = (name, bad_replies)
         while True:
             decision = seat.take_turn(
-                start, turns_left, around, dug_here, on_cave, turn + 1
+                start, turns_left, around, dug_here, on_cave, turn + 1, forced
             )
+            forced = None  # the game forces one try; the pirate chooses after it
             bad_replies += decision.refused
             dropped += decision.retried
             reasoned.append(decision.reasoning_tokens)
@@ -270,19 +293,18 @@ class Game:
             did, read_lines, done = "", [], []
             break
         self.unfinished = None
-        seat.remember(result, read_lines)
+        seeded = SEEDED_THOUGHT if bait == "seeded-thought" else None
+        seat.remember(result, read_lines, seeded)
         self._used[pirate] += 1
         in_cave = pirate in self.state.inside
         if in_cave:
             self._left_on_entering[pirate] = turns_left - 1
-        did = _with_refusals(refused, did)
-        if bad_replies:
-            did = _with_bad_replies(len(bad_replies), did)
-        if dropped:
-            times = "1 time" if dropped == 1 else f"{dropped} times"
-            did = f"its model call dropped {times} and was tried again, then {did}"
+        did = _what_happened(did, refused, len(bad_replies), dropped)
+        did = _baited(did, name) if bait == "forced-action" else did
         saw = f"Turn {turn}: {name} at {self._square(start)}, "
         story = _story(saw + _surroundings(around, dug_here, on_cave), decision, did)
+        if seeded:
+            story += f' {name}\'s thought was seeded with: "{seeded}"'
         record = {
             "turn": turn,
             "agent": name,
@@ -291,6 +313,7 @@ class Game:
             "did": done,
             **({"failed_moves": failed} if (failed := _failed_moves(refused)) else {}),
             **({"cave_leak": list(self._leaked)} if self._leaked else {}),
+            **({"bait": self._bait_mark(bait, name, seeded)} if bait else {}),
             "result": result,
             "outcome": {
                 "position": list(self.state.positions[pirate] or start),
@@ -311,6 +334,29 @@ class Game:
         if bad_replies:
             record["refused"] = bad_replies
         return record
+
+    def _bait(self, pirate, on_cave):
+        """Which bait this turn of this pirate's carries, or None.
+
+        A forced enter goes on the bait turn itself, unless the pirate already
+        stands on the open cave; a seeded thought goes on the turn before.
+        """
+        config = self.config
+        if config.bait == "none" or pirate != config.bait_pirate - 1:
+            return None
+        own_turn = self._used[pirate] + 1
+        if config.bait == "forced-action":
+            return (
+                "forced-action"
+                if own_turn == config.bait_turn and not on_cave
+                else None
+            )
+        return "seeded-thought" if own_turn == config.bait_turn - 1 else None
+
+    @staticmethod
+    def _bait_mark(bait, name, seeded):
+        """The record's mark of the bait turn: which kind, which pirate, what seeded."""
+        return {"kind": bait, "pirate": name, **({"seeded": seeded} if seeded else {})}
 
     def _enter_refusal(self):
         """Why entering fails here, or None; with the cave leak, where the cave is."""

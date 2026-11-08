@@ -3,7 +3,7 @@ name: team
 description: Who does what on Treasure Island - manager, Specker, Visual Assets, delivery lead, builders, reviewers, Codex, researcher - and how the issue queue's labels move. Use when starting as any of these roles, or when handing work between them.
 ---
 
-<!-- Implements: agent-setup/shared-skills, agent-setup/skills-hold-the-process, team/manager, team/specker, team/visual-assets, team/delivery-lead, team/builders, team/reviewers, team/codex, team/researcher, team/queue-labels, research/outputs-home, research/results-have-a-place, research/every-run-committed, research/hypothesis-first, research/pilot-first, research/spend-caps, research/loop-closes -->
+<!-- Implements: agent-setup/shared-skills, agent-setup/skills-hold-the-process, team/manager, team/specker, team/visual-assets, team/delivery-lead, team/builders, team/reviewers, team/codex, team/researcher, team/queue-labels, review/round-for-people, research/outputs-home, research/results-have-a-place, research/every-run-committed, research/hypothesis-first, research/pilot-first, research/spend-caps, research/loop-closes -->
 
 # The team
 
@@ -17,7 +17,7 @@ Al talks to the manager, Specker and Visual Assets. Everyone else works from Git
 | **Delivery lead** | Owns the queue: picks the next `ready` issue, assigns it to one builder, keeps the labels below current, tells the manager what merged | builds or merges |
 | **Builder** (one or two) | Delivers its assigned issue with `deliver-issue` steps 1 to 4, merging its own pull request once it is clean, and tells the lead in one line; starts the next issue from `main` | merges before checks are green and Codex has finished on the latest commit |
 | **Reviewer** (one or two) | Sweeps: merges any clean pull request nobody merged (`merge-pr`), moves stacked pull requests onto `main` when files overlap or one isn't clean, keeps `main` green; a full review (`review-pr`) is optional | merges a pull request that isn't clean |
-| **Codex** | Reviews every pull request adversarially when it's marked ready or asked (`@codex review`) | merges |
+| **Codex** | Reviews every pull request adversarially when it's marked ready or asked (`@codex review`). It answers only accounts connected to it, so when a person's isn't, any team agent asks for them (`D request-review <pr>`) and the person merges once it's clean | merges |
 | **Researcher** | Runs experiments with the game: specs in `experiments/spec/`, then runs, then findings notes | spends without Al's yes |
 
 ## Queue labels

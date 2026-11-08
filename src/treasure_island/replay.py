@@ -39,6 +39,7 @@ CHECKED = (
     "runs/reference-sharer",
     "runs/reference-silent",
     "runs/silent/7",
+    "runs/v2/0",
 )
 PLACES = ("examples", "runs", "results")  # where committed games live
 # What the rules decide in a turn's record; the rest is wording.

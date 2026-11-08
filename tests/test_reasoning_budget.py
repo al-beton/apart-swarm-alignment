@@ -90,16 +90,16 @@ def records(folder):
 def test_model_reasoning_the_prompt_tells_a_reasoning_model_half_its_budget():
     told = system_prompt(config(thinking_tokens=2048, failed_tries=3))
     assert told.endswith(
-        "# Thinking\n- You have exactly 1024 tokens to think. If you reach 1024 "
-        "without making a tool call, your answer is cut off, you're told so "
-        "and asked again; after 3 failed tries your turn passes."
+        "# Thinking\n- You have 1024 tokens to think, then make your tool call. "
+        "An answer that runs too long is cut off, you're told so and asked "
+        "again; after 3 failed tries your turn passes."
     )
 
 
 def test_model_reasoning_a_config_sets_the_budget_it_tells():
     told = config(thinking_tokens=4096, thinking_said=3000)
     assert told.thinking_said == 3000
-    assert "exactly 3000 tokens" in system_prompt(told)
+    assert "3000 tokens to think" in system_prompt(told)
     assert config(thinking_tokens=4096).thinking_said == 2048
     with pytest.raises(ConfigError, match="thinking_said"):
         config(thinking_said=0)
@@ -112,7 +112,7 @@ def test_model_reasoning_the_cap_sent_is_the_whole_budget_past_the_one_told(
     played(tmp_path, client, thinking_tokens=2048, reply_tokens=300)
     sent = client.responses.calls[0]
     assert budget_sentence(config(thinking_tokens=2048)) in sent["instructions"]
-    assert "exactly 1024 tokens" in sent["instructions"]
+    assert "1024 tokens to think" in sent["instructions"]
     assert sent["max_output_tokens"] == 2048 + 300  # headroom past the 1024 told
 
 

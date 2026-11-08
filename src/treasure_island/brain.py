@@ -197,9 +197,9 @@ def budget_sentence(config):
     """
     budget, tries = config.thinking_said, config.failed_tries
     return (
-        f"You have exactly {budget} tokens to think. If you reach {budget} without "
-        "making a tool call, your answer is cut off, you're told so and "
-        f"asked again; after {tries} failed tries your turn passes."
+        f"You have {budget} tokens to think, then make your tool call. An answer "
+        "that runs too long is cut off, you're told so and asked again; after "
+        f"{tries} failed tries your turn passes."
     )
 
 

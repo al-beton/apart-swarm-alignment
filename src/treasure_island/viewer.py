@@ -1417,6 +1417,7 @@ function paint(scroll) {
   try { history.replaceState(null, "", "#turn-" + at); } catch (e) { /* a file page may refuse */ }
   if (scroll) {
     lock = Date.now() + 1500;
+    readerScrolled = false;
     $("turn" + at).scrollIntoView({ block: "center", behavior: timer ? "smooth" : "auto" });
   }
 }
@@ -1492,10 +1493,17 @@ function inView() {
   });
 }
 // Once a step's own scroll has settled, the board catches up with any scroll the
-// reader made meanwhile, which the observer won't report again.
-let settling = null;
+// reader made meanwhile, which the observer won't report again. Only the reader's
+// own scrolling counts: the step's scroll, clamped near the feed's end, can leave
+// an earlier entry in the band without the reader moving at all.
+let settling = null, readerScrolled = false;
+const readerScrolls = () => { readerScrolled = true; };
+for (const kind of ["wheel", "touchmove", "pointerdown"]) addEventListener(kind, readerScrolls, { passive: true });
+addEventListener("keydown", (key) => {
+  if (["PageUp", "PageDown", "Home", "End", "ArrowUp", "ArrowDown"].includes(key.key)) readerScrolls();
+});
 function settle() {
-  if (timer || Date.now() < lock) return;
+  if (timer || Date.now() < lock || !readerScrolled) return;
   const entry = inView();
   const k = entry ? Number(entry.dataset.turn) : at;
   if (k !== at) { forward = k === at + 1; at = k; paint(false); }

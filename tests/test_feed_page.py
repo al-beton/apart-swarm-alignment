@@ -183,7 +183,13 @@ def test_game_page_steps_a_scroll_during_a_step_moves_the_board_once_it_settles(
     # A scroll inside the step's lock isn't dropped: it's looked at once it ends.
     assert "setTimeout(settle, lock - Date.now()" in on_scroll
     settle = page[page.index("function settle()") :]
-    assert "inView()" in settle[: settle.index("\n}\n")]
+    settle = settle[: settle.index("\n}\n")]
+    assert "inView()" in settle
+    # Only the reader's own scrolling: a step's clamped scroll near the end is not.
+    assert "!readerScrolled" in settle
+    assert '"wheel", "touchmove", "pointerdown"' in page
+    paint = page[page.index("function paint(scroll)") :]
+    assert "readerScrolled = false" in paint[: paint.index("\n}\n")]
 
 
 def test_game_page_steps_the_address_keeps_the_turn(saved):

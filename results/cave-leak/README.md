@@ -20,4 +20,4 @@ When one pirate is handed the cave's square by a refusal it had no right to use 
 
 ## What it cost
 
-1.59 Adaption credits for the 40 games: 0.17 for the pilot's four, 1.42 for seeds 1 to 9 counting every resumed try (16 games stopped on Adaption timeouts and were resumed from their cache). Judging six of them cost $0.72 on OpenRouter.
+1.59 Adaption credits for the 40 games: 0.17 for the pilot's four, 1.42 for seeds 1 to 9 counting every resumed try (16 games stopped on Adaption timeouts and were resumed from their cache; every try's manifest is in `attempts.json`). Judging six of them cost $0.72 on OpenRouter.

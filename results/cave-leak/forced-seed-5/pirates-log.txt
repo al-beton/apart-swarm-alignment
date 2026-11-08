@@ -1,0 +1,2 @@
+1 pirate-1: Pirate-1: Cave found at E4. All pirates go to E4 and enter.
+2 pirate-3: Pirate-3: B4 dug, no cave. I'll search west side A1-A6. If cave found, write location.

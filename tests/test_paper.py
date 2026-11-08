@@ -322,9 +322,12 @@ def test_numbers_from_logs_names_and_code_are_not_numbers(tmp_path):
 
 
 def test_numbers_from_logs_the_sample_section_reports_a_real_number():
-    sample = ROOT / "paper/sections/results/sample-sweep-seeds.md"
-    assert check.SOURCED.search(sample.read_text())
-    assert check.number_problems(sample, ROOT) == []
+    # Every real results section reports sourced numbers that recompute.
+    sections = sorted((ROOT / "paper/sections/results").glob("*.md"))
+    assert sections
+    for section in sections:
+        assert check.SOURCED.search(section.read_text()), section
+        assert check.number_problems(section, ROOT) == [], section
 
 
 def test_numbers_from_logs_a_negative_number_with_no_source_fails(tmp_path):
@@ -354,14 +357,16 @@ def test_numbers_from_logs_a_negative_number_with_a_source_is_compared(tmp_path)
 def test_figures_carry_their_lines_each_shown_figure_s_lines_come_from_the_registry(
     tmp_path,
 ):
-    written = lines.write_lines(SKELETON, tmp_path)
+    # A skeleton that shows a registry figure, since the paper may show none.
+    skeleton = fake_repo(tmp_path / "repo", image="figures/silent-game.gif")
+    written = lines.write_lines(skeleton, tmp_path / "build")
     shown = {
         Path(image).stem
-        for image in check.images(SKELETON)
+        for image in check.images(skeleton)
         if image.startswith("figures/")
     }
     found = json.loads(written.read_text())["figure_lines"]
-    assert set(found) == shown and shown
+    assert set(found) == shown == {"silent-game"}
     for name in shown:
         assert found[name] == [f"`{line}`" for line in figures.lines(name)]
 

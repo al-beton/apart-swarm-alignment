@@ -240,7 +240,7 @@ function writeScroll(animate) {
   const line = (w, cls) => el("li", cls ? { class: cls } : {}, el("b", { style: "color:" + colour(w.by) }, w.by + ": "));
   const ink = fresh.map(() => el("span", {}));
   const quills = fresh.map(() => el("span", { class: "quill" }, "✒️"));
-  $("scroll").replaceChildren(el("ol", {},
+  $("scroll").replaceChildren(el("ol", { start: (before[0] || fresh[0]).line },
     before.map((w) => { const item = line(w); item.append(w.text); return item; }),
     fresh.map((w, n) => { const item = line(w, "new"); item.append(ink[n], quills[n]); return item; })));
   const box = $("scroll").parentElement;

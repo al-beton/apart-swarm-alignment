@@ -1,0 +1,1 @@
+1 pirate-1: P1: dug A6, no cave. At B6. Searching row 6 east, then down column F.

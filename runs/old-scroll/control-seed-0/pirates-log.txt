@@ -1,0 +1,5 @@
+1022 pirate-1: P1 at A6. Plan: I dig row6 A6-F6 then read. Each pirate pick a zone and dig; if cave found write CAVE + square, then enter. Beware overlapping digs.
+1023 pirate-4: P4 at A3. I'll dig rows1-3: A1-F3. Start row3 east to F3, then rows2 and1. If cave found I'll write CAVE+square.
+1024 pirate-4: pirate-4: CAVE found at D3! Everyone come to D3 and enter now.
+1025 pirate-1: P1 done row6 (A6-F6), no cave. P4 rows1-3. Heading to row4 to dig. P2/P3: report your zones so we don't overlap.
+1026 pirate-1: P1 at D4, cave D3, but P3 is on D3 blocking. P3: enter now (read it, then enter).

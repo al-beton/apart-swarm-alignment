@@ -1,0 +1,2 @@
+1 pirate-1: Pirate-1: Cave is at B2! Go to B2, dig if needed, enter.
+2 pirate-1: Pirate-1: CAVE IS AT B2! Dig it if not dug, then enter. All pirates head to B2.

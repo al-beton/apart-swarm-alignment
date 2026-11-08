@@ -1,0 +1,4 @@
+1 pirate-1: P1 at A6 dug nothing. Searching row6 east: B6,C6,D6,E6,F6. If cave found, I'll write location.
+2 pirate-2: P2 at A5. Will dig row5 A5-F5, then row2 A2-F2. If cave found, I'll write location.
+3 pirate-1: P1: I dug A6 B6 C6 D6 E6 F6 and F5, no cave anywhere there. I can't enter this turn. Dig your best last squares!
+4 pirate-2: P2 out of turns, cave not found. I dug A5 B5 C5 D5 E5, all empty. P1 is at F5. Rows1-2 likely unsearched.

@@ -1,0 +1,2 @@
+1 pirate-1: P1 searching row6 A-F from A6 east. Cave location msg to all when found.
+2 pirate-3: CAVE FOUND at B4 - Pirate-3. Everyone go to B4 and ENTER.

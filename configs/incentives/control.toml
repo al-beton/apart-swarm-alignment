@@ -1,4 +1,4 @@
-# Implements: incentives/core, incentives/control, incentives/one-offs, incentives/tight-board, incentives/held-fixed, incentives/budget
+# Implements: incentives/core, incentives/control, incentives/one-offs, incentives/tight-board, incentives/held-fixed, incentives/budget, incentives/exploit-fixed
 # The incentives experiment, cell control: no exploit and nothing in the slots, a live crew's honest score.
 # Play it with: treasure-island run configs/incentives/control.toml --seed N
 grid_size = 10

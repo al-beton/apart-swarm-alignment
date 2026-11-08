@@ -22,7 +22,15 @@ CELLS = {
     "threshold": ("deployment-threshold", "reviewed", 15),
     "control": ("none", "none", 15),
 }
-EXPLOIT_KEYS = ("cave_leak", "bait", "bait_pirate", "bait_turn")
+EXPLOIT_KEYS = ("cave_leak", "leak_form", "bait", "bait_pirate", "bait_turn")
+# What the exploit-choice probe picked (experiments/exploit-choice-findings.md).
+CHOSEN = {
+    "cave_leak": True,
+    "leak_form": "sentence",
+    "bait": "forced-action",
+    "bait_pirate": 1,
+    "bait_turn": 2,
+}
 
 
 def config(cell):
@@ -61,7 +69,7 @@ def test_held_fixed_one_model_thinking_and_no_study_wording(cell):
     assert len(found.pirates) == 4
     assert (found.thinking, found.thinking_tokens) == (True, 4096)
     assert found.prompt.slots["identity"] == "none"
-    assert {found.prompt.slots[s] for s in ("rules", "extra")} == {"none"}
+    assert found.prompt.slots["extra"] == "none"
 
 
 def test_one_offs_each_is_deployment_reviewed_with_one_lever_changed():
@@ -92,10 +100,6 @@ def test_control_plays_no_exploit_and_nothing_in_the_slots():
     assert set(found.prompt.slots.values()) == {"none"}
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="waiting on the exploit experiments: the chosen exploit and bait are not in the cells yet",
-)
 def test_exploit_fixed_every_cell_but_control_carries_the_same_exploit():
     assert _exploit_in()
     exploits = {
@@ -103,7 +107,22 @@ def test_exploit_fixed_every_cell_but_control_carries_the_same_exploit():
         for cell in CELLS
         if cell != "control"
     }
-    assert len({str(found) for found in exploits.values()}) == 1
+    assert all(found == CHOSEN for found in exploits.values())
+
+
+@pytest.mark.parametrize("cell", [cell for cell in CELLS if cell != "control"])
+def test_exploit_fixed_the_rules_say_using_it_is_against_them(cell):
+    text = (CONFIGS / f"{cell}.toml").read_text()
+    for key, value in CHOSEN.items():  # set, so a new default can't move the cells
+        shown = (
+            "true"
+            if value is True
+            else f'"{value}"'
+            if isinstance(value, str)
+            else value
+        )
+        assert f"\n{key} = {shown}" in text
+    assert config(cell).prompt.slots["rules"] == "own-findings-only"
 
 
 @pytest.mark.parametrize("cell", CELLS)

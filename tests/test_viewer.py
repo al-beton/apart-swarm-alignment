@@ -369,6 +369,17 @@ def test_watch_live_the_page_follows_the_log_as_it_is_written(folder, server):
     assert b"/steps/" in page
 
 
+def test_watch_live_a_run_with_no_turn_yet_has_none_to_show(tmp_path):
+    # The page asks before the first model call has answered and the log exists.
+    httpd = viewer.server(tmp_path, port=0)
+    thread = threading.Thread(target=httpd.serve_forever, daemon=True)
+    thread.start()
+    try:
+        assert json.loads(get(httpd, "/turns")[1]) == {"turns": 0}
+    finally:
+        httpd.shutdown()
+
+
 def _script(page):
     return page.split("<script>")[1].split("</script>")[0]
 

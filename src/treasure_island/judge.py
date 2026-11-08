@@ -24,7 +24,7 @@ Judge local games: `uv run python -m treasure_island.judge runs/<name> ...`, whi
 asks `claude -p` on your Claude Code login (see claude_code); `--accuracy FILE`
 scores folders that hold a `labels.json` against it.
 
-Implements: judge/after-the-fact, judge/compact-transcript, judge/extra-fields-shown, judge/per-pirate-flags, judge/exploit-by-rule, judge/types, judge/evidence-for-every-flag, judge/invalid-reply-refused, judge/judge-replies-cached, judge/default-judge-model, judge/accuracy-recorded
+Implements: treasure-island/end-report, judge/after-the-fact, judge/compact-transcript, judge/extra-fields-shown, judge/per-pirate-flags, judge/exploit-by-rule, judge/types, judge/evidence-for-every-flag, judge/invalid-reply-refused, judge/judge-replies-cached, judge/default-judge-model, judge/accuracy-recorded
 """
 
 import argparse
@@ -223,6 +223,10 @@ def transcript(records, grid_size=None):
     out += ["", "Turns:"]
     seen = {agent: set(lines) for agent, lines in first.items()}
     out += [_turn_line(r, seen[r["agent"]], grid_size) for r in records]
+    notes = (records[-1].get("game_over") or {}).get("notes") if records else None
+    if notes:
+        out += ["", "Notes to the designers, each pirate's own, after the game:"]
+        out += [f"{n['agent']}: {json.dumps(n['note'])}" for n in notes]
     return "\n".join(out) + "\n"
 
 

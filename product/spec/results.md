@@ -1,10 +1,10 @@
 # Results
 
-- **examples-folder:** `examples/` holds at least three committed games that look different, each a run folder plus its GIF and its `transcript.md`, so there's a fixed set to look at after every change and something for a new reader to open straight away.
-- **examples-listed:** `examples/README.md` says in one line what each game shows, so a reader can pick one.
+- **examples-folder:** `examples/` holds two committed games on the same island (Al, 2026-11-08): `llm-crew`, three real LLM pirates, and `stripes`, the striping scripted pirates, a good strategy to compare them with. Each is a run folder plus its GIF, its `transcript.md` and its game page `game.html`, so there's a fixed pair to look at after every change and something for a new reader to open straight away.
+- **examples-listed:** `examples/README.md` says in one line what each game shows, in the order they're shown, the LLM game first, so a reader can pick one.
 - **examples-small:** Each example's GIF is under 2 MB, so a clone stays small and the GIF opens at once.
-- **examples-stay-true:** CI replays every example and fails if its logs, its GIF or its transcript differ, and says which command remakes them, so an example always shows what the code does today.
-- **examples-on-every-pr:** Every pull request's one game comment shows each example's GIF inline, with its name and how it ended, from that pull request's latest commit, so a change to the games can be seen without running anything.
+- **examples-stay-true:** CI replays every example offline from its stored replies and fails if its logs, its GIF, its transcript or its game page differ, and says which command remakes them, so an example always shows what the code does today. Remaking the LLM example plays real models, so `make examples` remakes only the scripted ones and the LLM one takes a key and a yes.
+- **examples-on-every-pr:** Every pull request's one game comment shows each example's GIF inline, in the guide's order, with its name, how it ended, and links to its game page, opened as a web page, and its transcript on GitHub, from that pull request's latest commit, so a change to the games can be seen, and every turn read in full, without running anything.
 - **result-folder:** Each result is `results/<name>/`, holding its run folders and a short `README.md` that says the question, what was run, what it shows and what it cost, so a finding can be kept and shared with its evidence beside it.
 - **results-are-runs:** A result's run folders use the same format as `runs/` and `examples/`, so the same commands work on them.
 - **results-listed:** `results/README.md` lists every result, so a reader can see at once what's been found.
@@ -19,11 +19,11 @@
 
 | Statement | Enforced by | Tested by |
 |---|---|---|
-| `examples-folder` | `src/treasure_island/examples.py`, `Makefile`, `examples/**`, `configs/small-crew.toml` | `test_examples_folder_holds_at_least_three_different_games`, `test_examples_folder_each_holds_what_the_game_wrote_and_a_gif` |
-| `examples-listed` | `examples/README.md` | `test_examples_listed_each_in_one_line_of_the_guide` |
+| `examples-folder` | `src/treasure_island/examples.py`, `Makefile`, `examples/**`, `configs/small-crew.toml`, `configs/llm-crew.toml` | `test_examples_folder_holds_an_llm_game_and_stripes_on_the_same_island`, `test_examples_folder_each_holds_what_the_game_wrote_and_a_gif` |
+| `examples-listed` | `examples/README.md` | `test_examples_listed_each_in_one_line_of_the_guide`, `test_examples_listed_in_the_order_they_are_shown_llm_first` |
 | `examples-small` | `src/treasure_island/examples.py` | `test_examples_small_each_gif_is_under_2_mb` |
-| `examples-stay-true` | `src/treasure_island/examples.py`, `src/treasure_island/saved_game.py` | `test_examples_stay_true_every_log_replays_byte_identical`, `test_examples_stay_true_every_gif_matches_what_is_drawn_now`, `test_examples_stay_true_a_stale_transcript_is_caught`, `test_examples_stay_true_a_stale_example_says_how_to_remake_it` |
-| `examples-on-every-pr` | `.github/workflows/game-gif.yml` | `test_examples_on_every_pr_shows_each_gif_inline_with_its_ending`, `test_examples_on_every_pr_reads_the_commit_without_running_its_code`, `test_examples_on_every_pr_lists_examples_from_that_commit` |
+| `examples-stay-true` | `src/treasure_island/examples.py`, `src/treasure_island/saved_game.py` | `test_examples_stay_true_every_log_replays_byte_identical`, `test_examples_stay_true_every_gif_matches_what_is_drawn_now`, `test_examples_stay_true_a_stale_transcript_is_caught`, `test_examples_stay_true_a_stale_example_says_how_to_remake_it`, `test_examples_stay_true_a_stale_game_page_is_caught`, `test_examples_stay_true_the_llm_game_is_redrawn_not_replayed`, `test_examples_stay_true_a_page_differing_only_in_png_bytes_is_the_same`, `test_examples_stay_true_replaying_keeps_a_page_that_shows_the_same` |
+| `examples-on-every-pr` | `.github/workflows/game-gif.yml` | `test_examples_on_every_pr_shows_each_gif_inline_with_its_ending`, `test_examples_on_every_pr_reads_the_commit_without_running_its_code`, `test_examples_on_every_pr_lists_examples_from_that_commit`, `test_examples_on_every_pr_links_each_game_page_and_transcript`, `test_examples_on_every_pr_shows_them_in_the_guide_s_order` |
 | `result-folder` | `results/**` | `test_result_folder_each_holds_run_folders_and_says_what_it_found` |
 | `results-are-runs` | `results/**` | `test_results_are_runs_with_the_same_files`, `test_results_are_runs_the_same_commands_work` |
 | `results-listed` | `results/README.md` | `test_results_listed_in_the_index_exactly_once_each` |

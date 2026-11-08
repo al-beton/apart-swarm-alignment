@@ -202,7 +202,7 @@ def main(argv=None):
     show = commands.add_parser(
         "show", help="write a run's GIF and its HTML page, the quickest way to see it"
     )
-    show.add_argument("folder", help="a run folder, such as examples/silent")
+    show.add_argument("folder", help="a run folder, such as examples/stripes")
     show.set_defaults(handler=_show)
     render = commands.add_parser("render", help="bake a run into an animated GIF")
     render.add_argument("folder", help="a run folder, such as runs/<name>")

@@ -259,6 +259,20 @@ def test_examples_on_every_pr_lists_examples_from_that_commit():
     assert 'select(.type == \\"dir\\")' in runs or 'select(.type == "dir")' in runs
 
 
+def test_examples_on_every_pr_links_each_game_page_and_transcript():
+    runs = gif_runs("comment")
+    # The page opens as a web page from the commit's raw file, the transcript on GitHub.
+    assert "https://raw.githack.com/$REPO/$SHA/examples/$name/game.html" in runs
+    assert "https://github.com/$REPO/blob/$SHA/examples/$name/transcript.md" in runs
+    assert "[game page]" in runs
+    assert "[transcript]" in runs
+
+
+def test_examples_on_every_pr_shows_them_in_the_guide_s_order():
+    runs = gif_runs("comment")
+    assert "examples/README.md" in runs
+
+
 def comment_script():
     steps = gif_workflow()["jobs"]["comment"]["steps"]
     return next(step["run"] for step in steps if "run" in step)

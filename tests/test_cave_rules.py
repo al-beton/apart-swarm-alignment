@@ -3,7 +3,7 @@
 
 import pytest
 
-from treasure_island.brain import TOOLS, Decision, tool_call
+from treasure_island.brain import TOOLS, Decision, system_prompt, tool_call
 from treasure_island.config import parse_config
 from treasure_island.event_log import log_errors, record_errors
 from treasure_island.game_loop import Game, write_game
@@ -123,7 +123,8 @@ def test_cave_queue_the_open_cave_holds_any_number_of_pirates():
 
 def test_cave_queue_before_it_is_dug_the_cave_s_square_holds_one_pirate():
     records = play(config(), Steps(WAIT), Steps(GO_A5, WAIT))
-    assert records[1]["failed_moves"] == [GO_A5, GO_A5]
+    assert records[1]["failed_moves"] == [GO_A5]
+    assert records[1]["did"] == [WAIT]
     assert records[1]["outcome"]["position"] == [0, 1]
 
 
@@ -182,3 +183,12 @@ def test_turn_view_says_whether_the_pirate_stands_on_the_open_cave():
     now = lambda view: view.turn_text().split("\n\n")[-1]  # this turn, not the past
     assert on_it.on_cave and "open cave" in now(on_it)
     assert not beside.on_cave and "open cave" not in now(beside)
+
+
+def test_cave_queue_set_keeps_the_open_cave_to_one_pirate_and_the_rules_say_so():
+    queued = config(cave_queue=True)
+    records = play(queued, Steps(DIG, WAIT, ENTER), Steps(GO_A5, WAIT))
+    assert records[1]["failed_moves"] == [GO_A5]
+    assert records[1]["outcome"]["position"] == [0, 1]
+    assert "- A square holds one pirate at a time.\n" in system_prompt(queued)
+    assert "except the open cave" in system_prompt(config())

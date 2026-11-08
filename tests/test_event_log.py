@@ -235,6 +235,7 @@ def test_asked_or_walked_a_walked_turn_says_so_and_holds_its_step():
     walked["did"] = [{"action": "move", "direction": "east"}]
     walked["order"] = {"to": "E5", "arrived": False}
     walked["saw"]["prompt"] = ""
+    walked["log_shown"] = []
     assert record_errors(walked) == []
     asked = changed(["asked"], True)
     asked["order_ended"] = {
@@ -257,3 +258,50 @@ def test_asked_or_walked_a_walked_turn_says_so_and_holds_its_step():
 )
 def test_asked_or_walked_a_bad_order_or_asked_flag_is_rejected(path, value):
     assert record_errors(changed(path, value))
+
+
+def walked_record():
+    walked = changed(["asked"], False)
+    walked["did"] = [{"action": "move", "direction": "east"}]
+    walked["saw"]["prompt"] = ""
+    walked["log_shown"] = []
+    return walked
+
+
+@pytest.mark.parametrize(
+    "field, value",
+    [
+        ("prompt", "You are at E5."),
+        ("log_shown", [{"line": 1, "text": "Cave at C4."}]),
+    ],
+)
+def test_asked_or_walked_a_walked_turn_that_was_shown_anything_is_rejected(
+    field, value
+):
+    walked = walked_record()
+    if field == "prompt":
+        walked["saw"]["prompt"] = value
+    else:
+        walked["log_shown"] = value
+    assert record_errors(walked)
+
+
+@pytest.mark.parametrize(
+    "ended",
+    [
+        "arrived",
+        {"how": "lost", "to": "E5", "at": [2, 0]},
+        {"how": "arrived", "at": [2, 0]},
+        {"how": "arrived", "to": "E5", "at": "C5"},
+        {"how": "blocked", "to": "E5", "at": [2, 0]},
+        {"how": "alert", "to": "E5", "at": [2, 0], "by": 2},
+    ],
+)
+def test_asked_or_walked_a_bad_order_ended_is_rejected(ended):
+    assert record_errors(changed(["order_ended"], ended))
+
+
+@pytest.mark.parametrize("how", ["arrived", "alert"])
+def test_asked_or_walked_an_order_ended_without_a_blocker_is_accepted(how):
+    ended = {"how": how, "to": "E5", "at": [2, 0]}
+    assert record_errors(changed(["order_ended"], ended)) == []

@@ -87,6 +87,39 @@ def _asked_errors(record):
         and isinstance(order.get("arrived"), bool)
     ):
         return ["order must name the square it is `to` and whether it `arrived`"]
+    errors = _order_ended_errors(record.get("order_ended"))
+    if record.get("asked") is False:
+        # A walked turn's brain was shown nothing (first-rules records have no
+        # `asked`, so they are never held to this).
+        saw = record.get("saw")
+        if isinstance(saw, dict) and saw.get("prompt") != "":
+            errors.append("a walked turn (asked: false) must have an empty saw.prompt")
+        if record.get("log_shown") != []:
+            errors.append("a walked turn (asked: false) must have an empty log_shown")
+    return errors
+
+
+ORDER_ENDS = ("arrived", "blocked", "alert")
+
+
+def _order_ended_errors(ended):
+    """What is wrong with an `order_ended`: how, to, at, and by when blocked."""
+    if ended is None:
+        return []
+    if not (
+        isinstance(ended, dict)
+        and ended.get("how") in ORDER_ENDS
+        and _is_text(ended.get("to"))
+        and _is_position(ended.get("at"))
+        and _is_text(ended.get("by", ""))
+        and (ended["how"] != "blocked" or ended.get("by"))
+    ):
+        why = (
+            "order_ended must say `how` it ended (arrived, blocked or alert), the "
+            "square it was going `to`, where it stopped `at` and, when blocked, "
+            "`by` whom"
+        )
+        return [why]
     return []
 
 

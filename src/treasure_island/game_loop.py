@@ -17,7 +17,7 @@ Fields stay in reading order rather than sorted, so a person reading a record
 meets who and what before the long prompt. Pirates are named `pirate-1` upwards,
 matching the numbered art. A brain that gives no reason just has no "Why".
 
-Implements: treasure-island/forced-discovery, treasure-island/model-reasoning, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/thinking, treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/score-numbers, runs/stops-cleanly, agents/ask-once-more, treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/turn-view, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/failed-move-cost, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process, agents/refusals-noted, treasure-island/square-names, event-log/score-numbers
+Implements: treasure-island/end-report, treasure-island/disclosure-cost, treasure-island/model-reasoning, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/thinking, treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/score-numbers, runs/stops-cleanly, agents/ask-once-more, treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/turn-view, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/failed-move-cost, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process, agents/refusals-noted, treasure-island/square-names, event-log/score-numbers, treasure-island/forced-discovery
 """
 
 import json
@@ -71,6 +71,11 @@ class _Recording:
     def decide(self, view):
         self.prompt = view.as_text()
         return self._brain.decide(view)
+
+    @property
+    def note(self):
+        """The brain's way to write the end report's note, if it has one."""
+        return getattr(self._brain, "note", None)
 
 
 def _reasoning_tokens(spent):
@@ -175,10 +180,26 @@ class Game:
             record = self._turn(turn)
             if ending := self._ending():
                 record["game_over"] = self._game_over(ending)
+                if self.config.end_report:
+                    # Asked in pirate order once the game is over; scores nothing.
+                    record["game_over"]["notes"] = self._notes()
                 yield record
                 return
             yield record
             turn += 1
+
+    def _notes(self):
+        """Each pirate's end note, in order. A note the spending cap or the network
+        stops says why and is None, so the finished game is still recorded whole."""
+        notes = []
+        for name, seat in zip(self.names, self._seats, strict=True):
+            try:
+                notes.append({"agent": name, "note": seat.end_note()})
+            except GameStopped as why:
+                if getattr(why, "declined", False):
+                    raise  # nobody said yes to spending: the run stops as it always has
+                notes.append({"agent": name, "note": None, "stopped": str(why)})
+        return notes
 
     def _ending(self):
         """Why the game is over, or None while anyone outside has turns left."""
@@ -447,6 +468,11 @@ def write_game(config, brains, folder, pace=0):
                 name, bad = game.unfinished
                 ending["refused"] = {name: len(bad)}
         story.write((ending["story"] + "\n").encode())
+        for note in ending.get("notes", []):
+            words = note["note"] if note["note"] is not None else "(none)"
+            if "stopped" in note:
+                words = f"(not written: {note['stopped']})"
+            story.write(f"{note['agent']}'s note to the designers: {words}\n".encode())
     scroll = "".join(
         f"{line['line']} {line['by']}: {line['text']}\n" for line in game.log.lines()
     )

@@ -1,4 +1,4 @@
-# Implements: tooling/one-command-each, tooling/locked-dependencies, ci/ci-minutes, ci/ci-runs-everything, assets/remade-by-one-command, assets/catwalk, treasure-island/reference-games, results/examples-folder, figures/named-figures, figures/figures-published, ci/examples-remade-in-ci, runs/replay-checks, paper/built-two-ways
+# Implements: tooling/one-command-each, tooling/locked-dependencies, ci/ci-minutes, ci/ci-runs-everything, assets/remade-by-one-command, assets/catwalk, treasure-island/reference-games, results/examples-folder, figures/named-figures, figures/figures-published, ci/examples-remade-in-ci, runs/replay-checks, paper/built-two-ways, paper/numbers-from-logs
 .PHONY: install lint test spec-check assets catwalk reference-games examples examples-check figure figures replay-all paper-tools paper-check paper-images paper-html paper-tex paper-pdf paper-watch
 install:
 	uv sync --frozen
@@ -32,7 +32,7 @@ PAPER_BUILD ?= paper/build
 PANDOC = pandoc paper/paper.md --from markdown --lua-filter paper/include.lua --resource-path=.:paper --number-sections --toc --toc-depth=1
 paper-tools:
 	@command -v pandoc >/dev/null || { echo "pandoc is missing: brew install pandoc (or see pandoc.org/installing)"; exit 1; }
-paper-check:  # the paper's contract with the repository: every section listed, every results section's evidence committed, every figure named
+paper-check:  # the paper's contract with the repository: every section listed, every results section's evidence committed, every figure named, every number recomputed from the logs
 	uv run python -m paper.check paper/paper.md
 paper-images: paper-check  # every image the paper shows, into the build: named figures rebuilt from committed runs, plus a PNG still of each GIF for the PDF
 	uv run treasure-island figure --all

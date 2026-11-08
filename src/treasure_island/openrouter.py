@@ -17,7 +17,7 @@ reasoning back.
 `OpenRouter.check_key` asks OpenRouter about a key, not a model, so it spends nothing.
 It never says the key's `label`, since OpenRouter's label is the key, masked.
 
-Implements: agents/reasoning-looked-up, treasure-island/model-reasoning, agents/openrouter-backend, agents/check-keys, agents/normal-temperature, agents/reply-cap
+Implements: treasure-island/end-report, agents/reasoning-looked-up, treasure-island/model-reasoning, agents/openrouter-backend, agents/check-keys, agents/normal-temperature, agents/reply-cap
 """
 
 import json
@@ -40,11 +40,14 @@ def _body(model_id, request):
             {"role": "system", "content": request["system"]},
             *request["messages"],
         ],
-        "tools": [{"type": "function", "function": tool} for tool in request["tools"]],
-        "tool_choice": "auto",
         "max_tokens": request["max_tokens"] + request["thinking_tokens"],
         "seed": request["seed"],
     }
+    if request["tools"]:  # the end report's note asks with none
+        body["tools"] = [
+            {"type": "function", "function": tool} for tool in request["tools"]
+        ]
+        body["tool_choice"] = "auto"
     if request["thinking_tokens"]:
         # The reasoning's own budget, on top of the reply's, the same one the
         # prompt states; with thinking off the model still has it, but its

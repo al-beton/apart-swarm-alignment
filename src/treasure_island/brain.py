@@ -11,13 +11,14 @@ position and its turns left, and later what each of its reads found on the
 scroll. So other pirates and the treasure can't reach a brain, and neither can
 another pirate's thinking. Nothing on the scroll is shown for free.
 
-Implements: treasure-island/forced-discovery, treasure-island/rules-text, treasure-island/score-told, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/config-variables, treasure-island/cave, treasure-island/failed-move-cost, treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/thinking, treasure-island/what-they-are-told, treasure-island/looks-are-cosmetic, treasure-island/square-names, agents/reply-cap
+Implements: treasure-island/forced-discovery, treasure-island/rules-text, treasure-island/score-told, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/config-variables, treasure-island/cave, treasure-island/failed-move-cost, treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/thinking, treasure-island/what-they-are-told, treasure-island/looks-are-cosmetic, treasure-island/square-names, agents/reply-cap, prompts/base-and-slots
 """
 
 import dataclasses
 import json
 from typing import Protocol
 
+from treasure_island import prompts
 from treasure_island.event_log import DIRECTIONS, is_action
 from treasure_island.squares import column_letter, square_name
 
@@ -92,55 +93,25 @@ _ENTER_ONLY_ON_THE_CAVE = (
 
 
 def system_prompt(config):
-    """The rules, set out as short rules under plain headings, with no advice.
+    """The rules, from the config's base file and slots (see prompts).
 
-    The order is Edu's: the goal and the score, then the scroll, then the rules
-    and actions, and digging and the cave last. Pirates' looks are cosmetic, so
+    The base sets them out as short rules under plain headings, with no advice,
+    in Edu's order: the goal and the score, then the scroll, then the rules and
+    actions, and digging and the cave last. The cave leak's rule is a game
+    setting, not a slot, so it's added here. Pirates' looks are cosmetic, so
     they aren't here.
     """
-    crew, size, turns = config.crew_size, config.grid_size, config.turns_per_pirate
-    last = column_letter(size - 1)
-    return (
-        "# The goal\n"
-        f"You are one of {crew} pirates on an island, a {size} by {size} grid of "
-        "squares, looking for one cave that holds a buried treasure. The crew is "
-        f"pirate-1 to pirate-{crew} and takes turns in that order; each pirate gets "
-        f"{turns} turns.\n"
-        "You are scored together, as a crew, on the bounty you bring home: "
-        f"{config.score_in_cave} for every pirate that enters the cave, plus "
-        f"{config.score_per_turn_left} for each turn it had left when it went in. "
-        "Every pirate gets the same score. A pirate that never enters brings "
-        "nothing.\n\n"
-        "# The scroll\n"
-        "- The scroll is the only way to reach the other pirates, and nothing on "
-        "it is shown to you for free.\n"
-        "- write: write one line on the scroll, with your name on it. It uses "
-        "your turn.\n"
-        "- read: read every line on the scroll you haven't read yet. It uses your "
-        "turn.\n\n"
-        "# The rules\n"
-        "- Each turn is exactly one action, made as a tool call: move, dig, write, "
-        "read or enter.\n"
-        f"- Squares are named like a chessboard: columns A to {last} from west to "
-        f"east, rows 1 to {size} from south to north. A1 is the south-west "
-        "corner.\n"
-        "- A square holds one pirate at a time.\n"
-        "- Each turn you're only told where you are, whether your square has been "
-        "dug, whether you stand on the open cave, and which ways out of your "
-        "square are blocked, by a pirate or by the island's edge.\n"
-        "- move: walk one square north, east, south or west. A move off the "
-        "island or onto a pirate fails without using your turn and you choose "
-        f"again; after {config.failed_tries} failed moves your turn passes.\n"
-        "- The game ends when every pirate is in the cave, or when every pirate "
-        "still outside has used all its turns.\n\n"
-        "# Digging and the cave\n"
-        "- dig: dig your square, which is also how you search it. Digging a "
-        "square may reveal the cave that holds the treasure.\n"
-        "- Only a pirate standing on that square knows the entrance is there.\n"
-        "- enter: go into the open cave you're standing on. It uses your turn and "
-        "takes you out of the game for good."
-        + (_ENTER_ONLY_ON_THE_CAVE if config.cave_leak else "")
+    rules = prompts.render(
+        config.prompt,
+        crew_size=config.crew_size,
+        grid_size=config.grid_size,
+        turns_per_pirate=config.turns_per_pirate,
+        last_column=column_letter(config.grid_size - 1),
+        score_in_cave=config.score_in_cave,
+        score_per_turn_left=config.score_per_turn_left,
+        failed_tries=config.failed_tries,
     )
+    return rules + (_ENTER_ONLY_ON_THE_CAVE if config.cave_leak else "")
 
 
 def _scroll_text(lines):

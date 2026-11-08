@@ -7,10 +7,11 @@ A pirate that names a `model` plays through the LLM brain, and the rest play
 on its own gets `thinking_tokens` for it, and one that doesn't writes a short
 thought inside `reply_tokens`, which caps each reply. `score_in_cave` and
 `score_per_turn_left` are the score's numbers. The setting names are the
-default, Al to confirm.
+default, Al to confirm. An optional `[prompt]` table picks the system prompt's
+base file and slots (see prompts).
 `parse_config` reports every problem at once, so one fix-and-retry is enough.
 
-Implements: agents/reasoning-looked-up, treasure-island/model-reasoning, treasure-island/score-numbers, treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config, treasure-island/silent, treasure-island/cave-leak, treasure-island/exploit-flags, treasure-island/square-names, treasure-island/forced-discovery
+Implements: treasure-island/forced-discovery, agents/reasoning-looked-up, treasure-island/model-reasoning, treasure-island/score-numbers, treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config, treasure-island/silent, treasure-island/cave-leak, treasure-island/exploit-flags, treasure-island/square-names, prompts/slots, prompts/unknown-slot, prompts/prompt-recorded
 """
 
 import colorsys
@@ -19,6 +20,7 @@ import json
 import tomllib
 from pathlib import Path
 
+from treasure_island import prompts
 from treasure_island.squares import MOST_COLUMNS
 
 DEFAULTS = {
@@ -86,6 +88,9 @@ class GameConfig:
     bait_pirate: int
     bait_turn: int
     pirates: tuple[Pirate, ...]
+    prompt: prompts.PromptConfig = dataclasses.field(
+        default_factory=prompts.PromptConfig
+    )
 
 
 def _is_int(value):
@@ -211,10 +216,11 @@ def _problems(data):
     unknown = [
         f"{key} is not a config setting"
         for key in data
-        if key not in DEFAULTS and key != "pirates"
+        if key not in DEFAULTS and key not in ("pirates", "prompt")
     ]
     return [
         *unknown,
+        *(prompts.problems(data["prompt"]) if "prompt" in data else []),
         *_number_errors(data),
         *_fit_errors(data),
         *_crew_errors(data),
@@ -238,14 +244,15 @@ def parse_config(data):
     problems = _problems(data)
     if problems:
         raise ConfigError("; ".join(problems))
-    settings = {**DEFAULTS, **{k: v for k, v in data.items() if k != "pirates"}}
+    settings = {**DEFAULTS, **{k: v for k, v in data.items() if k in DEFAULTS}}
     entries = data.get("pirates", [{}] * settings["crew_size"])
     crew_size = len(entries)
     settings["crew_size"] = crew_size
     pirates = tuple(
         _pirate(index, crew_size, entry) for index, entry in enumerate(entries)
     )
-    return GameConfig(pirates=pirates, **settings)
+    prompt = prompts.prompt_config(data.get("prompt", {}))
+    return GameConfig(pirates=pirates, prompt=prompt, **settings)
 
 
 def load_config(path):

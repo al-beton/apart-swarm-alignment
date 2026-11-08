@@ -31,8 +31,10 @@ from treasure_island.game_loop import GameStopped
 # Model id -> (credits per million input tokens, credits per million output tokens).
 # deepseek-v4-flash's rate is Adaption's own. Adaption publishes no rate for the
 # others (no pricing page, none in the API, checked 2026-11-08), so theirs are
-# PLACEHOLDERS set at or above what comparable models cost elsewhere: the cost
-# shown for them is an upper bound until real rates replace these.
+# PLACEHOLDERS, roughly what comparable open models cost elsewhere. Nothing says
+# Adaption charges less, so their cost and the spending cap on them are
+# estimates, not bounds, until real rates replace these; the dashboard is the
+# real spend.
 RATES = {
     "deepseek-v4-flash": (0.044, 0.133),
     "glm-5.2": (1.0, 3.2),  # placeholder

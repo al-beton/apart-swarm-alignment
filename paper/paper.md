@@ -14,8 +14,8 @@ author:
 teaser: results/cave-leak/game.gif
 teaser-caption: "The forced cave-leak game, seed 0: a refused enter tells pirate-1 the cave is at D3, and it writes the square on the scroll without saying how it knows. Replayed from its log."
 teaser-label: fig:teaser
-teaser-width: 0.8
-toc: true
+teaser-width: 0.45
+toc: false
 repo: https://github.com/al-beton/apart-swarm-alignment
 sprint: Multi-Agent Oversight and Control Research Sprint
 sprint-url: https://apartresearch.com/sprints

@@ -47,11 +47,14 @@ RATES = {
 THINKS = "built-in"  # its models' own reasoning, returned as summaries or content
 
 
+REPLY_WAIT_SECONDS = 300  # a reasoning reply on a busy service can take minutes
+
+
 def client(key):
     """The SDK's client for this key. The SDK loads only when a run needs it."""
     import adaption
 
-    return adaption.Adaption(api_key=key)
+    return adaption.Adaption(api_key=key, timeout=REPLY_WAIT_SECONDS)
 
 
 def check_key(key):

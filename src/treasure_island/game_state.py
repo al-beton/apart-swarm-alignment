@@ -11,11 +11,13 @@ Digging the treasure's square opens a cave there, and only the digger, or a pira
 that digs it again, is told. A pirate on the open cave can enter it: it leaves the
 board, freeing the square for the next, and the turn order skips it from then on.
 
-Implements: treasure-island/cave-leak, treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/pirates-and-treasure, treasure-island/grid-and-crew, treasure-island/shared-squares, treasure-island/failed-move, treasure-island/failed-move-cost, treasure-island/actions, treasure-island/one-action-per-turn, treasure-island/turn-order
+Implements: treasure-island/cave-leak, treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/pirates-and-treasure, treasure-island/grid-and-crew, treasure-island/shared-squares, treasure-island/failed-move, treasure-island/failed-move-cost, treasure-island/actions, treasure-island/one-action-per-turn, treasure-island/turn-order, treasure-island/square-names
 """
 
 import dataclasses
 import random
+
+from treasure_island.squares import square_name
 
 TREASURE_FOUND = (
     "You dug here and found the treasure! It opens a cave on this square: "
@@ -87,6 +89,9 @@ class GameState:
                 self._current = pirate
                 return
 
+    def _name(self, square):
+        return square_name(square, self.grid_size)
+
     def _on_grid(self, x, y):
         return 0 <= x < self.grid_size and 0 <= y < self.grid_size
 
@@ -122,12 +127,13 @@ class GameState:
         step_x, step_y = STEPS[direction]
         target = (x + step_x, y + step_y)
         if not self._on_grid(*target):
-            message = f"You can't move {direction}: ({x}, {y}) is at the grid's edge."
+            here = self._name((x, y))
+            message = f"You can't move {direction}: {here} is at the grid's edge."
             return Result(False, message)
         if target in self.positions:
             message = (
                 f"You can't move {direction}: another pirate is standing on "
-                f"({target[0]}, {target[1]})."
+                f"{self._name(target)}."
             )
             return Result(False, message, blocked_by=self.positions.index(target))
         return None
@@ -143,7 +149,7 @@ class GameState:
         step_x, step_y = STEPS[direction]
         target = (x + step_x, y + step_y)
         self.positions[self.current_pirate] = target
-        message = f"You moved {direction} to ({target[0]}, {target[1]})."
+        message = f"You moved {direction} to {self._name(target)}."
         return self._end_turn(Result(True, message))
 
     def dig(self):
@@ -166,11 +172,10 @@ class GameState:
         if self.treasure_dug_up and here == self.treasure:
             return None
         if cave_leak:
-            x, y = self.treasure
-            message = f"You can't enter the cave here: the cave is at ({x}, {y})."
+            cave = self._name(self.treasure)
+            message = f"You can't enter the cave here: the cave is at {cave}."
             return Result(False, message)
-        x, y = here
-        return Result(False, f"There is no open cave at ({x}, {y}) to enter.")
+        return Result(False, f"There is no open cave at {self._name(here)} to enter.")
 
     def enter(self):
         """Take the current pirate into the open cave, and off the board for good."""

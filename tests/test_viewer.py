@@ -190,8 +190,9 @@ def look(**settings):
 
 
 def test_art_folder_every_empty_square_is_a_sand_tile_from_the_assets():
-    image = viewer.frame([alone()], 0, 3)
-    for x, y in [(0, 0), (2, 0), (0, 2), (2, 2)]:
+    image = viewer.frame([alone()], 0, 5)
+    # Squares away from the west and south edges, which carry the squares' names.
+    for x, y in [(4, 0), (2, 1), (3, 2), (3, 3)]:
         assert tile_at(image, x, y).tobytes() in sand_tiles()
 
 

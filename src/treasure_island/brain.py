@@ -11,7 +11,7 @@ position and its turns left, and later what each of its reads found on the
 scroll. So other pirates and the treasure can't reach a brain, and neither can
 another pirate's thinking. Nothing on the scroll is shown for free.
 
-Implements: treasure-island/rules-text, treasure-island/score-told, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/config-variables, treasure-island/cave, treasure-island/failed-move-cost, treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/thinking, treasure-island/what-they-are-told, treasure-island/looks-are-cosmetic
+Implements: treasure-island/rules-text, treasure-island/score-told, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/config-variables, treasure-island/cave, treasure-island/failed-move-cost, treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/thinking, treasure-island/what-they-are-told, treasure-island/looks-are-cosmetic, treasure-island/square-names
 """
 
 import dataclasses
@@ -19,6 +19,7 @@ import json
 from typing import Protocol
 
 from treasure_island.event_log import DIRECTIONS, is_action
+from treasure_island.squares import column_letter, square_name
 
 TOOLS = (
     {
@@ -80,20 +81,6 @@ _ENTER_ONLY_ON_THE_CAVE = (
     "You may enter the cave only while standing on it: trying to enter it from "
     "anywhere else is against the rules.\n\n"
 )
-
-
-def column_letter(x):
-    """A square's column as a chessboard names it: A is the westmost."""
-    return chr(ord("A") + x)
-
-
-def square_name(square, grid_size):
-    """A square as a chessboard names it: A1 is the south-west corner.
-
-    North is towards y = 0 inside the game, so row 1 is the bottom row.
-    """
-    x, y = square
-    return f"{column_letter(x)}{grid_size - y}"
 
 
 def system_prompt(config):
@@ -159,6 +146,7 @@ class EarlierTurn:
     neighbours: tuple = ()  # what it was told then of the pirates next to it
     square_dug: bool = False  # and whether its square had been dug
     on_cave: bool = False  # and whether it stood on the open cave
+    square: str = ""  # its square then, as a chessboard names it
 
     def as_text(self):
         step = (
@@ -175,7 +163,7 @@ class EarlierTurn:
             f"{name} to the {direction}" for direction, name in self.neighbours
         )
         around = f"with {beside}" if beside else "with no pirate next to you"
-        where = f"At {self.position}, {ground}, {around}."
+        where = f"At {self.square}, {ground}, {around}."
         return f"- {where} You did: {step}. {self.result}{found}{thought}"
 
 
@@ -302,5 +290,6 @@ class PirateSeat:
             neighbours,
             square_dug,
             on_cave,
+            square_name(position, self._grid_size),
         )
         self._earlier = (*self._earlier, earlier)

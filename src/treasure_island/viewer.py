@@ -734,7 +734,7 @@ def caption_line(story):
     words = thought.split()
     if len(words) <= THOUGHT_WORDS:
         return story
-    short = " ".join([*words[:THOUGHT_ENDS], "…", *words[-THOUGHT_ENDS:]])
+    short = " ".join([*words[:THOUGHT_ENDS], "...", *words[-THOUGHT_ENDS:]])
     return f"{head}{sep}{short}{then}{tail}"
 
 

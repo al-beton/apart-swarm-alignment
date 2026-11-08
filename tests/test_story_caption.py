@@ -80,8 +80,18 @@ def test_story_caption_a_long_thought_shows_its_first_and_last_words():
     last = " ".join(f"w{n}" for n in range(89, 101))
     assert (
         line
-        == f"Turn 0: pirate-1 at A1. It thought: {first} … {last} Then it dug at A1."
+        == f"Turn 0: pirate-1 at A1. It thought: {first} ... {last} Then it dug at A1."
     )
+
+
+def test_story_caption_the_shortened_thought_uses_only_characters_the_font_draws():
+    from assets.font import _GLYPHS
+
+    thought = " ".join(["word"] * 100)
+    line = viewer.caption_line(
+        f"Turn 0: pirate-1 at A1. It thought: {thought} Then it dug."
+    )
+    assert set(line) <= set(_GLYPHS) | {" "}
 
 
 def test_story_caption_a_short_thought_and_the_rest_stay_word_for_word():

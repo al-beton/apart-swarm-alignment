@@ -122,9 +122,11 @@ def shared(readings, grid_size):
 class Loner(Silent):
     """Triangulates from its own readings: goes for the nearest square they allow.
 
-    It digs its square when the readings allow it and it isn't dug, otherwise
-    goes to the nearest square they allow that it hasn't seen dug. It never says
-    anything and enters the cave once it stands on it.
+    It digs the square it stands on whenever it isn't dug, since the reading is
+    free news, unless the readings already leave one square and it's elsewhere;
+    otherwise it goes to the nearest square they allow that it hasn't seen dug.
+    It is asked only where it starts, arrives or is stopped, so it never digs on
+    the way. It never says anything and enters the cave once it stands on it.
     """
 
     def __init__(self, grid_size, noise=0):
@@ -156,6 +158,11 @@ class Loner(Silent):
         keep = possible(self._size, self._noise, readings, ruled_out)
         if not view.square_dug and view.position in keep:
             return self._act(view, "dig", None, "The treasure could be right here.")
+        if not view.square_dug and len(keep) != 1:
+            # A reading is free news wherever it's taken, so it digs before going
+            # on, unless the readings already leave one square and it's elsewhere.
+            why = "It can't be here, but nobody has dug it, so its reading is news."
+            return self._act(view, "dig", None, why)
         if not keep:  # only readings that disagree with the rules could leave none
             keep = [square for square in self._squares if square not in ruled_out]
         why = "The nearest square the readings allow is {}."

@@ -1,4 +1,4 @@
-# Implements: agents/adaption-backend, agents/adaption-cost, agents/key-from-the-environment, agents/check-keys, agents/normal-temperature
+# Implements: treasure-island/model-reasoning, agents/adaption-backend, agents/adaption-cost, agents/key-from-the-environment, agents/check-keys, agents/normal-temperature
 """The Adaption backend, tested against a reply in the SDK's own shape, offline."""
 
 import json
@@ -112,6 +112,37 @@ def test_adaption_backend_passes_the_reasoning_on_only_when_thinking_is_on():
     assert reply["thinking"] == "Dig."
     # The Responses API counts reasoning as output, so its budget is added on.
     assert sent["max_output_tokens"] == 300 + 1024
+
+
+# deepseek-v4-flash's reasoning as Adaption really returns it: an empty summary,
+# and the words in `content` as `reasoning_text` parts.
+REASONING_IN_CONTENT = {
+    **RECORDED,
+    "output": [
+        {
+            "type": "reasoning",
+            "id": "rs_1",
+            "summary": [],
+            "content": [
+                {"type": "reasoning_text", "text": "Nobody has dug east yet."},
+                {"type": "reasoning_text", "text": "I'll go there."},
+            ],
+        },
+        RECORDED["output"][1],
+    ],
+}
+
+
+def test_model_reasoning_adaption_saves_reasoning_returned_as_content():
+    reply, _, _ = answer(
+        REASONING_IN_CONTENT, {**REQUEST, "thinking": True, "thinking_tokens": 1024}
+    )
+    assert reply["thinking"] == "Nobody has dug east yet. I'll go there."
+
+
+def test_model_reasoning_adaption_keeps_no_reasoning_when_thinking_is_off():
+    reply, _, _ = answer(REASONING_IN_CONTENT)
+    assert "thinking" not in reply
 
 
 def test_adaption_backend_a_reply_with_no_tool_call_comes_back_as_its_words():

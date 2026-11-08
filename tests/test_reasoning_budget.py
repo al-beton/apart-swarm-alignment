@@ -5,6 +5,7 @@ import json
 
 import pytest
 from adaption.types import Response
+from adaption.types.response_stream_event import ResponseStreamEvent
 
 from treasure_island import openrouter, saved_game
 from treasure_island.adaption_backend import AdaptionBackend
@@ -56,7 +57,12 @@ class FakeResponses:
 
     def create(self, **arguments):
         self.calls.append(arguments)
-        return self.replies.pop(0) if self.replies else reply()
+        response = self.replies.pop(0) if self.replies else reply()
+        # Streamed, as the backend asks: the whole reply comes on the last event.
+        end = "response.incomplete" if response.status == "incomplete" else None
+        return iter(
+            [ResponseStreamEvent(type=end or "response.completed", response=response)]
+        )
 
 
 class FakeClient:

@@ -124,13 +124,32 @@ def _reasoning(response):
     return " ".join(text for text in reasoning if text) or None
 
 
+_ENDS = ("response.completed", "response.incomplete")  # carry the whole reply
+
+
+def _streamed(events):
+    """The whole reply a stream ends with; one that ends without it has dropped.
+
+    A dropped stream raises `ConnectionError`, so `Retrying` asks again.
+    """
+    final = None
+    for event in events:
+        if event.type in _ENDS:
+            final = event.response
+        elif event.type in ("response.failed", "error"):
+            raise ConnectionError(f"Adaption's reply stream ended with {event.type}")
+    if final is None:
+        raise ConnectionError("Adaption's reply stream ended before the whole reply")
+    return final
+
+
 class AdaptionBackend:
     def __init__(self, model_id, client):
         self._model = model_id
         self._client = client
 
     def __call__(self, request):
-        response = self._client.responses.create(
+        events = self._client.responses.create(
             model=self._model,
             instructions=request["system"],
             input=request["messages"],
@@ -138,7 +157,11 @@ class AdaptionBackend:
             # The Responses API counts reasoning as output, so its budget adds on;
             # the prompt tells the model less (`thinking_said`), so it has room.
             max_output_tokens=request["max_tokens"] + request["thinking_tokens"],
+            # Streamed, so a reply that reasons for minutes keeps its connection
+            # alive and Adaption's server doesn't cut it off (`adaption-waits`).
+            stream=True,
         )
+        response = _streamed(events)
         usage = response.usage
         if usage is None:
             raise GameStopped(

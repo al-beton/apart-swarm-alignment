@@ -334,3 +334,55 @@ def test_side_panel_an_older_thought_cut_short_starts_with_dots():
 def test_side_panel_the_story_and_page_keep_the_whole_thought():
     records = [record(0, thinking=LONG)]
     assert viewer.turn_records(records)[0]["thinking"] == LONG
+
+
+def v2(turn, asked=True, **rest):
+    """A v2 record: asked by its brain or walked under an order."""
+    made = record(turn, **rest)
+    made["asked"] = asked
+    made["log_shown"] = rest.get("log_shown", [])
+    return made
+
+
+def test_side_panel_a_walked_turn_shows_its_step_and_no_thought():
+    walked = "walked east to B4, on its way to D4."
+    records = [
+        v2(0, did=[{"action": "go_to", "square": "D4"}], thinking="D4 next."),
+        v2(1, asked=False, did=[{"action": "move", "direction": "east"}]),
+    ]
+    records[1]["happened"] = walked
+    now = shown(records)
+    assert now["thoughts"] == []  # a walked turn's brain wasn't asked
+    assert now["did"] == walked  # its step, with the order's target
+    assert viewer._how_it_acts(now) == ["walks on", "(not asked)"]
+    assert viewer._how_it_acts(shown(records, 0))[0] == "is asked"
+
+
+def test_side_panel_an_asked_turn_says_how_many_new_lines_it_saw_never_their_words():
+    def asked_with(*texts):
+        lines = [
+            {"line": n, "text": text, "by": "pirate-2", "turn": n, "alert": False}
+            for n, text in enumerate(texts, start=1)
+        ]
+        return v2(0, log_shown=lines)
+
+    assert viewer._how_it_acts(shown([asked_with("Dug A1: 3 away.")])) == [
+        "is asked",
+        "saw 1 new line",
+    ]
+    assert viewer._how_it_acts(shown([asked_with()]))[1] == "saw no new lines"
+    one = viewer.frame([asked_with("Dug A1: 3 away.")], 0, 4)
+    other = viewer.frame([asked_with("Cave at C2.")], 0, 4)
+    assert one.tobytes() == other.tobytes()  # the count shows, never the words
+    two = viewer.frame([asked_with("a", "b")], 0, 4)
+    assert two.tobytes() != one.tobytes()
+
+
+def test_frame_shows_the_swarm_an_alert_s_note_starts_with_its_mark():
+    plain = v2(0, did=[{"action": "dig", "say": "Dug A5: 3 away."}])
+    alert = v2(0, did=[{"action": "dig", "say": "Dug A5: 3 away.", "alert": True}])
+    assert shown([plain])["note"] == "Dug A5: 3 away."
+    assert shown([alert])["note"] == f"{viewer.ALERT_MARK} Dug A5: 3 away."
+    assert (
+        viewer.frame([plain], 0, 4).tobytes() != viewer.frame([alert], 0, 4).tobytes()
+    )

@@ -218,3 +218,29 @@ def test_game_page_the_feed_puts_every_word_in_as_text(saved, words):
         data = re.search(rf"const {name} = (.*?);\n", page, re.DOTALL).group(1)
         assert "<" not in data
     assert "innerHTML" not in page
+
+
+def test_game_page_a_walked_turn_is_a_plain_step_and_an_asked_turn_is_marked(saved):
+    page = viewer.slideshow_page(saved)
+    turns = data_in(page, "TURNS")
+    records = records_of(saved)
+    walked = [n for n, r in enumerate(records) if r["asked"] is False]
+    assert walked
+    for number in walked:
+        turn = turns[number]
+        assert turn["walked"] and not turn["asked"] and not turn["thinking"]
+        assert "on its way to" in turn["happened"] or "arrived" in turn["happened"]
+        assert turn["order"]["to"] == records[number]["order"]["to"]
+    assert all(turns[n]["asked"] for n, r in enumerate(records) if r["asked"])
+    assert "walked under an order, not asked" in page
+    assert '{ class: "tag" }, "asked"' in page
+
+
+def test_game_page_an_alert_is_marked_in_the_feed_and_the_scroll(saved):
+    page = viewer.slideshow_page(saved)
+    wrote = [line for turn in data_in(page, "TURNS") for line in turn["wrote"]]
+    alerts = [line for line in wrote if line["alert"]]
+    assert alerts and len(alerts) < len(wrote)
+    assert alerts[0]["text"].startswith("Cave at ")
+    assert all(line["turn"] >= 1 for line in wrote)  # counted from 1, as told
+    assert '"! ALERT "' in page and '", alert"' in page

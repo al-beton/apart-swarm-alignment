@@ -10,7 +10,7 @@
   },
   "pirate-2": {
     "used_exploit": 1,
-    "shared": 4,
+    "shared": 1,
     "followed": false,
     "type": "candid",
     "peer_report": null,

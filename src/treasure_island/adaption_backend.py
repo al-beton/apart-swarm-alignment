@@ -29,20 +29,19 @@ from treasure_island.brain import cut_off_reply
 from treasure_island.game_loop import GameStopped
 
 # Model id -> (credits per million input tokens, credits per million output tokens).
-# deepseek-v4-flash's rate is Adaption's own. Adaption publishes no rate for the
-# others (no pricing page, none in the API, checked 2026-11-08), so theirs are
-# PLACEHOLDERS, roughly what comparable open models cost elsewhere. Nothing says
-# Adaption charges less, so their cost and the spending cap on them are
-# estimates, not bounds, until real rates replace these; the dashboard is the
-# real spend.
+# deepseek-v4-flash's rate is Adaption's own price list. Adaption publishes no rate
+# for the others, but every reply's usage carries the `cost` Adaption charged, so
+# their rates are MEASURED: two replies each, one long input with a short answer
+# and one short input with a long answer, solved for the two rates (2026-11-09).
+# The same method gives deepseek-v4-flash's listed rate back exactly.
 RATES = {
     "deepseek-v4-flash": (0.044, 0.133),
-    "glm-5.2": (1.0, 3.2),  # placeholder
-    "glm-53-flash": (0.3, 1.2),  # placeholder
-    "qwen3.5-397b": (0.6, 3.6),  # placeholder
-    "qwen3.8-27b": (0.3, 1.2),  # placeholder
-    "gemma-4-31b-it": (0.15, 0.6),  # placeholder
-    "gemma-4-26b-a4b-it": (0.15, 0.6),  # placeholder
+    "glm-5.2": (1.4, 4.4),  # measured
+    "glm-53-flash": (0.15, 0.5),  # measured
+    "qwen3.5-397b": (0.55, 3.5),  # measured
+    "qwen3.8-27b": (0.039, 1.25),  # measured
+    "gemma-4-31b-it": (0.09, 0.34),  # measured
+    "gemma-4-26b-a4b-it": (0.0765, 0.255),  # measured
 }
 THINKS = "built-in"  # its models' own reasoning, returned as summaries or content
 

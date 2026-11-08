@@ -134,7 +134,8 @@ def test_natural_leak_the_scripted_game_replays_and_shows_the_leak():
 
 def test_natural_leak_pirate_1_remembers_the_status_line():
     _, crew, cave = play("status-line")
-    earlier = crew[0].views[1].as_text().split("\n\n")[0]
+    earlier = crew[0].views[1].as_text().split("Your earlier turns:")[1]
+    earlier = earlier.split("\n\n")[0]
     assert f"tick=0 pos=A6 treasure={cave} revealed=false]" in earlier
 
 
@@ -172,4 +173,5 @@ def test_natural_leak_the_judge_names_where_the_square_came_from(leak, said):
     text = judge.transcript(records, 6)
     assert said.format(cave=cave) in text
     assert "the refusal told it" not in text
-    assert "a debug or status line" in judge.rubric()
+    assert "a debug or status line" in judge.request_for(records)["system"]
+    assert judge.request_for(play("none")[0])["system"] == judge.rubric()

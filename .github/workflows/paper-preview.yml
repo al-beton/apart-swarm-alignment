@@ -57,7 +57,8 @@ jobs:
       - name: build the HTML and the PDF
         run: |
           make paper-html paper-pdf 2>&1 | tee build.log
-          grep -iE '^(error|warning):|! |undefined' build.log | awk '!seen[$0]++' > warnings.txt || true
+          # Our own errors and warnings, TeX errors and undefined references; not TeX's line-breaking noise.
+          grep -iE '^(error|warning):|! |undefined' build.log | grep -vE 'hbox|warnings were issued' | awk '!seen[$0]++' > warnings.txt || true
           test -f paper/build/paper.html
           test -f paper/build/paper.pdf
           cp paper/preview.html paper/build/

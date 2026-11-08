@@ -36,7 +36,8 @@ The pull request title is `<feat|fix|improve>(<area>): <summary> (#<n>)`, where 
 Every pull request gets one adversarial review round from Codex before it merges. Codex answers an `@codex review` comment only from an account connected to it. If yours isn't, mark the pull request ready and write "ready for Codex" on it: a team agent asks on your behalf (a watcher session checks for this every few minutes), and Codex's summary comment appears within a few minutes. Then:
 
 - fix what's a real bug (P1) in one push, and answer every other finding "follow-up", resolving each thread with the commit that fixed it or why nothing changed;
-- when `blocking-checks` is green and every thread is resolved, squash-merge it yourself from GitHub, with the title as the subject and the closing line as the body. Nobody on the team pushes to, rebases, marks ready or merges your branch unless you ask Al.
+- after that push, ask for Codex once more the same way, so it has finished on your latest commit; there's no second round of findings, anything new that isn't a P1 is answered "follow-up" too;
+- when `blocking-checks` is green, Codex has finished on your latest commit and every thread is resolved, squash-merge it yourself from GitHub, with the title as the subject and the closing line as the body. Nobody on the team pushes to, rebases, marks ready or merges your branch unless you ask Al.
 
 Main moves fast, about fifty commits a day. To stay current, **merge `main` into your branch rather than rebasing**: a merge commit that touches none of your files needs no second review round, and a rebase after the round would.
 

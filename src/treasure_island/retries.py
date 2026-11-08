@@ -21,8 +21,14 @@ from treasure_island.game_loop import GameStopped
 
 WAITS = (4, 8, 16, 32)  # seconds before each try after the first
 _sleep = time.sleep  # tests stand in for it, so they never wait
-# The SDKs' own names for a network failure, so no SDK is imported here.
-_DROPPED = {"APIConnectionError", "APITimeoutError", "InternalServerError"}
+# The SDKs' own names for a network failure, so no SDK is imported here;
+# RemoteProtocolError is httpx's, for a streamed reply cut off part way.
+_DROPPED = {
+    "APIConnectionError",
+    "APITimeoutError",
+    "InternalServerError",
+    "RemoteProtocolError",
+}
 
 
 def dropped(error):

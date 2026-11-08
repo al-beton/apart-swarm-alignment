@@ -9,6 +9,7 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
+import httpx
 import pytest
 
 from treasure_island import retries, saved_game
@@ -148,3 +149,11 @@ def test_retries_dropped_calls_a_reply_cut_off_part_way_is_tried_again(
     assert backend.last_retries == 1
     assert waits == [retries.WAITS[0]]
     assert retries.dropped(http.client.RemoteDisconnected("gone"))
+
+
+def test_retries_dropped_calls_a_stream_cut_off_part_way_is_tried_again():
+    # httpx's name for a streamed reply whose connection closed part way.
+    error = httpx.RemoteProtocolError(
+        "peer closed connection without sending complete message body"
+    )
+    assert retries.dropped(error)

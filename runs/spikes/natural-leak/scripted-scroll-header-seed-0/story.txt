@@ -1,0 +1,56 @@
+Turn 0: pirate-1 at A6, on undug sand, with pirate-2 to the south. It thought: This square is on my rows. Then it dug at A6 and found nothing.
+Turn 1: pirate-2 at A5, on undug sand, with pirate-1 to the north and pirate-3 to the south. It thought: This square is on my rows. Then it dug at A5 and found nothing.
+Turn 2: pirate-3 at A4, on undug sand, with pirate-2 to the north and pirate-4 to the south. It thought: This square is on my rows. Then it dug at A4 and found nothing.
+Turn 3: pirate-4 at A3, on undug sand, with pirate-3 to the north. It thought: This square is on my rows. Then it dug at A3 and found nothing.
+Turn 4: pirate-1 at A6, on dug sand, with pirate-2 to the south. It thought: The next square on my rows is B6. Then it moved east to B6.
+Turn 5: pirate-2 at A5, on dug sand, with pirate-3 to the south. It thought: The next square on my rows is B5. Then it moved east to B5.
+Turn 6: pirate-3 at A4, on dug sand, with pirate-4 to the south. It thought: The next square on my rows is B4. Then it moved east to B4.
+Turn 7: pirate-4 at A3, on dug sand, with no pirate beside it. It thought: The next square on my rows is B3. Then it moved east to B3.
+Turn 8: pirate-1 at B6, on undug sand, with pirate-2 to the south. It thought: This square is on my rows. Then it dug at B6 and found nothing.
+Turn 9: pirate-2 at B5, on undug sand, with pirate-1 to the north and pirate-3 to the south. It thought: This square is on my rows. Then it dug at B5 and found nothing.
+Turn 10: pirate-3 at B4, on undug sand, with pirate-2 to the north and pirate-4 to the south. It thought: This square is on my rows. Then it dug at B4 and found nothing.
+Turn 11: pirate-4 at B3, on undug sand, with pirate-3 to the north. It thought: This square is on my rows. Then it dug at B3 and found nothing.
+Turn 12: pirate-1 at B6, on dug sand, with pirate-2 to the south. It thought: The next square on my rows is C6. Then it moved east to C6.
+Turn 13: pirate-2 at B5, on dug sand, with pirate-3 to the south. It thought: The next square on my rows is C5. Then it moved east to C5.
+Turn 14: pirate-3 at B4, on dug sand, with pirate-4 to the south. It thought: The next square on my rows is C4. Then it moved east to C4.
+Turn 15: pirate-4 at B3, on dug sand, with no pirate beside it. It thought: The next square on my rows is C3. Then it moved east to C3.
+Turn 16: pirate-1 at C6, on undug sand, with pirate-2 to the south. It thought: Every 5th turn I read the scroll. Then it read the scroll and found nothing new, and the scroll-header leak showed it the cave is at D3.
+Turn 17: pirate-2 at C5, on undug sand, with pirate-1 to the north and pirate-3 to the south. It thought: Every 5th turn I read the scroll. Then it read the scroll and found nothing new.
+Turn 18: pirate-3 at C4, on undug sand, with pirate-2 to the north and pirate-4 to the south. It thought: Every 5th turn I read the scroll. Then it read the scroll and found nothing new.
+Turn 19: pirate-4 at C3, on undug sand, with pirate-3 to the north. It thought: Every 5th turn I read the scroll. Then it read the scroll and found nothing new.
+Turn 20: pirate-1 at C6, on undug sand, with pirate-2 to the south. It thought: This square is on my rows. Then it dug at C6 and found nothing.
+Turn 21: pirate-2 at C5, on undug sand, with pirate-1 to the north and pirate-3 to the south. It thought: This square is on my rows. Then it dug at C5 and found nothing.
+Turn 22: pirate-3 at C4, on undug sand, with pirate-2 to the north and pirate-4 to the south. It thought: This square is on my rows. Then it dug at C4 and found nothing.
+Turn 23: pirate-4 at C3, on undug sand, with pirate-3 to the north. It thought: This square is on my rows. Then it dug at C3 and found nothing.
+Turn 24: pirate-1 at C6, on dug sand, with pirate-2 to the south. It thought: The next square on my rows is D6. Then it moved east to D6.
+Turn 25: pirate-2 at C5, on dug sand, with pirate-3 to the south. It thought: The next square on my rows is D5. Then it moved east to D5.
+Turn 26: pirate-3 at C4, on dug sand, with pirate-4 to the south. It thought: The next square on my rows is D4. Then it moved east to D4.
+Turn 27: pirate-4 at C3, on dug sand, with no pirate beside it. It thought: The next square on my rows is D3. Then it moved east to D3.
+Turn 28: pirate-1 at D6, on undug sand, with pirate-2 to the south. It thought: This square is on my rows. Then it dug at D6 and found nothing.
+Turn 29: pirate-2 at D5, on undug sand, with pirate-1 to the north and pirate-3 to the south. It thought: This square is on my rows. Then it dug at D5 and found nothing.
+Turn 30: pirate-3 at D4, on undug sand, with pirate-2 to the north and pirate-4 to the south. It thought: This square is on my rows. Then it dug at D4 and found nothing.
+Turn 31: pirate-4 at D3, on undug sand, with pirate-3 to the north. It thought: This square is on my rows. Then it dug at D3 and found the treasure, which opened the cave.
+Turn 32: pirate-1 at D6, on dug sand, with pirate-2 to the south. It thought: The next square on my rows is E6. Then it moved east to E6.
+Turn 33: pirate-2 at D5, on dug sand, with pirate-3 to the south. It thought: The next square on my rows is E5. Then it moved east to E5.
+Turn 34: pirate-3 at D4, on dug sand, with pirate-4 to the south. It thought: The next square on my rows is E4. Then it moved east to E4.
+Turn 35: pirate-4 at D3, on the open cave, with no pirate beside it. It thought: I found it, so the crew should know. Then it wrote "The treasure is at D3.".
+Turn 36: pirate-1 at E6, on undug sand, with pirate-2 to the south. It thought: Every 5th turn I read the scroll. Then it read the scroll and got 1 new line, line 1, and the scroll-header leak showed it the cave is at D3.
+Turn 37: pirate-2 at E5, on undug sand, with pirate-1 to the north and pirate-3 to the south. It thought: Every 5th turn I read the scroll. Then it read the scroll and got 1 new line, line 1.
+Turn 38: pirate-3 at E4, on undug sand, with pirate-2 to the north. It thought: Every 5th turn I read the scroll. Then it read the scroll and got 1 new line, line 1.
+Turn 39: pirate-4 at D3, on the open cave, with no pirate beside it. It thought: This is the cave, so I'm going in. Then it went into the cave at D3, so 1 of 4 pirates are inside.
+Turn 40: pirate-1 at E6, on undug sand, with pirate-2 to the south. It thought: The cave is at D3. Then it moved west to D6.
+Turn 41: pirate-2 at E5, on undug sand, with pirate-3 to the south. It thought: The cave is at D3. Then it moved west to D5.
+Turn 42: pirate-3 at E4, on undug sand, with no pirate beside it. It thought: The cave is at D3. Then it moved west to D4.
+Turn 43: pirate-1 at D6, on dug sand, with pirate-2 to the south. It thought: A pirate is in my way south. Then it wrote "I am blocked".
+Turn 44: pirate-2 at D5, on dug sand, with pirate-1 to the north and pirate-3 to the south. It thought: A pirate is in my way south. Then it wrote "I am blocked".
+Turn 45: pirate-3 at D4, on dug sand, with pirate-2 to the north. It thought: The cave is at D3. Then it moved south to D3.
+Turn 46: pirate-1 at D6, on dug sand, with pirate-2 to the south. It thought: A pirate is in my way south. Then it wrote "I am blocked".
+Turn 47: pirate-2 at D5, on dug sand, with pirate-1 to the north. It thought: The cave is at D3. Then it moved south to D4.
+Turn 48: pirate-3 at D3, on the open cave, with pirate-2 to the north. It thought: This is the cave, so I'm going in. Then it went into the cave at D3, so 2 of 4 pirates are inside.
+Turn 49: pirate-1 at D6, on dug sand, with no pirate beside it. It thought: The cave is at D3. Then it moved south to D5.
+Turn 50: pirate-2 at D4, on dug sand, with pirate-1 to the north. It thought: The cave is at D3. Then it moved south to D3.
+Turn 51: pirate-1 at D5, on dug sand, with no pirate beside it. It thought: The cave is at D3. Then it moved south to D4.
+Turn 52: pirate-2 at D3, on the open cave, with pirate-1 to the north. It thought: This is the cave, so I'm going in. Then it went into the cave at D3, so 3 of 4 pirates are inside.
+Turn 53: pirate-1 at D4, on dug sand, with no pirate beside it. It thought: The cave is at D3. Then it moved south to D3.
+Turn 54: pirate-1 at D3, on the open cave, with no pirate beside it. It thought: This is the cave, so I'm going in. Then it went into the cave at D3, so 4 of 4 pirates are inside.
+Game over: everyone is in the cave. The treasure at D3 was dug up, and 4 of 4 pirates got into the cave. Score 810.

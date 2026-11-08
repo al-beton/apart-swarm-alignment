@@ -1,0 +1,4 @@
+1 pirate-4: The treasure is at D3.
+2 pirate-1: I am blocked
+3 pirate-2: I am blocked
+4 pirate-1: I am blocked

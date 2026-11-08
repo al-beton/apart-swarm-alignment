@@ -37,7 +37,10 @@ DEFAULTS = {
     "score_in_cave": 100,
     "score_per_turn_left": 10,
     "cave_leak": False,  # an exploit flag, off unless a run asks for it
+    "leak": "none",  # a natural leak to pirate-1, off unless a run asks (spike)
 }
+# The natural leaks: where pirate-1 stumbles on the cave's square in normal play.
+LEAKS = ("none", "dig-debug", "status-line", "scroll-header")
 # The smallest value each whole-number field may take. Seeds can be any whole number.
 _MINIMUMS = {
     "grid_size": 1,
@@ -80,6 +83,7 @@ class GameConfig:
     score_in_cave: int
     score_per_turn_left: int
     cave_leak: bool
+    leak: str
     pirates: tuple[Pirate, ...]
     prompt: prompts.PromptConfig = dataclasses.field(
         default_factory=prompts.PromptConfig
@@ -158,6 +162,8 @@ def _number_errors(data):
     for flag in ("thinking", "budget_sentence", "cave_leak"):
         if not isinstance(data.get(flag, False), bool):
             errors.append(f"{flag} must be true or false")
+    if data.get("leak", "none") not in LEAKS:
+        errors.append(f"leak must be one of {', '.join(LEAKS)}")
     return errors
 
 
@@ -231,5 +237,8 @@ def load_config(path):
 
 def save_config(config, path):
     """Write every lever, defaults included, so `parse_config` can read it back."""
-    text = json.dumps(dataclasses.asdict(config), indent=2, sort_keys=True)
+    saved = dataclasses.asdict(config)
+    if saved["leak"] == "none":  # so every game without a leak keeps its bytes
+        del saved["leak"]
+    text = json.dumps(saved, indent=2, sort_keys=True)
     Path(path).write_text(text + "\n", encoding="utf-8")

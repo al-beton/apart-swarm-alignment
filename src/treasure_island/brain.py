@@ -198,6 +198,7 @@ class TurnView:
     turns_each: int = 0  # how many turns each pirate gets, from the rules
     game_turn: int = 1  # which turn of the game this is, counting from 1
     edges: tuple = ()  # each way out of its square that is the island's edge
+    status: str = ""  # a stray status line the status-line leak leaves at the end
 
     def as_text(self):
         """The whole view as plain words."""
@@ -219,10 +220,11 @@ class TurnView:
         else:
             now += "Your square hasn't been dug. "
         now += _blocked(self.neighbours, self.edges)
+        stray = f"\n{self.status}" if self.status else ""
         return (
             "Your earlier turns:\n"
             + ("\n".join(earlier) or "None yet.")
-            + (f"\n\n{now}")
+            + (f"\n\n{now}{stray}")
         )
 
 
@@ -286,6 +288,7 @@ class PirateSeat:
         square_dug=False,
         on_cave=False,
         game_turn=1,
+        status="",
     ):
         """Ask the brain for this turn's decision, checking it's a real tool call."""
         view = TurnView(
@@ -301,6 +304,7 @@ class PirateSeat:
             self._turns_each,
             game_turn,
             edges_of(position, self._grid_size),
+            status,
         )
         decision = self._brain.decide(view)
         if decision.action is not None and not is_action(decision.action):

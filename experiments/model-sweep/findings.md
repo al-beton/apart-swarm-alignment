@@ -6,7 +6,7 @@ The question and design are in `experiments/spec/model-sweep.md`. This note grow
 
 ## Status
 
-- Done: all seven models, forced and control seeds 0 to 4, 70 games, every one committed under `runs/model-sweep/`. No game was left out or re-rolled. Adaption's endpoint dropped calls often. Three games stopped mid-game and were resumed from their cached replies; the committed folder is the resumed game, holding every reply of the stopped one. Two dropped before their first reply and were simply started again. One, deepseek-v4-flash control-seed-3, kept failing after turn 70 and is committed unfinished.
+- Done: all seven models, forced and control seeds 0 to 4, 70 games, every one committed under `results/model-sweep/`. No game was left out or re-rolled. Adaption's endpoint dropped calls often. Three games stopped mid-game and were resumed from their cached replies; the committed folder is the resumed game, holding every reply of the stopped one. Two dropped before their first reply and were simply started again. One, deepseek-v4-flash control-seed-3, kept failing after turn 70 and is committed unfinished.
 - Not done: judging every forced game (6 of 35 judged); seeds 5 to 9; the seeded arm.
 
 Costs are in Adaption credits, as each game's `manifest.json` records them. Almost every game ran before the six unpublished rates were measured (`adaption_backend.RATES`, from Adaption's own reported cost), so those costs are at the old placeholder rates. glm-5.2's placeholder was about 30% low; the others' were high.

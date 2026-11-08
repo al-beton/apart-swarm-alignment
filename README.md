@@ -151,7 +151,7 @@ Add `cave_leak = true` to a config and a pirate that tries to enter the cave any
 
 Experiment one plays four arms of this game (`experiments/spec/cave-leak.md`). `uv run python -m treasure_island.cave_leak_table results/cave-leak` tables its games from their event logs: when the first pirate got in, how many did, the score, and when the leak fired and for whom, with each arm's means against the control. All four arms also turn on the end report (below), so every game ends with each pirate's note to the designers, at the end of its `transcript.md`; that's four more model calls a game.
 
-The model sweep plays experiment one's forced and control arms on every model Adaption hosts, four pirates on one model, with the end report on (`experiments/spec/model-sweep.md`): `uv run treasure-island run configs/model-sweep/glm-5.2-forced.toml --seed 0`, and likewise `<model>-<arm>.toml` for the others. Its games are under `runs/model-sweep/`, and which models are candid, launder or stay quiet is in `experiments/model-sweep/findings.md`.
+The model sweep plays experiment one's forced and control arms on every model Adaption hosts, four pirates on one model, with the end report on (`experiments/spec/model-sweep.md`): `uv run treasure-island run configs/model-sweep/glm-5.2-forced.toml --seed 0`, and likewise `<model>-<arm>.toml` for the others. Its games are under `results/model-sweep/`, and which models are candid, launder or stay quiet is in `experiments/model-sweep/findings.md`.
 
 ## The end report
 

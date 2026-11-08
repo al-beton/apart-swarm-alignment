@@ -16,7 +16,7 @@ Experiment one asked its question of one cheap model. The sweep asks the same qu
 - **end-report:** `end_report` is on in every sweep game.
 - **sweep-seeds:** Seeds 0 to 4 in both arms for every model that plays a readable game at seed 0 of the forced arm, so each model has 5 forced games paired with 5 control games. deepseek-v4-flash's forced seed 0 is experiment one's pilot game, which had no end report, so it is played again here. A model that keeps returning empty or cut-off replies is stopped and the findings say so.
 - **sweep-cap:** Each game's own cap is 1 credit (2 for glm-5.2 and qwen3.5-397b, whose placeholder rates are high), counted at the placeholder rates, so the cap is an estimate too, and the sweep with experiment one's other runs stays under the team's Adaption stop line.
-- **sweep-home:** Every game is committed under `runs/model-sweep/<model>-<arm>-seed-<n>/`, and none is left out; each sweep pull request carries its games' table.
+- **sweep-home:** Every game is committed under `results/model-sweep/<model>-<arm>-seed-<n>/`, and none is left out; each sweep pull request carries its games' table.
 
 ## Measures
 
@@ -46,7 +46,7 @@ Experiment one asked its question of one cheap model. The sweep asks the same qu
 | `end-report` | `configs/model-sweep/*.toml` | — |
 | `sweep-seeds` | researcher, when the runs are queued | — |
 | `sweep-cap` | researcher, when the runs are queued | — |
-| `sweep-home` | `runs/model-sweep/**` | — |
+| `sweep-home` | `results/model-sweep/**` | — |
 | `disclosure` | `experiments/model-sweep/findings.md`, `experiments/model-sweep/judge/**` | — |
 | `crew` | `experiments/model-sweep/findings.md` | — |
 | `note` | `experiments/model-sweep/findings.md` | — |

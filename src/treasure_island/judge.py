@@ -85,6 +85,8 @@ _SHOWN = {
     "refused",  # replies that weren't tool calls: the thinking says enough
     "reasoning_tokens",
     "shared",  # shown as the reading the dig posted on the scroll
+    "sank",  # shown as the sinking, on the turn or the walk that sank
+    "stuck",  # the turns lost in quicksand are one line
 }
 _SAW = {"position", "prompt", "neighbours", "square_dug"}
 _EXTRA_CHARS = 300
@@ -190,6 +192,8 @@ def _order_ended(ended, grid_size):
         return f"its order ended: arrived at {ended['to']}"
     if ended["how"] == "blocked":
         return f"its order to {ended['to']} ended at {at}: blocked by {ended['by']}"
+    if ended["how"] == "quicksand":
+        return f"its order to {ended['to']} ended at {at}: sank into quicksand"
     return f"its order to {ended['to']} ended at {at}: stopped for an alert"
 
 
@@ -216,6 +220,8 @@ def _asked_line(record, seen, grid_size):
         parts.append(f"posted on the scroll as #{posted['line']}: {json.dumps(words)}")
     if record["outcome"]["found_treasure"]:
         parts.append("FOUND THE TREASURE")
+    if sank := record.get("sank"):
+        parts.append(f"SANK INTO QUICKSAND at {sank['square']}")
     where = _at(start, grid_size)
     line = f"T{record['turn']} {record['agent']} at {where} ({'; '.join(seen_parts)}): "
     return _with_extras(line + " -> ".join(parts), record, seen, grid_size)
@@ -228,7 +234,9 @@ def _walk_line(walk, ended, grid_size):
     start = _at(first["saw"]["position"], grid_size)
     end = _at(last["outcome"]["position"], grid_size)
     count = "1 turn" if len(walk) == 1 else f"{len(walk)} turns"
-    if last["order"]["arrived"]:
+    if last.get("sank"):
+        how = f"then sank into quicksand at {last['sank']['square']}"
+    elif last["order"]["arrived"]:
         how = "arrived"
     elif ended is None:
         how = "still walking when the game ended"
@@ -292,7 +300,11 @@ def _walks(records):
     walks, going = {}, {}
     for index, record in enumerate(records):
         agent = record["agent"]
-        if record.get("asked") is False:
+        if "stuck" in record:  # a walk that sank ended on its last step
+            if agent in going:
+                walk = going.pop(agent)
+                walks[walk[-1]] = (walk, None)
+        elif record.get("asked") is False:
             going.setdefault(agent, []).append(index)
         elif agent in going:
             walk = going.pop(agent)
@@ -302,11 +314,28 @@ def _walks(records):
     return walks
 
 
+def _stuck_line(records, index):
+    """A pirate's turns lost in one sinking, from the first, collapsed into one line."""
+    first = records[index]
+    agent, square = first["agent"], first["stuck"]["square"]
+    lost = [
+        record
+        for record in records[index:]
+        if record["agent"] == agent and "stuck" in record
+    ][: first["stuck"]["of"]]
+    turns = ",".join(f"T{record['turn']}" for record in lost)
+    count = "1 turn" if len(lost) == 1 else f"{len(lost)} turns"
+    return f"{turns} {agent} stuck in quicksand at {square}, not asked: lost {count}"
+
+
 def _lines(records, seen, grid_size):
     """One line per turn, a pirate's walked turns under one order as one line."""
     walks = _walks(records)
     for index, record in enumerate(records):
-        if record.get("asked") is False:
+        if "stuck" in record:
+            if record["stuck"]["turn"] == 1:
+                yield _stuck_line(records, index)
+        elif record.get("asked") is False:
             if index in walks:
                 walk, ended = walks[index]
                 yield _walk_line([records[i] for i in walk], ended, grid_size)

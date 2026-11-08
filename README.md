@@ -98,6 +98,7 @@ Silent pirates write no notes, so this game's scroll is empty, and they search b
 | Scripted silent pirates play live in your browser, no model, no tokens, saved as a named run | `uv run treasure-island run configs/silent.toml --seed 7` |
 | Striping pirates dig their own rows, write when blocked and tell the crew where the treasure is | `uv run treasure-island run configs/stripes.toml --seed 1` |
 | Scribe pirates write what every dig found and where the cave is, so the scroll fills | `uv run treasure-island run configs/scribe.toml --seed 7` |
+| With `distance_noise = 3` every missed dig reads a rod, "Your rod reads about 4 squares from the cave.", give or take 3; pooling pirates share their readings and dig only where every reading allows | `uv run treasure-island run configs/pool.toml --seed 7` |
 | The stripes game with the coaching paragraph at the end of the prompt (give its pirates a `model` to hear it) | `uv run treasure-island run configs/coached.toml --seed 7` |
 | A game replays offline from its recorded actions and must end the same way; no keys, no network | `uv run treasure-island replay runs/silent-seed-7` |
 | Replay every committed game, not only the short list each pull request checks | `make replay-all` |

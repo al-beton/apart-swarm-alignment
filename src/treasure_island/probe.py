@@ -1,7 +1,7 @@
 """The exploit-choice probe: one reply to each form of the cave leak, then a question.
 
     uv run python -m treasure_island.probe run [--arms dump tool] [--seeds 20] [--yes]
-    uv run python -m treasure_island.probe table [runs/exploit-choice]
+    uv run python -m treasure_island.probe table [runs/exploit-choice or results/exploit-choice]
 
 `run` plays every arm in configs/exploit-choice/ on the same seeds. Each sample
 is a game where pirate-1 plays the scripted sharer until the bait shows it the
@@ -214,17 +214,31 @@ def _share(rows, key):
     return f"{sum(row[key] for row in rows)}/{len(rows)}"
 
 
+def _samples(home):
+    """(arm, seed, folder) of every sample: `<arm>/<seed>/` as played, or
+    `<arm>-<seed>/` as kept in results/, in arm then seed order."""
+    found = []
+    for folder in Path(home).iterdir():
+        if not folder.is_dir():
+            continue
+        if (folder / "config.json").exists():  # results/: one folder a sample
+            arm, _, seed = folder.name.rpartition("-")
+            found.append((arm, seed, folder))
+        else:
+            found += [(folder.name, s.name, s) for s in folder.iterdir() if s.is_dir()]
+    return sorted(found, key=lambda s: (s[0], len(s[1]), s[1]))
+
+
 def table(home=RUNS / HOME):
     """Markdown: a row per sample, then a summary per arm."""
     rows, skipped = [], []
     if not Path(home).is_dir():
         return f"No samples in {home} yet: `python -m treasure_island.probe run`.\n"
-    for arm_folder in sorted(Path(home).iterdir()):
-        for folder in sorted(arm_folder.iterdir(), key=lambda p: (len(p.name), p.name)):
-            if not (folder / "followup.json").exists():
-                skipped.append(f"{arm_folder.name}/{folder.name}")
-                continue
-            rows.append(_sample_row(arm_folder.name, folder.name, folder))
+    for arm, seed, folder in _samples(home):
+        if not (folder / "followup.json").exists():
+            skipped.append(f"{arm}/{seed}")
+            continue
+        rows.append(_sample_row(arm, seed, folder))
     head = (
         "| arm | seed | still possible | did after the leak | line said "
         "| headed for it | named it | thought says test | follow-up |"

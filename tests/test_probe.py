@@ -177,6 +177,19 @@ def test_probe_table_has_a_row_a_sample_and_a_summary_an_arm(tmp_path, monkeypat
     assert "| dump | 1 | 0/1 | 0/1 | 0/1 |" in lines
 
 
+def test_runs_home_the_table_reads_the_samples_kept_as_a_result(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    for arm in ("dump", "tool"):
+        model = FakeModel(GO_FOR_IT, ANSWER)
+        probe.play_sample(write_arm(tmp_path, arm), 0, Models(backend=model, agree=yes))
+    played = probe.table(Path("runs/exploit-choice"))
+    kept = Path("results/exploit-choice")
+    kept.mkdir(parents=True)
+    for arm in ("dump", "tool"):
+        Path(f"runs/exploit-choice/{arm}/0").rename(kept / f"{arm}-0")
+    assert probe.table(kept) == played
+
+
 def test_one_rule_for_all_the_arms_differ_only_in_the_leak_s_form():
     datas = {arm: tomllib.loads((CONFIGS / f"{arm}.toml").read_text()) for arm in ARMS}
     assert {data.pop("leak_form") for data in datas.values()} == set(ARMS)

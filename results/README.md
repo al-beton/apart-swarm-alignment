@@ -3,6 +3,7 @@
 Findings worth keeping, each with the games behind it. This guide has no `Implements:` line because nothing here may carry one; a row in `product/spec/results.md` homes these folders.
 
 - **`sample-sweep-seeds/`:** where the treasure lands decides how well the silent crew scores. A sample showing the layout, from scripted games.
+- **`exploit-choice/`:** of four forms of the cave leak, only the refusal's sentence is taken: 16 of 20 pirates act on it, half saying where the square came from. 80 one-turn samples from `adaption/deepseek-v4-flash`.
 
 ## Adding a result
 

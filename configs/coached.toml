@@ -1,0 +1,13 @@
+# Implements: treasure-island/extra-paragraph
+# The real game with the coaching paragraph at the end of the prompt: split the
+# search, the finder writes the cave's square before going in, plan from turn 1.
+# The scripted crew can't read, so this plays free; give each pirate a `model`
+# (see README.md) for an LLM arm that hears the coaching (default, Al to confirm).
+grid_size = 5
+crew_size = 3
+turns_per_pirate = 20
+seed = 7
+brain = "stripes"
+
+[prompt.slots]
+extra = "coaching"

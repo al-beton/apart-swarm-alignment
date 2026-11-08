@@ -1,4 +1,4 @@
-# Implements: prompts/base-and-slots, prompts/base-file, prompts/slots, prompts/shipped-variants, prompts/unknown-slot, prompts/prompt-recorded
+# Implements: prompts/base-and-slots, prompts/base-file, prompts/slots, prompts/shipped-variants, prompts/unknown-slot, prompts/system-override, prompts/prompt-recorded
 """The system prompt is a fixed base file plus the slots an experiment arm names."""
 
 import hashlib
@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from treasure_island import saved_game
+from treasure_island import cli, saved_game
 from treasure_island.brain import system_prompt
 from treasure_island.config import ConfigError, parse_config
 
@@ -75,7 +75,7 @@ def test_slots_none_adds_nothing_not_even_a_blank_line():
 def test_slots_a_config_with_no_prompt_block_plays_the_plain_base():
     config = parse_config(GAME)
     assert config.prompt.base == "prompts/base.md"
-    assert config.prompt.slots == {slot: "none" for slot in SHIPPED}
+    assert config.prompt.slots == {slot: "none" for slot in [*SHIPPED, "extra"]}
     assert system_prompt(config) == prompt_for(base="prompts/base.md")
 
 
@@ -128,12 +128,74 @@ def test_prompt_recorded_in_the_run_s_config_and_manifest(tmp_path):
             "rules": "none",
             "disclosure": "none",
             "identity": "none",
+            "extra": "none",
         },
+        "system": system_prompt(config),  # the exact words the pirates were told
     }
-    assert parse_config(saved) == config
+    assert system_prompt(parse_config(saved)) == system_prompt(config)
     manifest = json.loads((folder / "manifest.json").read_text())
     base = (ROOT / "prompts/base.md").read_bytes()
     assert manifest["prompt"] == {
         "base_sha256": hashlib.sha256(base).hexdigest(),
         "system_prompt": system_prompt(config),
     }
+
+
+def test_system_override_text_replaces_the_base_and_slots():
+    told = prompt_for(system="Dig well, crew.", slots={"framing": "competition"})
+    assert told == "Dig well, crew."
+
+
+def test_system_override_a_file_path_is_read(tmp_path):
+    path = tmp_path / "mine.md"
+    path.write_text("You are a pirate.\nFind the cave.\n")
+    assert prompt_for(system=str(path)) == "You are a pirate.\nFind the cave.\n"
+
+
+def test_system_override_a_long_one_line_prompt_is_the_prompt_itself():
+    words = "You are a pirate. " * 30  # longer than any file's name can be
+    assert prompt_for(system=words) == words
+
+
+def test_system_override_is_told_word_for_word():
+    words = "A crew of {crew_size}, nothing filled in.\nA second line."
+    config = parse_config({**GAME, "cave_leak": True, "prompt": {"system": words}})
+    assert system_prompt(config) == words  # no numbers filled, no flag's rule added
+
+
+@pytest.mark.parametrize("system", [3, ["a list"]])
+def test_system_override_must_be_text(system):
+    with pytest.raises(ConfigError, match="prompt.system"):
+        parse_config({**GAME, "prompt": {"system": system}})
+
+
+def test_prompt_recorded_running_the_saved_config_again_tells_the_same_words(
+    tmp_path, monkeypatch, capsys
+):
+    base = tmp_path / "base.md"
+    base.write_text("A crew of {crew_size} on {grid_size} squares.\n")
+    config = parse_config(
+        {
+            **GAME,
+            "brain": "silent",
+            "turns_per_pirate": 2,
+            "seed": 7,
+            "prompt": {"base": str(base)},
+        }
+    )
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / "first").mkdir()
+    first = saved_game.write_saved(config, tmp_path / "first")
+    base.write_text("The base changed since.\n")
+    # Played again through the run command, from the run's own config.json.
+    run = ["run", str(first / "config.json"), "--seed", "7", "--no-watch"]
+    assert cli.main(run) == 0
+    again = tmp_path / capsys.readouterr().out.strip().splitlines()[-1]
+    told = [
+        json.loads(line)["saw"]["prompt"]
+        for line in (again / "events.jsonl").read_text().splitlines()
+    ]
+    assert all(prompt.startswith("A crew of 4 on 9 squares.") for prompt in told)
+    assert (again / "events.jsonl").read_bytes() == (
+        first / "events.jsonl"
+    ).read_bytes()

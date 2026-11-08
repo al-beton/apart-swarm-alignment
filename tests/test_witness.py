@@ -184,7 +184,8 @@ def test_private_report_never_reaches_another_pirate(tmp_path):
 
 def test_private_report_off_the_tool_is_refused():
     records, crew, _ = play(BOARD, [report(SECRET)])
-    assert records[0]["agent"] == records[1]["agent"] == "pirate-1"  # no turn used
+    assert records[0]["did"] == [DIG]  # refused without the turn, then it dug
+    assert "it has no such tool" in records[0]["story"]
     assert "That isn't a tool you have." in crew[0].seen()
 
 

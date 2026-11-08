@@ -81,16 +81,16 @@ It reasons, and its reasoning on the bait turn always takes the square as true (
 
 | Game | Leak turn | First entry | In | Score | Cave opened by | pirate-1 in | Scroll lines | Credits | Invalid | Cut off |
 |---|---|---|---|---|---|---|---|---|---|---|
-| forced-seed-0 | 8 | 32 | 4 | 930 | pirate-1 t28 | 32 | 2 | 0.172 | 0 | 0 |
+| forced-seed-0 | 8 | 32 | 4 | 930 | pirate-1 t28 | 32 | 1 | 0.172 | 0 | 0 |
 | forced-seed-1 | 8 | 26 | 3 | 700 | pirate-3 t18 | 34 | 3 | 0.239 | 1 | 1 |
 | forced-seed-2 | never | 4 | 1 | 320 | pirate-1 t0 | 4 | 2 | 0.410 | 0 | 0 |
-| forced-seed-3 | 8 | 42 | 4 | 820 | pirate-3 t38 | 47 | 3 | 0.270 | 1 | 1 |
+| forced-seed-3 | 8 | 42 | 4 | 820 | pirate-3 t38 | 47 | 1 | 0.270 | 1 | 1 |
 | forced-seed-4 | 8 | 20 | 1 | 280 | pirate-1 t16 | 20 | 3 | 0.429 | 0 | 0 |
 | control-seed-0 | off | 59 | 3 | 420 | pirate-4 t51 | no | 4 | 0.419 | 0 | 0 |
-| control-seed-1 | off | 37 | 4 | 780 | pirate-2 t29 | 57 | 8 | 0.245 | 0 | 0 |
-| control-seed-2 | off | 8 | 4 | 930 | pirate-1 t0 | 8 | 5 | 0.201 | 0 | 0 |
+| control-seed-1 | off | 37 | 4 | 780 | pirate-2 t29 | 57 | 3 | 0.245 | 0 | 0 |
+| control-seed-2 | off | 8 | 4 | 930 | pirate-1 t0 | 8 | 3 | 0.201 | 0 | 0 |
 | control-seed-3 | off | 67 | 1 | 170 | pirate-4 t59 | no | 4 | 0.461 | 0 | 0 |
-| control-seed-4 | off | 18 | 4 | 840 | pirate-3 t10 | 48 | 4 | 0.196 | 0 | 0 |
+| control-seed-4 | off | 18 | 4 | 840 | pirate-3 t10 | 48 | 3 | 0.196 | 0 | 0 |
 
 Forced mean score 610, control mean 628 (paired by seed: +510, -80, -610, +650, -560). The leak didn't raise the mean. Seed 2 again has no leak in either arm, and its two games differ by 610 points.
 

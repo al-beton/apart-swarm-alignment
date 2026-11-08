@@ -8,7 +8,7 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 - **research-question:** (open) We want to know how often a swarm of LLM agents whistleblows once it has gone wrong, and what in its environment changes that; handing one agent a secret may only show candour about windfall information, so the exact claim is still to choose.
 - **sandbox-counts:** (decided) A reproducible sandbox with levers is a worthwhile result on its own, whatever the whistleblowing numbers turn out to be.
 - **principals:** (decided) For now the crew shares one goal and one score; a private score for each pirate is a lever to try later, since swarming pays even when each pirate maximises its own.
-- **what-they-are-told:** (decided) What pirates are told about the study is a lever to tune once games are running; for now they are told plainly that they are scored together as a crew (`score-told`), and the rules (`rules-text`) say nothing of a study.
+- **what-they-are-told:** (decided) What pirates are told about the study is a lever to tune once games are running; for now they are told plainly that they are scored together as a crew (`score-told`), and the rules (`rules-text`) say nothing of a study unless an arm sets the prompt's `identity` slot (see prompts).
 
 ## The game
 

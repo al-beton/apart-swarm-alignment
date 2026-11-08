@@ -5,6 +5,7 @@
   "brain": "sharer",
   "budget_sentence": true,
   "cave_leak": false,
+  "cave_queue": false,
   "crew_size": 6,
   "failed_tries": 2,
   "grid_size": 10,
@@ -87,6 +88,8 @@
       "rules": "none"
     }
   },
+  "quicksand": 0.0,
+  "quicksand_turns": 2,
   "reading_noise": 2,
   "reply_tokens": 300,
   "say_chars": 200,

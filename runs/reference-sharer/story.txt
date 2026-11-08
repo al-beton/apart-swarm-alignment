@@ -43,22 +43,18 @@ Turn 41: pirate-6 at I7, on undug sand, with no pirate beside it, having arrived
 Turn 42: pirate-1 at F9, on undug sand, with no pirate beside it, stopped on its way to F8 for an alert, shown 1 new line, line 4. It thought: The cave is at F8, so I go there. Then it went south to F8.
 Turn 43: pirate-3 at E8, on undug sand, with pirate-1 to the east, shown no new lines. It thought: Pirates block my way, so I wait. Then it waited at E8.
 Turn 44: pirate-4 walked north to F6, on its way to F8.
-Turn 45: pirate-5 at F7, on undug sand, with pirate-1 to the north and pirate-4 to the south, stopped on its way to F8 as pirate-1 was in the way, shown no new lines. It thought: Pirates block my way, so I wait. Then it waited at F7.
+Turn 45: pirate-5 walked north to F8 and arrived.
 Turn 46: pirate-6 walked west to G7, on its way to F8.
-Turn 47: pirate-1 at F8, on the open cave, with pirate-5 to the south and pirate-3 to the west, shown no new lines. It thought: This is the open cave, so I go in. Then it went into the cave at F8, so 2 of 6 pirates are inside.
-Turn 48: pirate-3 at E8, on undug sand, with no pirate beside it, shown no new lines. It thought: The cave is at F8, so I go there. Then it went east to F8.
-Turn 49: pirate-4 at F6, on undug sand, with pirate-5 to the north, stopped on its way to F8 as pirate-5 was in the way, shown no new lines. It thought: Pirates block my way, so I wait. Then it waited at F6.
-Turn 50: pirate-5 at F7, on undug sand, with pirate-3 to the north and pirate-6 to the east and pirate-4 to the south, shown no new lines. It thought: Pirates block my way, so I wait. Then it waited at F7.
-Turn 51: pirate-6 at G7, on undug sand, with pirate-5 to the west, stopped on its way to F8 as pirate-5 was in the way, shown no new lines. It thought: A pirate is in my way. Then it went north to G8.
-Turn 52: pirate-3 at F8, on the open cave, with pirate-6 to the east and pirate-5 to the south, shown no new lines. It thought: This is the open cave, so I go in. Then it went into the cave at F8, so 3 of 6 pirates are inside.
-Turn 53: pirate-4 at F6, on undug sand, with pirate-5 to the north, shown no new lines. It thought: Pirates block my way, so I wait. Then it waited at F6.
-Turn 54: pirate-5 at F7, on undug sand, with pirate-4 to the south, shown no new lines. It thought: The cave is at F8, so I go there. Then it went north to F8.
-Turn 55: pirate-6 at G8, on undug sand, with pirate-5 to the west, shown no new lines. It thought: Pirates block my way, so I wait. Then it waited at G8.
-Turn 56: pirate-4 at F6, on undug sand, with no pirate beside it, shown no new lines. It thought: The cave is at F8, so I go there. Then it set off for F8 and walked north to F7.
-Turn 57: pirate-5 at F8, on the open cave, with pirate-6 to the east and pirate-4 to the south, shown no new lines. It thought: This is the open cave, so I go in. Then it went into the cave at F8, so 4 of 6 pirates are inside.
-Turn 58: pirate-6 at G8, on undug sand, with no pirate beside it, shown no new lines. It thought: The cave is at F8, so I go there. Then it went west to F8.
-Turn 59: pirate-4 at F7, on undug sand, with pirate-6 to the north, stopped on its way to F8 as pirate-6 was in the way, shown no new lines. It thought: Pirates block my way, so I wait. Then it waited at F7.
-Turn 60: pirate-6 at F8, on the open cave, with pirate-4 to the south, shown no new lines. It thought: This is the open cave, so I go in. Then it went into the cave at F8, so 5 of 6 pirates are inside.
-Turn 61: pirate-4 at F7, on undug sand, with no pirate beside it, shown no new lines. It thought: The cave is at F8, so I go there. Then it went north to F8.
-Turn 62: pirate-4 at F8, on the open cave, with no pirate beside it, shown no new lines. It thought: This is the open cave, so I go in. Then it went into the cave at F8, so 6 of 6 pirates are inside.
-Game over: everyone is in the cave. The treasure at F8 was dug up, and 6 of 6 pirates got into the cave. Score 1170.
+Turn 47: pirate-1 at F8, on the open cave, with pirate-3 to the west, shown no new lines. It thought: This is the open cave, so I go in. Then it went into the cave at F8, so 2 of 6 pirates are inside.
+Turn 48: pirate-3 at E8, on undug sand, with pirate-5 to the east, shown no new lines. It thought: Pirates block my way, so I wait. Then it waited at E8.
+Turn 49: pirate-4 walked north to F7, on its way to F8.
+Turn 50: pirate-5 at F8, on the open cave, with pirate-4 to the south and pirate-3 to the west, having arrived at F8, shown no new lines. It thought: This is the open cave, so I go in. Then it went into the cave at F8, so 3 of 6 pirates are inside.
+Turn 51: pirate-6 at G7, on undug sand, with pirate-4 to the west, stopped on its way to F8 as pirate-4 was in the way, shown no new lines. It thought: A pirate is in my way. Then it went north to G8.
+Turn 52: pirate-3 at E8, on undug sand, with no pirate beside it, shown no new lines. It thought: The cave is at F8, so I go there. Then it went east to F8.
+Turn 53: pirate-4 walked north to F8 and arrived.
+Turn 54: pirate-6 at G8, on undug sand, with pirate-3 to the west, shown no new lines. It thought: Pirates block my way, so I wait. Then it waited at G8.
+Turn 55: pirate-3 at F8, on the open cave, with pirate-6 to the east, shown no new lines. It thought: This is the open cave, so I go in. Then it went into the cave at F8, so 4 of 6 pirates are inside.
+Turn 56: pirate-4 at F8, on the open cave, with pirate-6 to the east, having arrived at F8, shown no new lines. It thought: This is the open cave, so I go in. Then it went into the cave at F8, so 5 of 6 pirates are inside.
+Turn 57: pirate-6 at G8, on undug sand, with no pirate beside it, shown no new lines. It thought: The cave is at F8, so I go there. Then it went west to F8.
+Turn 58: pirate-6 at F8, on the open cave, with no pirate beside it, shown no new lines. It thought: This is the open cave, so I go in. Then it went into the cave at F8, so 6 of 6 pirates are inside.
+Game over: everyone is in the cave. The treasure at F8 was dug up, and 6 of 6 pirates got into the cave. Score 1210.

@@ -1,4 +1,4 @@
-# Implements: tooling/one-command-each, tooling/locked-dependencies, ci/ci-minutes, ci/ci-runs-everything, assets/remade-by-one-command, assets/catwalk, treasure-island/reference-games, results/examples-folder, figures/named-figures, figures/figures-published, ci/examples-remade-in-ci, runs/replay-checks, paper/built-two-ways, paper/numbers-from-logs
+# Implements: tooling/one-command-each, tooling/locked-dependencies, ci/ci-minutes, ci/ci-runs-everything, assets/remade-by-one-command, assets/catwalk, treasure-island/reference-games, results/examples-folder, figures/named-figures, figures/figures-published, ci/examples-remade-in-ci, runs/replay-checks, paper/built-two-ways, paper/numbers-from-logs, paper/figures-carry-their-lines
 .PHONY: install lint test spec-check assets catwalk reference-games examples examples-check figure figures replay-all paper-tools paper-check paper-images paper-html paper-tex paper-pdf paper-watch
 install:
 	uv sync --frozen
@@ -29,7 +29,7 @@ figures:  # every figure, into figures/
 
 # The paper: write paper/sections/*.md (paper/paper.md lists them in order), build to paper/build/ (gitignored).
 PAPER_BUILD ?= paper/build
-PANDOC = pandoc paper/paper.md --from markdown --lua-filter paper/include.lua --resource-path=.:paper --number-sections --toc --toc-depth=1
+PANDOC = pandoc paper/paper.md --from markdown --lua-filter paper/include.lua --resource-path=.:paper --metadata-file=$(PAPER_BUILD)/figure-lines.json --number-sections --toc --toc-depth=1
 paper-tools:
 	@command -v pandoc >/dev/null || { echo "pandoc is missing: brew install pandoc (or see pandoc.org/installing)"; exit 1; }
 paper-check:  # the paper's contract with the repository: every section listed, every results section's evidence committed, every figure named, every number recomputed from the logs
@@ -38,6 +38,7 @@ paper-images: paper-check  # every image the paper shows, into the build: named 
 	uv run treasure-island figure --all
 	@mkdir -p $(PAPER_BUILD)
 	uv run python -m paper.stills paper/paper.md $(PAPER_BUILD)
+	uv run python -m paper.lines paper/paper.md $(PAPER_BUILD)
 paper-html: paper-tools paper-images  # fast, for writing: open paper/build/paper.html
 	@cp paper/style.css $(PAPER_BUILD)/
 	$(PANDOC) --standalone --template paper/apart.html --css style.css --math-method=mathml --citeproc -o $(PAPER_BUILD)/paper.html

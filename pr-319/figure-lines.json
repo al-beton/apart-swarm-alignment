@@ -1,8 +1,3 @@
 {
-  "figure_lines": {
-    "silent-game": [
-      "`make figure NAME=silent-game`",
-      "`uv run treasure-island run configs/silent.toml --seed 7`"
-    ]
-  }
+  "figure_lines": {}
 }

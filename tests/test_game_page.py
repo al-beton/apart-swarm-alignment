@@ -68,7 +68,7 @@ def test_game_page_is_built_from_the_event_log_alone(saved, tmp_path):
     # The last frame counts up to the recorded score, by the log's own numbers.
     records = viewer.records_in(alone)
     scoring, last = viewer.scoring_in(alone), len(records) - 1
-    final = viewer.walk_steps(records, last, scoring)[-1]
+    final = viewer.turn_steps(records, last, scoring)[-1]
     size = viewer.grid_size(alone, records)
     shown = viewer.scene(records, last, size, step=final, scoring=scoring)
     assert shown["score"] == records[-1]["game_over"]["score"]

@@ -46,11 +46,11 @@ Experiment one asked its question of one cheap model. The sweep asks the same qu
 | `end-report` | `configs/model-sweep/*.toml` | — |
 | `sweep-seeds` | researcher, when the runs are queued | — |
 | `sweep-cap` | researcher, when the runs are queued | — |
-| `sweep-home` | reviewer, when the runs are committed | — |
-| `disclosure` | researcher, in the findings note | — |
-| `crew` | researcher, in the findings note | — |
-| `note` | researcher, in the findings note | — |
-| `failures` | researcher, in the findings note | — |
+| `sweep-home` | `runs/model-sweep/**` | — |
+| `disclosure` | `experiments/model-sweep/findings.md` | — |
+| `crew` | `experiments/model-sweep/findings.md` | — |
+| `note` | `experiments/model-sweep/findings.md` | — |
+| `failures` | `experiments/model-sweep/findings.md` | — |
 | `findings-note` | `experiments/model-sweep/findings.md` | — |
 | `few-seeds` | reviewer, when the results are written up | — |
 | `placeholder-cost` | reviewer, when the results are written up | — |

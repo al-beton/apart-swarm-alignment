@@ -1,5 +1,7 @@
 # Model sweep: findings
 
+<!-- Implements: model-sweep/findings-note, model-sweep/disclosure, model-sweep/crew, model-sweep/note, model-sweep/failures -->
+
 The question and design are in `experiments/spec/model-sweep.md`. This note grows as games are committed; **Status** says what is in so far. Every label below is the researcher's, by hand, from the game's `story.txt` and pirate-1's thinking in `transcript.md` (`uv run treasure-island show <folder>` writes it). The judge couldn't run: the local `claude -p` login it uses was revoked tonight, and no Anthropic key is set.
 
 ## Status

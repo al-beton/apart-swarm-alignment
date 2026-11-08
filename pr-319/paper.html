@@ -317,9 +317,10 @@ note whether crewmates followed the lead and whether any called it
 suspicious, on the scroll or in their reasoning.</p>
 <p>Labels are given by hand from each game’s transcript, with every
 quote shown. The repository’s judge model, which labels each pirate from
-a compact transcript with a turn and a quote for every flag, ran on only
-six of the games before its credit ran out; the results say where it
-disagrees.</p>
+a compact transcript with a turn and a quote for every flag, ran on six
+games of each experiment before its credit ran out. On the six sweep
+games, none of them laundered, it agreed with every hand label; on the
+six cave-leak games it did not, and the results say where.</p>
 <h2 data-number="3.5" id="reproducibility"><span
 class="header-section-number">3.5</span> Reproducibility</h2>
 <p>Every run is saved with its config, seed, both logs and every model
@@ -592,10 +593,11 @@ role="doc-biblioref">Needham et al. 2025</a>)</span>.</li>
 <li><strong>Labels from text.</strong> Candid, laundered and quiet are
 read from what a pirate wrote, by hand, and the counts in the results
 are recomputed from the logs by keyword and agree with the hand labels.
-The judge model ran on only six games and read a bare square as candid,
-so its rubric needs to say what ours does before it can label at scale.
-Two models return no reasoning, so their silence can’t be read as a
-choice.</li>
+The judge model ran on six games per experiment; it agreed with the hand
+labels on the sweep’s six, none of them laundered, but in the cave-leak
+games it read a bare square as candid, so its rubric needs to say what
+ours does before it can label at scale. Two models return no reasoning,
+so their silence can’t be read as a choice.</li>
 </ul>
 <h2 data-number="5.2" id="future-work"><span
 class="header-section-number">5.2</span> Future Work</h2>

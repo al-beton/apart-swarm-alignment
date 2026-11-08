@@ -12,7 +12,7 @@ stored, so a cached reply costs nothing and counts nothing against the cap. It a
 for a yes before the first call, and stops the game once the run has spent its cap,
 so a run overshoots by one reply at most.
 
-Implements: runs/cost-before-run, runs/yes-before-spending, runs/spending-cap, runs/cached-is-free, runs/stops-cleanly
+Implements: cave-leak/cap, runs/cost-before-run, runs/yes-before-spending, runs/spending-cap, runs/cached-is-free, runs/stops-cleanly
 """
 
 import dataclasses

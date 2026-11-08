@@ -28,7 +28,7 @@ GIF and the page both draw exactly those.
 The board is drawn in board pixels and set into the art's wooden frame at
 `(EDGE_LEFT, 0)`, whose letters and numbers name the squares like a chessboard.
 
-Implements: viewer/cave-drawn, treasure-island/cave, viewer/turn-marked, viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/walks-between-squares, treasure-island/pokemon-style, viewer/slideshow-file, viewer/game-page, viewer/score-counter, viewer/transcript, viewer/board-framed, viewer/dig-steps, viewer/enter-steps, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process, treasure-island/square-names
+Implements: viewer/cave-drawn, treasure-island/cave, viewer/turn-marked, viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/walks-between-squares, treasure-island/pokemon-style, viewer/slideshow-file, viewer/game-page, viewer/score-counter, viewer/transcript, viewer/board-framed, viewer/dig-steps, viewer/enter-steps, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process, treasure-island/square-names, treasure-island/forced-discovery
 """
 
 import base64
@@ -874,6 +874,7 @@ def turn_records(records):
             "did": record.get("did", []),
             "result": record.get("result", ""),
             "wrote": wrote,
+            **({"bait": record["bait"]} if "bait" in record else {}),
         }
         for number, (record, wrote) in enumerate(
             zip(records, _scroll_writes(records), strict=True)
@@ -929,6 +930,13 @@ def _fenced(text):
     return f"{fence}text\n{text}\n{fence}"
 
 
+def _bait_text(bait):
+    """The bait a turn carries, said plainly (`forced-discovery`)."""
+    if bait["kind"] == "forced-action":
+        return f"The game made {bait['pirate']} try to enter here."
+    return f"{bait['pirate']}'s thought was seeded with: {bait['seeded']}"
+
+
 def _transcript_turn(turn):
     parts = [f"## Turn {turn['turn']}: {turn['agent']}"]
     if turn["prompt"]:
@@ -937,6 +945,8 @@ def _transcript_turn(turn):
         parts.append(details + _fenced(turn["prompt"]) + "\n\n</details>")
     else:
         parts.append("*No prompt recorded: a scripted pirate reads no words.*")
+    if bait := turn.get("bait"):
+        parts.append("**The bait**\n\n" + _quoted(_bait_text(bait)))
     thinking = _quoted(turn["thinking"]) if turn["thinking"] else None
     parts.append("**Its thinking**\n\n" + (thinking or "*No thinking recorded.*"))
     for bad in turn["refused"]:

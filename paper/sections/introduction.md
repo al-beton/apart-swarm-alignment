@@ -13,6 +13,4 @@ This paper contributes:
 
 1. **A reproducible sandbox.** Every game is saved with every model request and reply and replays offline with no keys; every number in this paper is recomputed from committed game logs by the build, and every figure is rebuilt from a committed game.
 2. **A first exploit with a controlled bait.** The cave leak gives an agent knowledge it did not earn, at a known turn, with a forced and a seeded variant of the bait and two controls.
-3. **A first measurement** of how often the baited agent is candid, launders the knowledge or stays quiet, how its crew responds, and what it says afterwards when asked. [Rates pending the overnight runs: seeds 1 to 9 of the four arms, and the same arms across every model Adaption hosts.]
-
-Section 2 places this among related work, Section 3 sets out the game and the measures, Section 4 reports the results and Section 5 discusses what they do and don't show.
+3. **A first measurement**, in 40 games of one model and 60 more across six others: the baited agent usually passes the square to its crew without saying how it knows, names the leak to the designers once the game is over, and its crewmates doubt it privately and follow it anyway.

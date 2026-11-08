@@ -21,10 +21,14 @@ be able to follow the game from the frames alone.
 
 A pirate that moves walks there: its turn gets `WALK_FRAMES` frames, steps 1 to
 `WALK_FRAMES`, with the pirate a step further along each, and the last step is the
-turn's own frame. `walk_steps` says which steps a turn has, and the GIF and the page
-both draw exactly those.
+turn's own frame. A dig plays out over `DIG_STEPS` the same way, and a pirate going
+into the cave over `ENTER_STEPS`. `turn_steps` says which steps a turn has, and the
+GIF and the page both draw exactly those.
 
-Implements: viewer/cave-drawn, treasure-island/cave, viewer/turn-marked, viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/walks-between-squares, treasure-island/pokemon-style, viewer/slideshow-file, viewer/game-page, viewer/score-counter, viewer/transcript, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process, treasure-island/square-names
+The board is drawn in board pixels and set into the art's wooden frame at
+`(EDGE_LEFT, 0)`, whose letters and numbers name the squares like a chessboard.
+
+Implements: viewer/cave-drawn, treasure-island/cave, viewer/turn-marked, viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/walks-between-squares, treasure-island/pokemon-style, viewer/slideshow-file, viewer/game-page, viewer/score-counter, viewer/transcript, viewer/board-framed, viewer/dig-steps, viewer/enter-steps, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process, treasure-island/square-names
 """
 
 import base64
@@ -39,8 +43,10 @@ from typing import NamedTuple
 from PIL import Image, ImageChops
 
 import assets
-from assets.cave import going_in, hat_stack
-from assets.font import FONT_HEIGHT, FONT_WIDTH, draw_text, text_width, wrap
+from assets.board import EDGE_BOTTOM, EDGE_LEFT, board_edges
+from assets.cave import ENTER_STEPS, entering, hat_stack
+from assets.dig import DIG_STEPS, dig_ground, digging
+from assets.font import draw_text, text_width, wrap
 from assets.pirates import pirate, portrait
 from assets.pixels import DARK
 from assets.ui import open_scroll, panel, scroll_note
@@ -48,7 +54,6 @@ from treasure_island.config import DEFAULTS, parse_config
 from treasure_island.game_state import GameState
 from treasure_island.looks import sprite_values
 from treasure_island.pirates_log import one_line
-from treasure_island.squares import square_name
 
 ASSETS = Path(assets.__file__).parent
 SAND_TILES = ("sand", "sand-2", "sand-3")
@@ -82,10 +87,6 @@ FRAME_MS = 600
 WALK_FRAMES = 4  # frames a move takes, its landing included (default, Al to confirm)
 WALK_MS = 120  # how long each in-between frame shows
 _PLACES_THE_TREASURE = ("grid_size", "crew_size", "seed")
-# The board's edges are lettered and numbered like a chessboard, on the sand of
-# the edge squares, under any pirate standing there (default, Al to confirm).
-BOARD_LABEL_INK = DARK
-_LABEL_INSET = 3
 
 
 def records_in(folder):
@@ -253,18 +254,28 @@ def _walk(record):
     return (start, end) if moved and list(start) != list(end) else None
 
 
-def walk_steps(records, turn, scoring=None):
-    """The steps a turn is drawn in: 1 to WALK_FRAMES for a move, else [None].
+def _motion(record):
+    """What a turn plays out and in how many steps: a walk, a dig, going in, or none."""
+    if _walk(record):
+        return "walk", WALK_FRAMES
+    if record["outcome"].get("in_cave"):
+        return "enter", ENTER_STEPS
+    if any(action["action"] == "dig" for action in record["did"]):
+        return "dig", DIG_STEPS
+    return None, 1
+
+
+def turn_steps(records, turn, scoring=None):
+    """The steps a turn is drawn in: 1 to N for a walk, dig or going in, else [None].
 
     The last turn of a finished game that still owes pirates inside their turns
-    plays them out first: after any walk, one step per round, then its own frame.
+    plays them out first: after its own steps, one step per round, then its own frame.
     """
-    walked = _walk(records[turn]) is not None
+    steps = _motion(records[turn])[1]
     owed = len(_owed_rounds(records, turn, scoring))
     if not owed:
-        return list(range(1, WALK_FRAMES + 1)) if walked else [None]
-    first = WALK_FRAMES if walked else 1  # the first step that plays a round out
-    return [*range(1, first + owed), None]
+        return list(range(1, steps + 1)) if steps > 1 else [None]
+    return [*range(1, steps + owed), None]  # its last step plays the first round out
 
 
 def _walking(shown, record, step):
@@ -362,10 +373,8 @@ def _score_now(records, turn, step, scoring):
     score = sum(sum(earned) for earned in gains[: turn + 1])
     labels = gains[turn]
     if _owed_rounds(records, turn, scoring):
-        walked = _walk(records[turn]) is not None
-        played = (
-            len(rounds) if step is None else step - (WALK_FRAMES - 1 if walked else 0)
-        )
+        steps = _motion(records[turn])[1]
+        played = len(rounds) if step is None else step - (steps - 1)
         if played > 0:
             score += sum(sum(owed) for owed in rounds[:played])
             labels = rounds[played - 1] if step is not None else labels
@@ -376,7 +385,8 @@ def _score_now(records, turn, step, scoring):
 def scene(records, turn, size, treasure=None, step=None, scoring=None):  # noqa: PLR0913
     """What the frame for `turn` shows, from the records up to and including it.
 
-    `step`, one of `walk_steps`, is how far along its walk a moving pirate is drawn.
+    `step`, one of `turn_steps`, is how far along its walk, dig or way into the cave
+    the turn's pirate is drawn.
     """
     positions = dict(records[turn].get("crew", {}))
     for record in records:
@@ -413,7 +423,20 @@ def scene(records, turn, size, treasure=None, step=None, scoring=None):  # noqa:
     shown["score"], shown["gains"] = _score_now(
         records, turn, step, scoring or _DEFAULT_SCORING
     )
-    if step is not None and step < WALK_FRAMES and _walk(current):
+    kind, steps = _motion(current)
+    between = step is not None and step < steps  # before the turn's own frame
+    # Going in ends on its hat on the stack, which is the turn's own frame too.
+    shown["entering"] = (
+        (step - 1 if between else steps - 1) if kind == "enter" else None
+    )
+    shown["digging"] = None
+    if kind == "dig" and between:
+        here = tuple(current["saw"]["position"])
+        before = "dug" if here in _dug(records, turn - 1) else _ground_tile(*here)
+        shown["digging"] = (step - 1, before)
+        if current["outcome"]["found_treasure"]:  # the cave opens on the last step
+            shown["mark"] = _mark(records, treasure, None)
+    if kind == "walk" and between:
         return _walking(shown, current, step)
     return shown
 
@@ -451,47 +474,26 @@ def _draw_ground(image, size, shown, pirates):
         _draw_mark(image, shown)
     if shown["mark"] and shown["mark"][0] == "cave":
         _draw_cave(image, shown, pirates)
-    _draw_square_names(image, size)
-
-
-def column_label_spot(column, size):
-    """Where a column's letter goes: the bottom-right corner of its bottom square."""
-    return (
-        (column + 1) * TILE - _LABEL_INSET - FONT_WIDTH,
-        size * TILE - _LABEL_INSET - FONT_HEIGHT,
-    )
-
-
-def row_label_spot(row):
-    """Where a row's number goes: the top-left corner of its west square."""
-    return (_LABEL_INSET, row * TILE + _LABEL_INSET)
-
-
-def _draw_square_names(image, size):
-    for column in range(size):
-        letter = square_name((column, size - 1), size)[0]
-        draw_text(image, column_label_spot(column, size), letter, BOARD_LABEL_INK)
-    for row in range(size):
-        number = square_name((0, row), size)[1:]
-        draw_text(image, row_label_spot(row), number, BOARD_LABEL_INK)
+    if shown["digging"]:
+        step, before = shown["digging"]
+        x, y = shown["positions"][shown["acting"]]
+        image.paste(dig_ground(step, _art(f"tiles/{before}")), (x * TILE, y * TILE))
 
 
 def _draw_cave(image, shown, pirates):
     """The open cave, its gold glinting turn by turn, with a hat for each pirate inside."""
     x, y = shown["mark"][1]
-    cave = _art("treasure/cave" if shown["turn"] % 2 == 0 else "treasure/cave-2")
-    square = cave.copy()
     hats = [pirates[agent][1:] for agent in shown["inside"]]  # (colour, label)
-    square.alpha_composite(hat_stack(hats))
+    if shown["entering"] is not None:
+        # The whole square, the pirate going in and its hat flying onto the stack.
+        square = _art("tiles/dug").copy()
+        look = pirates[shown["going_in"]]
+        square.alpha_composite(entering(*look, hats, shown["entering"]))
+    else:
+        cave = _art("treasure/cave" if shown["turn"] % 2 == 0 else "treasure/cave-2")
+        square = cave.copy()
+        square.alpha_composite(hat_stack(hats))
     image.paste(square, (x * TILE, y * TILE), square)
-
-
-def _draw_going_in(image, shown, pirates):
-    """The pirate entering this turn, sinking into the cave's mouth."""
-    if shown["going_in"]:
-        x, y = shown["mark"][1]
-        sprite = going_in(*pirates[shown["going_in"]], 1)
-        image.paste(sprite, (x * TILE, y * TILE), sprite)
 
 
 def _draw_mark(image, shown):
@@ -523,7 +525,10 @@ def _draw_pirates(image, shown, pirates):
     for agent, spot in _placed(shown):
         if agent == shown["going_in"]:
             continue  # drawn going into the cave instead
-        sprite = _sprite(pirates[agent], *shown["poses"][agent])
+        if shown["digging"] and agent == shown["acting"]:
+            sprite = digging(*pirates[agent], shown["digging"][0])
+        else:
+            sprite = _sprite(pirates[agent], *shown["poses"][agent])
         image.paste(sprite, spot, sprite)
 
 
@@ -532,6 +537,8 @@ def _draw_labels(image, shown, pirates):
     for agent, spot in _placed(shown):
         if agent == shown["going_in"]:
             continue  # its back is turned as it goes in
+        if shown["digging"] and agent == shown["acting"]:
+            continue  # its sprite carries its label as it heaves up and down
         label = _label(pirates[agent], *shown["poses"][agent])
         image.paste(label, spot, label)
 
@@ -757,23 +764,29 @@ def frame(records, turn, size, pirates=None, treasure=None, step=None, scoring=N
     pirates = pirates or _default_pirates(_crew_names(records))
     shown = scene(records, turn, size, treasure, step, scoring)
     grid = max(size, 1) * TILE
-    board = max(grid, PANEL_HEIGHT)
-    width = grid + PANEL
+    board = max(grid + EDGE_BOTTOM, PANEL_HEIGHT)
+    right = EDGE_LEFT + grid  # where the board, in its frame, ends
+    width = right + PANEL
     caption = caption_height(records, width)
     image = Image.new("RGB", (width, board + caption + STRIP), "#2b2b2b")
-    _draw_ground(image, size, shown, pirates)
-    _draw_pirates(image, shown, pirates)
-    _draw_going_in(image, shown, pirates)
-    arrow, spot = turn_arrow(shown)
-    image.paste(arrow, spot, arrow)  # before the note and labels, so it covers neither
-    arrow_box = (*spot, spot[0] + arrow.width, spot[1] + arrow.height)
-    _draw_labels(image, shown, pirates)
+    edges = board_edges(max(size, 1))
+    image.paste(edges, (0, 0), edges)
+    # Everything on the board is placed in board pixels, then set into the frame.
+    spot = (EDGE_LEFT, 0, right, board)
+    sand = image.crop(spot)
+    _draw_ground(sand, size, shown, pirates)
+    _draw_pirates(sand, shown, pirates)
+    arrow, at = turn_arrow(shown)
+    sand.paste(arrow, at, arrow)  # before the note and labels, so it covers neither
+    arrow_box = (*at, at[0] + arrow.width, at[1] + arrow.height)
+    _draw_labels(sand, shown, pirates)
     # The note goes over the labels, so what was written always shows in full.
-    _draw_note(image, shown, arrow_box)
-    _draw_gains(image, shown)
+    _draw_note(sand, shown, arrow_box)
+    _draw_gains(sand, shown)
+    image.paste(sand, spot[:2])
     side = _panel_image(shown, board, pirates[shown["acting"]])
-    image.paste(side, (grid, 0), side)
-    _draw_score(image, shown, grid)
+    image.paste(side, (right, 0), side)
+    _draw_score(image, shown, right)
     words = _caption_image(records[turn].get("story", ""), width, caption)
     image.paste(words, (0, board), words)
     strip = _strip_image(shown, width)
@@ -806,7 +819,7 @@ def gif(folder):
     scoring = scoring_in(folder)
     frames, durations = [], []
     for turn in range(len(records)):
-        steps = walk_steps(records, turn, scoring)
+        steps = turn_steps(records, turn, scoring)
         for step in steps:
             drawn = frame(records, turn, size, pirates, treasure, step, scoring)
             frames.append(Image.open(io.BytesIO(_png(drawn))))
@@ -1128,7 +1141,7 @@ async function show(turn) {
   const forward = turn === shown + 1, mine = ++walk;
   shown = turn;
   status.textContent = "Turn " + turn + " of " + turns + (live ? " (live)" : "");
-  // Stepping forward onto a move plays its walk; jumping anywhere else doesn't.
+  // Stepping forward onto a turn plays its steps; jumping anywhere else doesn't.
   const steps = forward ? (await (await fetch("/steps/" + turn)).json()).steps : 1;
   for (let step = 1; step < steps && mine === walk; step++) {
     await draw(turn, step, mine);  // the hold starts once the frame is showing
@@ -1174,7 +1187,7 @@ class _Handler(BaseHTTPRequestHandler):
         elif path.startswith("/steps/"):
             turn = int(path[len("/steps/") :])
             records, scoring = records_in(self.folder), scoring_in(self.folder)
-            steps = len(walk_steps(records, turn, scoring))
+            steps = len(turn_steps(records, turn, scoring))
             self._reply("application/json", json.dumps({"steps": steps}).encode())
         else:
             self.send_error(404)

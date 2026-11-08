@@ -34,7 +34,7 @@ def test_named_figures_build_offline_from_committed_runs(offline, tmp_path, caps
     run = ROOT / "runs/silent-seed-7"
     records, scoring = viewer.records_in(run), viewer.scoring_in(run)
     turns = range(len(records))
-    frames = sum(len(viewer.walk_steps(records, turn, scoring)) for turn in turns)
+    frames = sum(len(viewer.turn_steps(records, turn, scoring)) for turn in turns)
     assert Image.open(gif).n_frames == frames
 
 

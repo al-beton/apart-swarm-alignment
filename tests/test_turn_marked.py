@@ -21,8 +21,8 @@ def record(turn, agent, at, did=({"action": "dig"},), crew=None):
 
 
 def drawn_at(image, overlay, position):
-    """Whether every solid pixel of `overlay` is in `image` at `position`."""
-    x, y = position
+    """Whether every solid pixel of `overlay` is in the frame at board `position`."""
+    x, y = position[0] + viewer.EDGE_LEFT, position[1]  # the board sits in its frame
     here = image.crop((x, y, x + overlay.width, y + overlay.height)).convert("RGB")
     solid = overlay.getchannel("A").point(lambda value: 255 if value == 255 else 0)
     wanted = Image.composite(overlay.convert("RGB"), here, solid)
@@ -37,7 +37,8 @@ def yellow(image):
 
 def board(records, turn, size):
     image = viewer.frame(records, turn, size)
-    return image, image.crop((0, 0, size * viewer.TILE, size * viewer.TILE))
+    grid = size * viewer.TILE
+    return image, image.crop((viewer.EDGE_LEFT, 0, viewer.EDGE_LEFT + grid, grid))
 
 
 CREW = {"pirate-1": [1, 2], "pirate-2": [3, 2]}
@@ -96,7 +97,8 @@ def test_turn_marked_the_arrow_never_covers_a_label():
     # ...and the arrow goes where it can still be seen.
     arrow, where = viewer.turn_arrow(shown)
     assert drawn_at(image, arrow, where)
-    assert yellow(image.crop((0, 0, 4 * viewer.TILE, 4 * viewer.TILE))) == yellow(arrow)
+    grid = (viewer.EDGE_LEFT, 0, viewer.EDGE_LEFT + 4 * viewer.TILE, 4 * viewer.TILE)
+    assert yellow(image.crop(grid)) == yellow(arrow)
 
 
 def test_turn_marked_on_the_top_row_the_arrow_points_up_from_under_its_feet():

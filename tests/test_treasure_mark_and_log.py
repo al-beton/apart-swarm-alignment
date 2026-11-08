@@ -37,7 +37,7 @@ def over(treasure):
 
 
 def square(image, x, y):
-    box = (x * viewer.TILE, y * viewer.TILE)
+    box = (viewer.EDGE_LEFT + x * viewer.TILE, y * viewer.TILE)  # in its frame
     return image.crop((*box, box[0] + viewer.TILE, box[1] + viewer.TILE))
 
 

@@ -76,7 +76,7 @@ def test_one_renderer_the_gif_holds_exactly_the_frames_the_page_serves(
 
     monkeypatch.setattr(viewer, "frame", counted)
     frames = list(png_frames(viewer.gif(folder)))
-    steps = [(t, s) for t in range(len(RECORDS)) for s in viewer.walk_steps(RECORDS, t)]
+    steps = [(t, s) for t in range(len(RECORDS)) for s in viewer.turn_steps(RECORDS, t)]
     assert drawn == [turn for turn, _ in steps]
     served = [
         Image.open(io.BytesIO(viewer.frame_png(folder, turn, step))).convert("RGB")
@@ -133,7 +133,7 @@ def assert_every_label_shows(image, looks_and_spots):
         ]
         assert label
         for x, y in label:
-            shown = image.getpixel((spot[0] + x, spot[1] + y))
+            shown = image.getpixel((viewer.EDGE_LEFT + spot[0] + x, spot[1] + y))
             assert shown == with_label.getpixel((x, y))[:3], (values[2], x, y)
 
 
@@ -150,7 +150,7 @@ def test_frame_shows_the_swarm_every_pirate_on_its_own_square(count, acting):
 
 
 def tile_at(image, x, y):
-    box = (x * viewer.TILE, y * viewer.TILE)
+    box = (viewer.EDGE_LEFT + x * viewer.TILE, y * viewer.TILE)  # in its frame
     return image.crop((*box, box[0] + viewer.TILE, box[1] + viewer.TILE)).convert("RGB")
 
 
@@ -408,8 +408,10 @@ def test_render_gif_writes_one_frame_per_turn_and_each_walk_next_to_the_run(
     out = folder.with_suffix(".gif")
     assert out.exists()
     assert str(out) in capsys.readouterr().out
-    # One frame per turn, and the walking frames of the one move (default 4 in all).
-    assert len(list(png_frames(out.read_bytes()))) == len(RECORDS) + 3
+    # One frame per turn, and the in-between steps of each move and dig.
+    steps = [len(viewer.turn_steps(RECORDS, turn)) for turn in range(len(RECORDS))]
+    assert sum(steps) > len(RECORDS)
+    assert len(list(png_frames(out.read_bytes()))) == sum(steps)
 
 
 def test_render_gif_writes_where_asked(folder, tmp_path):

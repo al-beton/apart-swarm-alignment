@@ -15,8 +15,8 @@ CREW = {"pirate-1": [0, 0], "pirate-2": [0, 0]}
 
 
 def drawn_at(image, overlay, position):
-    """Whether every solid pixel of `overlay` is in `image` at `position`."""
-    x, y = position
+    """Whether every solid pixel of `overlay` is in the frame at board `position`."""
+    x, y = position[0] + viewer.EDGE_LEFT, position[1]  # the board sits in its frame
     box = (x, y, x + overlay.width, y + overlay.height)
     here = image.crop(box).convert("RGB")
     solid = overlay.getchannel("A").point(lambda value: 255 if value == 255 else 0)
@@ -49,7 +49,9 @@ def shown(records, turn=None):
 
 
 def panel_of(image, size=4):
-    return image.crop((size * viewer.TILE, 0, image.width, image.height))
+    return image.crop(
+        (viewer.EDGE_LEFT + size * viewer.TILE, 0, image.width, image.height)
+    )
 
 
 def test_side_panel_says_what_the_pirate_did_in_plain_words():
@@ -161,7 +163,7 @@ def test_readable_at_once_a_turn_that_does_not_write_has_nothing_over_the_pirate
     # Nothing is drawn over the pirate: the board is the same as a turn with no action.
     quiet = viewer.frame([record(0, did=[], at=[2, 2])], 0, 4)
     dig = viewer.frame([record(0, at=[2, 2])], 0, 4)
-    above = (0, 0, 4 * viewer.TILE, 2 * viewer.TILE)
+    above = (viewer.EDGE_LEFT, 0, viewer.EDGE_LEFT + 4 * viewer.TILE, 2 * viewer.TILE)
     assert quiet.crop(above).tobytes() == dig.crop(above).tobytes()
 
 

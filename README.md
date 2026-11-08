@@ -114,6 +114,7 @@ Silent pirates write no notes, so this game's scroll is empty, and they search b
 | All the art is drawn in code: one command redraws every PNG in `assets/` | `make assets` |
 | Every pirate walks in all four directions, in one GIF (`assets/catwalk.gif`), which each pull request's art comment shows | `make catwalk` |
 | Every named figure, rebuilt from committed runs with no keys, each with its two lines: the command that rebuilds it and the command that plays the game again | `make figures` |
+| The paper, built from Markdown sections in `paper/` into Apart's layout, every results section bound to a committed experiment or result and every figure a named one (see `paper/README.md`) | `make paper-html` |
 | The game's command and what it can do | `uv run treasure-island --help` |
 
 A test runs or checks each of these commands, so this table can't go stale.
@@ -139,6 +140,7 @@ Each pull request also gets a comment showing every example game's GIF at its la
 | `make test` | runs every test, in parallel |
 | `make spec-check` | checks that the spec, the code and the tests point at each other |
 | `make examples-check` | remakes the examples and fails if anything in `examples/` changed but the times in their manifests, as CI does |
+| `make paper-html`, `make paper-pdf`, `make paper-watch` | build the paper from `paper/` as HTML, as the PDF, or on every save; a pull request that touches it gets a GitHub Pages preview |
 
 ## How we work
 

@@ -17,13 +17,13 @@ A second game on the same runner, to check whether what we find with pirates is 
 
 | Statement | Enforced by | Tested by |
 |---|---|---|
-| `the-game` | not yet | — |
-| `tasks` | not yet | — |
-| `tools` | not yet | — |
-| `graded-by-lookup` | not yet | — |
-| `grader-leak` | not yet | — |
-| `turn-view` | not yet | — |
-| `end-report` | not yet | — |
-| `workspace-config` | not yet | — |
-| `scripted-crew` | not yet | — |
-| `workspace-run` | not yet | — |
+| `the-game` | `src/treasure_island/workspace.py` | `test_the_game_agents_take_turns_in_order_until_every_turn_is_taken`, `test_the_game_the_seed_deals_the_tasks` |
+| `tasks` | `src/treasure_island/workspace.py` | `test_tasks_each_declares_its_pairs_and_one_has_a_quirk` |
+| `tools` | `src/treasure_island/workspace.py` | `test_tools_an_unknown_tool_is_kept_and_the_turn_passes`, `test_tools_write_and_read_notes_share_one_line_signed` |
+| `graded-by-lookup` | `src/treasure_island/workspace.py` | `test_graded_by_lookup_the_right_outputs_pass`, `test_graded_by_lookup_the_game_runs_nothing_and_writes_no_file` |
+| `grader-leak` | `src/treasure_island/workspace.py` | `test_grader_leak_on_prints_the_expected_outputs_and_marks_the_turn`, `test_grader_leak_off_says_only_how_many_failed`, `test_grader_leak_only_a_failed_submission_s_turn_is_marked` |
+| `turn-view` | `src/treasure_island/workspace.py` | `test_turn_view_shows_turns_left_last_result_and_unread_notes` |
+| `end-report` | `src/treasure_island/workspace.py`, `src/treasure_island/workspace_run.py` | `test_end_report_on_asks_each_agent_once_in_order`, `test_end_report_off_asks_nobody` |
+| `workspace-config` | `src/treasure_island/workspace.py`, `src/treasure_island/workspace_run.py`, `configs/workspace/control.toml`, `configs/workspace/grader-leak.toml` | `test_workspace_config_refuses_every_unknown_setting_at_once`, `test_workspace_config_the_two_arms` |
+| `scripted-crew` | `src/treasure_island/workspace.py` | `test_scripted_crew_passes_only_through_the_leak` |
+| `workspace-run` | `src/treasure_island/workspace_run.py`, `src/treasure_island/cli.py` | `test_workspace_run_a_scripted_game_is_free_and_the_same_bytes`, `test_workspace_run_a_model_agent_asks_after_a_yes_and_replays_from_the_cache`, `test_workspace_run_nobody_saying_yes_spends_nothing` |

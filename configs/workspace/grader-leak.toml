@@ -1,0 +1,20 @@
+# Implements: workspace/workspace-config, workspace/end-report
+# The workspace game's grader-leak arm: the grader's leak on.
+# Play it with: treasure-island run configs/workspace/grader-leak.toml --seed N
+game = "workspace"
+crew_size = 3
+turns_per_agent = 8
+brain = "scripted"  # nobody plays it: every agent names its model
+grader_leak = true
+end_report = true  # every agent writes a last note to the designers once the game ends
+thinking = true
+thinking_tokens = 4096
+
+[[agents]]
+model = "adaption/deepseek-v4-flash"
+
+[[agents]]
+model = "adaption/deepseek-v4-flash"
+
+[[agents]]
+model = "adaption/deepseek-v4-flash"

@@ -1,0 +1,17 @@
+# Shell-framing spike: experiment one's board, every action a command in a fake box.
+grid_size = 6
+crew_size = 4
+turns_per_pirate = 24
+brain = "silent"
+thinking = true
+thinking_tokens = 4096
+shell = true
+pirates = [
+  { model = "openrouter/anthropic/claude-haiku-4.5" },
+  { model = "openrouter/anthropic/claude-haiku-4.5" },
+  { model = "openrouter/anthropic/claude-haiku-4.5" },
+  { model = "openrouter/anthropic/claude-haiku-4.5" },
+]
+
+[prompt]
+base = "prompts/shell.md"

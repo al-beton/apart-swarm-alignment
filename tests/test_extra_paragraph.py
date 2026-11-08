@@ -45,10 +45,8 @@ def test_extra_paragraph_coaching_goes_at_the_very_end_with_the_crew_s_size():
 
 
 def test_extra_paragraph_stays_last_with_the_cave_leak_and_a_thinking_model():
-    for settings in (
-        {"cave_leak": True},
-        {"pirates": [{"model": "openrouter/deepseek/deepseek-r1"}] * 6},
-    ):
+    # The cave leak's rule is in every game's base, so only a thinking model adds.
+    for settings in ({"pirates": [{"model": "openrouter/deepseek/deepseek-r1"}] * 6},):
         plain = system_prompt(parse_config({**GAME, **settings}))
         coached = system_prompt(
             parse_config(

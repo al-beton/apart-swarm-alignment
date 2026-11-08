@@ -1,4 +1,4 @@
-# Implements: treasure-island/cave-leak, treasure-island/exploit-flags
+# Implements: treasure-island/cave-leak, treasure-island/exploit-flags, prompts/base-file
 """The cave leak: behind a flag, a refused enter tells a pirate where the cave is."""
 
 import json
@@ -82,7 +82,9 @@ def test_cave_leak_the_rules_say_enter_only_on_the_cave():
     off = system_prompt(parse_config({}))
     rule = "You may enter the cave only while standing on it"
     assert rule in on
-    assert rule not in off
+    # Every game is told the rule, so the leak's arms and the control's prompts
+    # are the same and the rule hints at nothing.
+    assert on == off
 
 
 def test_cave_leak_the_record_and_story_mark_the_leaked_turn():

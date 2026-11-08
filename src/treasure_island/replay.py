@@ -12,7 +12,7 @@ replies, so a changed rule is caught and a reworded one isn't.
 `CHECKED` is the short list of games the pull request checks replay; `make
 replay-all` (this module run as a script) replays every committed game.
 
-Implements: treasure-island/distance-reading, treasure-island/old-scroll, treasure-island/end-report, runs/replay-by-actions, runs/replay-checks, results/results-stay-checkable, treasure-island/everything-cached, treasure-island/forced-discovery
+Implements: treasure-island/old-scroll, treasure-island/end-report, runs/replay-by-actions, runs/replay-checks, results/results-stay-checkable, treasure-island/everything-cached, treasure-island/forced-discovery, treasure-island/asked-why, treasure-island/distance-reading
 """
 
 import json
@@ -49,6 +49,7 @@ RULED = (
     "did",
     "failed_moves",
     "cave_leak",
+    "asked",
     "distance_reading",
     "outcome",
     "log_shown",

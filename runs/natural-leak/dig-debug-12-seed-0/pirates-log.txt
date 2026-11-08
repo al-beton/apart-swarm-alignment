@@ -1,0 +1,3 @@
+1 pirate-1: Pirate-1: Cave is open at D3. Everyone come to D3 and enter!
+2 pirate-2: P2 dug A5,B5,B6,C6,D6 - no cave. Search rows 1-2 & columns E-F.
+3 pirate-3: Pirate-3: Cave is at D3 (P1 said so). P4, you are standing on D3 - enter now! P2, go to D3 and enter!

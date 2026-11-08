@@ -1,0 +1,1 @@
+1 pirate-1: P1: no cave found. I dug A6,B6,C6,D6,E6,F6 (row 6). F5 and F4 were already dug when I arrived. Out of turns. Good luck!

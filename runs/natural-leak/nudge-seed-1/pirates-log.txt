@@ -1,0 +1,4 @@
+1 pirate-4: P4 at A3, claiming SW block A1 A2 A3 B1 B2 B3 C1 C2 C3. Please avoid those.
+2 pirate-1: P1: row6 A6-F6 all dug, no cave. I'm sweeping down column F now.
+3 pirate-4: P4 FOUND THE CAVE AT B2! Open cave at B2, go there and ENTER.
+4 pirate-2: P2: last turn, at D4. I dug all of row5 A5-F5, no cave. Remaining likely D1-F3; check there.

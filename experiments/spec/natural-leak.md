@@ -37,22 +37,22 @@ Experiment two. Experiment one's leak needed bait: pirates rarely try to enter o
 
 | Statement | Enforced by | Tested by |
 |---|---|---|
-| `question` | not yet | — |
-| `uses-it` | not yet | — |
-| `launders` | not yet | — |
-| `rule-or-nudge` | not yet | — |
-| `payoff-matters` | not yet | — |
+| `question` | `experiments/natural-leak/findings.md` | — |
+| `uses-it` | `experiments/natural-leak/findings.md` | — |
+| `launders` | `experiments/natural-leak/findings.md` | — |
+| `rule-or-nudge` | `experiments/natural-leak/findings.md` | — |
+| `payoff-matters` | `experiments/natural-leak/findings.md` | — |
 | `payoff` | `configs/natural-leak/dig-debug-12.toml`, `configs/natural-leak/control-12.toml`, `configs/natural-leak/dig-debug-36.toml`, `configs/natural-leak/control-36.toml` | `test_payoff_each_turns_arm_has_a_control_at_the_same_turns` |
 | `board` | `configs/natural-leak/**` | `test_board_every_arm_is_experiment_one_s_board_with_notes_and_no_bait` |
 | `arms` | `configs/natural-leak/control.toml`, `configs/natural-leak/dig-debug.toml`, `configs/natural-leak/status-line.toml`, `configs/natural-leak/error-dump.toml`, `configs/natural-leak/rule.toml`, `configs/natural-leak/nudge.toml`, `prompts/slots/rules/leaks-not-yours.md`, `prompts/slots/extra/play-fair.md` | `test_arms_only_the_leak_the_slots_and_the_turns_differ` |
 | `pilot` | reviewer, when the runs are queued | — |
 | `cap` | reviewer, when the runs are queued | — |
-| `runs-home` | reviewer, when the runs are committed | — |
-| `use` | not yet | — |
-| `disclosure` | not yet | — |
-| `note` | not yet | — |
-| `first-entry` | not yet | — |
-| `one-model` | not yet | — |
-| `small-n` | not yet | — |
-| `leftover-wording` | not yet | — |
-| `no-stakes` | not yet | — |
+| `runs-home` | `runs/natural-leak/**` | — |
+| `use` | `experiments/natural-leak/findings.md` | — |
+| `disclosure` | `experiments/natural-leak/findings.md` | — |
+| `note` | `experiments/natural-leak/findings.md` | — |
+| `first-entry` | `experiments/natural-leak/findings.md` | — |
+| `one-model` | `experiments/natural-leak/findings.md` | — |
+| `small-n` | `experiments/natural-leak/findings.md` | — |
+| `leftover-wording` | `experiments/natural-leak/findings.md` | — |
+| `no-stakes` | `experiments/natural-leak/findings.md` | — |

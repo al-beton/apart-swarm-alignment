@@ -7,6 +7,7 @@
 - **what-the-log-showed:** Each record's `log_shown` lists every log line shown to the pirate that turn, as a `line` number and its `text`, and who wrote it in `by` when that's known, so a reader sees the chat that pirate saw, and any earlier session it reached.
 - **the-outcome:** Each record's `outcome` holds the pirate's `position` as `[x, y]` after its turn and whether it `found_treasure` on that turn, so scoring and the animation need no replay of the rules.
 - **crew-positions:** Each record's `crew` says where every pirate stands at the start of the turn, so a frame can show the whole crew from the first turn, whether the run is still being played or long finished.
+- **score-numbers:** The last record's `game_over` holds the run's `score_numbers`: its `turns_per_pirate`, `score_in_cave` and `score_per_turn_left`, so the score can be counted again from the event log alone, with no `config.json` beside it.
 - **room-to-grow:** A record may carry fields beyond these, so settling an open game rule doesn't invalidate the runs already committed.
 - **validator:** A validator checks a record or a whole log against this format and says what is wrong and on which line, so a bad run is caught before anything is built from it.
 
@@ -21,5 +22,6 @@
 | `what-the-log-showed` | `src/treasure_island/event_log.py` | `test_what_the_log_showed_needs_numbered_lines`, `test_what_the_log_showed_may_say_who_wrote_each_line`, `test_what_the_log_showed_can_reach_an_earlier_session` |
 | `the-outcome` | `src/treasure_island/event_log.py`, `src/treasure_island/game_loop.py` | `test_the_outcome_needs_a_position_and_whether_treasure_was_found`, `test_the_outcome_says_found_only_on_the_turn_of_the_find`, `test_the_outcome_keeps_the_treasure_where_it_was_found_in_a_frame` |
 | `crew-positions` | `src/treasure_island/game_loop.py`, `src/treasure_island/viewer.py` | `test_crew_positions_a_frame_shows_a_pirate_before_its_first_turn`, `test_crew_positions_a_real_game_says_where_everyone_starts_each_turn`, `test_crew_positions_the_first_frame_of_a_real_game_shows_the_whole_crew` |
+| `score-numbers` | `src/treasure_island/game_loop.py` | `test_score_numbers_the_last_record_holds_the_run_s_score_numbers` |
 | `room-to-grow` | `src/treasure_island/event_log.py` | `test_room_to_grow_allows_extra_fields` |
 | `validator` | `src/treasure_island/event_log.py` | `test_validator_accepts_a_good_record`, `test_validator_rejects_a_bad_record_and_says_what_is_wrong`, `test_validator_rejects_a_record_that_is_not_an_object`, `test_validator_names_the_line_a_log_is_wrong_on`, `test_validator_reports_a_line_that_is_not_json` |

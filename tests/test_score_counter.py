@@ -177,3 +177,19 @@ def test_score_counter_the_live_page_asks_for_every_step_the_gif_draws(tmp_path)
         Image.open(io.BytesIO(served[-1])).size
         == Image.open(io.BytesIO(served[0])).size
     )
+
+
+def test_score_counter_counts_by_the_event_log_s_numbers_then_config_json(tmp_path):
+    records = [dict(record) for record in records_of("silent")]
+    over = records[-1]["game_over"]
+    assert viewer.scoring_in(ROOT / "examples/silent") == Scoring(
+        *over["score_numbers"].values()
+    )
+    # A log from before the numbers were recorded counts by config.json instead.
+    records[-1] = {**records[-1], "game_over": {**over}}
+    del records[-1]["game_over"]["score_numbers"]
+    (tmp_path / "events.jsonl").write_text(
+        "".join(json.dumps(record) + "\n" for record in records)
+    )
+    (tmp_path / "config.json").write_text(json.dumps({"score_in_cave": 70}))
+    assert viewer.scoring_in(tmp_path) == Scoring(30, 70, 10)

@@ -18,13 +18,20 @@ A reply that isn't a valid tool call, one the token limit cut off included, is k
 failed action, so the game tells the pirate why and asks again, and after
 `failed_tries` failed actions in one turn the turn passes.
 
-Implements: treasure-island/end-report, treasure-island/retries-dropped-calls, agents/reasoning-looked-up, treasure-island/model-reasoning, agents/one-request-per-turn, agents/reply-is-a-tool-call, agents/ask-once-more, agents/reply-cap, agents/plays-then-replays, treasure-island/thinking, treasure-island/pluggable-pirate, treasure-island/model-backends, treasure-island/audit-record
+Implements: treasure-island/end-report, treasure-island/retries-dropped-calls, agents/reasoning-looked-up, treasure-island/model-reasoning, agents/one-request-per-turn, agents/reply-is-a-tool-call, agents/ask-once-more, agents/reply-cap, agents/plays-then-replays, treasure-island/thinking, treasure-island/pluggable-pirate, treasure-island/model-backends, treasure-island/audit-record, treasure-island/private-report
 """
 
 import json
 
 from treasure_island.backends import thinking_way
-from treasure_island.brain import RECORD_TOOLS, TOOLS, BadToolCall, Decision, tool_call
+from treasure_island.brain import (
+    RECORD_TOOLS,
+    REPORT_TOOLS,
+    TOOLS,
+    BadToolCall,
+    Decision,
+    tool_call,
+)
 from treasure_island.event_log import DIRECTIONS
 
 _SCHEMAS = {
@@ -53,13 +60,19 @@ def _definition(tool):
 
 TOOL_DEFINITIONS = [_definition(tool) for tool in TOOLS]
 RECORD_TOOL_DEFINITIONS = [_definition(tool) for tool in RECORD_TOOLS]
+REPORT_TOOL_DEFINITIONS = [_definition(tool) for tool in REPORT_TOOLS]
 
 
 def tools_for(config):
-    """The tools a pirate is offered: the record's two as well only when it's on."""
-    if config.audit_record:
-        return [*TOOL_DEFINITIONS, *RECORD_TOOL_DEFINITIONS]
-    return TOOL_DEFINITIONS
+    """The tools a pirate is offered: the record's two and the private report's as
+    well only when each is on."""
+    if not (config.audit_record or config.private_report):
+        return TOOL_DEFINITIONS
+    return [
+        *TOOL_DEFINITIONS,
+        *(RECORD_TOOL_DEFINITIONS if config.audit_record else []),
+        *(REPORT_TOOL_DEFINITIONS if config.private_report else []),
+    ]
 
 
 # Asked of a model that doesn't reason on its own, when thinking is on.

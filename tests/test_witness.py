@@ -124,7 +124,7 @@ def test_witness_only_the_witness_sees_it():
 
 
 def test_witness_control_sees_a_plain_refusal_that_names_no_square():
-    records, crew, cave = play({**WITNESSED, "witness_control": True})
+    records, _, cave = play({**WITNESSED, "witness_control": True})
     seen = next(r for r in records if "witnessed" in r)
     line = (
         "You saw pirate-1's log: its refused enter said there is no open cave "

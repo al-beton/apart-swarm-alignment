@@ -1,4 +1,7 @@
 {
+  "bait": "none",
+  "bait_pirate": 1,
+  "bait_turn": 3,
   "brain": "stripes",
   "cave_leak": false,
   "crew_size": 3,

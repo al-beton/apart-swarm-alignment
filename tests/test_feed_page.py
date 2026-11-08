@@ -167,6 +167,25 @@ def test_game_page_steps_arrow_keys_play_slider_and_filter_step_the_page(saved):
     assert 'Number($("speed").value) / (steps + 2)' in page
 
 
+def test_game_page_steps_play_restarts_at_the_filter_s_last_turn(saved):
+    page = viewer.slideshow_page(saved)
+    play = page[page.index("function play()") :]
+    play = play[: play.index("\n}\n")]
+    # Not just at the game's last turn: at the filtered pirate's last one too.
+    assert "at >= lastKept()" in play and "at === N - 1" not in play
+    assert "const lastKept = () => TURNS.map((t, n) => n).filter(kept)" in page
+
+
+def test_game_page_steps_a_scroll_during_a_step_moves_the_board_once_it_settles(saved):
+    page = viewer.slideshow_page(saved)
+    on_scroll = page[page.index("function onScroll(seen)") :]
+    on_scroll = on_scroll[: on_scroll.index("\n}\n")]
+    # A scroll inside the step's lock isn't dropped: it's looked at once it ends.
+    assert "setTimeout(settle, lock - Date.now()" in on_scroll
+    settle = page[page.index("function settle()") :]
+    assert "inView()" in settle[: settle.index("\n}\n")]
+
+
 def test_game_page_steps_the_address_keeps_the_turn(saved):
     page = viewer.slideshow_page(saved)
     assert "location.hash" in page and "history.replaceState" in page

@@ -1427,6 +1427,8 @@ function nearestKept(k) {
   const later = TURNS.findIndex((t, n) => n > k && kept(n));
   return later >= 0 ? later : TURNS.map((t, n) => n).filter((n) => n < k && kept(n)).pop();
 }
+// The filter's last turn, or -1 if it keeps none.
+const lastKept = () => TURNS.map((t, n) => n).filter(kept).concat(-1).sort((a, b) => b - a)[0];
 function go(k, scroll = true) {
   if (k < 0 || k >= N) return;
   forward = k === at + 1;
@@ -1440,7 +1442,8 @@ function step(by) {
 }
 function play() {
   if (timer) { stop(); return; }
-  if (at === N - 1) { const first = nearestKept(0); if (first !== undefined) go(first); }
+  // At the filter's last turn there's nothing later to play, so start again.
+  if (at >= lastKept()) { const first = nearestKept(0); if (first !== undefined) go(first); }
   $("play").textContent = "❚❚";
   timer = setInterval(() => step(1), Number($("speed").value));
 }
@@ -1480,8 +1483,30 @@ document.addEventListener("keydown", (key) => {
 function band() {
   return -Math.round(innerHeight * 0.45) + "px 0px " + -Math.round(innerHeight * 0.5) + "px 0px";
 }
+// The entry across the band's middle, if any: what the reader has scrolled to.
+function inView() {
+  const y = innerHeight * 0.475;
+  return entries.find((entry) => {
+    const box = entry.getBoundingClientRect();
+    return !entry.classList.contains("hidden") && box.top <= y && box.bottom >= y;
+  });
+}
+// Once a step's own scroll has settled, the board catches up with any scroll the
+// reader made meanwhile, which the observer won't report again.
+let settling = null;
+function settle() {
+  if (timer || Date.now() < lock) return;
+  const entry = inView();
+  const k = entry ? Number(entry.dataset.turn) : at;
+  if (k !== at) { forward = k === at + 1; at = k; paint(false); }
+}
 function onScroll(seen) {
-  if (Date.now() < lock || timer) return;
+  if (timer) return;
+  if (Date.now() < lock) {
+    clearTimeout(settling);
+    settling = setTimeout(settle, lock - Date.now() + 50);
+    return;
+  }
   for (const one of seen) {
     const k = Number(one.target.dataset.turn);
     if (one.isIntersecting && k !== at) { forward = k === at + 1; at = k; paint(false); }

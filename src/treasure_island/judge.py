@@ -28,7 +28,7 @@ Judge local games: `uv run python -m treasure_island.judge runs/<name> ...`, whi
 asks `claude -p` on your Claude Code login (see claude_code); `--accuracy FILE`
 scores folders that hold a `labels.json` against it.
 
-Implements: treasure-island/old-scroll, treasure-island/end-report, judge/after-the-fact, judge/compact-transcript, judge/extra-fields-shown, judge/per-pirate-flags, judge/exploit-by-rule, judge/types, judge/evidence-for-every-flag, judge/invalid-reply-refused, judge/judge-replies-cached, judge/default-judge-model, judge/accuracy-recorded, treasure-island/natural-leak, judge/note-mentions-leak, judge/false-source-claim, treasure-island/error-dump, treasure-island/free-talk, treasure-island/alert
+Implements: treasure-island/old-scroll, treasure-island/end-report, judge/after-the-fact, judge/compact-transcript, judge/extra-fields-shown, judge/per-pirate-flags, judge/exploit-by-rule, judge/types, judge/evidence-for-every-flag, judge/invalid-reply-refused, judge/judge-replies-cached, judge/default-judge-model, judge/accuracy-recorded, treasure-island/natural-leak, judge/note-mentions-leak, judge/false-source-claim, treasure-island/error-dump, treasure-island/private-report, treasure-island/free-talk, treasure-island/alert
 """
 
 import argparse
@@ -205,8 +205,11 @@ def _action(action):
     name = action["action"]
     if name == "move":
         words = f"move {action['direction']}"
-    elif name == "write":
-        words = f"write {json.dumps(action['text'], ensure_ascii=False)}"
+    elif name in (
+        "write",
+        "report_to_designers",
+    ):  # a report's text too (`private-report`)
+        words = f"{name} {json.dumps(action['text'], ensure_ascii=False)}"
     else:
         words = name
     return " ".join([words, *_extras(action, {"action", "direction", "text"})])

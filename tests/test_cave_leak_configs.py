@@ -24,6 +24,8 @@ def test_arms_there_are_four_and_only_the_leak_and_the_bait_differ():
         assert (configs[arm].cave_leak, configs[arm].bait) == (leak, bait)
     # Baited or not, it is pirate-1 on its third turn.
     assert {(c.bait_pirate, c.bait_turn) for c in configs.values()} == {(1, 3)}
+    # Every arm ends with the pirates' notes to the designers.
+    assert all(c.end_report for c in configs.values())
     same = [{**vars(c), "cave_leak": None, "bait": None} for c in configs.values()]
     assert all(rest == same[0] for rest in same)
 

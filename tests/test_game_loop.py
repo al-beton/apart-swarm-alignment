@@ -396,11 +396,11 @@ def test_turn_view_says_which_neighbours_hold_a_pirate():
     first, second = Steps(DIG, move("east")), Steps(DIG)
     play(off_the_treasure(turns_per_pirate=2), first, second)
     assert first.views[0].neighbours == (("south", "pirate-2"),)
-    assert "There is a pirate to the south (pirate-2)." in first.views[0].as_text()
+    assert "The way south is blocked by pirate-2." in first.views[0].as_text()
     assert second.views[0].neighbours == (("north", "pirate-1"),)
     # Once pirate-1 has moved east to (1, 0), nobody is next to pirate-2.
     assert second.views[1].neighbours == ()
-    assert "There is no pirate next to you." in second.views[1].as_text()
+    assert "No way out of your square is blocked." in second.views[1].as_text()
 
 
 def test_turn_view_says_whether_the_pirate_s_square_has_been_dug():
@@ -411,9 +411,7 @@ def test_turn_view_says_whether_the_pirate_s_square_has_been_dug():
     assert [view.square_dug for view in first.views] == [False, True, False]
     assert [view.square_dug for view in second.views] == [False, False, True]
     assert "Your square hasn't been dug." in second.views[1].as_text()
-    assert "Your square has been dug, by you or another pirate." in (
-        second.views[2].as_text()
-    )
+    assert "Your square has been dug and holds no cave." in (second.views[2].as_text())
 
 
 def test_no_vision_a_pirate_two_squares_away_is_never_shown():

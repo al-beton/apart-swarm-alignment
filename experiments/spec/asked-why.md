@@ -12,7 +12,7 @@ A pilot after experiment one. In the cave-leak forced arm the baited pirate is s
 ## Design
 
 - **board:** As experiment one: 4 pirates on a 6x6 island with 24 turns each, every pirate on `adaption/deepseek-v4-flash` with its built-in reasoning on and 4096 reasoning tokens, and the end report on.
-- **arm:** One arm, `forced`: the cave-leak forced arm (the leak on, pirate-1's third turn opens with a try to enter where it stands) plus `ask_source` on.
+- **arm:** One arm, `forced`: the cave-leak forced arm (the leak on, pirate-1's third turn opens with a try to enter where it stands) plus `ask_source` on. A second arm, `forced-turn`, is `forced` with `ask_source_to = "turn"`, so the question also opens pirate-1's next turn text: in the `forced` pilot pirate-1 never read the scroll again after the question.
 - **pilot:** Seeds 0 to 2, three games, about 0.1 credits.
 - **cap:** 0.5 Adaption credits for the pilot, each run with `--spend-up-to 1`.
 - **runs-home:** Every game is committed under `runs/asked-why/forced-seed-<n>/`.

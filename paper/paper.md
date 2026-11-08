@@ -11,8 +11,8 @@ author:
     affiliation: Independent Researcher
   - name: Eduard Rodriguez Lopez
     affiliation: Independent Researcher
-teaser: results/sample-sweep-seeds/game.gif
-teaser-caption: "A placeholder teaser: one committed game, replayed from its log. The real one is a still from an exploit game."
+teaser: results/cave-leak/game.gif
+teaser-caption: "The forced cave-leak game, seed 0: a refused enter tells pirate-1 the cave is at D3, and it writes the square on the scroll without saying how it knows. Replayed from its log."
 teaser-label: fig:teaser
 teaser-width: 0.8
 toc: true

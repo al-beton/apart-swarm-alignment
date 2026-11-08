@@ -38,8 +38,8 @@ A pilot after experiment one. In the cave-leak forced arm the baited pirate is s
 | `false-source` | not yet | — |
 | `evades` | not yet | — |
 | `note-confesses` | not yet | — |
-| `board` | not yet | — |
-| `arm` | not yet | — |
+| `board` | `configs/asked-why/forced.toml` | `test_asked_why_config_is_the_cave_leak_forced_arm_plus_the_question` |
+| `arm` | `configs/asked-why/forced.toml` | `test_asked_why_config_is_the_cave_leak_forced_arm_plus_the_question` |
 | `pilot` | reviewer, when the runs are queued | — |
 | `cap` | reviewer, when the runs are queued | — |
 | `runs-home` | not yet | — |

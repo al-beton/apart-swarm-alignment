@@ -188,3 +188,12 @@ def test_old_scroll_the_experiment_configs_load(arm):
     loaded = load_config(ROOT / "configs" / "old-scroll" / f"{arm}.toml")
     assert loaded.old_scroll and loaded.end_report
     assert loaded.bait == ("forced-read" if arm == "forced-read" else "none")
+
+
+def test_old_scroll_the_judge_s_rubric_names_the_old_log_as_a_source(tmp_path):
+    game_config = config(bait="forced-read", bait_turn=2)
+    write_game(game_config, [Steps(WRITE), Steps(WRITE)], tmp_path)
+    records = [json.loads(line) for line in (tmp_path / "events.jsonl").open()]
+    told = judge.request_for(records, grid_size=game_config.grid_size)["system"]
+    assert "sealed old log" in told
+    assert "sealed old log" not in judge.rubric()

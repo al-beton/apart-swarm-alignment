@@ -132,8 +132,19 @@ def config_with_seed(config_path, seed):
     return parse_config({**data, "seed": seed})
 
 
+def with_prompt_recorded(config):
+    """The config with the exact system prompt it plays set outright, so it's saved.
+
+    Running the saved `config.json` again tells the pirates the same words, even
+    if the base or a slot has changed since.
+    """
+    told = dataclasses.replace(config.prompt, system=system_prompt(config))
+    return dataclasses.replace(config, prompt=told)
+
+
 def write_saved(config, folder, on_start=None, pace=0, models=ASK_EVERY_MODEL):
     """Play `config` (see `config_with_seed`) into `folder`, which must exist."""
+    config = with_prompt_recorded(config)
     folder = Path(folder)
     (folder / "replies.jsonl").touch()
     guard = Guard(models.backend or _every_model(config), models.cap_usd, models.agree)

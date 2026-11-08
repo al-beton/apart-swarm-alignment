@@ -7,7 +7,7 @@ The judge's rubric changed after these were made (`note_mentions_leak`, added in
 
 ```sh
 git worktree add /tmp/judge-a3f3a43 a3f3a4335
-cp -r runs/model-sweep/<game> /tmp/game
+cp -r results/model-sweep/<game> /tmp/game
 cp experiments/model-sweep/judge/<game>.judge-replies.jsonl /tmp/game/judge-replies.jsonl
 cd /tmp/judge-a3f3a43 && uv run python -m treasure_island.judge /tmp/game
 ```

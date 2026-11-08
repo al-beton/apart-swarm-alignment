@@ -299,3 +299,27 @@ def test_numbers_from_logs_the_sample_section_reports_a_real_number():
     sample = ROOT / "paper/sections/results/sample-sweep-seeds.md"
     assert check.SOURCED.search(sample.read_text())
     assert check.number_problems(sample, ROOT) == []
+
+
+def test_numbers_from_logs_a_negative_number_with_no_source_fails(tmp_path):
+    for text in ("The difference was -115 points.", "(-115 points)", "-115 points."):
+        found = problems(with_results(tmp_path / str(len(text)), text))
+        assert len(found) == 1, text
+        assert "-115 has no source" in found[0]
+
+
+def test_numbers_from_logs_a_negative_number_with_a_source_is_compared(tmp_path):
+    lower = "min(-game_over(game)['score'] for game in data)"  # -230
+    right = with_results(
+        tmp_path / "right", f"It moved by -230<!-- from {GAMES}: {lower} -->."
+    )
+    assert problems(right) == []
+    wrong = with_results(
+        tmp_path / "wrong", f"It moved by -115<!-- from {GAMES}: {lower} -->."
+    )
+    found = problems(wrong)
+    assert len(found) == 1 and "says -115" in found[0] and "-230" in found[0]
+    # A hyphen inside a name is still not a sign, nor a number.
+    assert (
+        problems(with_results(tmp_path / "names", "pirate-1 and seed-7 went in.")) == []
+    )

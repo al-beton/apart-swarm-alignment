@@ -66,16 +66,30 @@ jobs:
           # The marker finds this workflow's own comment, so it never edits a
           # comment that another workflow keeps on the same pull request.
           marker="<!-- game-gif -->"
-          # Committed examples can show inline, from raw files at this commit. A
-          # branch from before there were any has only the fresh game to link.
-          names=$(gh api "repos/$REPO/contents/examples?ref=$SHA" \
-            --jq '.[] | select(.type == "dir") | .name' 2>/dev/null || true)
+          # Committed examples can show inline, from raw files at this commit, in
+          # the order their guide lists them (the LLM game first). A branch from
+          # before there were any has only the fresh game to link.
+          names=$(curl --silent --fail \
+            "https://raw.githubusercontent.com/$REPO/$SHA/examples/README.md" \
+            | sed -n 's/^- \*\*`\([^/`]*\)\/`.*/\1/p' || true)
+          if [ -z "$names" ]; then
+            names=$(gh api "repos/$REPO/contents/examples?ref=$SHA" \
+              --jq '.[] | select(.type == "dir") | .name' 2>/dev/null || true)
+          fi
           shown=""
           for name in $names; do
             raw="https://raw.githubusercontent.com/$REPO/$SHA/examples/$name"
             ending=$(curl --silent --fail "$raw/story.txt" | tail -n 1)
+            # The whole game to read: its page, served as a web page from this
+            # commit's raw file, and its transcript, which GitHub renders.
+            page="https://raw.githack.com/$REPO/$SHA/examples/$name/game.html"
+            transcript="https://github.com/$REPO/blob/$SHA/examples/$name/transcript.md"
+            links="[transcript]($transcript)"
+            if curl --silent --fail --head --output /dev/null "$raw/game.html"; then
+              links="[game page]($page) · $links"
+            fi
             shown="$shown
-          **$name:** $ending
+          **$name:** $ending $links
 
           ![$name]($raw/game.gif)
           "

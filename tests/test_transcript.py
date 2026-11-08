@@ -129,9 +129,9 @@ def test_transcript_the_same_game_writes_the_same_text(saved):
     assert viewer.transcript(saved) == viewer.transcript(saved)
 
 
-def test_transcript_the_readmes_point_to_the_stripes_transcript_first():
-    assert "examples/stripes/transcript.md" in (ROOT / "README.md").read_text()
-    assert "stripes/transcript.md" in (ROOT / "examples/README.md").read_text()
+def test_transcript_the_readmes_point_to_the_llm_transcript_first():
+    assert "examples/llm-crew/transcript.md" in (ROOT / "README.md").read_text()
+    assert "llm-crew/transcript.md" in (ROOT / "examples/README.md").read_text()
 
 
 def test_transcript_shows_the_reasoning_tokens_a_turn_spent(saved):

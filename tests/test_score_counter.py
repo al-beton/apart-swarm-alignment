@@ -146,7 +146,7 @@ def test_score_counter_is_drawn_at_the_top_of_the_frame():
 
 def test_score_counter_the_live_page_asks_for_every_step_the_gif_draws(tmp_path):
     folder = tmp_path / "silent"
-    shutil.copytree(ROOT / "examples/silent", folder)
+    shutil.copytree(ROOT / "examples/stripes", folder)
     records = viewer.records_in(folder)
     last = len(records) - 1
     steps = viewer.turn_steps(records, last, viewer.scoring_in(folder))
@@ -180,9 +180,9 @@ def test_score_counter_the_live_page_asks_for_every_step_the_gif_draws(tmp_path)
 
 
 def test_score_counter_counts_by_the_event_log_s_numbers_then_config_json(tmp_path):
-    records = [dict(record) for record in records_of("silent")]
+    records = [dict(record) for record in records_of("stripes")]
     over = records[-1]["game_over"]
-    assert viewer.scoring_in(ROOT / "examples/silent") == Scoring(
+    assert viewer.scoring_in(ROOT / "examples/stripes") == Scoring(
         *over["score_numbers"].values()
     )
     # A log from before the numbers were recorded counts by config.json instead.

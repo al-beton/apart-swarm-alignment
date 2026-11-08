@@ -178,7 +178,7 @@ def test_replay_checks_replay_all_finds_every_committed_game():
 
 
 def test_replay_checks_replay_all_names_a_game_that_fails(tmp_path, capsys):
-    for name in ("examples/silent", "runs/reference-stripes"):
+    for name in ("examples/stripes", "runs/reference-stripes"):
         shutil.copytree(ROOT / name, tmp_path / name)
     broken = records(tmp_path / "runs/reference-stripes")
     broken[3]["outcome"]["position"] = [9, 9]
@@ -186,7 +186,7 @@ def test_replay_checks_replay_all_names_a_game_that_fails(tmp_path, capsys):
     assert replay.main([str(tmp_path)]) == 1
     out = capsys.readouterr()
     assert "reference-stripes" in out.err
-    assert "examples/silent" not in out.err
+    assert "examples/stripes" not in out.err
     assert "2 games" in out.out
 
 

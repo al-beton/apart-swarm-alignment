@@ -5,7 +5,7 @@ A reproducible sandbox for asking when a swarm of LLM agents whistleblows, and w
 
 Each committed run replays offline with no API keys, so anyone can clone this and check it. Every named figure rebuilds from those committed runs, also with no keys.
 
-![A whole game: three silent pirates search the grid alone and go into the cave](examples/silent/game.gif)
+![A whole game: three LLM pirates, deepseek-v4-flash, search the island and talk on the scroll](examples/llm-crew/game.gif)
 
 ## Quick start
 
@@ -14,22 +14,22 @@ You need [uv](https://docs.astral.sh/uv/) and nothing else: no API keys and no a
 ```bash
 git clone https://github.com/al-beton/apart-swarm-alignment.git
 cd apart-swarm-alignment
-uv run treasure-island show examples/silent
+uv run treasure-island show examples/llm-crew
 ```
 
-That writes a GIF of a whole game, an HTML page you can step through with the arrow keys and the game's `transcript.md`, and prints where they are. To read a game in full on GitHub, start with [`examples/stripes/transcript.md`](examples/stripes/transcript.md): every turn's prompt, thinking, action and result, then the score.
+That writes a GIF of a whole game, an HTML page you can step through with the arrow keys and the game's `transcript.md`, and prints where they are. To read a game in full on GitHub, start with [`examples/llm-crew/transcript.md`](examples/llm-crew/transcript.md): every turn's prompt, thinking, action and result, then the score.
 
 ## Read one game
 
-`examples/small-crew` fits on a screen, so here it is from the start:
+`runs/readme-walkthrough`, two scripted pirates on a small island, fits on a screen, so here it is from the start:
 
 ```bash
 git clone https://github.com/al-beton/apart-swarm-alignment.git
 cd apart-swarm-alignment
-uv run treasure-island show examples/small-crew
+uv run treasure-island show runs/readme-walkthrough
 ```
 
-![Two silent pirates search alone; one digs up the treasure and goes into the cave](examples/small-crew/game.gif)
+![Two silent pirates search alone; one digs up the treasure and goes into the cave](runs/readme-walkthrough/game.gif)
 
 Its `story.txt` is the whole game, and each line says who acted, what it saw around it, what it did, what any read of the scroll found and why.
 
@@ -101,13 +101,13 @@ Silent pirates write no notes, so this game's scroll is empty, and they search b
 | The stripes game with the coaching paragraph at the end of the prompt (give its pirates a `model` to hear it) | `uv run treasure-island run configs/coached.toml --seed 7` |
 | A game replays offline from its recorded actions and must end the same way; no keys, no network | `uv run treasure-island replay runs/silent-seed-7` |
 | Replay every committed game, not only the short list each pull request checks | `make replay-all` |
-| Open a finished example: `examples/` holds four, each with its story, GIF and transcript | `uv run treasure-island replay examples/silent` |
+| Open a finished example: `examples/` holds two on one island, a real LLM crew (`llm-crew`) and the striping pirates (`stripes`), each with its story, GIF, transcript and game page | `uv run treasure-island replay examples/llm-crew` |
 | Check a finding: `results/` keeps each with the games behind it, its question and its cost | `uv run treasure-island replay results/sample-sweep-seeds/small-crew-seed-1` |
-| See a game the quickest way: its GIF, its page and its `transcript.md` | `uv run treasure-island show examples/silent` |
+| See a game the quickest way: its GIF, its page and its `transcript.md` | `uv run treasure-island show examples/llm-crew` |
 | Watch a game live in the browser, turn by turn, score counting up, the scroll along the bottom | `uv run treasure-island watch runs/silent-seed-7` |
 | Bake a game into an animated GIF from the same drawing code | `uv run treasure-island render runs/silent-seed-7` |
 | The game page: one offline HTML file, the board and scroll on the left, a feed of every turn on the right | `uv run treasure-island slideshow runs/silent-seed-7` |
-| Remake the examples after a change that's meant to show in them | `make examples` |
+| Remake the examples after a change that's meant to show in them: `stripes` is played again, `llm-crew` redrawn from its own game (playing it again asks real models) | `make examples` |
 | Remake the scripted pirates' reference games | `make reference-games` |
 | Every named figure, rebuilt from committed runs with no keys, each with its two command lines | `make figures` |
 | Redraw every PNG in `assets/`: all the art is drawn in code (`assets/sheet.png` shows it on one page) | `make assets` |

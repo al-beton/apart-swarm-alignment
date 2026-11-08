@@ -39,6 +39,6 @@ Labels are given by hand from each game's transcript, with every quote shown. A 
 
 ## Reproducibility
 
-Every run is saved with its config, seed, both logs and every model request and reply, word for word. Replaying a run reuses those replies, so `uv run treasure-island replay <run>` plays a committed game again with no API keys and no network and checks it ends the same way, and CI replays every committed game on every change. Every number in the results sections is recomputed by `make paper-check` from the games' own logs, and every figure is rebuilt from a committed game.
+Every run is saved with its config, seed, both logs and every model request and reply, word for word. `uv run treasure-island replay <run>` plays a committed game again from its recorded actions, with no API keys and no network, and checks it ends the same way; CI does this for a fixed list of games on every change, and `make replay-all` for every committed game. Running a game's config again reuses its stored replies, so it spends nothing. Every number in the results sections is recomputed by `make paper-check` from the games' own logs, and every figure is rebuilt from a committed game.
 
 ![A real three-pirate crew of `deepseek-v4-flash` on a 5x5 island, replayed from its log (`examples/llm-crew`). Pirate-2 digs up the cave at C4, writes where it is and goes in; the other two read the scroll and follow. Score 590.](examples/llm-crew/game.gif)

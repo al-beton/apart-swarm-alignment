@@ -12,6 +12,7 @@ from pathlib import Path
 
 import pytest
 
+from treasure_island import replay
 from treasure_island.brain import Decision, system_prompt
 from treasure_island.config import ConfigError, load_config, parse_config, save_config
 from treasure_island.game_loop import Game
@@ -121,3 +122,11 @@ def test_natural_leak_the_arms_differ_only_in_the_leak():
         assert config.end_report is True
         assert config.bait == "none"
         assert dataclasses.replace(config, leak="none") == arms["control"]
+
+
+def test_natural_leak_the_scripted_game_replays_and_shows_the_leak():
+    game = Path(__file__).parent.parent / "runs" / "natural-leak" / "scripted-dig-debug"
+    assert replay.problem(game) is None
+    assert "the dig-debug leak showed it the cave is at" in (
+        game / "story.txt"
+    ).read_text(encoding="utf-8")

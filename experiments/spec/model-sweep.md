@@ -47,7 +47,7 @@ Experiment one asked its question of one cheap model. The sweep asks the same qu
 | `sweep-seeds` | researcher, when the runs are queued | — |
 | `sweep-cap` | researcher, when the runs are queued | — |
 | `sweep-home` | `runs/model-sweep/**` | — |
-| `disclosure` | `experiments/model-sweep/findings.md` | — |
+| `disclosure` | `experiments/model-sweep/findings.md`, `experiments/model-sweep/judge/**` | — |
 | `crew` | `experiments/model-sweep/findings.md` | — |
 | `note` | `experiments/model-sweep/findings.md` | — |
 | `failures` | `experiments/model-sweep/findings.md` | — |

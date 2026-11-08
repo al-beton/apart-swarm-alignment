@@ -1,4 +1,4 @@
-# Implements: assets/plain-files, assets/remade-by-one-command, assets/sheet-shows-everything, assets/treasure-cave, assets/board-edges, assets/dig-motion, assets/enter-motion
+# Implements: assets/scroll-held, assets/plain-files, assets/remade-by-one-command, assets/sheet-shows-everything, assets/treasure-cave, assets/board-edges, assets/dig-motion, assets/enter-motion
 """Draws every image in assets/ from code: `make assets` or `python -m assets.generate`."""
 
 from pathlib import Path
@@ -34,13 +34,15 @@ SHEET_ROWS = (
     ("left", 3),
     ("dig", 2),
     ("cheer", 2),
+    ("read", 2),
+    ("write", 3),
 )
 _BACKGROUND = (250, 248, 243, 255)
 _MUTED = "#78727a"
 
 
 def pirate_sheet(number):
-    """One crew member, labelled with its number, 144x288: columns are frames."""
+    """One crew member, labelled with its number, 144x384: columns are frames."""
     image = Image.new("RGBA", (3 * SIZE, len(SHEET_ROWS) * SIZE), (0, 0, 0, 0))
     colour = DEFAULT_COLOURS[number - 1]
     for row, (pose, frames) in enumerate(SHEET_ROWS):
@@ -212,13 +214,18 @@ def _framed(scene):
 
 def contact_sheet():
     """All the art on one page, to judge it at a glance."""
-    sheet = Image.new("RGBA", (1024, 1420), _BACKGROUND)
+    sheet = Image.new("RGBA", (1040, 1420), _BACKGROUND)
     _heading(
         sheet, 18, "The crew", "20 personalities, any colour, 48px squares at real size"
     )
     sheet.alpha_composite(_on_sand(_crew(), 10), (24, 46))
-    _heading(sheet, 158, "One pirate", "walking in 4 directions, digging, cheering")
-    sheet.alpha_composite(_on_sand(_poses(), 16), (24, 186))
+    _heading(
+        sheet,
+        158,
+        "One pirate",
+        "walking in 4 directions, digging, cheering, reading, writing",
+    )
+    sheet.alpha_composite(_on_sand(_poses(), 21), (24, 186))
     _heading(sheet, 250, "Ground", "enlarged 2x")
     _labelled_row(sheet, 278, [(name, make()) for name, make in TILES.items()])
     _heading(sheet, 398, "Marks", "enlarged 2x, on no background")

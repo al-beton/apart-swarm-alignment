@@ -46,7 +46,7 @@ def test_walks_between_squares_it_walks_on_every_in_between_frame():
 
 
 def test_walks_between_squares_a_turn_where_nobody_moves_gets_one_frame():
-    stayed = [turn(0, [1, 1], [1, 1], [{"action": "read"}])]
+    stayed = [turn(0, [1, 1], [1, 1], [])]  # its turn passed
     assert viewer.turn_steps(stayed, 0) == [None]
     # A move that failed against the edge goes nowhere, so it doesn't walk either.
     bumped = [turn(0, [0, 0], [0, 0], [{"action": "move", "direction": "north"}])]

@@ -9,6 +9,7 @@
 - **label-on-hat:** A label of up to two letters or digits sits in a cream blob on the hat, dark on cream whatever the colour, and stays in the same place from every direction.
 - **four-directions:** Pirates face four directions, each with a standing frame and two walking frames.
 - **actions-shown:** Pirates also have digging and cheering poses.
+- **scroll-held:** A pirate reading holds the open scroll across its chest in both hands, and a pirate writing holds it in one hand and writes on it with a quill, the line growing over three frames; both face the reader with the face and hat above the scroll, so reading and writing show on the pirate itself.
 - **ground-tiles:** The ground tiles are sand and grass, dug sand that still looks walkable, water that doesn't, and sinking sand.
 - **treasure-shown:** The treasure's square has a question mark to mark it for the reader, until it is dug up and becomes the cave.
 - **treasure-cave:** Once the treasure is dug up its square is a cave the pirates go into, with gold glinting in its mouth over two frames, and room beside the door for a stack of hats.
@@ -35,6 +36,7 @@
 | `label-on-hat` | `assets/pirates.py`, `src/treasure_island/looks.py` | `test_label_on_hat_is_dark_on_cream_whatever_the_colour`, `test_label_on_hat_stays_put_from_every_direction` |
 | `four-directions` | `assets/pirates.py` | `test_four_directions_each_walk_with_three_frames` |
 | `actions-shown` | `assets/pirates.py` | `test_actions_shown_digging_and_cheering_differ_from_standing` |
+| `scroll-held` | `assets/pirates.py`, `assets/generate.py` | `test_scroll_held_every_pirate_reads_and_writes_in_front_of_its_coat`, `test_scroll_held_the_written_line_grows_frame_by_frame`, `test_scroll_held_the_face_and_label_stay_above_the_scroll` |
 | `ground-tiles` | `assets/tiles.py` | `test_ground_tiles_are_opaque_and_look_different` |
 | `treasure-shown` | `assets/treasure.py` | `test_treasure_shown_a_question_mark_marks_it_until_it_is_dug_up` |
 | `treasure-cave` | `assets/cave.py`, `assets/generate.py` | `test_treasure_cave_is_a_square_that_glints_and_leaves_room_for_the_hats` |

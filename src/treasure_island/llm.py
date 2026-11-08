@@ -51,6 +51,16 @@ THOUGHT = (
 )
 
 
+def _reasoning_tokens(text):
+    """The reasoning tokens a backend says a reply spent, or None."""
+    try:
+        reply = json.loads(text)
+    except json.JSONDecodeError:
+        return None
+    spent = reply.get("reasoning_tokens") if isinstance(reply, dict) else None
+    return spent if isinstance(spent, int) and not isinstance(spent, bool) else None
+
+
 def _read_reply(text):
     """The tool call in a reply and its thinking, or BadToolCall saying why not."""
     try:
@@ -100,11 +110,12 @@ class LLMPirate:
     def decide(self, view):
         text = self._replies.ask(self._request(view))
         retried = self._replies.last_retries
+        spent = _reasoning_tokens(text)
         try:
             action, thinking = _read_reply(text)
         except BadToolCall as why:
             # A failed action: the game tells the pirate why and asks again.
             bad = ({"reply": text, "why": str(why)},)
-            return Decision(None, None, bad, retried)
+            return Decision(None, None, bad, retried, spent)
         kept = thinking if self._config.thinking and thinking else None
-        return Decision(action, kept, (), retried)
+        return Decision(action, kept, (), retried, spent)

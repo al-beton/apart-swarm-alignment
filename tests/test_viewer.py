@@ -163,10 +163,14 @@ def sand_tiles():
 
 
 def on_ground(image, x, y, sprite):
-    """Whether the square at (x, y) is exactly this sprite on some sand tile."""
+    """Whether the acting pirate's square is exactly this sprite on some sand tile.
+
+    Its square is outlined in yellow under it (viewer/turn-marked).
+    """
     shown = tile_at(image, x, y).tobytes()
     for name in viewer.SAND_TILES:
         ground = art(f"tiles/{name}").copy()
+        viewer.outline(ground, (0, 0))
         ground.alpha_composite(sprite)
         if ground.convert("RGB").tobytes() == shown:
             return True
@@ -277,8 +281,8 @@ def test_sprite_follows_action_a_pirate_faces_the_way_it_moves(direction, pose):
 
 def test_sprite_follows_action_it_keeps_facing_that_way_and_stands_still():
     moved = alone(0, [{"action": "move", "direction": "west"}])
-    wrote = alone(1, [{"action": "write", "text": "hello"}])
-    assert viewer.scene([moved, wrote], 1, 3)["poses"]["pirate-1"] == ("left", 0)
+    passed = alone(1, [])  # a turn that passed, with no action
+    assert viewer.scene([moved, passed], 1, 3)["poses"]["pirate-1"] == ("left", 0)
 
 
 def test_sprite_follows_action_walking_alternates_its_feet():
@@ -310,6 +314,7 @@ def test_sprite_follows_action_digging_and_finding_the_treasure():
 
 def on_ground_dug(image, x, y, sprite):
     ground = art("tiles/dug").copy()
+    viewer.outline(ground, (0, 0))  # the acting pirate's square
     ground.alpha_composite(sprite)
     return tile_at(image, x, y).tobytes() == ground.convert("RGB").tobytes()
 

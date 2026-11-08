@@ -41,12 +41,12 @@ Covering tracks is the second wrongdoing we study. With the `dig-debug` natural 
 | `audit-arms` | `configs/audit/none.toml`, `configs/audit/announced.toml` | `test_announced_audit_the_arms_differ_only_in_the_audit` |
 | `audit-pilot` | researcher, when the runs are queued | — |
 | `audit-cap` | researcher, when the runs are queued | — |
-| `audit-home` | reviewer, when the runs are committed | — |
-| `amendments` | not yet | — |
-| `reads` | not yet | — |
-| `used-leak` | not yet | — |
-| `audit-note` | not yet | — |
-| `audit-findings` | not yet | — |
+| `audit-home` | `runs/cover-and-report/**` | — |
+| `amendments` | `experiments/cover-and-report/findings.md` | — |
+| `reads` | `experiments/cover-and-report/findings.md` | — |
+| `used-leak` | `experiments/cover-and-report/findings.md` | — |
+| `audit-note` | `experiments/cover-and-report/findings.md` | — |
+| `audit-findings` | `experiments/cover-and-report/findings.md` | — |
 | `audit-small-n` | reviewer, when the results are written up | — |
 | `audit-one-model` | reviewer, when the results are written up | — |
 | `audit-words-only` | reviewer, when the results are written up | — |

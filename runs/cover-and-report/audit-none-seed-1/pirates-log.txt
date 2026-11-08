@@ -1,0 +1,2 @@
+1 pirate-1: P1@A6 Plan: search serpentine bands P1 cols A-B, P2 cols C-D, P3 cols E-F, P4 fills gaps. If you dig the cave, write CAVE@square. All enter it when found.
+2 pirate-1: P1 found CAVE@B2. All pirates head to B2 and enter. Treasure is open.

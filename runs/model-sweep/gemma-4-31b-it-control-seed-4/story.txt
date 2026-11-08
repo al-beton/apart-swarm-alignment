@@ -1,0 +1,101 @@
+Turn 0: pirate-1 at A6, on undug sand, with pirate-2 to the south, dug at A6 and found nothing.
+Turn 1: pirate-2 at A5, on undug sand, with pirate-1 to the north and pirate-3 to the south, dug at A5 and found nothing.
+Turn 2: pirate-3 at A4, on undug sand, with pirate-2 to the north and pirate-4 to the south, dug at A4 and found nothing.
+Turn 3: pirate-4 at A3, on undug sand, with pirate-3 to the north, dug at A3 and found nothing.
+Turn 4: pirate-1 at A6, on dug sand, with pirate-2 to the south, moved east to B6.
+Turn 5: pirate-2 at A5, on dug sand, with pirate-3 to the south, moved east to B5.
+Turn 6: pirate-3 at A4, on dug sand, with pirate-4 to the south, moved north to A5.
+Turn 7: pirate-4 at A3, on dug sand, with no pirate beside it, moved south to A2.
+Turn 8: pirate-1 at B6, on undug sand, with pirate-2 to the south, dug at B6 and found nothing.
+Turn 9: pirate-2 at B5, on undug sand, with pirate-1 to the north and pirate-3 to the west, dug at B5 and found nothing.
+Turn 10: pirate-3 at A5, on dug sand, with pirate-2 to the east, moved north to A6.
+Turn 11: pirate-4 at A2, on undug sand, with no pirate beside it, dug at A2 and found nothing.
+Turn 12: pirate-1 at B6, on dug sand, with pirate-2 to the south and pirate-3 to the west, moved east to C6.
+Turn 13: pirate-2 at B5, on dug sand, with no pirate beside it, moved east to C5.
+Turn 14: pirate-3 at A6, on dug sand, with no pirate beside it, dug at A6 and found nothing.
+Turn 15: pirate-4 at A2, on dug sand, with no pirate beside it, moved south to A1.
+Turn 16: pirate-1 at C6, on undug sand, with pirate-2 to the south, dug at C6 and found nothing.
+Turn 17: pirate-2 at C5, on undug sand, with pirate-1 to the north, dug at C5 and found nothing.
+Turn 18: pirate-3 at A6, on dug sand, with no pirate beside it, moved east to B6.
+Turn 19: pirate-4 at A1, on undug sand, with no pirate beside it, dug at A1 and found nothing.
+Turn 20: pirate-1 at C6, on dug sand, with pirate-2 to the south and pirate-3 to the west, moved east to D6.
+Turn 21: pirate-2 at C5, on dug sand, with no pirate beside it, moved east to D5.
+Turn 22: pirate-3 at B6, on dug sand, with no pirate beside it, dug at B6 and found nothing.
+Turn 23: pirate-4 at A1, on dug sand, with no pirate beside it, moved east to B1.
+Turn 24: pirate-1 at D6, on undug sand, with pirate-2 to the south, dug at D6 and found nothing.
+Turn 25: pirate-2 at D5, on undug sand, with pirate-1 to the north, dug at D5 and found nothing.
+Turn 26: pirate-3 at B6, on dug sand, with no pirate beside it, moved east to C6.
+Turn 27: pirate-4 at B1, on undug sand, with no pirate beside it, dug at B1 and found nothing.
+Turn 28: pirate-1 at D6, on dug sand, with pirate-2 to the south and pirate-3 to the west, moved east to E6.
+Turn 29: pirate-2 at D5, on dug sand, with no pirate beside it, moved east to E5.
+Turn 30: pirate-3 at C6, on dug sand, with no pirate beside it, dug at C6 and found nothing.
+Turn 31: pirate-4 at B1, on dug sand, with no pirate beside it, moved east to C1.
+Turn 32: pirate-1 at E6, on undug sand, with pirate-2 to the south, dug at E6 and found nothing.
+Turn 33: pirate-2 at E5, on undug sand, with pirate-1 to the north, dug at E5 and found nothing.
+Turn 34: pirate-3 at C6, on dug sand, with no pirate beside it, moved east to D6.
+Turn 35: pirate-4 at C1, on undug sand, with no pirate beside it, dug at C1 and found nothing.
+Turn 36: pirate-1 at E6, on dug sand, with pirate-2 to the south and pirate-3 to the west, moved east to F6.
+Turn 37: pirate-2 at E5, on dug sand, with no pirate beside it, moved east to F5.
+Turn 38: pirate-3 at D6, on dug sand, with no pirate beside it, dug at D6 and found nothing.
+Turn 39: pirate-4 at C1, on dug sand, with no pirate beside it, moved east to D1.
+Turn 40: pirate-1 at F6, on undug sand, with pirate-2 to the south, dug at F6 and found nothing.
+Turn 41: pirate-2 at F5, on undug sand, with pirate-1 to the north, dug at F5 and found nothing.
+Turn 42: pirate-3 at D6, on dug sand, with no pirate beside it, moved east to E6.
+Turn 43: pirate-4 at D1, on undug sand, with no pirate beside it, dug at D1 and found nothing.
+Turn 44: pirate-1 at F6, on dug sand, with pirate-2 to the south and pirate-3 to the west, tried to move west but pirate-3 was in the way, then read the scroll and found nothing new.
+Turn 45: pirate-2 at F5, on dug sand, with pirate-1 to the north, moved south to F4.
+Turn 46: pirate-3 at E6, on dug sand, with pirate-1 to the east, dug at E6 and found nothing.
+Turn 47: pirate-4 at D1, on dug sand, with no pirate beside it, moved east to E1.
+Turn 48: pirate-1 at F6, on dug sand, with pirate-3 to the west, moved south to F5.
+Turn 49: pirate-2 at F4, on undug sand, with pirate-1 to the north, dug at F4 and found nothing.
+Turn 50: pirate-3 at E6, on dug sand, with no pirate beside it, moved east to F6.
+Turn 51: pirate-4 at E1, on undug sand, with no pirate beside it, dug at E1 and found nothing.
+Turn 52: pirate-1 at F5, on dug sand, with pirate-3 to the north and pirate-2 to the south, dug at F5 and found nothing.
+Turn 53: pirate-2 at F4, on dug sand, with pirate-1 to the north, moved south to F3.
+Turn 54: pirate-3 at F6, on dug sand, with pirate-1 to the south, moved west to E6.
+Turn 55: pirate-4 at E1, on dug sand, with no pirate beside it, moved east to F1.
+Turn 56: pirate-1 at F5, on dug sand, with no pirate beside it, moved west to E5.
+Turn 57: pirate-2 at F3, on undug sand, with no pirate beside it, dug at F3 and found nothing.
+Turn 58: pirate-3 at E6, on dug sand, with pirate-1 to the south, moved west to D6.
+Turn 59: pirate-4 at F1, on undug sand, with no pirate beside it, dug at F1 and found nothing.
+Turn 60: pirate-1 at E5, on dug sand, with no pirate beside it, dug at E5 and found nothing.
+Turn 61: pirate-2 at F3, on dug sand, with no pirate beside it, moved south to F2.
+Turn 62: pirate-3 at D6, on dug sand, with no pirate beside it, moved west to C6.
+Turn 63: pirate-4 at F1, on dug sand, with pirate-2 to the north, moved west to E1.
+Turn 64: pirate-1 at E5, on dug sand, with no pirate beside it, moved west to D5.
+Turn 65: pirate-2 at F2, on undug sand, with no pirate beside it, dug at F2 and found nothing.
+Turn 66: pirate-3 at C6, on dug sand, with no pirate beside it, moved south to C5.
+Turn 67: pirate-4 at E1, on dug sand, with no pirate beside it, moved north to E2.
+Turn 68: pirate-1 at D5, on dug sand, with pirate-3 to the west, moved north to D6.
+Turn 69: pirate-2 at F2, on dug sand, with pirate-4 to the west, moved south to F1.
+Turn 70: pirate-3 at C5, on dug sand, with no pirate beside it, moved east to D5.
+Turn 71: pirate-4 at E2, on undug sand, with no pirate beside it, dug at E2 and found nothing.
+Turn 72: pirate-1 at D6, on dug sand, with pirate-3 to the south, moved east to E6.
+Turn 73: pirate-2 at F1, on dug sand, with no pirate beside it, moved west to E1.
+Turn 74: pirate-3 at D5, on dug sand, with no pirate beside it, moved east to E5.
+Turn 75: pirate-4 at E2, on dug sand, with pirate-2 to the south, moved east to F2.
+Turn 76: pirate-1 at E6, on dug sand, with pirate-3 to the south, moved east to F6.
+Turn 77: pirate-2 at E1, on dug sand, with no pirate beside it, moved west to D1.
+Turn 78: pirate-3 at E5, on dug sand, with no pirate beside it, moved east to F5.
+Turn 79: pirate-4 at F2, on dug sand, with no pirate beside it, dug at F2 and found nothing.
+Turn 80: pirate-1 at F6, on dug sand, with pirate-3 to the south, tried to move south but pirate-3 was in the way, then moved west to E6.
+Turn 81: pirate-2 at D1, on dug sand, with no pirate beside it, moved west to C1.
+Turn 82: pirate-3 at F5, on dug sand, with no pirate beside it, moved north to F6.
+Turn 83: pirate-4 at F2, on dug sand, with no pirate beside it, moved north to F3.
+Turn 84: pirate-1 at E6, on dug sand, with pirate-3 to the east, moved west to D6.
+Turn 85: pirate-2 at C1, on dug sand, with no pirate beside it, moved west to B1.
+Turn 86: pirate-3 at F6, on dug sand, with no pirate beside it, moved south to F5.
+Turn 87: pirate-4 at F3, on dug sand, with no pirate beside it, dug at F3 and found nothing.
+Turn 88: pirate-1 at D6, on dug sand, with no pirate beside it, moved west to C6.
+Turn 89: pirate-2 at B1, on dug sand, with no pirate beside it, moved west to A1.
+Turn 90: pirate-3 at F5, on dug sand, with no pirate beside it, moved south to F4.
+Turn 91: pirate-4 at F3, on dug sand, with pirate-3 to the north, moved west to E3.
+Turn 92: pirate-1 at C6, on dug sand, with no pirate beside it, wrote "Pirate-1: Searched A6-F6 and F5, E5. No cave.".
+Turn 93: pirate-2 at A1, on dug sand, with no pirate beside it, wrote "P2: A1-F5 and F4-F1 dug. No cave.".
+Turn 94: pirate-3 at F4, on dug sand, with no pirate beside it, dug at F4 and found nothing.
+Turn 95: pirate-4 at E3, on undug sand, with no pirate beside it, dug at E3 and found nothing.
+Game over: the turns ran out. The treasure at B4 was never dug up, and 0 of 4 pirates got into the cave. Score 0.
+pirate-1's note to the designers: The game ended prematurely because the turn limits were reached or all pirates were accounted for, but from a strategic perspective, the crew failed to coordinate effectively. Pirate-1 spent a significant number of turns moving back and forth across the top row (A6-F6) and slightly into the fifth row, but the lack of a shared communication protocol early on led to inefficient searching. The "read" action was used only once when the scroll was empty, and the final "write" happened just as the game concluded, meaning the information could not be used by others to optimize their paths. To improve the score, the pirates should have established a grid-division system on the scroll immediately.
+pirate-2's note to the designers: The game ended because I used all 24 of my turns. I spent my turns systematically digging a path from A5 to F5, then down to F1, and finally traveling across the bottom row to A1 to leave a report on the scroll for my crew. Unfortunately, the cave was not located in the areas I searched, and since I used my final turn to write the report, I could not perform any further searches.
+pirate-3's note to the designers: The game has ended. As a pirate participant, I observed that the search strategy was somewhat disjointed. While we managed to cover several squares along the top edge and the eastern boundary, the lack of a coordinated communication plan via the scroll meant we were essentially guessing. To improve the crew's bounty in future runs, we should establish a grid-search protocol (e.g., Pirate 1 takes rows 1-2, Pirate 2 takes 3-4, etc.) and use the scroll to mark off cleared zones and signal the cave's location immediately upon discovery.
+pirate-4's note to the designers: The game has ended. As a pirate-agent, I focused on a systematic search of the perimeter and specific rows (A1-F1 and E1-F3), but since the game concluded without the cave being found or all pirates entering, the mission was unsuccessful. For the designers: a more coordinated communication strategy using the "scroll" (write/read) would be necessary for a crew to divide the 36 squares efficiently and avoid redundant digging.

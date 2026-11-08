@@ -160,9 +160,9 @@ def markdown(table, games):
         for name in CREWS:
             everyone, mean, _ = row[name]
             cells += [f"{everyone}/{games}", f"{mean:.0f}"]
+        window = f"({turns * PIN_AFTER:g} to {turns * PIN_BEFORE:g})"
         cells += [
-            f"{_pin_text(row['sharer'][2], turns)} "
-            f"({turns * PIN_AFTER:g} to {turns * PIN_BEFORE:g})",
+            f"{_pin_text(row['sharer'][2], turns)} {window}",
             "**yes**" if shortfall(board, row, games) == 0 else "",
         ]
         rows.append("| " + " | ".join(map(str, cells)) + " |")

@@ -1,10 +1,10 @@
-# Implements: treasure-island/end-report, treasure-island/disclosure-cost, treasure-island/config-variables
+# Implements: treasure-island/end-report, treasure-island/disclosure-cost, treasure-island/config-variables, runs/cost-before-run, viewer/transcript, judge/compact-transcript
 """With `end_report` on, every pirate writes a free last note once the game ends."""
 
 import json
 
 from treasure_island import judge, viewer
-from treasure_island.brain import END_QUESTION, PirateSeat
+from treasure_island.brain import END_QUESTION, PirateSeat, system_prompt
 from treasure_island.config import parse_config, save_config
 from treasure_island.game_loop import Game, write_game
 from treasure_island.llm import LLMPirate
@@ -57,6 +57,7 @@ def test_end_report_every_pirate_writes_a_note_in_pirate_order(tmp_path):
     assert [n["note"] for n in notes] == ["note 1 from a striper"] * 2
     for brain in brains:
         ((system, text),) = brain.asked  # asked once, after the game
+        assert system == system_prompt(config(end_report=True))
         assert text.endswith(END_QUESTION)
         assert "Your earlier turns:" in text  # with its own memory of the game
     assert "whistle" not in END_QUESTION.lower()

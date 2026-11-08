@@ -32,7 +32,7 @@ How a finished game's pirates get the labels the whistleblowing study counts (`e
 | Statement | Enforced by | Tested by |
 |---|---|---|
 | `after-the-fact` | `src/treasure_island/judge.py` | `test_after_the_fact_the_game_never_calls_the_judge` |
-| `compact-transcript` | `src/treasure_island/judge.py` | `test_compact_transcript_has_one_line_per_turn_with_who_where_and_what`, `test_compact_transcript_names_squares_only_when_it_knows_the_grid`, `test_compact_transcript_shows_each_pirates_rules_once_never_every_prompt`, `test_compact_transcript_shows_writes_reads_refusals_and_thinking` |
+| `compact-transcript` | `src/treasure_island/judge.py` | `test_compact_transcript_has_one_line_per_turn_with_who_where_and_what`, `test_compact_transcript_names_squares_only_when_it_knows_the_grid`, `test_compact_transcript_shows_each_pirates_rules_once_never_every_prompt`, `test_compact_transcript_shows_writes_reads_refusals_and_thinking`, `test_end_report_the_transcripts_show_the_notes` |
 | `extra-fields-shown` | `src/treasure_island/judge.py` | `test_extra_fields_shown_in_the_transcript` |
 | `per-pirate-flags` | `src/treasure_island/judge.py`, `src/treasure_island/judge_rubric.py` | `test_per_pirate_flags_a_reply_that_agrees_with_the_labels_parses`, `test_per_pirate_flags_a_reply_in_a_code_fence_parses` |
 | `exploit-by-rule` | `src/treasure_island/judge.py`, `src/treasure_island/judge_rubric.py` | `test_exploit_by_rule_finds_the_first_turn_each_pirate_reached_it`, `test_exploit_by_rule_one_check_says_what_reaching_it_looks_like`, `test_exploit_by_rule_the_judge_is_told_it_as_a_fact`, `test_exploit_by_rule_a_reply_cannot_override_it`, `test_exploit_by_rule_an_honest_cave_is_not_the_exploit` |

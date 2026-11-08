@@ -11,7 +11,7 @@ default, Al to confirm. An optional `[prompt]` table picks the system prompt's
 base file and slots (see prompts).
 `parse_config` reports every problem at once, so one fix-and-retry is enough.
 
-Implements: agents/reasoning-looked-up, treasure-island/model-reasoning, treasure-island/score-numbers, treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config, treasure-island/silent, treasure-island/cave-leak, treasure-island/exploit-flags, treasure-island/square-names, prompts/slots, prompts/unknown-slot, prompts/prompt-recorded
+Implements: agents/reasoning-looked-up, treasure-island/model-reasoning, treasure-island/score-numbers, treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config, treasure-island/silent, treasure-island/cave-leak, treasure-island/exploit-flags, treasure-island/end-report, treasure-island/square-names, prompts/slots, prompts/unknown-slot, prompts/prompt-recorded
 """
 
 import colorsys
@@ -37,6 +37,7 @@ DEFAULTS = {
     "score_in_cave": 100,
     "score_per_turn_left": 10,
     "cave_leak": False,  # an exploit flag, off unless a run asks for it
+    "end_report": False,  # a last free note to the designers, once the game ends
 }
 # The smallest value each whole-number field may take. Seeds can be any whole number.
 _MINIMUMS = {
@@ -80,6 +81,7 @@ class GameConfig:
     score_in_cave: int
     score_per_turn_left: int
     cave_leak: bool
+    end_report: bool
     pirates: tuple[Pirate, ...]
     prompt: prompts.PromptConfig = dataclasses.field(
         default_factory=prompts.PromptConfig
@@ -155,7 +157,7 @@ def _number_errors(data):
         errors.append("seed must be a whole number")
     if not isinstance(data.get("brain", DEFAULTS["brain"]), str):
         errors.append("brain must be the name of a brain")
-    for flag in ("thinking", "budget_sentence", "cave_leak"):
+    for flag in ("thinking", "budget_sentence", "cave_leak", "end_report"):
         if not isinstance(data.get(flag, False), bool):
             errors.append(f"{flag} must be true or false")
     return errors

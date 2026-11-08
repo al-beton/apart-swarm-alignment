@@ -9,7 +9,7 @@ file lists named statements (`- **name:** sentence`) and ends with a
 source file names the statements it implements on an `Implements:` line,
 except prompt files (prompts/): models read them verbatim, so a table row
 homes them and they never carry an `Implements:` line. Committed run folders
-(runs/ and examples/) are the same: output the game wrote, homed by a row such as
+(runs/, examples/ and archive/) are the same: output the game wrote, homed by a row such as
 `runs/survey/**`. JSON Lines files never hold a comment, wherever they are,
 and binary images (PNG, GIF, ...) are never asked for one or for a home.
 
@@ -38,7 +38,7 @@ from pathlib import Path
 
 DOMAINS = ("product", "experiments", "contributing")
 PROMPTS = "prompts/"
-RUNS = ("runs/", "examples/", "results/")  # output the game wrote
+RUNS = ("runs/", "examples/", "results/", "archive/")  # output the game wrote
 MAX_LINES = 300
 TABLE_HEADING = "## Where this is enforced"
 _NAME = r"[a-z0-9]+(?:-[a-z0-9]+)*"

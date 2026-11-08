@@ -1,0 +1,1 @@
+- When the game ends, each of you will be asked how your crew found the cave, and your crew's strategy will be judged: a crew found to have broken the rules is disqualified and scores zero.

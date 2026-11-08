@@ -243,6 +243,22 @@ def test_stops_cleanly_a_capped_run_keeps_its_turns_and_replays(toml):
     assert cli.main(["replay", str(folder)]) == 0
 
 
+def test_stops_cleanly_an_end_note_the_cap_stopped_replays(toml):
+    toml.write_text(
+        CONFIG.replace(
+            "turns_per_pirate = 3", "turns_per_pirate = 1\nend_report = true"
+        )
+    )
+    # Two turns and the first note fit under the cap; the second note doesn't.
+    models = Models(FakeModel(cost=0.4), cap_usd=1.0, agree=yes)
+    folder = saved_game.play_saved(toml, 0, models=models)
+    last = json.loads((folder / "events.jsonl").read_text().splitlines()[-1])
+    notes = last["game_over"]["notes"]
+    assert notes[0]["note"] == DIG
+    assert notes[1]["note"] is None and "spending cap" in notes[1]["stopped"]
+    assert saved_game.differences(folder) == []
+
+
 def test_stops_cleanly_a_run_stopped_before_its_first_turn_replays(toml):
     models = Models(FakeModel(), cap_usd=0.0, agree=yes)
     folder = saved_game.play_saved(toml, 0, models=models)

@@ -35,7 +35,7 @@ from treasure_island.brain import system_prompt
 from treasure_island.config import ConfigError, parse_config, save_config
 from treasure_island.game_loop import GameStopped, write_game
 from treasure_island.retries import Retrying
-from treasure_island.runs import Replies, earlier_replies, new_folder
+from treasure_island.runs import MissingReply, Replies, earlier_replies, new_folder
 from treasure_island.spending import CAP_USD, Declined, Guard
 from treasure_island.strategies import brains_for
 
@@ -125,15 +125,32 @@ def _with_thinking_looked_up(config):
 
 
 def config_with_seed(config_path, seed):
-    """The config a game of this file and seed plays; it must name a brain."""
-    data = tomllib.loads(Path(config_path).read_text(encoding="utf-8"))
+    """The config a game of this file and seed plays; it must name a brain.
+
+    The file is TOML, or a run's own `config.json`, so a run can be played again.
+    """
+    text = Path(config_path).read_text(encoding="utf-8")
+    data = (
+        json.loads(text) if Path(config_path).suffix == ".json" else tomllib.loads(text)
+    )
     if "brain" not in data:
         raise ConfigError(f"{Path(config_path).name} names no brain to play with.")
     return parse_config({**data, "seed": seed})
 
 
+def with_prompt_recorded(config):
+    """The config with the exact system prompt it plays set outright, so it's saved.
+
+    Running the saved `config.json` again tells the pirates the same words, even
+    if the base or a slot has changed since.
+    """
+    told = dataclasses.replace(config.prompt, system=system_prompt(config))
+    return dataclasses.replace(config, prompt=told)
+
+
 def write_saved(config, folder, on_start=None, pace=0, models=ASK_EVERY_MODEL):
     """Play `config` (see `config_with_seed`) into `folder`, which must exist."""
+    config = with_prompt_recorded(config)
     folder = Path(folder)
     (folder / "replies.jsonl").touch()
     guard = Guard(models.backend or _every_model(config), models.cap_usd, models.agree)
@@ -185,6 +202,13 @@ def refused_replies(folder, unrecorded=None):
     return {agent: count for agent, count in sorted(counts.items()) if count}
 
 
+def _notes_stopped(folder):
+    """Why each end note the game recorded as stopped wasn't written, by pirate."""
+    lines = (folder / "events.jsonl").read_text().splitlines()
+    ending = (json.loads(lines[-1]).get("game_over") or {}) if lines else {}
+    return {n["agent"]: n["stopped"] for n in ending.get("notes", []) if "stopped" in n}
+
+
 def differences(folder):
     """The logs a replay of this folder doesn't rebuild byte for byte."""
     folder = Path(folder)
@@ -195,14 +219,18 @@ def differences(folder):
     stopped = (
         json.loads(manifest.read_text()).get("stopped") if manifest.exists() else None
     )
+    notes_stopped = _notes_stopped(folder)
 
     def stop_where_it_stopped(request):
-        raise GameStopped(stopped)
+        # An end note the cap stopped has no reply, so it stops again the same way.
+        if not request["tools"] and request["agent"] in notes_stopped:
+            raise GameStopped(notes_stopped[request["agent"]])
+        if stopped:
+            raise GameStopped(stopped)
+        raise MissingReply(f"No stored reply for {request['agent']}")
 
     # No backend: replay asks nothing, and a run that stopped stops again.
-    replies = Replies(
-        folder / "replies.jsonl", stop_where_it_stopped if stopped else None
-    )
+    replies = Replies(folder / "replies.jsonl", stop_where_it_stopped)
     with tempfile.TemporaryDirectory() as scratch:
         write_game(config, brains_for(config.brain, config, replies), scratch)
         return [

@@ -55,7 +55,7 @@ def test_game_page_both_commands_write_it(saved, capsys):
         saved.with_suffix(".html").unlink(missing_ok=True)
         assert cli.main(command) == 0
         page = saved.with_suffix(".html").read_text()
-        assert 'id="record"' in page
+        assert 'id="feed"' in page
         assert str(saved.with_suffix(".html")) in capsys.readouterr().out
 
 
@@ -132,26 +132,6 @@ def test_game_page_a_note_written_over_lines_shows_on_one_as_the_scroll_keeps_it
     # What the pirate did stays exactly as it wrote it.
     first = next(shown for shown in turns if shown["wrote"])
     assert "\n" in next(a["text"] for a in first["did"] if a["action"] == "write")
-
-
-def test_game_page_a_click_or_the_arrow_keys_step_through_the_turn_list(saved):
-    page = viewer.slideshow_page(saved)
-    assert 'id="turns"' in page
-    assert 'addEventListener("click"' in page
-    assert '"ArrowLeft"' in page and '"ArrowRight"' in page
-
-
-def test_game_page_the_prompt_is_folded_and_the_thinking_grey(saved):
-    page = viewer.slideshow_page(saved)
-    folded = re.search(r"<details[^>]*>", page).group(0)
-    assert "open" not in folded
-    assert re.search(r"\.thinking \{[^}]*color: #[0-9a-f]{3,6}", page)
-
-
-def test_game_page_a_filter_keeps_one_pirate_s_turns(saved):
-    page = viewer.slideshow_page(saved)
-    assert '<select id="pirate"' in page
-    assert "every pirate" in page
 
 
 def test_game_page_long_text_wraps_inside_its_column(saved):

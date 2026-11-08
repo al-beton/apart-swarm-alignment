@@ -52,7 +52,7 @@ def test_slideshow_file_holds_the_renderer_s_frame_for_every_turn(saved):
     turns = turns_in(viewer.slideshow_page(saved))
     assert len(turns) == len(records_of(saved))
     for number, turn in enumerate(turns):
-        assert base64.b64decode(turn["frame"]) == viewer.frame_png(saved, number)
+        assert base64.b64decode(turn["frame"]) == viewer.board_png(saved, number)
 
 
 def test_slideshow_file_holds_every_turn_s_story(saved):

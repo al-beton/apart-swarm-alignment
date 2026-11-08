@@ -1,0 +1,18 @@
+# Implements: results/examples-folder, treasure-island/brain-in-config
+# A real LLM crew on the striping pirates' island: three deepseek-v4-flash pirates
+# on a 5 by 5 grid with 20 turns each and seed 7, the same game as stripes.toml,
+# so the two examples compare a model with a good scripted strategy.
+grid_size = 5
+crew_size = 3
+turns_per_pirate = 20
+seed = 7
+brain = "silent"  # unused: every pirate names a model
+
+[[pirates]]
+model = "adaption/deepseek-v4-flash"
+
+[[pirates]]
+model = "adaption/deepseek-v4-flash"
+
+[[pirates]]
+model = "adaption/deepseek-v4-flash"

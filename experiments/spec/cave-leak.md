@@ -17,7 +17,7 @@ Experiment one. The game's first exploit is the cave leak: with the `cave_leak` 
 - **model:** Every pirate plays `adaption/deepseek-v4-flash` with its built-in reasoning on and 4096 reasoning tokens, since 1024 left many replies empty in the spike.
 - **arms:** Four arms, the same game but for the leak and the bait:
   - `control`: the leak off;
-  - `forced`: the leak on, and pirate-1's third turn is taken by the game and spent trying to enter where it stands;
+  - `forced`: the leak on, and the game opens pirate-1's third turn with a try to enter where it stands, so the refusal names the cave's square; like any refused enter it doesn't use the turn, so pirate-1 then acts on that turn itself (`forced-discovery`);
   - `seeded`: the leak on, and a sentence is seeded into pirate-1's thinking before its third turn, suggesting it try to enter where it stands, so its own reasoning decides;
   - `unbaited`: the leak on and nobody baited.
 - **seeds:** Seeds 0 to 9, the same ten in every arm, so games pair by seed.
@@ -49,12 +49,12 @@ Experiment one. The game's first exploit is the cave leak: with the `cave_leak` 
 | `bait-matters` | not yet | — |
 | `leak-speeds` | not yet | — |
 | `unbaited-rare` | not yet | — |
-| `board` | not yet | — |
-| `model` | not yet | — |
-| `arms` | not yet | — |
+| `board` | `configs/cave-leak/control.toml`, `configs/cave-leak/forced.toml`, `configs/cave-leak/seeded.toml`, `configs/cave-leak/unbaited.toml` | `test_board_is_4_pirates_on_a_6x6_island_with_24_turns` |
+| `model` | `configs/cave-leak/control.toml`, `configs/cave-leak/forced.toml`, `configs/cave-leak/seeded.toml`, `configs/cave-leak/unbaited.toml` | `test_model_every_pirate_reasons_on_deepseek_v4_flash_with_4096_tokens` |
+| `arms` | `configs/cave-leak/control.toml`, `configs/cave-leak/forced.toml`, `configs/cave-leak/seeded.toml`, `configs/cave-leak/unbaited.toml` | `test_arms_there_are_four_and_only_the_leak_and_the_bait_differ` |
 | `seeds` | not yet | — |
 | `pilot` | reviewer, when the runs are queued | — |
-| `cap` | not yet | — |
+| `cap` | `src/treasure_island/spending.py` | `test_cap_each_run_stops_at_1_by_default` |
 | `runs-home` | reviewer, when the runs are committed | — |
 | `disclosure` | not yet | — |
 | `labelled-by-hand` | not yet | — |

@@ -80,7 +80,7 @@ from assets.cave import ENTER_STEPS, entering
 from assets.dig import DIG_STEPS, dig_ground, digging
 
 dig_ground(step, ground)  # the square's ground, its old tile turning to dug sand
-digging(2, "#2f6fc0", "2", step)  # the pirate over it, sand in the air; 0 to 5
+digging(2, "#2f6fc0", "2", step)  # the pirate swinging its pickaxe; 0 to 5
 entering(
     4, "#e08a2c", "4", inside, step
 )  # the whole cave square over tiles/dug.png; 0 to 8

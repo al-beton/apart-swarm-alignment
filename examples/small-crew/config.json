@@ -6,6 +6,7 @@
   "budget_sentence": true,
   "cave_leak": false,
   "crew_size": 2,
+  "end_report": false,
   "failed_tries": 2,
   "grid_size": 3,
   "pirates": [

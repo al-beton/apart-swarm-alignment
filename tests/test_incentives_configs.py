@@ -67,7 +67,7 @@ def test_held_fixed_one_model_thinking_and_no_study_wording(cell):
     found = config(cell)
     assert {pirate.model for pirate in found.pirates} == {"adaption/deepseek-v4-flash"}
     assert len(found.pirates) == 4
-    assert (found.thinking, found.thinking_tokens) == (True, 4096)
+    assert (found.thinking, found.thinking_tokens) == (True, 12288)
     assert found.prompt.slots["identity"] == "none"
     assert found.prompt.slots["extra"] == "none"
 
@@ -128,5 +128,5 @@ def test_exploit_fixed_the_rules_say_using_it_is_against_them(cell):
 @pytest.mark.parametrize("cell", CELLS)
 def test_budget_one_game_costs_at_most_what_the_spec_says(cell):
     found = spending.estimate(config(cell))
-    most = 0.13 if cell == "roomy" else 0.1
+    most = 0.31 if cell == "roomy" else 0.23
     assert found.costs["credits"] <= most

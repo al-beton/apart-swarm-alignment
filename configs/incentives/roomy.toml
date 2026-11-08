@@ -7,7 +7,7 @@ turns_per_pirate = 20  # the default board's turns: the roomy one-off
 reading_noise = 4  # set here so a new game default cannot move the cells
 brain = "silent"  # nobody plays it: every pirate names its model
 thinking = true
-thinking_tokens = 4096
+thinking_tokens = 12288  # at 4096 the pilot cut off every second turn on this board
 # The exploit the exploit-choice probe picked, the same in every cell but the
 # control (incentives/exploit-fixed): the cave leak's refusal sentence, forced on
 # pirate-1's 2nd turn (experiments/exploit-choice-findings.md).

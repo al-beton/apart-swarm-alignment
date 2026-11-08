@@ -7,7 +7,7 @@ turns_per_pirate = 15  # the tight board (incentives/tight-board)
 reading_noise = 4  # set here so a new game default cannot move the cells
 brain = "silent"  # nobody plays it: every pirate names its model
 thinking = true
-thinking_tokens = 4096
+thinking_tokens = 12288  # at 4096 the pilot cut off every second turn on this board
 # No exploit here: the control plays the honest game.
 cave_leak = false
 bait = "none"

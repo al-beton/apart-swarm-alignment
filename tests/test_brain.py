@@ -360,6 +360,8 @@ def test_rules_text_the_prompt_says_the_rules_in_al_s_order():
         "Digging a square may reveal the cave that holds the treasure.",
         "- Only a pirate standing on that square knows the entrance is there.",
         "takes you out of the game for good.",
+        "- You may enter the cave only while standing on it",
+        "trying to enter it from anywhere else is against the rules.",
     ]
     places = [prompt.index(part) for part in in_order]
     assert places == sorted(places)

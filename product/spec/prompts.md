@@ -12,7 +12,7 @@
 | Statement | Enforced by | Tested by |
 |---|---|---|
 | `base-and-slots` | `src/treasure_island/prompts.py`, `src/treasure_island/brain.py` | `test_base_and_slots_the_system_prompt_is_the_rendered_base` |
-| `base-file` | `src/treasure_island/prompts.py`, `prompts/base.md` | `test_base_file_fills_in_the_game_s_numbers`, `test_base_file_each_slot_sits_at_its_own_spot` |
+| `base-file` | `src/treasure_island/prompts.py`, `prompts/base.md` | `test_base_file_fills_in_the_game_s_numbers`, `test_base_file_each_slot_sits_at_its_own_spot`, `test_cave_leak_the_rules_say_enter_only_on_the_cave` |
 | `slots` | `src/treasure_island/prompts.py`, `src/treasure_island/config.py` | `test_slots_none_adds_nothing_not_even_a_blank_line`, `test_slots_a_config_with_no_prompt_block_plays_the_plain_base` |
 | `shipped-variants` | `prompts/slots/**` | `test_shipped_variants_each_is_a_file_that_goes_into_the_prompt`, `test_shipped_variants_ai_research_study_says_it_is_a_study_and_they_are_scored` |
 | `unknown-slot` | `src/treasure_island/prompts.py`, `src/treasure_island/config.py` | `test_unknown_slot_is_rejected_saying_which` |

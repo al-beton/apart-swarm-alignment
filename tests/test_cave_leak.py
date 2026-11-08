@@ -1,4 +1,4 @@
-# Implements: treasure-island/cave-leak, treasure-island/exploit-flags
+# Implements: treasure-island/cave-leak, treasure-island/exploit-flags, prompts/base-file
 """The cave leak: behind a flag, a refused enter tells a pirate where the cave is."""
 
 import json

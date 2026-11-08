@@ -11,7 +11,7 @@ from PIL import Image, ImageChops
 from treasure_island import viewer
 
 ROOT = Path(__file__).resolve().parents[1]
-GAMES = ["examples/silent", "examples/stripes", "examples/small-crew"]
+GAMES = ["examples/llm-crew", "examples/stripes", "runs/readme-walkthrough"]
 CREW = {"pirate-1": [0, 0], "pirate-2": [0, 0]}
 
 
@@ -123,7 +123,7 @@ def test_story_caption_a_run_with_no_story_still_draws():
 
 
 def test_story_caption_the_page_and_the_gif_show_the_same_frame():
-    folder = ROOT / "examples/small-crew"
+    folder = ROOT / "runs/readme-walkthrough"
     png = Image.open(io.BytesIO(viewer.frame_png(folder, 0))).convert("RGB")
     gif = Image.open(io.BytesIO(viewer.gif(folder)))
     gif.seek(0)

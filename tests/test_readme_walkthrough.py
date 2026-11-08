@@ -10,7 +10,7 @@ from treasure_island import cli
 
 ROOT = Path(__file__).resolve().parents[1]
 HEADING = "Read one game"
-GAME = ROOT / "examples/small-crew"
+GAME = ROOT / "runs/readme-walkthrough"
 
 
 def section():
@@ -46,7 +46,7 @@ def test_readme_reads_a_game_explains_the_other_files_and_shows_the_gif():
     text = section()
     assert "`pirates-log.txt`" in text
     assert "`events.jsonl`" in text
-    assert "(examples/small-crew/game.gif)" in text
+    assert "(runs/readme-walkthrough/game.gif)" in text
 
 
 def test_readme_reads_a_game_is_honest_that_these_pirates_write_no_notes():
@@ -62,7 +62,7 @@ def test_readme_reads_a_game_commands_work(tmp_path, monkeypatch, capsys):
     clone, enter, show = block.strip().splitlines()
     assert clone.startswith("git clone ")
     assert enter == "cd apart-swarm-alignment"
-    shutil.copytree(ROOT / "examples", tmp_path / "examples")
+    shutil.copytree(ROOT / "runs/readme-walkthrough", tmp_path / "runs/readme-walkthrough")
     monkeypatch.chdir(tmp_path)
     assert cli.main(shlex.split(show)[3:]) == 0
-    assert "small-crew.gif" in capsys.readouterr().out
+    assert "readme-walkthrough.gif" in capsys.readouterr().out

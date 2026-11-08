@@ -5,7 +5,7 @@ A reproducible sandbox for asking when a swarm of LLM agents whistleblows, and w
 
 Each committed run replays offline with no API keys, so anyone can clone this and check it. Every named figure rebuilds from those committed runs, also with no keys.
 
-![A whole game: three silent pirates search the grid alone and go into the cave](examples/silent/game.gif)
+![A whole game: three LLM pirates, deepseek-v4-flash, search the island and talk on the scroll](examples/llm-crew/game.gif)
 
 ![All the game's art on one page](assets/sheet.png)
 
@@ -18,22 +18,22 @@ You need [uv](https://docs.astral.sh/uv/) and nothing else: no API keys and no a
 ```bash
 git clone https://github.com/al-beton/apart-swarm-alignment.git
 cd apart-swarm-alignment
-uv run treasure-island show examples/silent
+uv run treasure-island show examples/llm-crew
 ```
 
 That writes a GIF of a whole game, an HTML page you can step through with the arrow keys and the game's `transcript.md`, and prints where they are. To read a game in full on GitHub, start with [`examples/stripes/transcript.md`](examples/stripes/transcript.md): every turn's prompt, thinking, action and result, then the score.
 
 ## Read one game
 
-`examples/small-crew` fits on a screen, so here it is from the start:
+`runs/readme-walkthrough`, two scripted pirates on a small island, fits on a screen, so here it is from the start:
 
 ```bash
 git clone https://github.com/al-beton/apart-swarm-alignment.git
 cd apart-swarm-alignment
-uv run treasure-island show examples/small-crew
+uv run treasure-island show runs/readme-walkthrough
 ```
 
-![Two silent pirates search alone; one digs up the treasure and goes into the cave](examples/small-crew/game.gif)
+![Two silent pirates search alone; one digs up the treasure and goes into the cave](runs/readme-walkthrough/game.gif)
 
 Its `story.txt` is the whole game, and each line says who acted, what it saw around it, what it did, what any read of the scroll found and why.
 
@@ -103,13 +103,13 @@ Silent pirates write no notes, so this game's scroll is empty, and they search b
 | A game replays offline by its recorded actions, with no keys and no network: each pirate's moves go back into today's game, which must end the same way. A changed prompt or reworded story doesn't break an old game; a changed rule does (read its `story.txt`) | `uv run treasure-island replay runs/silent-seed-7` |
 | Replay every committed game, not only the short list the pull request checks replay (in `src/treasure_island/replay.py`) | `make replay-all` |
 | Striping pirates that each dig their own rows, write when they're blocked and tell the crew where the treasure is | `uv run treasure-island run configs/stripes.toml --seed 1` |
-| Scribe pirates search like silent ones but write what every dig found, and where the cave is before going in, so every game shows writing (see `examples/scribe/game.gif`) | `uv run treasure-island run configs/scribe.toml --seed 7` |
-| Open a finished game: `examples/` holds four, each with its story, GIF and transcript, and any of them replays | `uv run treasure-island replay examples/silent` |
+| Scribe pirates search like silent ones but write what every dig found, and where the cave is before going in, so every game shows writing  | `uv run treasure-island run configs/scribe.toml --seed 7` |
+| Open a finished game: `examples/` holds two on the same island, a real LLM crew (`llm-crew`) and the striping scripted pirates (`stripes`), each with its story, GIF, transcript and game page `game.html`, and either replays | `uv run treasure-island replay examples/llm-crew` |
 | Check a finding: `results/` keeps each one with the games behind it, its question and what it cost | `uv run treasure-island replay results/sample-sweep-seeds/small-crew-seed-1` |
-| Remake the examples, after a change that's meant to show in them | `make examples` |
+| Remake the examples, after a change that's meant to show in them: `stripes` is played again, and `llm-crew` is redrawn from its own game, since playing it again asks real models (`uv run treasure-island run configs/llm-crew.toml --seed 7` takes a key and a yes) | `make examples` |
 | Remake the scripted pirates' reference games | `make reference-games` |
 | Watch a game in the browser, turn by turn, in the approved art: each pirate in its own colour and label, facing the way it moves, the acting pirate's square outlined in yellow (a pirate reading or writing holds the open scroll in front of it), what each saw, the treasure's mark, the crew's score counting up at the top (+100 as a pirate goes into the cave, +10 for each turn it waits inside) and the crew's log along the bottom (stop it with Ctrl-C) | `uv run treasure-island watch runs/silent-seed-7` |
-| See a game the quickest way: its GIF, its page and its `transcript.md`, from one command | `uv run treasure-island show examples/silent` |
+| See a game the quickest way: its GIF, its page and its `transcript.md`, from one command | `uv run treasure-island show examples/llm-crew` |
 | Bake a game into an animated GIF, from the same drawing code. A long thought in the side panel shows its end after "...", in readable type, and the caption under the board cuts a thought of more than 30 words to its first 12 words, "..." and its last 12, so the GIF stays small; the game page, `transcript.md` and `story.txt` keep every thought whole | `uv run treasure-island render runs/silent-seed-7` |
 | Read a game in full: one HTML file you can open or pass on, with no server. The board and a list of turns sit on the left (step with the arrow keys or a click), and each turn's prompt (folded), whole thinking, tool calls and result on the right, beside the scroll so far, with a filter for one pirate's turns. It's built from `events.jsonl` alone, so it works for LLM games too | `uv run treasure-island slideshow runs/silent-seed-7` |
 | All the art is drawn in code: one command redraws every PNG in `assets/` | `make assets` |

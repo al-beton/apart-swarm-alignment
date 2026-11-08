@@ -155,6 +155,10 @@ def test_game_page_steps_arrow_keys_play_slider_and_filter_step_the_page(saved):
     assert 'id="play"' in page and 'id="speed"' in page
     assert 'type="range"' in page
     assert 'id="pirate"' in page and "every pirate" in page
+    # A filter past the pirate's last turn falls back to its last one before.
+    assert "k < at && kept(k)" in page
+    # Playing fast, a turn's steps fit in its time, so a dig always finishes.
+    assert 'Number($("speed").value) / (steps + 2)' in page
 
 
 def test_game_page_steps_the_address_keeps_the_turn(saved):

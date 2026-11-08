@@ -1329,7 +1329,12 @@ function showBoard(t, animate) {
     $("board").src = png(t.frame);
     clearInterval(walking);
     walking = null;
-  }, 130);
+  }, stepMs(t.steps.length));
+}
+// Playing, a turn's steps fit inside its time on screen, so a dig or a pirate going
+// in always finishes before the next turn.
+function stepMs(steps) {
+  return timer ? Math.min(130, Number($("speed").value) / (steps + 2)) : 130;
 }
 
 // The scroll under the board: a turn that writes types its line out with a quill.
@@ -1428,7 +1433,12 @@ $("pirate").addEventListener("change", () => {
   for (const entry of [...entries, ...ghosts.map((g) => g.entry)]) {
     entry.classList.toggle("hidden", Boolean(only) && entry.dataset.agent !== only);
   }
-  if (!kept(at)) step(1); else paint(true);
+  if (kept(at)) { paint(true); return; }
+  // The nearest of its turns, later if there is one, else earlier.
+  const later = TURNS.findIndex((t, k) => k > at && kept(k));
+  const earlier = TURNS.map((t, k) => k).filter((k) => k < at && kept(k)).pop();
+  const k = later >= 0 ? later : earlier;
+  if (k !== undefined) go(k); else paint(true);
 });
 document.addEventListener("keydown", (key) => {
   if (key.target.closest && key.target.closest("input, select, textarea")) return;

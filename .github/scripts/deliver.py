@@ -1,6 +1,6 @@
 """deliver: the mechanical steps of the deliver-issue skill.
 
-Implements: workflow/one-routine, commits/named-paths, review/review-finished, merging/stacked-retarget, merging/main-stays-green, merging/merge-when-clean
+Implements: workflow/one-routine, commits/named-paths, review/review-finished, merging/stacked-retarget, merging/main-stays-green, merging/merge-when-clean, merging/squash-links-pr, commits/commit-refs-issue
 
 Usage: `python3 .github/scripts/deliver.py <command> ...`
 
@@ -19,7 +19,9 @@ Usage: `python3 .github/scripts/deliver.py <command> ...`
 - `resolve THREAD_ID REPLY` replies in a thread, then resolves it.
 - `merge PR` squash-merges when blocking-checks is green on the latest
   commit, Codex has finished reviewing it and every thread is resolved,
-  keeping the closing block. Merges of main that touch none of the pull
+  keeping the closing block as the commit's body. Its subject is the pull
+  request's title with the issue numbers swapped for its own, so the commit
+  on main links to the pull request. Merges of main that touch none of the pull
   request's own files don't need a review of their own: Codex's round on the
   commit under them counts. Green means the commit's last real run passed:
   a draft run that started later and was skipped (marking a pull request
@@ -165,6 +167,15 @@ def closing_lines(body):
     return [line for line in body.splitlines() if CLOSING.match(line.strip())]
 
 
+# The issue numbers that end a pull request's title, such as "(#225)" or "(#3, #4)".
+TITLE_ISSUES = re.compile(r"\s*\(#\d+(?:[,\s]+#\d+)*\)\s*$")
+
+
+def squash_subject(title, number):
+    """The pull request's title ending in its own number, not its issues'."""
+    return f"{TITLE_ISSUES.sub('', title)} (#{number})"
+
+
 def unresolved_threads(number, run=run_command):
     repo = json.loads(run("repo", "view", "--json", "owner,name"))
     data = json.loads(
@@ -259,7 +270,7 @@ def merge(number, run=run_command, pause=time.sleep):
         str(number),
         "--squash",
         "--subject",
-        pr["title"],
+        squash_subject(pr["title"], number),
         "--body",
         "\n".join(closing),
     )

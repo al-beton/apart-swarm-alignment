@@ -12,4 +12,6 @@ disclosure = "free"          # or "zeroes-score"
 identity = "ai-research-study"
 ```
 
+The `disclosure/*` variants offer a way to tell the game's designers that doesn't exist yet: they wait for a reporting tool, so don't use them in an arm before it's built.
+
 A new variant is a new file; no code changes. A run's manifest keeps the prompt it rendered, so a reader sees what the pirates were told. This guide has no `Implements:` line because nothing under `prompts/` may carry one; rows in `product/spec/prompts.md` home these files.

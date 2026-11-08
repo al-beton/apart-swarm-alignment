@@ -470,14 +470,15 @@ def _draw_ground(image, size, shown, pirates):
         for y in range(size):
             name = "dug" if (x, y) in shown["dug"] else _ground_tile(x, y)
             image.paste(_art(f"tiles/{name}"), (x * TILE, y * TILE))
+    if shown["digging"]:
+        # The dig's ground first, so the mark or the cave on that square stays over it.
+        step, before = shown["digging"]
+        x, y = shown["positions"][shown["acting"]]
+        image.paste(dig_ground(step, _art(f"tiles/{before}")), (x * TILE, y * TILE))
     if shown["mark"] and shown["mark"][0] == "mark-question":
         _draw_mark(image, shown)
     if shown["mark"] and shown["mark"][0] == "cave":
         _draw_cave(image, shown, pirates)
-    if shown["digging"]:
-        step, before = shown["digging"]
-        x, y = shown["positions"][shown["acting"]]
-        image.paste(dig_ground(step, _art(f"tiles/{before}")), (x * TILE, y * TILE))
 
 
 def _draw_cave(image, shown, pirates):

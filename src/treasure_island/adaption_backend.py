@@ -72,12 +72,21 @@ def _text(part):
     ) or ""
 
 
+def reasoning_tokens(response):
+    """The reasoning tokens a reply spent, as its usage says, or None if it doesn't."""
+    details = getattr(getattr(response, "usage", None), "output_tokens_details", None)
+    if isinstance(details, dict):  # the SDK hands some parts over as plain dicts
+        return details.get("reasoning_tokens")
+    return getattr(details, "reasoning_tokens", None)
+
+
 def _reply_text(response, thinking):
     """The JSON the LLM brain reads, or the reply's own words if it called no tool."""
     calls = [item for item in response.output if item.type == "function_call"]
     details = getattr(response, "incomplete_details", None)
+    spent = reasoning_tokens(response)
     if not calls and getattr(details, "reason", None) == "max_output_tokens":
-        return cut_off_reply(response.output_text)
+        return cut_off_reply(response.output_text, spent)
     if not calls:
         return response.output_text
     call = calls[0]
@@ -86,6 +95,8 @@ def _reply_text(response, thinking):
     except json.JSONDecodeError:
         arguments = call.arguments
     reply = {"tool": call.name, "arguments": arguments}
+    if spent is not None:
+        reply["reasoning_tokens"] = spent
     # deepseek's reasoning comes back as `reasoning_text` parts in `content`, with
     # an empty summary; a model that summarises puts its words in `summary`.
     reasoning = [
@@ -110,7 +121,8 @@ class AdaptionBackend:
             instructions=request["system"],
             input=request["messages"],
             tools=[{"type": "function", **tool} for tool in request["tools"]],
-            # The Responses API counts reasoning as output, so its budget adds on.
+            # The Responses API counts reasoning as output, so its budget adds on,
+            # exactly, as the prompt's budget sentence tells the model.
             max_output_tokens=request["max_tokens"] + request["thinking_tokens"],
         )
         usage = response.usage

@@ -3,6 +3,7 @@
   "bait_pirate": 1,
   "bait_turn": 3,
   "brain": "stripes",
+  "budget_sentence": true,
   "cave_leak": false,
   "crew_size": 3,
   "failed_tries": 2,

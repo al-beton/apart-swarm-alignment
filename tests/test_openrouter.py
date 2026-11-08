@@ -1,4 +1,4 @@
-# Implements: agents/reply-cap, agents/openrouter-backend, agents/key-from-the-environment, agents/normal-temperature
+# Implements: treasure-island/model-reasoning, agents/reply-cap, agents/openrouter-backend, agents/key-from-the-environment, agents/normal-temperature
 """The OpenRouter backend answers from a recorded reply, with no network and no key.
 
 `openrouter-reply.json` follows the reply OpenRouter's API reference documents for
@@ -95,7 +95,9 @@ def test_openrouter_backend_a_tool_call_comes_back_in_the_one_reply_form(
 ):
     answering(monkeypatch)
     text, cost = ask()
-    assert json.loads(text) == {"tool": "move", "arguments": {"direction": "east"}}
+    reply = json.loads(text)
+    reply.pop("reasoning_tokens", None)  # what the usage reports, recorded too
+    assert reply == {"tool": "move", "arguments": {"direction": "east"}}
     assert cost == RECORDED["usage"]["cost"]
     text, _ = ask(THINKING)
     assert json.loads(text)["thinking"] == "The square to the east is unchecked."
@@ -122,6 +124,15 @@ def test_openrouter_backend_asks_with_every_tool_and_the_key(offline, monkeypatc
     # The reasoning has its own budget, on top of the reply's.
     assert fake.body(1)["reasoning"] == {"max_tokens": 1024}
     assert fake.body(1)["max_tokens"] == 300 + 1024
+
+
+def test_model_reasoning_openrouter_sends_the_budget_with_thinking_off(
+    offline, monkeypatch
+):
+    fake = answering(monkeypatch)
+    ask({**REQUEST, "thinking_tokens": 4096})
+    assert fake.body()["reasoning"] == {"max_tokens": 4096, "exclude": True}
+    assert fake.body()["max_tokens"] == 300 + 4096
 
 
 def test_openrouter_backend_a_reply_with_no_tool_call_is_passed_on_to_be_refused(

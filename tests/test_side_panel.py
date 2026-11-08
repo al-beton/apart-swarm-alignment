@@ -237,6 +237,22 @@ def test_frame_shows_the_swarm_a_writer_holds_the_scroll_and_its_line_shows_besi
     )
 
 
+def test_frame_shows_the_swarm_a_pirate_that_waits_and_says_holds_the_scroll():
+    made = record(0, did=[{"action": "wait", "say": "Over here, crew!"}], at=[1, 1])
+    assert holding(viewer.frame([made], 0, 4), (1, 1), "write", 2)
+    assert shown([made])["note"] == "Over here, crew!"
+
+
+def test_frame_shows_the_swarm_being_shown_new_lines_draws_nothing():
+    made = record(0, did=[{"action": "wait"}], at=[1, 1])
+    made["asked"] = True
+    made["log_shown"] = [{"line": 1, "by": "pirate-2", "turn": 1, "text": "Hi."}]
+    image = viewer.frame([made], 0, 4)
+    assert not holding(image, (1, 1), "read", 1)
+    assert not holding(image, (1, 1), "write", 2)
+    assert shown([made])["note"] is None
+
+
 @pytest.mark.usefixtures("left_edge_starts")
 def test_readable_at_once_a_real_game_tells_its_ending_in_the_frame():
     class Dig:

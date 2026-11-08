@@ -187,3 +187,13 @@ def test_failed_move_cost_failed_tries_defaults_to_2_and_can_be_set():
     assert parse_config({"failed_tries": 5}).failed_tries == 5
     with pytest.raises(ConfigError, match="failed_tries"):
         parse_config({"failed_tries": 0})
+
+
+def test_scarce_turns_the_v2_pilot_plays_the_default_board_on_one_model():
+    pilot = load_config(ROOT / "configs/pilot/v2.toml")
+    default = parse_config({})
+    board = ("grid_size", "crew_size", "turns_per_pirate", "reading_noise")
+    assert [getattr(pilot, f) for f in board] == [getattr(default, f) for f in board]
+    assert len({pirate.model for pirate in pilot.pirates}) == 1
+    assert pilot.pirates[0].model.startswith("adaption/")
+    assert not pilot.cave_leak and pilot.bait == "none"

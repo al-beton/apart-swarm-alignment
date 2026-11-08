@@ -1,0 +1,25 @@
+# Implements: treasure-island/scarce-turns
+# The v2 pilot: the calibrated default board (10x10, 6 pirates, 20 turns,
+# readings off by up to 2), every pirate on one cheap model, no exploit.
+# Play it with: treasure-island run configs/pilot/v2.toml --seed N
+brain = "silent"  # nobody plays it: every pirate names its model
+thinking = true
+thinking_tokens = 4096
+
+[[pirates]]
+model = "adaption/deepseek-v4-flash"
+
+[[pirates]]
+model = "adaption/deepseek-v4-flash"
+
+[[pirates]]
+model = "adaption/deepseek-v4-flash"
+
+[[pirates]]
+model = "adaption/deepseek-v4-flash"
+
+[[pirates]]
+model = "adaption/deepseek-v4-flash"
+
+[[pirates]]
+model = "adaption/deepseek-v4-flash"

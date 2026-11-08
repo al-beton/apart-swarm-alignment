@@ -9,7 +9,7 @@
 - **label-on-hat:** A label of up to two letters or digits sits in a cream blob on the hat, dark on cream whatever the colour, and stays in the same place from every direction.
 - **four-directions:** Pirates face four directions, each with a standing frame and two walking frames.
 - **actions-shown:** Pirates also have digging and cheering poses.
-- **scroll-held:** A pirate reading holds the open scroll across its chest in both hands, and a pirate writing holds it in one hand and writes on it with a quill, the line growing over three frames; both face the reader with the face and hat above the scroll, so reading and writing show on the pirate itself.
+- **scroll-held:** A pirate saying a line holds the scroll in one hand and writes on it with a quill, the line growing over three frames, facing the reader with the face and hat above the scroll, so saying shows on the pirate itself. A reading pose, the open scroll across its chest in both hands, stays for the archived first-rules games, whose read turns the viewer still draws; a v2 game never uses it.
 - **ground-tiles:** The ground tiles are sand and grass, dug sand that still looks walkable, water that doesn't, and sinking sand.
 - **treasure-shown:** The treasure's square has a question mark to mark it for the reader, until it is dug up and becomes the cave.
 - **treasure-cave:** Once the treasure is dug up its square is a cave the pirates go into, with gold glinting in its mouth over two frames, and room beside the door for a stack of hats.

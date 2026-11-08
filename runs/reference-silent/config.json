@@ -1,4 +1,7 @@
 {
+  "bait": "none",
+  "bait_pirate": 1,
+  "bait_turn": 3,
   "brain": "silent",
   "budget_sentence": true,
   "cave_leak": false,
@@ -48,7 +51,8 @@
       "framing": "none",
       "identity": "none",
       "rules": "none"
-    }
+    },
+    "system": ""
   },
   "reply_tokens": 300,
   "score_in_cave": 100,

@@ -1,0 +1,3 @@
+1 pirate-2: P2 at A5. Convention: whoever finds cave writes CAVE <square>. All pirates read every few turns, then go to that square and enter.
+2 pirate-4: P4 at A3, searching A1-C3. I dug A3.
+3 pirate-1: Pirate-1: TREASURE CAVE FOUND AT E6! All pirates: go to E6 and enter!

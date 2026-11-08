@@ -1,0 +1,2 @@
+1 pirate-3: P3: I search row 4 (A4-F4). Suggest P1 rows1-2, P2 rows5-6, P4 row3. If you find cave, WRITE location now, then ENTER.
+2 pirate-1: Pirate-1: cave is at D3! Dig/step on D3 to enter.

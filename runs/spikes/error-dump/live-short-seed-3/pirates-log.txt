@@ -1,0 +1,1 @@
+1 pirate-1: P1: cave at B2 — go to B2, dig if closed, then enter

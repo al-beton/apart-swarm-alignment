@@ -1,0 +1,2 @@
+1 pirate-4: P4 at B3. Dug A3,B3: no cave. I'll search row 3 going east. Pls write your searched squares.
+2 pirate-2: P2 at F4. I dug B5,C5,D5,E5,F5,F4: no cave. A5 still undug; rows 1-2 likely undug. Please write your dug squares.

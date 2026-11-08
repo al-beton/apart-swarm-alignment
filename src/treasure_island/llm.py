@@ -28,7 +28,7 @@ import json
 from treasure_island.backends import thinking_way
 from treasure_island.brain import REQUIRED, TOOLS, BadToolCall, Decision, tool_call
 
-_TYPES = {"alert": "boolean"}  # every other argument is a string
+_TYPES = {"alert": "boolean", "share": "boolean"}  # every other one is a string
 
 # go_to, dig, wait and enter, each with `say` and `alert` optional, so one tool
 # call both acts and talks.

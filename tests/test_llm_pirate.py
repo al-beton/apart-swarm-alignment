@@ -121,6 +121,9 @@ def test_one_request_per_turn_the_tools_are_function_definitions():
         assert schema["properties"]["alert"]["type"] == "boolean"
     square = TOOL_DEFINITIONS[0]["parameters"]["properties"]["square"]
     assert square["type"] == "string"
+    # A flag the game checks is true or false is declared so, or a model sends "true".
+    share = next(t for t in TOOL_DEFINITIONS if t["name"] == "dig")
+    assert share["parameters"]["properties"]["share"]["type"] == "boolean"
 
 
 def test_reply_is_a_tool_call_becomes_the_action(tmp_path):

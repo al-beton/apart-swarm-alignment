@@ -3,25 +3,28 @@
 One request asks the model for one of the pirate's tools. Its tool call comes back in
 the one reply form the LLM brain reads, `{"tool": ..., "arguments": {...}}`, with
 `"thinking"` when thinking is on. A reply with no tool call is passed on as its
-text, so the brain records why it's refused and asks once more. The cost is the
+text, so the brain records why it's refused and asks once more; one the token
+limit cut off (`finish_reason` "length") is marked so. The cost is the
 reply's own `usage.cost`; OpenRouter's credits are dollars (default, Al to confirm).
 A reply with no cost stops the game, since the spending cap couldn't count it.
 
 Default, Al to confirm: the model may answer without a tool (`tool_choice` "auto"),
 since some models refuse to be forced, and thinking off sends no reasoning setting,
-so each model reasons as it does by default and its reasoning isn't kept. Thinking
-on asks for reasoning within `thinking_tokens`, on top of the reply's cap.
+so each model reasons as it does by default and its reasoning isn't kept. Either
+way a model that reasons gets `thinking_tokens` on top of the reply's cap, and
+thinking on asks for its reasoning within that budget.
 
 `OpenRouter.check_key` asks OpenRouter about a key, not a model, so it spends nothing.
 It never says the key's `label`, since OpenRouter's label is the key, masked.
 
-Implements: agents/reasoning-looked-up, treasure-island/model-reasoning, agents/openrouter-backend, agents/check-keys, agents/normal-temperature
+Implements: agents/reasoning-looked-up, treasure-island/model-reasoning, agents/openrouter-backend, agents/check-keys, agents/normal-temperature, agents/reply-cap
 """
 
 import json
 import urllib.error
 import urllib.request
 
+from treasure_island.brain import cut_off_reply
 from treasure_island.game_loop import GameStopped
 
 URL = "https://openrouter.ai/api/v1/chat/completions"
@@ -72,9 +75,12 @@ def thinks_for(model_id, listing=None):
     return None
 
 
-def _reply_text(message, thinking):
+def _reply_text(choice, thinking):
     """The reply in the brain's one form, or the model's own words if it called no tool."""
+    message = choice["message"]
     calls = message.get("tool_calls") or []
+    if not calls and choice.get("finish_reason") == "length":
+        return cut_off_reply(message.get("content"))
     if not calls:
         return message.get("content") or ""
     function = calls[0]["function"]
@@ -129,7 +135,7 @@ class OpenRouter:
                 f"OpenRouter's reply for {self.model_id} gave no cost, "
                 "so the spending cap couldn't count it"
             )
-        text = _reply_text(reply["choices"][0]["message"], request["thinking"])
+        text = _reply_text(reply["choices"][0], request["thinking"])
         return text, float(cost)
 
     @staticmethod

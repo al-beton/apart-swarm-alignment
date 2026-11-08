@@ -8,7 +8,7 @@ import pytest
 
 from treasure_island import cli, saved_game
 from treasure_island.backends import BACKENDS, UnknownModel, thinking_way
-from treasure_island.brain import TOOLS, PirateSeat, system_prompt
+from treasure_island.brain import TOOLS, PirateSeat, cut_off_reply, system_prompt
 from treasure_island.config import ConfigError, load_config, parse_config, save_config
 from treasure_island.event_log import log_errors
 from treasure_island.game_loop import Game
@@ -194,6 +194,14 @@ def test_reply_cap_defaults_to_300_tokens_and_a_config_can_set_it(tmp_path):
         parse_config({"reply_tokens": 0})
 
 
+def test_reply_cap_a_reply_the_token_limit_cut_off_is_refused_saying_so(tmp_path):
+    model = FakeModel(cut_off_reply("I should first consider"), DIG)
+    decision, _ = one_turn(model, tmp_path=tmp_path)
+    refused = decision.refused[0]
+    assert "I should first consider" in refused["reply"]
+    assert "ran out of room" in refused["why"]
+
+
 def test_thinking_is_on_by_default_and_a_config_can_turn_it_off(tmp_path):
     answer = json.dumps({"tool": "dig", "arguments": {}, "thinking": "hmm"})
     assert llm_config().thinking is True
@@ -238,13 +246,29 @@ def ask_as(model_name, tmp_path, **settings):
 
 
 def test_model_reasoning_a_model_that_reasons_gets_the_thinking_budget(tmp_path):
-    assert llm_config().thinking_tokens == 1024
+    assert llm_config().thinking_tokens == 4096
     request = ask_as("openrouter/some-model", tmp_path)
-    assert request["thinking_tokens"] == 1024
+    assert request["thinking_tokens"] == 4096
     assert "thought" not in request["messages"][0]["content"]
     assert ask_as("openrouter/m", tmp_path, thinking_tokens=64)["thinking_tokens"] == 64
     with pytest.raises(ConfigError, match="thinking_tokens"):
         parse_config({"thinking_tokens": 0})
+
+
+def test_model_reasoning_a_model_that_reasons_keeps_its_budget_with_thinking_off(
+    tmp_path,
+):
+    # Some providers reason whether asked or not, and need room for it.
+    answer = json.dumps({"tool": "dig", "arguments": {}, "thinking": "hmm"})
+    model = FakeModel(answer)
+    config = llm_config(thinking=False)
+    pirate = dataclasses.replace(config.pirates[0], model="openrouter/some-model")
+    replies = Replies(tmp_path / "replies.jsonl", backend=model)
+    brain = LLMPirate("pirate-1", pirate, replies, config)
+    decision = PirateSeat("pirate-1", brain, config).take_turn((0, 0), 3)
+    assert model.requests[0]["thinking"] is False
+    assert model.requests[0]["thinking_tokens"] == 4096
+    assert decision.thinking is None
 
 
 def test_model_reasoning_a_model_without_it_writes_a_short_thought(tmp_path):

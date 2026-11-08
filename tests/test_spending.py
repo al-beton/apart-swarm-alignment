@@ -87,9 +87,12 @@ def test_cost_before_run_counts_every_failed_move_a_turn_allows(toml):
 
 def test_cost_before_run_counts_the_thinking_budget(toml):
     config = load_config(toml)
+    less = dataclasses.replace(config, thinking_tokens=config.thinking_tokens - 100)
+    budget = estimate(config).tokens - estimate(less).tokens
+    assert budget == estimate(config).calls * 100
+    # A model that reasons gets its budget with thinking off too.
     off = dataclasses.replace(config, thinking=False)
-    budget = estimate(config).tokens - estimate(off).tokens
-    assert budget == estimate(config).calls * config.thinking_tokens
+    assert estimate(off).tokens == estimate(config).tokens
 
 
 def test_cost_before_run_prices_a_model_whose_price_is_known(toml, monkeypatch):

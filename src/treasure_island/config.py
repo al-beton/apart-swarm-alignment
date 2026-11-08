@@ -11,7 +11,7 @@ default, Al to confirm. An optional `[prompt]` table picks the system prompt's
 base file and slots (see prompts).
 `parse_config` reports every problem at once, so one fix-and-retry is enough.
 
-Implements: treasure-island/forced-discovery, agents/reasoning-looked-up, treasure-island/model-reasoning, treasure-island/score-numbers, treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config, treasure-island/silent, treasure-island/cave-leak, treasure-island/exploit-flags, treasure-island/square-names, prompts/slots, prompts/unknown-slot, prompts/prompt-recorded
+Implements: treasure-island/dig-reading, treasure-island/say-on-any-action, treasure-island/toggles, treasure-island/forced-discovery, agents/reasoning-looked-up, treasure-island/model-reasoning, treasure-island/score-numbers, treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config, treasure-island/silent, treasure-island/cave-leak, treasure-island/exploit-flags, treasure-island/square-names, prompts/slots, prompts/unknown-slot, prompts/prompt-recorded
 """
 
 import colorsys
@@ -40,6 +40,10 @@ DEFAULTS = {
     "bait": "none",  # or "forced-action" or "seeded-thought" (`forced-discovery`)
     "bait_pirate": 1,  # which pirate is baited, counting from 1
     "bait_turn": 3,  # on which of its own turns
+    # How far off a dig's reading can be (`dig-reading`); 0 until calibration
+    # picks the board (`scarce-turns`).
+    "reading_noise": 0,
+    "say_chars": 200,  # the longest line a pirate can say (`say-on-any-action`)
 }
 BAITS = ("none", "forced-action", "seeded-thought")
 # The smallest value each whole-number field may take. Seeds can be any whole number.
@@ -54,6 +58,8 @@ _MINIMUMS = {
     "score_per_turn_left": 0,
     "bait_pirate": 1,
     "bait_turn": 1,
+    "reading_noise": 0,
+    "say_chars": 1,
 }
 PERSONALITIES = 20  # the art draws this many, numbered from 1
 
@@ -89,6 +95,8 @@ class GameConfig:
     bait: str
     bait_pirate: int
     bait_turn: int
+    reading_noise: int
+    say_chars: int
     pirates: tuple[Pirate, ...]
     prompt: prompts.PromptConfig = dataclasses.field(
         default_factory=prompts.PromptConfig

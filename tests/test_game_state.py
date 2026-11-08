@@ -1,9 +1,9 @@
-# Implements: treasure-island/pirates-and-treasure, treasure-island/grid-and-crew, treasure-island/shared-squares, treasure-island/failed-move, treasure-island/failed-move-cost, treasure-island/actions, treasure-island/one-action-per-turn, treasure-island/turn-order
+# Implements: treasure-island/pirates-and-treasure, treasure-island/grid-and-crew, treasure-island/shared-squares, treasure-island/failed-move, treasure-island/failed-move-cost, treasure-island/actions, treasure-island/one-action-per-turn, treasure-island/turn-order, treasure-island/go-to, treasure-island/wait
 """The game's rules, played directly with plain values."""
 
 import pytest
 
-from treasure_island.game_state import CAVE_HERE, GameState
+from treasure_island.game_state import CAVE_HERE, GameState, first_step
 
 
 def game(grid_size=5, crew_size=1, seed=0, at=None):
@@ -72,15 +72,29 @@ def test_grid_and_crew_a_crew_bigger_than_the_grid_cannot_start():
         ("west", (1, 2)),
     ],
 )
-def test_actions_a_move_goes_one_square_in_any_of_four_directions(direction, expected):
+def test_go_to_a_step_goes_one_square_in_any_of_four_directions(direction, expected):
     state = game(at=[(2, 2)])
-    assert state.move(direction).ok is True
+    assert state.step(direction).ok is True
     assert state.positions == [expected]
+
+
+@pytest.mark.parametrize(
+    "here,there,way",
+    [
+        ((0, 0), (3, 3), "east"),
+        ((3, 0), (0, 3), "west"),
+        ((2, 4), (2, 0), "north"),
+        ((2, 0), (2, 4), "south"),
+    ],
+)
+def test_go_to_steps_along_the_row_first_then_the_column(here, there, way):
+    assert first_step(here, there) == way
 
 
 def test_actions_digging_says_nothing_found_off_the_treasure():
     result = off_treasure().dig()
     assert (result.ok, result.found_treasure) == (True, False)
+    assert result.reading is not None
 
 
 def test_actions_digging_says_treasure_on_the_treasure():
@@ -93,7 +107,7 @@ def test_actions_digging_says_treasure_on_the_treasure():
 def test_actions_a_dug_up_treasure_stays_dug_up():
     state = on_treasure(crew_size=2)
     state.dig()
-    state.move("east")
+    state.wait()
     assert state.treasure_dug_up is True
     again = state.dig()  # digging the open cave says so, and finds nothing new
     assert (again.found_treasure, again.message) == (False, CAVE_HERE)
@@ -111,76 +125,75 @@ def test_actions_a_dig_reports_only_to_the_pirate_that_dug():
     # results is kept where another pirate's turn could read it.
     state = on_treasure(crew_size=2)
     assert state.dig().found_treasure is True
-    answer = state.move("east")
+    answer = state.wait()
     assert answer.found_treasure is False
     assert "treasure" not in answer.message.lower()
 
 
+def test_wait_keeps_the_pirate_where_it_is_and_ends_its_turn():
+    state = game(crew_size=2)
+    result = state.wait()
+    assert result.ok is True
+    assert result.message == "You waited at A5."
+    assert state.positions == [(0, 0), (0, 1)]
+    assert (state.current_pirate, state.turn) == (1, 1)
+
+
 @pytest.mark.parametrize("direction", ["north", "east", "south", "west"])
-def test_shared_squares_a_move_onto_another_pirate_is_refused_and_says_who(direction):
+def test_shared_squares_a_go_to_onto_another_pirate_is_refused_and_says_who(direction):
     x, y = {"north": (2, 1), "east": (3, 2), "south": (2, 3), "west": (1, 2)}[direction]
+    far = {"north": "C5", "east": "E3", "south": "C1", "west": "A3"}[direction]
     state = game(crew_size=2, at=[(2, 2), (x, y)])
-    result = state.move(direction)
+    result = state.go_to_refusal(far)
     assert result.ok is False
     assert result.blocked_by == 1
     assert direction in result.message
-    assert "pirate" in result.message
+    assert "pirate-2" in result.message
     assert state.positions == [(2, 2), (x, y)]
 
 
 def test_shared_squares_a_square_a_pirate_left_is_free_again():
     state = game(crew_size=2, at=[(0, 0), (0, 1)])
-    state.move("east")
-    assert state.move("north").ok is True
+    state.step("east")
+    assert state.step("north").ok is True
     assert state.positions == [(1, 0), (0, 0)]
 
 
-def test_shared_squares_no_two_pirates_ever_stand_together():
-    state = game(grid_size=3, crew_size=8)
-    for direction in ["east", "north", "west", "south"] * 20:
-        state.move(direction)
-        assert len(set(state.positions)) == 8
+def test_shared_squares_a_step_onto_a_pirate_is_never_taken():
+    state = game(crew_size=2, at=[(0, 0), (0, 1)])
+    with pytest.raises(ValueError):
+        state.step("south")
+    assert state.positions == [(0, 0), (0, 1)]
 
 
 @pytest.mark.parametrize(
-    "square,direction",
+    "name,says",
     [
-        ((0, 2), "west"),
-        ((4, 2), "east"),
-        ((2, 0), "north"),
-        ((2, 4), "south"),
+        ("A5", "already at A5"),
+        ("F2", "no square F2 on the island"),
+        ("A9", "no square A9 on the island"),
+        ("sideways", "isn't a square's name"),
+        ("", "isn't a square's name"),
     ],
 )
-def test_failed_move_off_any_edge_fails_and_says_why(square, direction):
-    state = game(at=[square])
-    result = state.move(direction)
-    assert result.ok is False
-    assert direction in result.message
-    assert "edge" in result.message
-    assert state.positions == [square]
-
-
-def test_failed_move_an_unknown_direction_fails_and_says_why():
+def test_failed_move_a_go_to_that_cannot_happen_fails_and_says_why(name, says):
     state = game()
-    result = state.move("sideways")
+    result = state.go_to_refusal(name)
     assert result.ok is False
-    assert "sideways" in result.message
+    assert says in result.message
     assert state.positions == [(0, 0)]
-
-
-@pytest.mark.parametrize("direction", ["west", "south"])
-def test_failed_move_cost_a_failed_move_leaves_the_turn_with_the_pirate(direction):
-    # West is off the edge; south is onto pirate 2.
-    state = game(crew_size=2, at=[(0, 0), (0, 1)])
-    assert state.move(direction).ok is False
     assert (state.current_pirate, state.turn) == (0, 0)
-    assert state.move("east").ok is True
-    assert state.positions == [(1, 0), (0, 1)]
+
+
+def test_failed_move_a_go_to_anywhere_free_is_not_refused():
+    state = game(crew_size=2, at=[(0, 0), (4, 4)])
+    assert state.go_to_refusal("E1") is None
+    assert state.go_to_refusal("b5") is None
 
 
 def test_one_action_per_turn_each_action_ends_the_turn():
     state = game(crew_size=2)
-    state.move("east")
+    state.step("east")
     assert (state.current_pirate, state.turn) == (1, 1)
     state.dig()
     assert (state.current_pirate, state.turn) == (0, 2)

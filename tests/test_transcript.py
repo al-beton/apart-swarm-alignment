@@ -3,21 +3,21 @@
 
 import json
 import re
-import shutil
 from pathlib import Path
 
 import pytest
+import talking
 
 from treasure_island import cli, viewer
 
 ROOT = Path(__file__).resolve().parents[1]
-GAME = "examples/stripes"  # a finished game whose pirates think and write
+GAME = "runs/talking"  # a finished game whose pirates think and say lines
 
 
 @pytest.fixture
 def saved(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    shutil.copytree(ROOT / GAME, tmp_path / "game")
+    talking.write(tmp_path / "game")
     return tmp_path / "game"
 
 
@@ -113,13 +113,14 @@ def test_transcript_a_pirate_s_words_cannot_break_its_structure(saved):
     records[0]["saw"]["prompt"] = words
     records[0]["thinking"] = words
     records[0]["result"] = words
-    records[0]["did"] = [{"action": "write", "text": words}]
+    records[0]["did"] = [{"action": "wait", "say": words}]
     rewrite(saved, records)
     # Inside a code fence the words are shown as they are; outside it, as text.
     fenced = r"^(`{3,})text\n.*?\n\1$"
     text = re.sub(fenced, "", viewer.transcript(saved), flags=re.DOTALL | re.MULTILINE)
     assert len(headings(text)) == len(records)
-    assert text.count("</details>") == text.count("<details>") == len(records)
+    prompted = sum(1 for record in records if record["saw"]["prompt"])
+    assert text.count("</details>") == text.count("<details>") == prompted
     assert "<script>" not in text
     assert "```" not in text
     assert not re.search(r"^#+ Turn 99", text, re.MULTILINE)
@@ -129,9 +130,9 @@ def test_transcript_the_same_game_writes_the_same_text(saved):
     assert viewer.transcript(saved) == viewer.transcript(saved)
 
 
-def test_transcript_the_readmes_point_to_the_stripes_transcript_first():
-    assert "examples/stripes/transcript.md" in (ROOT / "README.md").read_text()
-    assert "stripes/transcript.md" in (ROOT / "examples/README.md").read_text()
+def test_transcript_the_readmes_point_to_the_silent_transcript_first():
+    assert "examples/silent/transcript.md" in (ROOT / "README.md").read_text()
+    assert "silent/transcript.md" in (ROOT / "examples/README.md").read_text()
 
 
 def test_transcript_shows_the_reasoning_tokens_a_turn_spent(saved):

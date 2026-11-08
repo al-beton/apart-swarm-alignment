@@ -26,6 +26,11 @@ def square_name(position, grid_size):
     return f"{column_letter(x)}{grid_size - y}"
 
 
+def is_square_name(name):
+    """Whether `name` is shaped like a square's name, on this grid or not."""
+    return isinstance(name, str) and bool(_NAME.fullmatch(name.strip()))
+
+
 def square_at(name, grid_size):
     """The (x, y) square a name like "E4" means, or None if it isn't on the grid."""
     found = _NAME.fullmatch(name.strip())

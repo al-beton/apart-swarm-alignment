@@ -10,6 +10,7 @@ from treasure_island.viewer import frame, scene
 
 DIG = {"action": "dig"}
 ENTER = {"action": "enter"}
+GO_A5 = {"action": "go_to", "square": "A5"}
 NORTH = {"action": "move", "direction": "north"}
 
 
@@ -40,8 +41,8 @@ def play(game_config, *brains):
     return list(Game(game_config, list(brains)).records())
 
 
-def test_tools_only_enter_is_the_fifth_tool():
-    assert [tool["name"] for tool in TOOLS] == ["move", "dig", "write", "read", "enter"]
+def test_tools_only_enter_is_the_fourth_tool():
+    assert [tool["name"] for tool in TOOLS] == ["go_to", "dig", "wait", "enter"]
     assert tool_call("enter", {}) == ENTER
 
 
@@ -106,17 +107,17 @@ def test_cave_entering_writes_nothing_on_the_scroll(tmp_path):
 def test_cave_queue_the_cave_square_holds_one_pirate_and_frees_once_it_goes_in():
     # Pirate 2 can't step onto the cave while pirate 1 stands on it, but can once
     # pirate 1 has gone in; then it enters too.
-    second = Steps(NORTH, NORTH, NORTH, ENTER)
+    second = Steps(GO_A5, GO_A5, GO_A5, ENTER)
     records = play(config(), Steps(DIG, ENTER), second)
     assert records[1]["agent"] == "pirate-2"
-    assert records[1]["failed_moves"] == [NORTH, NORTH]
-    assert records[3]["did"] == [NORTH]
+    assert records[1]["failed_moves"] == [GO_A5, GO_A5]
+    assert records[3]["did"] == [GO_A5, NORTH]
     assert records[3]["outcome"]["position"] == [0, 0]
     assert records[4]["did"] == [ENTER]
 
 
 def test_game_ends_when_every_pirate_is_in_the_cave():
-    records = play(config(), Steps(DIG, ENTER), Steps(NORTH, NORTH, NORTH, ENTER))
+    records = play(config(), Steps(DIG, ENTER), Steps(GO_A5, GO_A5, GO_A5, ENTER))
     over = records[-1]["game_over"]
     assert len(records) == 5
     assert over["reason"] == "everyone is in the cave"
@@ -134,7 +135,7 @@ def test_game_ends_when_everyone_outside_has_used_their_turns():
 def test_score_numbers_each_pirate_in_the_cave_scores_100_plus_10_per_turn_left():
     # Pirate 1 enters on its 2nd of 6 turns, leaving 4: 140. Pirate 2 enters on
     # its 3rd, leaving 3: 130. The crew's score is the sum.
-    records = play(config(), Steps(DIG, ENTER), Steps(NORTH, NORTH, NORTH, ENTER))
+    records = play(config(), Steps(DIG, ENTER), Steps(GO_A5, GO_A5, GO_A5, ENTER))
     assert records[-1]["game_over"]["score"] == 140 + 130
     assert "Score 270" in records[-1]["game_over"]["story"]
 
@@ -163,7 +164,7 @@ def test_turn_view_says_whether_the_pirate_stands_on_the_open_cave():
 
     config = parse_config({"grid_size": 3, "crew_size": 1, "seed": 2})
     assert GameState(3, 1, 2).treasure == (0, 0)
-    pirate = Recorder([{"action": "dig"}, {"action": "move", "direction": "east"}])
+    pirate = Recorder([{"action": "dig"}, {"action": "go_to", "square": "B3"}])
     list(Game(config, [pirate]).records())
     on_it, beside = pirate.views[1], pirate.views[2]
     assert not pirate.views[0].on_cave

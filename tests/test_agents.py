@@ -43,7 +43,7 @@ def test_no_model_yet_every_model_is_refused():
         backend_for("some-provider/some-model")
 
 
-@pytest.mark.parametrize("name", ["silent", "stripes"])
+@pytest.mark.parametrize("name", ["silent", "noisy"])
 def test_free_runs_in_ci_each_scripted_brain_plays_a_full_game(name, offline, capsys):
     config = ROOT / "configs" / f"{name}.toml"
     assert cli.main(["run", str(config), "--seed", "7", "--no-watch"]) == 0
@@ -52,9 +52,7 @@ def test_free_runs_in_ci_each_scripted_brain_plays_a_full_game(name, offline, ca
     assert "Game over" in (folder / "story.txt").read_text()
 
 
-@pytest.mark.parametrize(
-    "name", ["silent-seed-7", "reference-silent", "reference-stripes"]
-)
+@pytest.mark.parametrize("name", ["silent/7", "reference-silent"])
 def test_committed_runs_pass_the_validator_and_replay(name, offline):
     folder = ROOT / "runs" / name
     assert log_errors(folder / "events.jsonl") == []

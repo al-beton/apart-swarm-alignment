@@ -31,7 +31,7 @@ def test_named_figures_build_offline_from_committed_runs(offline, tmp_path, caps
     assert cli.main(["figure", "silent-game", "--out", str(tmp_path)]) == 0
     gif = tmp_path / "silent-game.gif"
     assert str(gif) in capsys.readouterr().out
-    run = ROOT / "runs/silent-seed-7"
+    run = ROOT / "examples/silent"
     records, scoring = viewer.records_in(run), viewer.scoring_in(run)
     turns = range(len(records))
     frames = sum(len(viewer.turn_steps(records, turn, scoring)) for turn in turns)
@@ -61,10 +61,10 @@ def test_rerun_matches_every_committed_run_without_spending(offline):
 
 
 def test_rerun_matches_catches_a_config_that_differs(monkeypatch):
-    wrong = figures.Figure("runs/silent-seed-7", "configs/stripes.toml", 7)
+    wrong = figures.Figure("examples/silent", "configs/noisy.toml", 7)
     monkeypatch.setitem(figures.FIGURES, "wrong", wrong)
-    assert "brain" in figures.rerun_mismatch("wrong")
-    off_by_one = figures.Figure("runs/silent-seed-7", "configs/silent.toml", 8)
+    assert "reading_noise" in figures.rerun_mismatch("wrong")
+    off_by_one = figures.Figure("examples/silent", "configs/silent.toml", 8)
     monkeypatch.setitem(figures.FIGURES, "off-by-one", off_by_one)
     assert "seed" in figures.rerun_mismatch("off-by-one")
 

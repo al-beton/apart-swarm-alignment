@@ -163,22 +163,37 @@ def _dug(records, turn):
     }
 
 
+def said(action):
+    """The line an action put on the scroll, or None: a v2 `say`, or a first-rules write."""
+    if action.get("action") == "write":
+        return action["text"]
+    return action.get("say")
+
+
+def _said_lines(record):
+    return [line for action in record["did"] if (line := said(action)) is not None]
+
+
 def _note(record):
-    """What a pirate wrote on its turn, or None: only writing is drawn over a pirate."""
-    words = [a["text"] for a in record["did"] if a["action"] == "write"]
+    """What a pirate said on its turn, or None: only saying is drawn over a pirate."""
+    words = _said_lines(record)
     return " ".join(words) if words else None
 
 
 def _reading(record):
-    """Whether the turn read the scroll; what it read is never drawn."""
-    return any(action["action"] == "read" for action in record["did"])
+    """Whether the turn read the scroll; what it read is never drawn.
+
+    A first-rules read, or a v2 asked turn that was shown new lines.
+    """
+    reads = any(action["action"] == "read" for action in record["did"])
+    return reads or bool(record.get("asked") and record.get("log_shown"))
 
 
 def _said(record):
     """A turn in plain words, for a record that doesn't say what happened."""
     if record["outcome"]["found_treasure"]:
         return "I found the treasure!"
-    words = [a["text"] for a in record["did"] if a["action"] == "write"]
+    words = _said_lines(record)
     if words:
         return " ".join(words)
     actions = []
@@ -233,10 +248,9 @@ def _log_so_far(records, turn):
     """The scroll as it stands after `turn`: only a note adds a line to it."""
     lines = []
     for record in records[: turn + 1]:
-        for action in record["did"]:
-            if action["action"] == "write":
-                note = f"{record['agent']}: {one_line(action['text'])}"
-                lines.append((len(lines) + 1, note))
+        for line in _said_lines(record):
+            note = f"{record['agent']}: {one_line(line)}"
+            lines.append((len(lines) + 1, note))
     return lines
 
 
@@ -268,9 +282,10 @@ def _motion(record):
         return "enter", ENTER_STEPS
     if any(action["action"] == "dig" for action in record["did"]):
         return "dig", DIG_STEPS
-    for kind, steps in SCROLL_STEPS.items():  # the held scroll's frames (assets)
-        if any(action["action"] == kind for action in record["did"]):
-            return kind, steps
+    if _said_lines(record):  # the held scroll's frames (assets)
+        return "write", SCROLL_STEPS["write"]
+    if any(action["action"] == "read" for action in record["did"]):
+        return "read", SCROLL_STEPS["read"]
     return None, 1
 
 
@@ -628,7 +643,9 @@ def _draw_note(image, shown):
     if len(text) > _NOTE_CHARACTERS:
         text = text[: _NOTE_CHARACTERS - 3] + "..."
     note = scroll_note(text)
-    image.paste(note, note_spot(shown, note.size), note)
+    # A pirate saying a line as it walks is part way between squares.
+    left, top = note_spot(shown, note.size)
+    image.paste(note, (round(left), round(top)), note)
 
 
 def wrapped(text):
@@ -897,10 +914,10 @@ def _scroll_writes(records):
     for record in records:
         wrote = []
         for action in record.get("did", []):
-            if action.get("action") == "write":
+            if (words := said(action)) is not None:
                 line += 1
                 # As the scroll keeps it, on one line; `did` keeps it as written.
-                text = one_line(action["text"])
+                text = one_line(words)
                 wrote.append({"line": line, "by": record["agent"], "text": text})
         writes.append(wrote)
     return writes
@@ -929,6 +946,7 @@ def turn_records(records):
             "did": record.get("did", []),
             "result": record.get("result", ""),
             "wrote": wrote,
+            "walked": record.get("asked") is False,
             **({"bait": record["bait"]} if "bait" in record else {}),
         }
         for number, (record, wrote) in enumerate(
@@ -1094,6 +1112,8 @@ def _transcript_turn(turn):
         summary = f"What it was shown ({len(turn['prompt'])} characters)"
         details = f"<details>\n<summary>{summary}</summary>\n\n"
         parts.append(details + _fenced(turn["prompt"]) + "\n\n</details>")
+    elif turn.get("walked"):
+        parts.append("*Walked under an order: its brain wasn't asked.*")
     else:
         parts.append("*No prompt recorded: a scripted pirate reads no words.*")
     if bait := turn.get("bait"):

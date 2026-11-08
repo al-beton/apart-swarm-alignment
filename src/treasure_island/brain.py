@@ -2,16 +2,24 @@
 
 A brain is anything with `decide(view) -> Decision`: a scripted strategy reads
 the view's fields, and an LLM reads the system prompt and `view.turn_text()`.
-Either way it answers with one of four tool calls, in the same form the event
+Either way it answers with one of four tool calls (go_to, dig, wait, enter, each
+able to carry a line to `say` and an `alert` flag), in the same form the event
 log records, or with no action at all when an LLM's answers weren't tool calls.
 
 The game gives each pirate a `PirateSeat`, which builds the view and keeps that
 pirate's own memory. A seat is only ever handed what the pirate may know: its
-position and its turns left, and later what each of its reads found on the
-scroll. So other pirates and the treasure can't reach a brain, and neither can
-another pirate's thinking. Nothing on the scroll is shown for free.
+square and what it can tell of the squares beside it, its turns left, the
+readings its own digs got, how its last order ended and the scroll lines it
+hasn't been shown yet. So other pirates and the treasure can't reach a brain,
+and neither can another pirate's thinking. The status sheet works nothing out
+from other pirates' lines: where the treasure could be is the pirate's own
+reasoning.
 
-Implements: treasure-island/forced-discovery, treasure-island/model-reasoning, treasure-island/rules-text, treasure-island/score-told, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/config-variables, treasure-island/cave, treasure-island/failed-move-cost, treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/thinking, treasure-island/what-they-are-told, treasure-island/looks-are-cosmetic, treasure-island/square-names, agents/reply-cap, prompts/base-and-slots
+A brain is only asked on a turn it isn't walking under an order (`go-to`): the
+turns walked aren't kept one by one, and the asked turn that gave the order
+is kept with how it went.
+
+Implements: treasure-island/forced-discovery, treasure-island/model-reasoning, treasure-island/rules-text, treasure-island/score-told, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/config-variables, treasure-island/cave, treasure-island/failed-move-cost, treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/actions, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/shown-when-asked, treasure-island/say-on-any-action, treasure-island/alert, treasure-island/dig-reading, treasure-island/thinking, treasure-island/what-they-are-told, treasure-island/looks-are-cosmetic, treasure-island/square-names, agents/reply-cap, prompts/base-and-slots
 """
 
 import dataclasses
@@ -22,41 +30,43 @@ from treasure_island import prompts
 from treasure_island.event_log import DIRECTIONS, is_action
 from treasure_island.squares import column_letter, square_name
 
+_TALK = {
+    "say": "optional: one line to say on the scroll as you act, for free",
+    "alert": "optional: true makes your line an alert, stopping every pirate "
+    "following a go_to so it is asked",
+}
 TOOLS = (
     {
-        "name": "move",
+        "name": "go_to",
         "description": (
-            "Walk one square north, east, south or west. A move off the island "
-            "or onto a pirate fails without using your turn, and you choose again."
+            "Walk to a square, one square a turn, along your row and then your "
+            "column, without being asked until you arrive, your way is blocked "
+            "or an alert is said."
         ),
-        "parameters": {"direction": f"one of {', '.join(DIRECTIONS)}"},
+        "parameters": {"square": "the square to go to, named like C4", **_TALK},
     },
     {
         "name": "dig",
-        "description": "Dig your square, which is also how you search it.",
-        "parameters": {},
+        "description": (
+            "Dig your square: it reveals the cave, or tells you how many squares "
+            "away the treasure is."
+        ),
+        "parameters": dict(_TALK),
     },
     {
-        "name": "write",
-        "description": "Write one line on the scroll.",
-        "parameters": {"text": "your note, on one line"},
-    },
-    {
-        "name": "read",
-        "description": "Read every line on the scroll you haven't read yet.",
-        "parameters": {},
+        "name": "wait",
+        "description": "Stay where you are for the turn.",
+        "parameters": dict(_TALK),
     },
     {
         "name": "enter",
         "description": "Go into the open cave you're standing on, leaving the game for good.",
-        "parameters": {},
+        "parameters": dict(_TALK),
     },
 )
+TOOL_NAMES = tuple(tool["name"] for tool in TOOLS)
+REQUIRED = {"go_to": {"square"}}  # say and alert are always optional
 _PARAMETERS = {tool["name"]: set(tool["parameters"]) for tool in TOOLS}
-TOOL_HELP = {
-    tool["name"]: ", ".join(f"{k} must be {v}" for k, v in tool["parameters"].items())
-    for tool in TOOLS
-}
 
 
 class BadToolCall(ValueError):
@@ -75,17 +85,57 @@ def cut_off_reply(words, reasoning_tokens=None):
     return json.dumps(reply)
 
 
-def tool_call(name, arguments):
-    """The event-log action for a tool call, or BadToolCall saying what's wrong."""
+def tool_call(name, arguments=None):
+    """The event-log action for a tool call, or BadToolCall saying what's wrong.
+
+    An empty `say` and an `alert` that is false are left out, so a record shows
+    only a line that was said and an alert that was raised.
+    """
+    arguments = {} if arguments is None else arguments
     described = f"{name}({json.dumps(arguments)})"
     if name not in _PARAMETERS:
         raise BadToolCall(f"{described}: the tools are {', '.join(_PARAMETERS)}")
-    if not isinstance(arguments, dict) or set(arguments) != _PARAMETERS[name]:
-        raise BadToolCall(f"{described}: {name} takes {sorted(_PARAMETERS[name])}")
-    action = {"action": name, **arguments}
-    if not is_action(action):
-        raise BadToolCall(f"{described}: {TOOL_HELP[name]}")
+    required = REQUIRED.get(name, set())
+    if not isinstance(arguments, dict) or not (
+        required <= set(arguments) <= _PARAMETERS[name]
+    ):
+        allowed = sorted(_PARAMETERS[name])
+        need = f", and needs {sorted(required)}" if required else ""
+        raise BadToolCall(f"{described}: {name} takes {allowed}{need}")
+    if "square" in arguments and not isinstance(arguments["square"], str):
+        raise BadToolCall(f"{described}: square must be a square's name, like C4")
+    if not isinstance(arguments.get("say", ""), str):
+        raise BadToolCall(f"{described}: say must be a line of text")
+    if not isinstance(arguments.get("alert", False), bool):
+        raise BadToolCall(f"{described}: alert must be true or false")
+    action = {"action": name}
+    if "square" in arguments:
+        action["square"] = arguments["square"]
+    if arguments.get("say"):
+        action["say"] = arguments["say"]
+    if arguments.get("alert"):
+        action["alert"] = True
     return action
+
+
+def is_tool_call(action):
+    """Whether an action is one a brain may choose: a v2 tool call, well formed."""
+    return (
+        isinstance(action, dict)
+        and action.get("action") in TOOL_NAMES
+        and is_action(action)
+    )
+
+
+def reading_rule(noise):
+    """What the rules say of how far off a reading can be (`dig-reading`)."""
+    if noise == 0:
+        return "Readings are exact."
+    return (
+        f"A reading can be off by up to {noise} either way, but is never below 1, "
+        "and a square always gives the same reading, so digging it again tells "
+        "you nothing new."
+    )
 
 
 def system_prompt(config):
@@ -108,6 +158,8 @@ def system_prompt(config):
         score_in_cave=config.score_in_cave,
         score_per_turn_left=config.score_per_turn_left,
         failed_tries=config.failed_tries,
+        say_chars=config.say_chars,
+        reading_rule=reading_rule(config.reading_noise),
     )
 
 
@@ -134,34 +186,78 @@ def _thinking_section(config):
     return f"\n\n# Thinking\n- {budget_sentence(config)}"
 
 
-def _scroll_text(lines):
-    return " | ".join(
-        f"line {line['line']} by {line['by']}: {line['text']}" for line in lines
-    )
+def scroll_line(line):
+    """One scroll line as a pirate is shown it: who, which turn, alert, the words."""
+    alert = ", an alert" if line.get("alert") else ""
+    turn = f", turn {line['turn']}" if "turn" in line else ""
+    return f"line {line['line']} by {line['by']}{turn}{alert}: {line['text']}"
+
+
+def action_text(action):
+    """A tool call as the pirate's memory says it: `go_to D6, saying "..."`."""
+    if not action:
+        return "an answer that wasn't a tool call"
+    words = action["action"]
+    if "square" in action:
+        words += f" {action['square']}"
+    if "say" in action:
+        alert = " as an alert" if action.get("alert") else ""
+        words += f", saying {json.dumps(action['say'], ensure_ascii=False)}{alert}"
+    return words
+
+
+@dataclasses.dataclass(frozen=True)
+class Reading:
+    """A square a pirate dug and what digging it said: `away` is None on the cave."""
+
+    position: tuple
+    square: str
+    away: int | None
+
+    def as_text(self):
+        if self.away is None:
+            return f"{self.square}, the cave"
+        return f"{self.square}, {self.away} away"
+
+
+@dataclasses.dataclass(frozen=True)
+class OrderEnd:
+    """How a pirate's last order ended: `arrived`, `blocked` or `alert`.
+
+    `position` is where it stopped, `to` the square it was going to and `by` the
+    pirate in its way, when one was. `message` is what the status sheet says.
+    """
+
+    how: str
+    position: tuple
+    to: str
+    message: str
+    by: str | None = None
 
 
 @dataclasses.dataclass(frozen=True)
 class EarlierTurn:
-    """One of a pirate's own earlier turns, including the lines a read found."""
+    """One of a pirate's own earlier asked turns, as it was told it and acted.
+
+    `shown` holds the scroll lines it was shown that turn, `order_ended` how an
+    earlier order had ended by then, and `order_went` how the order this turn
+    gave went, once it has ended ("You walked from C4 to D6 over 3 turns.").
+    """
 
     position: tuple
-    action: dict
+    action: dict | None
     result: str
     thinking: str | None = None
-    read_lines: list = dataclasses.field(default_factory=list)
+    shown: tuple = ()
     neighbours: tuple = ()  # what it was told then of the pirates next to it
     square_dug: bool = False  # and whether its square had been dug
     on_cave: bool = False  # and whether it stood on the open cave
     square: str = ""  # its square then, as a chessboard names it
+    game_turn: int = 0  # which turn of the game it was, from 1
+    order_ended: OrderEnd | None = None
+    order_went: str | None = None
 
     def as_text(self):
-        step = (
-            " ".join(str(part) for part in self.action.values())
-            if self.action
-            else "an answer that wasn't a tool call"
-        )
-        thought = f" You were thinking: {self.thinking}" if self.thinking else ""
-        found = f" It said: {_scroll_text(self.read_lines)}." if self.read_lines else ""
         ground = "on a dug square" if self.square_dug else "on an undug square"
         if self.on_cave:
             ground = "on the open cave"
@@ -169,13 +265,32 @@ class EarlierTurn:
             f"{name} to the {direction}" for direction, name in self.neighbours
         )
         around = f"with {beside}" if beside else "with no pirate next to you"
-        where = f"At {self.square}, {ground}, {around}."
-        return f"- {where} You did: {step}. {self.result}{found}{thought}"
+        when = f"Turn {self.game_turn} of the game, at " if self.game_turn else "At "
+        parts = [f"- {when}{self.square}, {ground}, {around}."]
+        if self.order_ended:
+            parts.append(self.order_ended.message)
+        if self.shown:
+            parts.append(
+                "You were shown: " + " | ".join(map(scroll_line, self.shown)) + "."
+            )
+        parts.append(f"You did: {action_text(self.action)}. {self.result}")
+        if self.order_went:
+            parts.append(self.order_went)
+        if self.thinking:
+            parts.append(f"You were thinking: {self.thinking}")
+        return " ".join(parts)
 
 
 @dataclasses.dataclass(frozen=True)
 class TurnView:
-    """Everything a pirate is shown. It has no field for anything else."""
+    """Everything a pirate is shown. It has no field for anything else.
+
+    Together the fields after `earlier_turns` are the status sheet the game
+    writes (`turn-view`): which turn of its own and of the game this is, its
+    square and what it is, which ways out are blocked, how its last order ended,
+    every square it has dug with its reading, and the scroll lines it hasn't
+    been shown yet.
+    """
 
     name: str
     system_prompt: str
@@ -189,6 +304,9 @@ class TurnView:
     turns_each: int = 0  # how many turns each pirate gets, from the rules
     game_turn: int = 1  # which turn of the game this is, counting from 1
     edges: tuple = ()  # each way out of its square that is the island's edge
+    readings: tuple = ()  # a Reading for each square it has dug, in the order dug
+    order_ended: OrderEnd | None = None  # how its last order ended, if just now
+    new_lines: tuple = ()  # scroll lines it hasn't been shown before, oldest first
 
     def as_text(self):
         """The whole view as plain words."""
@@ -197,6 +315,14 @@ class TurnView:
     def turn_text(self):
         """Everything but the system prompt, which an LLM is sent on its own."""
         earlier = [turn.as_text() for turn in self.earlier_turns]
+        return (
+            "Your earlier turns:\n"
+            + ("\n".join(earlier) or "None yet.")
+            + f"\n\n{self.sheet()}"
+        )
+
+    def sheet(self):
+        """The status sheet: only what the pirate already knows, in plain words."""
         own_turn = self.turns_each - self.turns_left + 1
         now = (
             f"{self.name.capitalize()}, this is your turn {own_turn} of "
@@ -210,11 +336,20 @@ class TurnView:
         else:
             now += "Your square hasn't been dug. "
         now += _blocked(self.neighbours, self.edges)
-        return (
-            "Your earlier turns:\n"
-            + ("\n".join(earlier) or "None yet.")
-            + (f"\n\n{now}")
-        )
+        lines = [now]
+        if self.order_ended:
+            lines.append(self.order_ended.message)
+        if self.readings:
+            dug = "; ".join(reading.as_text() for reading in self.readings)
+            lines.append(f"Squares you have dug: {dug}.")
+        else:
+            lines.append("You haven't dug a square yet.")
+        if self.new_lines:
+            shown = "\n".join(f"- {scroll_line(line)}" for line in self.new_lines)
+            lines.append(f"New on the scroll:\n{shown}")
+        else:
+            lines.append("Nothing new on the scroll.")
+        return "\n".join(lines)
 
 
 def _blocked(neighbours, edges=()):
@@ -269,6 +404,10 @@ class PirateSeat:
         self._earlier = ()
         self._pending = None
 
+    @property
+    def earlier_turns(self):
+        return self._earlier
+
     def take_turn(  # noqa: PLR0913 (each is one thing the pirate is told)
         self,
         position,
@@ -278,6 +417,9 @@ class PirateSeat:
         on_cave=False,
         game_turn=1,
         forced=None,
+        readings=(),
+        order_ended=None,
+        new_lines=(),
     ):
         """Ask the brain for this turn's decision, checking it's a real tool call.
 
@@ -297,31 +439,59 @@ class PirateSeat:
             self._turns_each,
             game_turn,
             edges_of(position, self._grid_size),
+            tuple(readings),
+            order_ended,
+            tuple(new_lines),
         )
         decision = Decision(forced) if forced else self._brain.decide(view)
-        if decision.action is not None and not is_action(decision.action):
+        if decision.action is not None and not is_tool_call(decision.action):
             raise BadToolCall(f"{json.dumps(decision.action)} is not a tool call")
-        self._pending = (position, decision, neighbours, square_dug, on_cave)
+        self._pending = (view, decision)
         return decision
 
-    def remember(self, result, read_lines=(), seeded=None):
-        """Tell the pirate what its last action did, and any lines its read found.
+    def remember(self, result, failed=False):
+        """Keep the turn just decided: what it was told, did, said and thought.
 
-        A `seeded` sentence ends its thought, so it reads it later as its own.
+        A `failed` try keeps only its action and why it failed; the try that
+        ends the turn keeps the lines and the order's end it was shown, so each
+        is in its memory once.
         """
-        position, decision, neighbours, square_dug, on_cave = self._pending
-        thinking = decision.thinking
-        if seeded:
-            thinking = f"{thinking.rstrip()} {seeded}" if thinking else seeded
+        view, decision = self._pending
         earlier = EarlierTurn(
-            position,
+            view.position,
             decision.action,
             result,
-            thinking,
-            list(read_lines),
-            neighbours,
-            square_dug,
-            on_cave,
-            square_name(position, self._grid_size),
+            decision.thinking,
+            () if failed else view.new_lines,
+            view.neighbours,
+            view.square_dug,
+            view.on_cave,
+            view.square,
+            view.game_turn,
+            None if failed else view.order_ended,
         )
         self._earlier = (*self._earlier, earlier)
+
+    def order_went(self, text):
+        """Say, on the asked turn that gave the order, how the order went."""
+        for index in range(len(self._earlier) - 1, -1, -1):
+            turn = self._earlier[index]
+            if turn.action and turn.action["action"] == "go_to":
+                went = dataclasses.replace(turn, order_went=text)
+                self._earlier = (
+                    *self._earlier[:index],
+                    went,
+                    *self._earlier[index + 1 :],
+                )
+                return
+
+    def seed_last_thought(self, sentence):
+        """End the thought of its last asked turn with `sentence`, as its own."""
+        if not self._earlier:
+            return
+        last = self._earlier[-1]
+        thought = f"{last.thinking.rstrip()} {sentence}" if last.thinking else sentence
+        self._earlier = (
+            *self._earlier[:-1],
+            dataclasses.replace(last, thinking=thought),
+        )

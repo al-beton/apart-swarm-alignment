@@ -162,7 +162,7 @@ def test_cave_drawn_the_caption_and_panel_say_how_many_are_inside():
     config = parse_config(
         {"grid_size": 5, "crew_size": 2, "turns_per_pirate": 6, "seed": seed}
     )
-    north = {"action": "move", "direction": "north"}
+    north = {"action": "go_to", "square": "A5"}
     brains = [Steps(DIG, ENTER), Steps(north, north, north, ENTER)]
     records = list(Game(config, brains).records())
     first, second = (r for r in records if r["did"] == [ENTER])

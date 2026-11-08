@@ -22,14 +22,14 @@ SOURCE = Path(__file__).resolve().parents[1] / "src/treasure_island"
 
 
 class Busy:
-    """A strategy that walks, digs, writes and reads, noting every view's text."""
+    """A strategy that walks, digs, says lines and waits, noting every view's text."""
 
     def __init__(self):
         self.actions = [
-            {"action": "write", "text": "starting here"},
-            {"action": "move", "direction": "east"},
-            {"action": "dig"},
-            {"action": "read"},
+            {"action": "wait", "say": "starting here"},
+            {"action": "go_to", "square": "C1"},
+            {"action": "dig", "say": "dug", "alert": True},
+            {"action": "wait"},
         ]
         self.texts = []
 

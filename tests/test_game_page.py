@@ -8,18 +8,19 @@ import subprocess
 from pathlib import Path
 
 import pytest
+import talking
 
 from treasure_island import cli, viewer
 
 ROOT = Path(__file__).resolve().parents[1]
-GAME = "runs/reference-scribe"  # a scripted game that writes to the scroll
+GAME = "runs/talking"  # a scripted game that says lines on the scroll
 
 
 @pytest.fixture
 def saved(tmp_path, monkeypatch):
     """A copy of a committed game that writes, in a folder of its own."""
     monkeypatch.chdir(tmp_path)
-    shutil.copytree(ROOT / GAME, tmp_path / GAME)
+    talking.write(tmp_path / GAME)
     return tmp_path / GAME
 
 
@@ -105,33 +106,37 @@ def test_game_page_a_scripted_turn_with_no_thinking_still_shows(saved):
     assert {t["prompt"] for t in turns} == {""}
 
 
+def as_saved(folder):
+    """The scroll as saved, without the turn and alert marks the page leaves out."""
+    lines = (folder / "pirates-log.txt").read_text().splitlines()
+    return [re.sub(r" \(turn \d+(, alert)?\)", "", line) for line in lines]
+
+
 def test_game_page_the_scroll_so_far_is_rebuilt_newest_last(saved):
     turns = turns_in(viewer.slideshow_page(saved))
     written = [line for turn in turns for line in turn["wrote"]]
-    assert written, "the game should write to the scroll"
-    as_saved = (saved / "pirates-log.txt").read_text().splitlines()
-    assert [f"{w['line']} {w['by']}: {w['text']}" for w in written] == as_saved
-    # Each line belongs to the turn that wrote it, so the page shows only those so far.
+    assert written, "the game should say lines on the scroll"
+    assert [f"{w['line']} {w['by']}: {w['text']}" for w in written] == as_saved(saved)
+    # Each line belongs to the turn that said it, so the page shows only those so far.
     for turn in turns:
-        writes = [a["text"] for a in turn["did"] if a["action"] == "write"]
-        assert [w["text"] for w in turn["wrote"]] == writes
+        said = [a["say"] for a in turn["did"] if "say" in a]
+        assert [w["text"] for w in turn["wrote"]] == said
 
 
 def test_game_page_a_note_written_over_lines_shows_on_one_as_the_scroll_keeps_it(saved):
     # A pirate writes its first note across two lines; the scroll joins them.
     records = records_of(saved)
-    turn = next(r for r in records if any(a["action"] == "write" for a in r["did"]))
-    note = next(a for a in turn["did"] if a["action"] == "write")
-    note["text"] = note["text"].replace(" ", "\n", 1)
-    assert "\n" in note["text"]
+    turn = next(r for r in records if any("say" in a for a in r["did"]))
+    note = next(a for a in turn["did"] if "say" in a)
+    note["say"] = note["say"].replace(" ", "\n", 1)
+    assert "\n" in note["say"]
     rewrite(saved, records)
     turns = turns_in(viewer.slideshow_page(saved))
     written = [line for shown in turns for line in shown["wrote"]]
-    as_saved = (saved / "pirates-log.txt").read_text().splitlines()
-    assert [f"{w['line']} {w['by']}: {w['text']}" for w in written] == as_saved
-    # What the pirate did stays exactly as it wrote it.
+    assert [f"{w['line']} {w['by']}: {w['text']}" for w in written] == as_saved(saved)
+    # What the pirate did stays exactly as it said it.
     first = next(shown for shown in turns if shown["wrote"])
-    assert "\n" in next(a["text"] for a in first["did"] if a["action"] == "write")
+    assert "\n" in next(a["say"] for a in first["did"] if "say" in a)
 
 
 def test_game_page_long_text_wraps_inside_its_column(saved):

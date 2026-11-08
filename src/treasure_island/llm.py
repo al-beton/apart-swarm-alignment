@@ -1,4 +1,6 @@
-"""The LLM brain: one model request per turn, and its reply back as a tool call.
+"""The LLM brain: one model request per asked turn, and its reply back as a tool call.
+
+A turn walked under an order asks the brain nothing, so it makes no request.
 
 A request holds only what a pirate needs: the system prompt, the turn's text,
 the pirate's tools as function definitions, the reply cap, whether to think and
@@ -24,11 +26,12 @@ Implements: treasure-island/retries-dropped-calls, agents/reasoning-looked-up, t
 import json
 
 from treasure_island.backends import thinking_way
-from treasure_island.brain import TOOLS, BadToolCall, Decision, tool_call
-from treasure_island.event_log import DIRECTIONS
+from treasure_island.brain import REQUIRED, TOOLS, BadToolCall, Decision, tool_call
 
-_SCHEMAS = {"direction": {"type": "string", "enum": list(DIRECTIONS)}}
+_TYPES = {"alert": "boolean"}  # every other argument is a string
 
+# go_to, dig, wait and enter, each with `say` and `alert` optional, so one tool
+# call both acts and talks.
 TOOL_DEFINITIONS = [
     {
         "name": tool["name"],
@@ -36,10 +39,10 @@ TOOL_DEFINITIONS = [
         "parameters": {
             "type": "object",
             "properties": {
-                name: _SCHEMAS.get(name, {"type": "string", "description": text})
+                name: {"type": _TYPES.get(name, "string"), "description": text}
                 for name, text in tool["parameters"].items()
             },
-            "required": list(tool["parameters"]),
+            "required": sorted(REQUIRED.get(tool["name"], ())),
         },
     }
     for tool in TOOLS

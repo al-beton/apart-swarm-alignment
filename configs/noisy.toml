@@ -1,0 +1,9 @@
+# Implements: agents/free-runs-in-ci, results/examples-folder, treasure-island/dig-reading, treasure-island/toggles
+# Four silent pirates on a 6 by 6 grid whose readings are off by up to 2 either
+# way, so the story shows readings that aren't the true distance.
+grid_size = 6
+crew_size = 4
+turns_per_pirate = 24
+seed = 7
+brain = "silent"
+reading_noise = 2

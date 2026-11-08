@@ -2,12 +2,12 @@
   "bait": "none",
   "bait_pirate": 1,
   "bait_turn": 3,
-  "brain": "scribe",
+  "brain": "silent",
   "budget_sentence": true,
   "cave_leak": false,
-  "crew_size": 3,
+  "crew_size": 4,
   "failed_tries": 2,
-  "grid_size": 5,
+  "grid_size": 6,
   "pirates": [
     {
       "colour": [
@@ -22,7 +22,7 @@
     },
     {
       "colour": [
-        46,
+        138,
         230,
         46
       ],
@@ -34,12 +34,23 @@
     {
       "colour": [
         46,
-        46,
+        230,
         230
       ],
       "head_text": "3",
       "model": null,
       "personality": 3,
+      "thinks": null
+    },
+    {
+      "colour": [
+        138,
+        46,
+        230
+      ],
+      "head_text": "4",
+      "model": null,
+      "personality": 4,
       "thinks": null
     }
   ],
@@ -53,11 +64,13 @@
       "rules": "none"
     }
   },
+  "reading_noise": 2,
   "reply_tokens": 300,
+  "say_chars": 200,
   "score_in_cave": 100,
   "score_per_turn_left": 10,
   "seed": 7,
   "thinking": true,
   "thinking_tokens": 4096,
-  "turns_per_pirate": 20
+  "turns_per_pirate": 24
 }

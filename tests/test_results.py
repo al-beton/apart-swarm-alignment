@@ -108,4 +108,9 @@ def test_result_gif_each_result_has_one_under_2_mb():
 
 def test_results_stay_checkable_each_result_has_a_game_on_the_list():
     for name in names():
+        games = [
+            path.parent for path in (ROOT / "results" / name).rglob("events.jsonl")
+        ]
+        if all(replay.first_rules(game) for game in games):
+            continue  # first-rules games can't replay under the v2 rules
         assert any(item.startswith(f"results/{name}/") for item in replay.CHECKED), name

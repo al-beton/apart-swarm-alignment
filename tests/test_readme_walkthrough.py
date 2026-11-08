@@ -52,9 +52,7 @@ def test_readme_reads_a_game_explains_the_other_files_and_shows_the_gif():
 def test_readme_reads_a_game_is_honest_that_these_pirates_write_no_notes():
     text = section()
     assert "no notes" in text
-    assert "examples/stripes" in text
-    log = (GAME / "pirates-log.txt").read_text().splitlines()
-    assert all(line.split(":", 1)[1] == "" for line in log)
+    assert (GAME / "pirates-log.txt").read_text() == ""
 
 
 def test_readme_reads_a_game_commands_work(tmp_path, monkeypatch, capsys):

@@ -11,7 +11,7 @@ from PIL import Image, ImageChops
 from treasure_island import viewer
 
 ROOT = Path(__file__).resolve().parents[1]
-GAMES = ["examples/silent", "examples/stripes", "examples/small-crew"]
+GAMES = ["examples/silent", "examples/noisy", "examples/small-crew"]
 CREW = {"pirate-1": [0, 0], "pirate-2": [0, 0]}
 
 

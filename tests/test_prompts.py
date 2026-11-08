@@ -44,8 +44,9 @@ def test_base_file_fills_in_the_game_s_numbers():
     assert "You are one of 4 pirates" in prompt
     assert "a 9 by 9 grid" in prompt
     assert "20 turns" in prompt
-    assert "after 3 failed moves" in prompt
-    assert "columns A to I" in prompt
+    assert "After 3 failed actions in one turn" in prompt
+    assert "up to 200 characters" in prompt
+    assert "Readings are exact." in prompt
     assert "pirate-1 to pirate-4" in prompt
     assert "100 for every pirate that enters the cave, plus 10" in prompt
     assert not re.search(r"[{}]", prompt)

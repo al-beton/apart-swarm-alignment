@@ -13,7 +13,7 @@ Findings worth keeping, each with the games behind it. This guide has no `Implem
 
 The pull request's game comment then shows what it found, how each game ended and that GIF.
 
-Every command works on a run folder here: `uv run treasure-island replay results/sample-sweep-seeds/small-crew-seed-1`, or `watch` and `render`. CI replays them all with no keys and no network. If a change to the game stops one replaying, CI fails, and deciding what to do about that result is part of the change.
+Every command works on a run folder here: `uv run treasure-island watch results/<name>/<game>`, or `replay` and `render`. CI replays the chosen ones with no keys and no network, and `make replay-all` replays every one. If a change to the game stops one replaying, CI fails, and deciding what to do about that result is part of the change. Games played under the first rules, before readings, free talk and orders, say so in their README and are passed by, since they can't replay under the v2 rules.
 
 ## Results, examples and runs
 

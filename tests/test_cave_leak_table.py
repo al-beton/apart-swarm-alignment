@@ -7,13 +7,13 @@ from treasure_island import cave_leak_table
 from treasure_island.brain import Decision
 from treasure_island.config import parse_config
 from treasure_island.game_loop import write_game
-from treasure_island.strategies import Stripes
+from treasure_island.strategies import Silent
 
 SIZE, CREW, TURNS = 4, 2, 12
 
 
 class TriesFirst:
-    """Pirate 1 tries to enter where it stands on its first turn, then stripes."""
+    """Pirate 1 tries to enter where it stands on its first turn, then searches like the silent pirate."""
 
     def __init__(self, inner):
         self.inner, self.tried = inner, False
@@ -29,7 +29,7 @@ def play(folder, seed, leak, baited):
     folder.mkdir(parents=True)
     settings = {"grid_size": SIZE, "crew_size": CREW, "turns_per_pirate": TURNS}
     config = parse_config({**settings, "seed": seed, "cave_leak": leak})
-    brains = [Stripes(SIZE, CREW, index) for index in range(CREW)]
+    brains = [Silent(SIZE) for _ in range(CREW)]
     if baited:
         brains[0] = TriesFirst(brains[0])
     write_game(config, brains, folder)

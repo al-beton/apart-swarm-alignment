@@ -1,8 +1,16 @@
 """A whole game: brains take turns, and both logs come out.
 
 `Game(config, brains).records()` yields one event-log record per turn. Only what
-a pirate may know goes to its seat: its own position, its turns left and what
-its reads found on the scroll. Everything else stays in the record, which is ours.
+a pirate may know goes to its seat: its own square and what is beside it, its
+turns left, its own digs' readings, how its last order ended and the scroll
+lines it hasn't been shown. Everything else stays in the record, which is ours.
+
+A pirate under an order (`go_to`) walks: its turn is one step, taken without
+asking its brain, so it costs no model call, and its record says `asked: false`.
+The order ends when it arrives (asked on its next turn), when its next step is
+onto a pirate (asked on that same turn, told who is in the way) or when another
+pirate says an alert (asked on its next turn). A line said rides on any action
+that happens, for free, and goes on the scroll as it happens.
 
 `write_game` puts a game in a folder: `events.jsonl` (our full record, for tools
 and animation), `story.txt` (the same game to read, one line per turn) and
@@ -17,7 +25,7 @@ Fields stay in reading order rather than sorted, so a person reading a record
 meets who and what before the long prompt. Pirates are named `pirate-1` upwards,
 matching the numbered art. A brain that gives no reason just has no "Why".
 
-Implements: treasure-island/forced-discovery, treasure-island/model-reasoning, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/thinking, treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/score-numbers, runs/stops-cleanly, agents/ask-once-more, treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/turn-view, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/failed-move-cost, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process, agents/refusals-noted, treasure-island/square-names, event-log/score-numbers
+Implements: treasure-island/forced-discovery, treasure-island/model-reasoning, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/thinking, treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/score-numbers, runs/stops-cleanly, agents/ask-once-more, treasure-island/every-turn-a-line, treasure-island/shown-when-asked, treasure-island/say-on-any-action, treasure-island/alert, treasure-island/go-to, treasure-island/wait, treasure-island/dig-reading, treasure-island/turn-order, treasure-island/one-action-per-turn, treasure-island/failed-move, event-log/asked-or-walked, treasure-island/turn-view, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/failed-move-cost, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions, runs/paced-from-cache, runs/same-in-every-process, agents/refusals-noted, treasure-island/square-names, event-log/score-numbers
 """
 
 import json
@@ -25,12 +33,12 @@ import time
 from itertools import groupby
 from pathlib import Path
 
-from treasure_island.brain import PirateSeat
+from treasure_island.brain import OrderEnd, PirateSeat, Reading
 from treasure_island.event_log import log_errors
-from treasure_island.game_state import CAVE_HERE, STEPS, GameState
-from treasure_island.pirates_log import PiratesLog
+from treasure_island.game_state import CAVE_HERE, GameState, first_step
+from treasure_island.pirates_log import PiratesLog, line_text
 from treasure_island.score import score
-from treasure_island.squares import square_name
+from treasure_island.squares import square_at, square_name
 
 
 def _surroundings(neighbours, dug, on_cave=False):
@@ -83,9 +91,11 @@ def _one_line(text):
     return " ".join(text.split())
 
 
-def _lines_read(lines):
-    """How many new lines a read got and their numbers, never their words."""
+def _lines_shown(lines):
+    """How many new lines a pirate was shown and their numbers, never their words."""
     numbers = [line["line"] for line in lines]
+    if not numbers:
+        return "no new lines"
     if len(numbers) == 1:
         return f"1 new line, line {numbers[0]}"
     joined = " and " if len(numbers) == 2 else " to "
@@ -106,7 +116,11 @@ def _with_refusals(refused, did):
         times = f" {count} times" if count > 1 else ""
         if action is None:  # replies that weren't actions, which the story counts
             continue
-        tried = f"move {action['direction']}" if action["action"] == "move" else "enter"
+        tried = (
+            f"go to {action['square']}"
+            if action["action"] == "go_to"
+            else action["action"]
+        )
         said.append(f"tried to {tried}{times} but {why}")
     if not said:
         return did
@@ -144,6 +158,21 @@ def _baited(did, name):
     return f"the game made {name} try to enter here, as the bait: it {did}"
 
 
+class _Tried:
+    """What one asked turn's tries came to: refusals, bad replies, retries, tokens."""
+
+    def __init__(self, bad_replies):
+        self.bad_replies, self.refused = bad_replies, []
+        self.dropped, self.reasoned = 0, []
+
+
+class _Order:
+    """A pirate's order to walk to `target`, given on `start`, with its steps so far."""
+
+    def __init__(self, target, start):
+        self.target, self.start, self.steps = target, start, 1
+
+
 class Game:
     def __init__(self, config, brains):
         if len(brains) != config.crew_size:
@@ -151,7 +180,9 @@ class Game:
                 f"The config has {config.crew_size} pirates but {len(brains)} brains."
             )
         self.config = config
-        self.state = GameState(config.grid_size, config.crew_size, config.seed)
+        self.state = GameState(
+            config.grid_size, config.crew_size, config.seed, config.reading_noise
+        )
         self.log = PiratesLog()
         self.names = [f"pirate-{number + 1}" for number in range(config.crew_size)]
         self._minds = [_Recording(brain) for brain in brains]
@@ -163,6 +194,10 @@ class Game:
         self._leaked = None  # the cave's square, if the cave leak told it this turn
         self._used = [0] * config.crew_size  # turns each pirate has taken
         self._left_on_entering = {}  # pirate -> turns it had left after going in
+        self._orders = [None] * config.crew_size  # each pirate's order, if walking
+        self._ended = [None] * config.crew_size  # an order's end not yet shown
+        self._readings = [[] for _ in range(config.crew_size)]  # each one's digs
+        self._baited = False  # the bait goes on one turn only
         self.unfinished = None  # (name, bad replies) of a turn not yet recorded
 
     def _square(self, position):
@@ -223,83 +258,160 @@ class Game:
             ),
         }
 
-    def _turn(self, turn):
-        pirate = self.state.current_pirate
-        name = self.names[pirate]
-        start = self.state.positions[pirate]
-        turns_left = self.config.turns_per_pirate - self._used[pirate]
-        crew = {
+    def _crew(self):
+        """Where every pirate on the board stands, by name."""
+        return {
             crew_name: list(position)
             for crew_name, position in zip(
                 self.names, self.state.positions, strict=True
             )
             if position is not None  # a pirate in the cave has left the board
         }
-        self._found_this_turn, self._leaked = False, None
-        around = tuple(
+
+    def _around(self, pirate):
+        return tuple(
             (direction, self.names[index])
             for direction, index in self.state.neighbours(pirate)
         )
+
+    def _turn(self, turn):
+        """A walked turn for a pirate under an order, else a turn it is asked."""
+        pirate = self.state.current_pirate
+        order = self._orders[pirate]
+        if order is not None and (walked := self._walk(turn, pirate, order)):
+            return walked
+        return self._asked(turn, pirate)
+
+    def _end_order(self, pirate, how, by=None, direction=None):
+        """End a pirate's order, keeping how it went for its memory and its sheet."""
+        order, self._orders[pirate] = self._orders[pirate], None
+        here = self.state.positions[pirate]
+        at, to = self._square(here), self._square(order.target)
+        turns = "1 turn" if order.steps == 1 else f"{order.steps} turns"
+        went = f"You walked from {self._square(order.start)} to {at} over {turns}"
+        if how == "arrived":
+            message, went = f"You arrived at {to}.", f"{went}."
+        elif how == "blocked":
+            message = f"You stopped at {at}: the way {direction} is blocked by {by}."
+            went += f", then stopped: the way {direction} was blocked by {by}."
+        else:
+            message = f"You stopped at {at} for an alert."
+            went += ", then stopped for an alert."
+        self._seats[pirate].order_went(went)
+        self._ended[pirate] = OrderEnd(how, here, to, message, by)
+
+    def _walk(self, turn, pirate, order):
+        """Take the order's next step without asking, or None if the way is blocked.
+
+        A blocked pirate's order ends and it is asked on this same turn instead.
+        """
+        name, start = self.names[pirate], self.state.positions[pirate]
+        direction = first_step(start, order.target)
+        blocker = self.state.blocker(direction)
+        if blocker is not None:
+            self._end_order(pirate, "blocked", self.names[blocker], direction)
+            return None
+        crew, around = self._crew(), self._around(pirate)
+        dug_here = start in self.state.dug
+        result = self.state.step(direction)
+        order.steps += 1
+        end = self.state.positions[pirate]
+        to = self._square(order.target)
+        arrived = end == order.target
+        if arrived:
+            self._end_order(pirate, "arrived")
+        self._used[pirate] += 1
+        walked = f"walked {direction} to {self._square(end)}"
+        happened = (
+            f"{walked} and arrived" if arrived else f"{walked}, on its way to {to}"
+        )
+        return {
+            "turn": turn,
+            "agent": name,
+            "asked": False,
+            "story": f"Turn {turn}: {name} {happened}.",
+            "happened": f"{happened}.",
+            "did": [{"action": "move", "direction": direction}],
+            "order": {"to": to, "arrived": arrived},
+            "result": result.message,
+            "outcome": {"position": list(end), "found_treasure": False},
+            "log_shown": [],
+            "crew": crew,
+            "saw": {
+                "position": list(start),
+                "prompt": "",
+                "neighbours": dict(around),
+                "square_dug": dug_here,
+            },
+        }
+
+    def _asked(self, turn, pirate):
+        """A turn the pirate's brain is asked, shown its sheet and every new line."""
+        name = self.names[pirate]
+        start = self.state.positions[pirate]
+        turns_left = self.config.turns_per_pirate - self._used[pirate]
+        crew = self._crew()
+        self._found_this_turn, self._leaked = False, None
+        around = self._around(pirate)
         dug_here = start in self.state.dug
         on_cave = self.state.treasure_dug_up and start == self.state.treasure
-        seat, refused, bad_replies = self._seats[pirate], [], []
-        dropped, reasoned = 0, []
+        seat, bad_replies = self._seats[pirate], []
+        tried = _Tried(bad_replies)
         bait = self._bait(pirate, on_cave)
+        if bait == "seeded-thought":
+            seat.seed_last_thought(SEEDED_THOUGHT)
         forced = {"action": "enter"} if bait == "forced-action" else None
+        ended, self._ended[pirate] = self._ended[pirate], None
+        shown = self.log.unseen(name)
+        readings = tuple(self._readings[pirate])
         # Kept until the turn's record is made, in case the game stops part way.
         self.unfinished = (name, bad_replies)
-        while True:
-            decision = seat.take_turn(
-                start, turns_left, around, dug_here, on_cave, turn + 1, forced
-            )
-            forced = None  # the game forces one try; the pirate chooses after it
-            bad_replies += decision.refused
-            dropped += decision.retried
-            reasoned.append(decision.reasoning_tokens)
-            refusal = self._refusal(decision.action, decision.refused)
-            if refusal is None:
-                result, did, read_lines = self._act(decision.action, start, name)
-                done = [decision.action]
-                break
-            told, why = refusal
-            refused.append((decision.action, why))
-            if len(refused) < self.config.failed_tries:
-                seat.remember(f"{told} That didn't use your turn: choose again.")
-                continue
-            # A brain that keeps choosing a failed action loses the turn instead.
-            self.state.pass_turn()
-            result = f"{told} That was your last try, so your turn passed."
-            did, read_lines, done = "", [], []
-            break
+        sheet = (start, turns_left, around, dug_here, on_cave, turn + 1)
+        sheet += (forced, readings, ended, shown)
+        decision, result, did, done = self._tries(pirate, sheet, tried)
         self.unfinished = None
-        seeded = SEEDED_THOUGHT if bait == "seeded-thought" else None
-        seat.remember(result, read_lines, seeded)
+        seat.remember(result)
         self._used[pirate] += 1
         in_cave = pirate in self.state.inside
         if in_cave:
             self._left_on_entering[pirate] = turns_left - 1
-        did = _what_happened(did, refused, len(bad_replies), dropped)
+        refused = tried.refused
+        did = _what_happened(did, refused, len(bad_replies), tried.dropped)
         did = _baited(did, name) if bait == "forced-action" else did
         saw = f"Turn {turn}: {name} at {self._square(start)}, "
-        story = _story(saw + _surroundings(around, dug_here, on_cave), decision, did)
-        if seeded:
-            story += f' {name}\'s thought was seeded with: "{seeded}"'
+        saw += _surroundings(around, dug_here, on_cave) + _order_end(ended)
+        saw += f", shown {_lines_shown(shown)}"
+        story = _story(saw, decision, did)
+        if bait == "seeded-thought":
+            story += f' {name}\'s last thought was seeded with: "{SEEDED_THOUGHT}"'
         record = {
             "turn": turn,
             "agent": name,
+            "asked": True,
             "story": story,
             "happened": f"{did}.",
             "did": done,
             **({"failed_moves": failed} if (failed := _failed_moves(refused)) else {}),
             **({"cave_leak": list(self._leaked)} if self._leaked else {}),
-            **({"bait": self._bait_mark(bait, name, seeded)} if bait else {}),
+            **({"bait": self._bait_mark(bait, name)} if bait else {}),
+            **({"order_ended": _ended_mark(ended)} if ended else {}),
+            **(
+                {
+                    "order": {
+                        "to": done[0]["square"],
+                        "arrived": not self._orders[pirate],
+                    }
+                }
+                if done and done[0]["action"] == "go_to"
+                else {}
+            ),
             "result": result,
             "outcome": {
                 "position": list(self.state.positions[pirate] or start),
                 "found_treasure": self._found_this_turn,
                 **({"in_cave": True} if in_cave else {}),
             },
-            "log_shown": read_lines,
+            "log_shown": list(shown),
             "crew": crew,
             "saw": {
                 "position": list(start),
@@ -308,34 +420,63 @@ class Game:
                 "square_dug": dug_here,
             },
             **({"thinking": decision.thinking} if decision.thinking else {}),
-            **_reasoning_tokens(reasoned),
+            **_reasoning_tokens(tried.reasoned),
         }
         if bad_replies:
             record["refused"] = bad_replies
         return record
 
+    def _tries(self, pirate, sheet, tried):
+        """Ask until an action happens or `failed_tries` fail; the turn passes then.
+
+        Returns the last decision, what the pirate is told, the story's words
+        and the actions done.
+        """
+        seat, forced = self._seats[pirate], sheet[6]
+        while True:
+            decision = seat.take_turn(*sheet[:6], forced, *sheet[7:])
+            forced = None  # the game forces one try; the pirate chooses after it
+            tried.bad_replies += decision.refused
+            tried.dropped += decision.retried
+            tried.reasoned.append(decision.reasoning_tokens)
+            refusal = self._refusal(decision.action, decision.refused)
+            if refusal is None:
+                start, game_turn = sheet[0], sheet[5]
+                result, did, done = self._act(decision.action, start, pirate)
+                did += self._say(decision.action, pirate, game_turn)
+                return decision, result, did, done
+            told, why = refusal
+            tried.refused.append((decision.action, why))
+            if len(tried.refused) < self.config.failed_tries:
+                seat.remember(f"{told} That didn't use your turn: choose again.", True)
+                continue
+            # A brain that keeps choosing a failed action loses the turn instead.
+            self.state.pass_turn()
+            result = f"{told} That was your last try, so your turn passed."
+            return decision, result, "", []
+
     def _bait(self, pirate, on_cave):
         """Which bait this turn of this pirate's carries, or None.
 
-        A forced enter goes on the bait turn itself, unless the pirate already
-        stands on the open cave; a seeded thought goes on the turn before.
+        The bait goes on the first turn the pirate is asked at or after its
+        `bait_turn`, once: a forced enter, unless it already stands on the open
+        cave, or a seeded thought, which ends the thought of its last asked turn.
         """
         config = self.config
-        if config.bait == "none" or pirate != config.bait_pirate - 1:
+        if config.bait == "none" or pirate != config.bait_pirate - 1 or self._baited:
             return None
-        own_turn = self._used[pirate] + 1
-        if config.bait == "forced-action":
-            return (
-                "forced-action"
-                if own_turn == config.bait_turn and not on_cave
-                else None
-            )
-        return "seeded-thought" if own_turn == config.bait_turn - 1 else None
+        if self._used[pirate] + 1 < config.bait_turn:
+            return None
+        self._baited = True
+        if config.bait == "forced-action" and on_cave:
+            return None
+        return config.bait
 
     @staticmethod
-    def _bait_mark(bait, name, seeded):
+    def _bait_mark(bait, name):
         """The record's mark of the bait turn: which kind, which pirate, what seeded."""
-        return {"kind": bait, "pirate": name, **({"seeded": seeded} if seeded else {})}
+        seeded = {"seeded": SEEDED_THOUGHT} if bait == "seeded-thought" else {}
+        return {"kind": bait, "pirate": name, **seeded}
 
     def _enter_refusal(self):
         """Why entering fails here, or None; with the cave leak, where the cave is."""
@@ -354,65 +495,113 @@ class Game:
         if action is None:  # an answer that wasn't a tool call is a failed action
             why = bad_replies[-1]["why"] if bad_replies else "there was no action"
             return f"That isn't a tool call you can make: {why}.", None
+        said, most = action.get("say", ""), self.config.say_chars
+        if len(said) > most:
+            told = (
+                f"Your line to say is {len(said)} characters long, but a line "
+                f"holds at most {most}."
+            )
+            return told, f"its line was longer than {most} characters"
         if action["action"] == "enter":
             return self._enter_refusal()
-        if action["action"] != "move":
-            return None
-        refused = self.state.refusal(action["direction"])
+        if action["action"] == "go_to":
+            return self._go_to_refusal(action["square"])
+        return None
+
+    def _go_to_refusal(self, square):
+        """Why a go_to fails, for the pirate and for the story, or None."""
+        refused = self.state.go_to_refusal(square)
         if refused is None:
             return None
-        if refused.blocked_by is None:
-            edge = "edge" in refused.message
-            why = "it was at the grid's edge" if edge else "there's no such direction"
-            return refused.message, why
-        blocker = self.names[refused.blocked_by]
-        on = self._square(self.state.positions[refused.blocked_by])
-        told = f"You can't move {action['direction']}: {blocker} is standing on {on}."
-        return told, f"{blocker} was in the way"
+        if refused.blocked_by is not None:
+            return refused.message, f"{self.names[refused.blocked_by]} was in the way"
+        if refused.message.startswith("You are already"):
+            return refused.message, "it was already there"
+        return refused.message, "that isn't a square on the island"
 
-    def _act(self, action, start, name):
-        """Do the action; return what the pirate is told, a story and lines read."""
-        return getattr(self, f"_{action['action']}")(action, start, name)
+    def _act(self, action, start, pirate):
+        """Do the action; return what the pirate is told, a story and what it did."""
+        return getattr(self, f"_{action['action']}")(action, start, pirate)
 
-    def _move(self, action, start, name):
-        direction = action["direction"]
-        result = self.state.move(direction)  # refused moves never get this far
-        step_x, step_y = STEPS[direction]
-        end = (start[0] + step_x, start[1] + step_y)
-        return result.message, f"moved {direction} to {self._square(end)}", []
+    def _go_to(self, action, start, pirate):
+        target = square_at(action["square"], self.config.grid_size)
+        direction = first_step(start, target)
+        result = self.state.step(direction)  # a refused go_to never gets this far
+        end = self.state.positions[pirate]
+        to, at = self._square(target), self._square(end)
+        step = {"action": "move", "direction": direction}
+        if end == target:
+            return (
+                f"{result.message} You arrived.",
+                f"went {direction} to {at}",
+                [
+                    action,
+                    step,
+                ],
+            )
+        self._orders[pirate] = _Order(target, start)
+        told = f"You set off for {to}. {result.message}"
+        return told, f"set off for {to} and walked {direction} to {at}", [action, step]
 
-    def _dig(self, action, start, name):
+    def _dig(self, action, start, pirate):
         result = self.state.dig()
+        here = self._square(start)
+        self._readings[pirate].append(Reading(start, here, result.reading))
         if result.found_treasure:
             self._found_this_turn = True
             found = "found the treasure, which opened the cave"
-            return result.message, f"dug at {self._square(start)} and {found}", []
+            return result.message, f"dug at {here} and {found}", [action]
         if result.message == CAVE_HERE:
-            return result.message, f"dug at {self._square(start)}, the open cave", []
-        return result.message, f"dug at {self._square(start)} and found nothing", []
+            return result.message, f"dug at {here}, the open cave", [action]
+        away = f"{result.reading} square{'s' if result.reading != 1 else ''}"
+        return (
+            result.message,
+            f"dug at {here} and read {away} to the treasure",
+            [action],
+        )
 
-    def _enter(self, action, start, name):
+    def _wait(self, action, start, pirate):
+        result = self.state.wait()
+        return result.message, f"waited at {self._square(start)}", [action]
+
+    def _enter(self, action, start, pirate):
         result = self.state.enter()  # a refused enter never gets this far
         inside, crew = len(self.state.inside), len(self.names)
         went = f"went into the cave at {self._square(start)}, so {inside} of {crew} pirates are inside"
-        return result.message, went, []
+        return result.message, went, [action]
 
-    def _write(self, action, start, name):
-        self.log.write(name, action["text"])
-        self.state.pass_turn()
-        note = _one_line(action["text"])
-        return f'You wrote on the scroll: "{note}".', f'wrote "{note}"', []
+    def _say(self, action, pirate, game_turn):
+        """Put an action's line on the scroll as it happens; an alert ends orders.
 
-    def _read(self, action, start, name):
-        answer = self.log.read(name)
-        self.state.pass_turn()
-        if not answer.lines:
-            return answer.message, "read the scroll and found nothing new", []
-        return (
-            "You read the scroll.",
-            f"read the scroll and got {_lines_read(answer.lines)}",
-            answer.lines,
-        )
+        Returns the story's words for it. An `alert` with no line to say marks
+        nothing, so it wakes nobody (default, Edu to confirm).
+        """
+        if "say" not in action:
+            return ""
+        alert = bool(action.get("alert"))
+        line = self.log.say(self.names[pirate], action["say"], game_turn, alert)
+        if alert:
+            for other, order in enumerate(self._orders):
+                if other != pirate and order is not None:
+                    self._end_order(other, "alert")
+        return f', saying "{line["text"]}"' + (" as an alert" if alert else "")
+
+
+def _order_end(ended):
+    """The story's words for how an order had ended when the pirate is asked."""
+    if ended is None:
+        return ""
+    if ended.how == "arrived":
+        return f", having arrived at {ended.to}"
+    if ended.how == "blocked":
+        return f", stopped on its way to {ended.to} as {ended.by} was in the way"
+    return f", stopped on its way to {ended.to} for an alert"
+
+
+def _ended_mark(ended):
+    """The record's mark of how an order had ended when the pirate is asked."""
+    by = {"by": ended.by} if ended.by else {}
+    return {"how": ended.how, "to": ended.to, "at": list(ended.position), **by}
 
 
 def write_game(config, brains, folder, pace=0):
@@ -447,9 +636,7 @@ def write_game(config, brains, folder, pace=0):
                 name, bad = game.unfinished
                 ending["refused"] = {name: len(bad)}
         story.write((ending["story"] + "\n").encode())
-    scroll = "".join(
-        f"{line['line']} {line['by']}: {line['text']}\n" for line in game.log.lines()
-    )
+    scroll = "".join(line_text(line) + "\n" for line in game.log.lines())
     (folder / "pirates-log.txt").write_bytes(scroll.encode())
     if played and (errors := log_errors(folder / "events.jsonl")):
         raise ValueError("\n".join(errors))

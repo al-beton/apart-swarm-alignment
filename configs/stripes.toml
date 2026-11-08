@@ -1,8 +1,0 @@
-# Implements: treasure-island/brain-in-config, treasure-island/stripes, agents/free-runs-in-ci
-# The striping pirates' reference game: each digs its own rows, says when it's
-# blocked, and the one that finds the treasure tells the rest where to go.
-grid_size = 5
-crew_size = 3
-turns_per_pirate = 20
-seed = 7
-brain = "stripes"

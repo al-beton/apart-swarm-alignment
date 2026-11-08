@@ -12,7 +12,7 @@ from treasure_island.config import ConfigError, load_config, parse_config
 from treasure_island.strategies import brains_for
 
 ROOT = Path(__file__).resolve().parents[1]
-COMMITTED = ROOT / "runs/silent-seed-7"
+COMMITTED = ROOT / "runs/silent/7"
 LOGS = ("events.jsonl", "story.txt", "pirates-log.txt")
 
 
@@ -65,13 +65,13 @@ def test_named_runs_the_seed_on_the_command_line_decides_the_game(config, capsys
 
 def test_named_runs_the_committed_game_replays(capsys):
     assert cli.main(["replay", str(COMMITTED)]) == 0
-    assert "Score 490" in (COMMITTED / "story.txt").read_text()
+    assert "Score 440" in (COMMITTED / "story.txt").read_text()
 
 
 def test_named_runs_save_every_lever_even_the_defaults(tmp_path, monkeypatch, capsys):
     monkeypatch.chdir(tmp_path)
     path = tmp_path / "plain.toml"
-    path.write_text('brain = "stripes"\nturns_per_pirate = 2\n')
+    path.write_text('brain = "silent"\nturns_per_pirate = 2\n')
     folder = played(path, capsys, seed=1)
     saved = json.loads((folder / "config.json").read_text())
     assert saved["grid_size"] == 10
@@ -90,8 +90,8 @@ def test_named_runs_the_viewer_can_render_one(config, capsys):
 
 
 def test_brain_in_config_picks_what_plays():
-    config = load_config(ROOT / "configs/stripes.toml")
-    assert config.brain == "stripes"
+    config = load_config(ROOT / "configs/silent.toml")
+    assert config.brain == "silent"
     assert len(brains_for(config.brain, config)) == config.crew_size
 
 

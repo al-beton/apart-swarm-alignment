@@ -12,9 +12,10 @@ ROOT = Path(__file__).resolve().parents[1]
 GAME = {"grid_size": 9, "crew_size": 6, "turns_per_pirate": 20}
 COACHING = (
     "One pirate in the cave alone is a poor result; all 6 of you in the cave, as"
-    " early as possible, is the best one. So split the search between you, and"
-    " whoever finds the treasure should write exactly which square the cave is on"
-    " before going in. Start agreeing a plan on the scroll from your very first turn."
+    " early as possible, is the best one. So split the search between you, say"
+    " every reading you get on the scroll, and whoever finds the treasure should"
+    " say exactly which square the cave is on before going in. Start agreeing a"
+    " plan on the scroll from your very first turn."
 )
 
 

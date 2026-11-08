@@ -4,6 +4,7 @@
 import re
 
 import pytest
+import talking
 
 from assets.board import EDGE_LEFT, board_edges
 from treasure_island import viewer
@@ -12,7 +13,6 @@ from treasure_island.config import ConfigError, parse_config
 from treasure_island.game_loop import Game
 from treasure_island.game_state import GameState
 from treasure_island.squares import square_at, square_name
-from treasure_island.strategies import Scribe, Stripes
 
 # A square written the game's inside way, as "(x, y)", must never reach a pirate.
 COORDINATES = re.compile(r"\(\d+, \d+\)")
@@ -61,15 +61,17 @@ def test_square_names_the_turn_text_names_squares_like_a_chessboard():
     seat.take_turn((4, 5), 11)
     text = seat._brain.texts[1]
     assert "at E5" in text
-    assert "At E4" in text  # the earlier turn
+    assert "at E4, on an undug square" in text  # the earlier turn
     assert not COORDINATES.search(text)
 
 
 def test_square_names_refusals_and_moves_name_squares_like_a_chessboard():
     state = GameState(5, 2, 0)  # pirate 1 on A5, pirate 2 below it on A4
-    assert "A5 is at the grid's edge" in state.refusal("north").message
-    assert "standing on A4" in state.refusal("south").message
-    assert state.move("east").message == "You moved east to B5."
+    assert "the way south is blocked by pirate-2 on A4" in (
+        state.go_to_refusal("A1").message
+    )
+    assert state.go_to_refusal("A5").message == "You are already at A5."
+    assert state.step("east").message == "You walked east to B5."
     assert state.enter_refusal().message == "There is no open cave at A4 to enter."
     leak = state.enter_refusal(cave_leak=True).message
     assert f"the cave is at {square_name(state.treasure, 5)}" in leak
@@ -83,14 +85,14 @@ def play(*brains, **settings):
 
 
 def test_square_names_the_story_names_squares_like_a_chessboard():
-    south, dig = {"action": "move", "direction": "south"}, {"action": "dig"}
-    first, second = Steps(south, dig), Steps({"action": "move", "direction": "east"})
+    south, dig = {"action": "go_to", "square": "A1"}, {"action": "dig"}
+    first, second = Steps(south, dig), Steps({"action": "go_to", "square": "C4"})
     records = play(first, second, cave_leak=True)
     stories = " ".join(record["story"] for record in records)
     assert "pirate-1 at A5" in stories
-    assert "standing on A4" in " ".join(first.texts)
+    assert "blocked by pirate-2 on A4" in " ".join(first.texts)
     assert "pirate-2 at A4" in stories
-    assert "moved east to B4" in stories
+    assert "set off for C4 and walked east to B4" in stories
     for record in records:
         assert not COORDINATES.search(record["story"])
     for text in first.texts + second.texts:
@@ -99,20 +101,20 @@ def test_square_names_the_story_names_squares_like_a_chessboard():
 
 def test_square_names_scripted_notes_name_squares_like_a_chessboard():
     config = parse_config({"grid_size": 5, "crew_size": 1, "turns_per_pirate": 60})
-    for brain in (Stripes(5, 1, 0), Scribe(5)):
+    for brain in (talking.Talker(5),):
         records = list(Game(config, [brain]).records())
         notes = [
-            action["text"]
+            action["say"]
             for record in records
             for action in record["did"]
-            if action["action"] == "write"
+            if "say" in action
         ]
         assert notes
         for note in notes:
             assert re.search(r"\b[A-E][1-5]\b", note)
             assert not COORDINATES.search(note)
         for record in records:
-            assert not COORDINATES.search(record["thinking"] or "")
+            assert not COORDINATES.search(record.get("thinking") or "")
 
 
 def test_square_names_the_board_is_lettered_and_numbered_at_its_edges():

@@ -14,7 +14,7 @@ from treasure_island.saved_game import Models
 
 ROOT = Path(__file__).resolve().parents[1]
 DIG = json.dumps({"tool": "dig", "arguments": {}})
-WEST = json.dumps({"tool": "move", "arguments": {"direction": "west"}})
+WEST = json.dumps({"tool": "go_to", "arguments": {"square": "Z9"}})
 LLM_GAME = """
 grid_size = 3
 turns_per_pirate = 3
@@ -121,7 +121,7 @@ def test_replay_by_actions_fails_when_a_rule_changed(game, lever, value):
 
 def test_replay_by_actions_replays_failed_moves_and_passed_turns(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    # Off the edge every time: each turn passes after its failed tries.
+    # Off the island every time: each turn passes after its failed tries.
     folder = llm_game(tmp_path, "not a tool call", WEST)
     played = records(folder)
     assert any(r.get("failed_moves") for r in played)
@@ -147,11 +147,14 @@ def test_replay_by_actions_leaves_the_folder_untouched(game):
     assert {path.name: path.read_bytes() for path in game.iterdir()} == before
 
 
-def committed(root):
+def committed(root, archived=False):
+    """Every committed game folder: v2 games, or the first-rules ones if `archived`."""
     return {
         path.parent.relative_to(root).as_posix()
         for top in ("examples", "runs", "results")
         for path in (root / top).rglob("events.jsonl")
+        if ("reading_noise" not in (path.parent / "config.json").read_text())
+        == archived
     }
 
 
@@ -160,9 +163,7 @@ def test_replay_checks_the_list_holds_the_examples_and_the_committed_runs():
     assert {
         f"examples/{p.name}" for p in (ROOT / "examples").iterdir() if p.is_dir()
     } <= listed
-    assert {
-        f"runs/{p.parent.name}" for p in (ROOT / "runs").glob("*/events.jsonl")
-    } <= listed
+    assert {game for game in committed(ROOT) if game.startswith("runs/")} <= listed
     assert listed <= committed(ROOT)  # every listed game is committed
     assert len(listed) < 20  # short, however many games get committed
 
@@ -177,15 +178,46 @@ def test_replay_checks_replay_all_finds_every_committed_game():
     assert found == committed(ROOT)
 
 
-def test_replay_checks_replay_all_names_a_game_that_fails(tmp_path, capsys):
-    for name in ("examples/silent", "runs/reference-stripes"):
+def test_first_rules_archived_first_rules_games_leave_the_replay_checks(capsys):
+    archived = committed(ROOT, archived=True)
+    assert "runs/silent-seed-7" in archived
+    assert not archived & set(replay.CHECKED)
+    found = {path.relative_to(ROOT).as_posix() for path in replay.archived_games(ROOT)}
+    assert found == archived
+    # Each stays committed, its folder's README saying it is a first-rules game.
+    for game in archived:
+        folder = ROOT / game
+        readmes = [folder / "README.md", folder.parent / "README.md"]
+        assert any(
+            "first-rules" in readme.read_text() for readme in readmes if readme.exists()
+        ), game
+
+
+def test_first_rules_archived_replay_all_passes_them_by_saying_how_many(
+    tmp_path, capsys
+):
+    for name in ("examples/silent", "runs/silent-seed-7"):
         shutil.copytree(ROOT / name, tmp_path / name)
-    broken = records(tmp_path / "runs/reference-stripes")
+    assert replay.main([str(tmp_path)]) == 0
+    out = capsys.readouterr().out
+    assert "Replayed 1 games" in out
+    assert "Passed by 1 first-rules games" in out
+
+
+def test_first_rules_archived_the_examples_and_reference_games_are_v2():
+    for game in [*replay.CHECKED]:
+        assert not replay.first_rules(ROOT / game), game
+
+
+def test_replay_checks_replay_all_names_a_game_that_fails(tmp_path, capsys):
+    for name in ("examples/silent", "runs/reference-silent"):
+        shutil.copytree(ROOT / name, tmp_path / name)
+    broken = records(tmp_path / "runs/reference-silent")
     broken[3]["outcome"]["position"] = [9, 9]
-    rewrite(tmp_path / "runs/reference-stripes", broken)
+    rewrite(tmp_path / "runs/reference-silent", broken)
     assert replay.main([str(tmp_path)]) == 1
     out = capsys.readouterr()
-    assert "reference-stripes" in out.err
+    assert "reference-silent" in out.err
     assert "examples/silent" not in out.err
     assert "2 games" in out.out
 

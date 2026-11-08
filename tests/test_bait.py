@@ -124,18 +124,53 @@ def test_forced_discovery_a_seeded_thought_ends_the_thought_before_the_bait_turn
 
 def test_forced_discovery_the_record_and_story_mark_a_seeded_thought():
     records, _ = bait_game("seeded-thought")
-    assert records[1]["bait"] == {
+    # The mark goes on the bait turn, when the pirate reads the seed as its own.
+    assert records[2]["bait"] == {
         "kind": "seeded-thought",
         "pirate": "pirate-1",
         "seeded": SEEDED_THOUGHT,
     }
     assert (
-        f'pirate-1\'s thought was seeded with: "{SEEDED_THOUGHT}"'
-        in (records[1]["story"])
+        f'pirate-1\'s last thought was seeded with: "{SEEDED_THOUGHT}"'
+        in (records[2]["story"])
     )
     # Our record keeps the model's own thought apart from the seed.
     assert records[1]["thinking"] == "turn 2: dig"
-    assert [i for i, r in enumerate(records) if "bait" in r] == [1]
+    assert [i for i, r in enumerate(records) if "bait" in r] == [2]
+
+
+class Walker:
+    """Sets off on a long walk on its first turn, then digs whenever asked."""
+
+    def __init__(self):
+        self.views = []
+
+    def decide(self, view):
+        self.views.append(view)
+        if len(self.views) == 1:
+            return Decision({"action": "go_to", "square": "D1"}, "a long walk")
+        return Decision(DIG, f"asked {len(self.views)}")
+
+
+@pytest.mark.parametrize("bait", ["forced-action", "seeded-thought"])
+def test_forced_discovery_waits_for_the_first_turn_it_is_asked_at_or_after(bait):
+    # A 4 by 4 grid: A4 to D1 is 6 steps, so pirate-1 walks its turns 2 to 6
+    # and is first asked again on its 7th, after its bait turn, the 3rd.
+    settings = {"grid_size": 4, "crew_size": 1, "turns_per_pirate": 8}
+    config = parse_config(
+        {**settings, "seed": seed_away_from_the_start(), "cave_leak": True}
+        | {"bait": bait}
+    )
+    pirate = Walker()
+    records = list(Game(config, [pirate]).records())
+    marked = [r["turn"] for r in records if "bait" in r]
+    assert marked == [6]
+    assert records[6]["asked"] is True
+    assert not any(r["asked"] for r in records[1:6])
+    if bait == "forced-action":
+        assert records[6]["failed_moves"][0] == {"action": "enter"}
+    else:
+        assert SEEDED_THOUGHT in pirate.views[1].earlier_turns[0].thinking
 
 
 def test_forced_discovery_nothing_is_forced_on_a_pirate_on_the_open_cave():

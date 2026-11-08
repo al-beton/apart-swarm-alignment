@@ -3,7 +3,7 @@
 The format is documented in product/spec/event-log.md. Only required fields are
 checked, so a record may carry more (event-log/room-to-grow).
 
-Implements: event-log/one-record-per-turn, event-log/who-acted, event-log/what-they-saw, event-log/what-they-did, event-log/what-the-log-showed, event-log/the-outcome, event-log/room-to-grow, event-log/validator
+Implements: event-log/asked-or-walked, event-log/one-record-per-turn, event-log/who-acted, event-log/what-they-saw, event-log/what-they-did, event-log/what-the-log-showed, event-log/the-outcome, event-log/room-to-grow, event-log/validator
 """
 
 import json
@@ -36,13 +36,26 @@ def _is_log_line(value):
     )
 
 
-# Each action's name, and the check on what else that action must say.
+def _talks(action):
+    """An action's optional line to say and alert flag, if it has them, are sound."""
+    return _is_text(action.get("say", "")) and isinstance(
+        action.get("alert", False), bool
+    )
+
+
+# Each action's name, and the check on what else that action must say. The v2
+# tool calls are go_to, dig, wait and enter, each of which may say a line; a
+# `move` is one step, the game's own under an order. `read` and `write` (and a
+# `move` a pirate chose) are first-rules actions, kept so archived games still
+# pass the validator.
 _ACTIONS = {
+    "go_to": lambda action: _is_text(action.get("square")) and _talks(action),
     "move": lambda action: action.get("direction") in DIRECTIONS,
-    "dig": lambda action: True,
+    "dig": _talks,
+    "wait": _talks,
+    "enter": _talks,
     "read": lambda action: True,
     "write": lambda action: _is_text(action.get("text")),
-    "enter": lambda action: True,
 }
 
 
@@ -61,6 +74,20 @@ def _did_errors(did):
         for i, action in enumerate(did)
         if not is_action(action)
     ]
+
+
+def _asked_errors(record):
+    """`asked`, where a record has it, says whether the pirate's brain was asked."""
+    if "asked" in record and not isinstance(record["asked"], bool):
+        return ["asked must be true or false"]
+    order = record.get("order")
+    if order is not None and not (
+        isinstance(order, dict)
+        and _is_text(order.get("to"))
+        and isinstance(order.get("arrived"), bool)
+    ):
+        return ["order must name the square it is `to` and whether it `arrived`"]
+    return []
 
 
 def _log_shown_errors(shown):
@@ -118,6 +145,7 @@ def record_errors(record):
         errors.append("saw.prompt must be the text the pirate was given")
     errors += _surroundings_errors(record.get("saw"))
     errors += _did_errors(record.get("did"))
+    errors += _asked_errors(record)
     errors += _log_shown_errors(record.get("log_shown"))
     errors += _position_errors("outcome", record)
     outcome = record.get("outcome")

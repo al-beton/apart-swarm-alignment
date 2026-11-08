@@ -2,6 +2,8 @@
 
 A sample showing how a result is laid out. Two games aren't enough to say much about the silent pirates.
 
+These are first-rules games, played before digging gave readings, before any action could say a line for free and before `go_to` orders. They stay committed as they were, but they can't replay under the v2 rules, so they have left the replay checks and `make replay-all` passes them by.
+
 ## Question
 
 Does where the treasure lands change how well a crew of scripted silent pirates scores?

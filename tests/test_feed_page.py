@@ -5,22 +5,22 @@ import base64
 import io
 import json
 import re
-import shutil
 from pathlib import Path
 
 import pytest
+import talking
 from PIL import Image
 
 from treasure_island import viewer
 
 ROOT = Path(__file__).resolve().parents[1]
-GAME = "runs/reference-scribe"  # a scripted game that writes and goes into the cave
+GAME = "runs/talking"  # a scripted game that says lines and goes into the cave
 
 
 @pytest.fixture
 def saved(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    shutil.copytree(ROOT / GAME, tmp_path / GAME)
+    talking.write(tmp_path / GAME)
     return tmp_path / GAME
 
 
@@ -56,17 +56,14 @@ def test_game_page_the_left_shows_the_board_alone_above_the_parchment_scroll(sav
 
 def test_game_page_the_board_never_draws_the_note(saved):
     records = viewer.records_in(saved)
-    writes = next(
-        n
-        for n, r in enumerate(records)
-        if any(a["action"] == "write" for a in r["did"])
-    )
+    writes = next(n for n, r in enumerate(records) if any("say" in a for a in r["did"]))
     size = viewer.grid_size(saved, records)
     pirates = viewer.pirates_in(saved, records)
     drawn = viewer.board(records, writes, size, pirates)
     # The same turn writing something else draws the same board: no note on it.
     other = [dict(r) for r in records]
-    other[writes] = {**other[writes], "did": [{"action": "write", "text": "Other."}]}
+    said = [{**a, "say": "Other."} if "say" in a else a for a in other[writes]["did"]]
+    other[writes] = {**other[writes], "did": said}
     assert drawn.tobytes() == viewer.board(other, writes, size, pirates).tobytes()
     # The frame of that turn does draw it.
     framed = viewer.frame(records, writes, size, pirates)

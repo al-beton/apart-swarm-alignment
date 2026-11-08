@@ -3,7 +3,8 @@
 The base (`prompts/base.md` by default) is the rules and actions, written once
 and tuned on its own. It holds the game's numbers as `{crew_size}`,
 `{grid_size}`, `{turns_per_pirate}`, `{last_column}`, `{score_in_cave}`,
-`{score_per_turn_left}` and `{failed_tries}`, and each
+`{score_per_turn_left}`, `{failed_tries}`, `{say_chars}` and `{reading_rule}`
+(the sentence on how far off a reading can be), and each
 slot as `{framing}`, `{rules}`, `{disclosure}`, `{identity}` or `{extra}` alone
 on its own line; `{extra}` is a paragraph of its own at the very end. An
 experiment arm picks one variant per slot, the file

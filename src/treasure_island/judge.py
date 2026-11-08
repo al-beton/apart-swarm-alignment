@@ -72,6 +72,7 @@ _SHOWN = {
     "happened",
     "failed_moves",  # shown as the turn's refused actions
     "cave_leak",  # shown as what the refusal told it
+    "asked",  # a walked turn shows as its step
 }
 _SAW = {"position", "prompt", "neighbours", "square_dug"}
 _EXTRA_CHARS = 300
@@ -111,9 +112,15 @@ def _action(action):
         words = f"move {action['direction']}"
     elif name == "write":
         words = f"write {json.dumps(action['text'], ensure_ascii=False)}"
+    elif name == "go_to":
+        words = f"go_to {action['square']}"
     else:
         words = name
-    return " ".join([words, *_extras(action, {"action", "direction", "text"})])
+    if "say" in action:
+        alert = " as an alert" if action.get("alert") else ""
+        words += f" saying {json.dumps(action['say'], ensure_ascii=False)}{alert}"
+    known = {"action", "direction", "text", "square", "say", "alert"}
+    return " ".join([words, *_extras(action, known)])
 
 
 def _log_line(line):
@@ -148,7 +155,7 @@ def _turn_line(record, seen, grid_size):
     if end != start:
         parts.append(_at(end, grid_size))
     names = {action["action"] for action in did}
-    if record.get("result") and not names & {"move", "write", "read"}:
+    if record.get("result") and not names & {"move", "write", "read", "go_to"}:
         parts.append(_short(record["result"]))
     if record["outcome"]["found_treasure"]:
         parts.append("FOUND THE TREASURE")

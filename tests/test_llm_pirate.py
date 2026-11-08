@@ -115,15 +115,19 @@ def test_one_request_per_turn_the_tools_are_function_definitions():
         schema = tool["parameters"]
         assert tool["description"]
         assert schema["type"] == "object"
-        assert sorted(schema["required"]) == sorted(schema["properties"])
-    move = TOOL_DEFINITIONS[0]["parameters"]["properties"]["direction"]
-    assert move["enum"] == ["north", "east", "south", "west"]
+        # Only go_to's square is required: a line to say and an alert are optional.
+        assert schema["required"] == (["square"] if tool["name"] == "go_to" else [])
+        assert schema["properties"]["say"]["type"] == "string"
+        assert schema["properties"]["alert"]["type"] == "boolean"
+    square = TOOL_DEFINITIONS[0]["parameters"]["properties"]["square"]
+    assert square["type"] == "string"
 
 
 def test_reply_is_a_tool_call_becomes_the_action(tmp_path):
-    answer = json.dumps({"tool": "move", "arguments": {"direction": "east"}})
+    said = {"square": "C3", "say": "Going east.", "alert": True}
+    answer = json.dumps({"tool": "go_to", "arguments": said})
     decision, _ = one_turn(FakeModel(answer), tmp_path=tmp_path)
-    assert decision.action == {"action": "move", "direction": "east"}
+    assert decision.action == {"action": "go_to", **said}
     assert decision.refused == ()
 
 
@@ -150,7 +154,9 @@ def test_ask_once_more_a_bad_reply_is_recorded_and_the_pirate_is_told_why(tmp_pa
         "not json",
         json.dumps(["dig"]),
         json.dumps({"tool": "teleport", "arguments": {}}),
-        json.dumps({"tool": "move", "arguments": {"direction": "up"}}),
+        json.dumps({"tool": "move", "arguments": {"direction": "east"}}),
+        json.dumps({"tool": "go_to", "arguments": {}}),
+        json.dumps({"tool": "wait", "arguments": {"alert": "loud"}}),
         json.dumps({"tool": "dig"}),
     ],
 )
@@ -176,11 +182,11 @@ def test_ask_once_more_failed_tries_sets_how_many_bad_replies_a_turn_takes(tmp_p
 
 
 def test_ask_once_more_a_bad_reply_and_a_failed_move_share_a_turn_s_tries(tmp_path):
-    off_the_edge = json.dumps({"tool": "move", "arguments": {"direction": "north"}})
-    model = FakeModel("no idea", off_the_edge, DIG)
+    off_the_island = json.dumps({"tool": "go_to", "arguments": {"square": "D9"}})
+    model = FakeModel("no idea", off_the_island, DIG)
     first = first_turns(model, tmp_path)[0]
     assert first["did"] == []
-    assert first["failed_moves"] == [{"action": "move", "direction": "north"}]
+    assert first["failed_moves"] == [{"action": "go_to", "square": "D9"}]
     assert len(first["refused"]) == 1
     assert "passed" in first["story"]
 
@@ -326,3 +332,65 @@ def test_no_cache_an_llm_game_asks_the_model_again(toml):
 def test_model_backends_a_config_names_each_pirate_s_model(toml):
     config = load_config(toml)
     assert [pirate.model for pirate in config.pirates] == ["fake/digger", None]
+
+
+class ByPirate:
+    """A backend answering each pirate from its own list, the last for ever."""
+
+    def __init__(self, **answers):
+        self.answers = {name: list(said) for name, said in answers.items()}
+        self.requests = []
+
+    def __call__(self, request):
+        self.requests.append(request)
+        said = self.answers[request["agent"]]
+        answer = said.pop(0) if len(said) > 1 else said[0]
+        return json.dumps(answer), 0.001
+
+
+ORDERS = """
+grid_size = 5
+turns_per_pirate = 8
+brain = "silent"
+
+[[pirates]]
+model = "fake/walker"
+
+[[pirates]]
+model = "fake/shouter"
+"""
+
+
+def test_plays_then_replays_a_game_of_orders_and_alerts(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    toml = tmp_path / "orders.toml"
+    toml.write_text(ORDERS)
+
+    def model():
+        go = {"tool": "go_to", "arguments": {"square": "E5", "say": "Off east."}}
+        stop = {"tool": "wait", "arguments": {"say": "Stop!", "alert": True}}
+        south = {"tool": "go_to", "arguments": {"square": "A1"}}
+        dig = {"tool": "dig", "arguments": {}}
+        return ByPirate(**{"pirate-1": [go, dig], "pirate-2": [stop, south, dig]})
+
+    first = model()
+    folder = saved_game.play_saved(toml, 2, models=Models(first, agree=yes))
+    records = [json.loads(line) for line in (folder / "events.jsonl").open()]
+    asked = [record for record in records if record["asked"]]
+    walked = [record for record in records if not record["asked"]]
+    # One request per asked turn, none for a walked one.
+    assert len(first.requests) == len(asked)
+    assert walked, "somebody should have walked under an order"
+    # pirate-2's alert stopped pirate-1 one step into its walk.
+    assert records[2]["agent"] == "pirate-1"
+    assert records[2]["order_ended"]["how"] == "alert"
+    assert "Stop!" in first.requests[2]["messages"][0]["content"]
+    assert log_errors(folder / "events.jsonl") == []
+    assert cli.main(["replay", str(folder)]) == 0
+    # From its stored replies it plays again byte for byte, asking nothing.
+    again = model()
+    second = saved_game.play_saved(toml, 2, models=Models(again, agree=yes))
+    assert again.requests == []
+    assert (second / "events.jsonl").read_bytes() == (
+        folder / "events.jsonl"
+    ).read_bytes()

@@ -12,7 +12,7 @@ replies, so a changed rule is caught and a reworded one isn't.
 `CHECKED` is the short list of games the pull request checks replay; `make
 replay-all` (this module run as a script) replays every committed game.
 
-Implements: treasure-island/forced-discovery, runs/replay-by-actions, runs/replay-checks, results/results-stay-checkable, treasure-island/everything-cached
+Implements: treasure-island/first-rules-archived, event-log/asked-or-walked, treasure-island/forced-discovery, runs/replay-by-actions, runs/replay-checks, results/results-stay-checkable, treasure-island/everything-cached
 """
 
 import json
@@ -28,20 +28,30 @@ from treasure_island.game_loop import GameStopped, write_game
 
 # The games every pull request replays: the examples, the committed runs, and one
 # game of each result. Any other committed game replays with `make replay-all`.
+# Games played under the first rules (before readings, free talk and orders)
+# stay committed but can't replay under these rules, so none is listed, and
+# `make replay-all` passes them by, saying how many (`first-rules-archived`).
 CHECKED = (
-    "examples/scribe",
+    "examples/noisy",
     "examples/silent",
     "examples/small-crew",
-    "examples/stripes",
-    "runs/reference-scribe",
     "runs/reference-silent",
-    "runs/reference-stripes",
-    "runs/silent-seed-7",
-    "results/sample-sweep-seeds/small-crew-seed-1",
+    "runs/silent/7",
 )
 PLACES = ("examples", "runs", "results")  # where committed games live
 # What the rules decide in a turn's record; the rest is wording.
-RULED = ("turn", "agent", "did", "failed_moves", "cave_leak", "outcome", "log_shown")
+RULED = (
+    "turn",
+    "agent",
+    "asked",
+    "did",
+    "failed_moves",
+    "cave_leak",
+    "order",
+    "order_ended",
+    "outcome",
+    "log_shown",
+)
 
 
 class Diverged(Exception):
@@ -55,6 +65,8 @@ def _attempts(record):
     passed replays exactly the tries it had. Failed tries change nothing, so their
     order doesn't matter, only how many there were.
     """
+    if record.get("asked") is False:
+        return []
     failed = record.get("failed_moves", [])
     if record.get("bait", {}).get("kind") == "forced-action":
         failed = failed[1:]  # the game made the first try itself, and will again
@@ -149,11 +161,39 @@ def problem(folder):
     return None
 
 
+def first_rules(folder):
+    """Whether a game was played under the first rules, before `reading_noise`.
+
+    Every v2 game's `config.json` holds every lever, `reading_noise` included,
+    and no first-rules game's does.
+    """
+    config = Path(folder) / "config.json"
+    return config.exists() and "reading_noise" not in json.loads(config.read_text())
+
+
 def committed_games(root=Path()):
-    """Every game folder under the places committed games live, sorted."""
+    """Every game folder under the places committed games live, sorted.
+
+    First-rules games are left out: they stay committed as they were, but they
+    can't replay under the v2 rules (`first-rules-archived`).
+    """
     root = Path(root)
     return sorted(
-        path.parent for place in PLACES for path in (root / place).rglob("events.jsonl")
+        path.parent
+        for place in PLACES
+        for path in (root / place).rglob("events.jsonl")
+        if not first_rules(path.parent)
+    )
+
+
+def archived_games(root=Path()):
+    """Every committed first-rules game folder, sorted."""
+    root = Path(root)
+    return sorted(
+        path.parent
+        for place in PLACES
+        for path in (root / place).rglob("events.jsonl")
+        if first_rules(path.parent)
     )
 
 
@@ -168,6 +208,8 @@ def main(argv=None):
             failed += 1
             print(f"{game.relative_to(root).as_posix()}: {why}", file=sys.stderr)
     print(f"Replayed {len(games)} games by their recorded actions: {failed} failed.")
+    if archived := archived_games(root):
+        print(f"Passed by {len(archived)} first-rules games, which can't replay.")
     return 1 if failed else 0
 
 

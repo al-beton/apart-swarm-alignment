@@ -19,7 +19,7 @@
 
 | Statement | Enforced by | Tested by |
 |---|---|---|
-| `examples-folder` | `src/treasure_island/examples.py`, `Makefile`, `examples/**`, `configs/small-crew.toml` | `test_examples_folder_holds_at_least_three_different_games`, `test_examples_folder_each_holds_what_the_game_wrote_and_a_gif` |
+| `examples-folder` | `src/treasure_island/examples.py`, `Makefile`, `examples/**`, `configs/small-crew.toml`, `configs/noisy.toml` | `test_examples_folder_holds_at_least_three_different_games`, `test_examples_folder_each_holds_what_the_game_wrote_and_a_gif` |
 | `examples-listed` | `examples/README.md` | `test_examples_listed_each_in_one_line_of_the_guide` |
 | `examples-small` | `src/treasure_island/examples.py` | `test_examples_small_each_gif_is_under_2_mb` |
 | `examples-stay-true` | `src/treasure_island/examples.py`, `src/treasure_island/saved_game.py` | `test_examples_stay_true_every_log_replays_byte_identical`, `test_examples_stay_true_every_gif_matches_what_is_drawn_now`, `test_examples_stay_true_a_stale_transcript_is_caught`, `test_examples_stay_true_a_stale_example_says_how_to_remake_it` |

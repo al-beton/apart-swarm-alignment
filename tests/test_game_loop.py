@@ -1,4 +1,4 @@
-# Implements: treasure-island/turn-view, treasure-island/reading-costs, treasure-island/every-turn-a-line, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/failed-move-cost, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions
+# Implements: treasure-island/go-to, treasure-island/say-on-any-action, treasure-island/shown-when-asked, treasure-island/failed-move, treasure-island/dig-reading, treasure-island/turn-view, treasure-island/every-turn-a-line, treasure-island/agent-memory, treasure-island/shared-squares, treasure-island/failed-move-cost, event-log/the-outcome, event-log/crew-positions, treasure-island/game-ends, treasure-island/two-logs, treasure-island/story-record, treasure-island/toggles, treasure-island/no-token-strategies, treasure-island/no-vision, treasure-island/actions
 """A whole game: brains take turns, and both logs come out."""
 
 import json
@@ -17,6 +17,7 @@ from treasure_island.squares import square_at
 from treasure_island.viewer import scene
 
 DIG = {"action": "dig"}
+WAIT = {"action": "wait"}
 
 
 class Steps:
@@ -33,15 +34,12 @@ class Steps:
         return Decision(action, self.thinking)
 
 
-def move(direction):
-    return {"action": "move", "direction": direction}
+def go(square, **talk):
+    return {"action": "go_to", "square": square, **talk}
 
 
-def write(text):
-    return {"action": "write", "text": text}
-
-
-READ = {"action": "read"}
+def saying(action, text, alert=False):
+    return {**action, "say": text, **({"alert": True} if alert else {})}
 
 
 def config(**settings):
@@ -85,7 +83,7 @@ def play(game_config, *brains):
 
 
 def test_game_ends_with_no_one_in_the_cave_when_it_was_never_dug():
-    records = play(on_the_treasure(crew_size=1), Steps(write("here")))
+    records = play(on_the_treasure(crew_size=1), Steps(WAIT))
     assert len(records) == 6
     assert records[-1]["game_over"]["reason"] == "the turns ran out"
     assert records[-1]["game_over"]["score"] == 0
@@ -97,56 +95,73 @@ def test_game_ends_with_the_treasure_named_in_the_record():
 
 
 def test_shared_squares_a_blocked_pirate_is_told_who_and_chooses_again():
-    # Pirate 2 starts below pirate 1, so south is blocked; it then digs instead.
-    first = Steps(move("south"), DIG)
+    # Pirate 2 starts below pirate 1, so a go_to south is blocked; it digs instead.
+    first = Steps(go("A1"), DIG)
     records = play(config(turns_per_pirate=2), first, Steps(DIG))
     assert records[0]["agent"] == "pirate-1"
-    assert records[0]["failed_moves"] == [move("south")]
+    assert records[0]["failed_moves"] == [go("A1")]
     assert records[0]["did"] == [DIG]
     assert records[0]["outcome"]["position"] == [0, 0]
     assert records[1]["agent"] == "pirate-2"
     told = first.views[1]
     assert told.turns_left == first.views[0].turns_left
-    assert "pirate-2 is standing on A4" in told.as_text()
+    assert "the way south is blocked by pirate-2 on A4" in told.as_text()
     assert "didn't use your turn" in told.as_text()
 
 
 def test_shared_squares_the_story_says_who_was_in_the_way():
-    records = play(config(), Steps(move("south"), DIG), Steps(DIG))
-    assert records[0]["story"].startswith(
-        "Turn 0: pirate-1 at A5, on undug sand, with pirate-2 to the south, tried to move south but pirate-2 was in the way, "
-        "then dug at A5 and found nothing."
+    records = play(config(), Steps(go("A1"), DIG), Steps(DIG))
+    assert records[0]["story"] == (
+        "Turn 0: pirate-1 at A5, on undug sand, with pirate-2 to the south, shown no "
+        "new lines, tried to go to A1 but pirate-2 was in the way, then dug at A5 and "
+        "read 5 squares to the treasure."
     )
 
 
-def test_failed_move_cost_a_move_off_the_edge_is_refused_and_chosen_again():
-    first = Steps(move("west"), DIG)
+def test_failed_move_cost_a_go_to_off_the_island_is_refused_and_chosen_again():
+    first = Steps(go("F5"), DIG)
     records = play(config(turns_per_pirate=2), first, Steps(DIG))
-    assert records[0]["failed_moves"] == [move("west")]
+    assert records[0]["failed_moves"] == [go("F5")]
     assert records[0]["did"] == [DIG]
-    assert "edge" in first.views[1].as_text()
+    assert "There is no square F5 on the island" in first.views[1].as_text()
     assert "didn't use your turn" in first.views[1].as_text()
-    assert records[0]["story"].startswith(
-        "Turn 0: pirate-1 at A5, on undug sand, with pirate-2 to the south, tried to move west but it was at the grid's "
-        "edge, then dug at A5 and found nothing."
+    assert (
+        "tried to go to F5 but that isn't a square on the island, then dug"
+        in (records[0]["story"])
     )
+
+
+def test_failed_move_cost_a_go_to_its_own_square_is_refused():
+    records = play(config(turns_per_pirate=1), Steps(go("A5"), WAIT), Steps(DIG))
+    assert records[0]["failed_moves"] == [go("A5")]
+    assert records[0]["did"] == [WAIT]
+    assert "tried to go to A5 but it was already there" in records[0]["story"]
+
+
+def test_failed_move_cost_a_line_longer_than_say_chars_is_refused():
+    long_line = saying(DIG, "x" * 11)
+    first = Steps(long_line, saying(DIG, "short"))
+    records = play(config(turns_per_pirate=1, say_chars=10), first, Steps(WAIT))
+    assert records[0]["failed_moves"] == [long_line]
+    assert "a line holds at most 10" in first.views[1].as_text()
+    assert [line["text"] for line in records[1]["log_shown"]] == ["short"]
+    assert "its line was longer than 10 characters" in records[0]["story"]
 
 
 def test_failed_move_cost_after_failed_tries_refusals_the_turn_passes():
-    stubborn = Steps(move("south"))
+    stubborn = Steps(go("A1"))
     records = play(config(turns_per_pirate=2), stubborn, Steps(DIG))
     assert len(stubborn.views) == 2 * 2
-    assert records[0]["failed_moves"] == [move("south")] * 2
+    assert records[0]["failed_moves"] == [go("A1")] * 2
     assert records[0]["did"] == []
-    assert "pirate-2 is standing on A4" in records[0]["result"]
+    assert "blocked by pirate-2" in records[0]["result"]
     assert records[1]["agent"] == "pirate-2"
-    assert records[0]["story"].startswith(
-        "Turn 0: pirate-1 at A5, on undug sand, with pirate-2 to the south, tried to move south 2 times but pirate-2 was in "
-        "the way, so its turn passed."
+    assert records[0]["story"].endswith(
+        "tried to go to A1 2 times but pirate-2 was in the way, so its turn passed."
     )
     assert len(records) == 4
 
-    patient = Steps(move("south"))
+    patient = Steps(go("A1"))
     play(config(turns_per_pirate=1, failed_tries=4), patient, Steps(DIG))
     assert len(patient.views) == 4
 
@@ -162,15 +177,15 @@ class Answers:
 
 
 def test_failed_move_cost_keeps_every_bad_reply_and_every_failed_move():
-    # A bad reply before the failed move, and another before the dig.
+    # A bad reply before the failed action, and another before the dig.
     first_bad = {"reply": "let me think", "why": "not a tool call"}
     second_bad = {"reply": "{", "why": "not JSON"}
     pirate_1 = Answers(
-        Decision(move("west"), None, (first_bad,)),
+        Decision(go("F5"), None, (first_bad,)),
         Decision(DIG, None, (second_bad,)),
     )
     records = play(config(turns_per_pirate=1), pirate_1, Steps(DIG))
-    assert records[0]["failed_moves"] == [move("west")]
+    assert records[0]["failed_moves"] == [go("F5")]
     assert records[0]["refused"] == [first_bad, second_bad]
     assert records[0]["did"] == [DIG]
 
@@ -181,75 +196,92 @@ def test_game_ends_wanting_one_brain_per_pirate():
 
 
 def test_two_logs_every_record_passes_the_validator(tmp_path):
-    write_game(off_the_treasure(), [Steps(DIG), Steps(write("hi"))], tmp_path)
+    brains = [Steps(go("E5"), DIG), Steps(saying(WAIT, "hi", alert=True))]
+    write_game(off_the_treasure(), brains, tmp_path)
     assert log_errors(tmp_path / "events.jsonl") == []
 
 
-def test_two_logs_only_a_note_adds_a_line_to_the_pirates_log(tmp_path):
-    brains = [Steps(DIG), Steps(write("row 2 is empty"))]
+def test_two_logs_only_a_said_line_adds_a_line_to_the_pirates_log(tmp_path):
+    brains = [Steps(DIG), Steps(saying(WAIT, "row 2 is empty"))]
     write_game(off_the_treasure(turns_per_pirate=2), brains, tmp_path)
     lines = (tmp_path / "pirates-log.txt").read_text().splitlines()
-    assert lines == ["1 pirate-2: row 2 is empty", "2 pirate-2: row 2 is empty"]
+    assert lines == [
+        "1 pirate-2 (turn 2): row 2 is empty",
+        "2 pirate-2 (turn 4): row 2 is empty",
+    ]
 
 
 def test_two_logs_the_pirates_log_holds_only_what_pirates_can_see(tmp_path):
-    brains = [Steps(write("here"), DIG, thinking="SECRET"), Steps(READ, DIG)]
+    brains = [Steps(saying(DIG, "here"), WAIT, thinking="SECRET"), Steps(DIG)]
     write_game(off_the_treasure(turns_per_pirate=2), brains, tmp_path)
-    assert (tmp_path / "pirates-log.txt").read_text() == "1 pirate-1: here\n"
+    assert (tmp_path / "pirates-log.txt").read_text() == "1 pirate-1 (turn 1): here\n"
 
 
 def test_two_logs_a_scroll_nobody_wrote_on_is_an_empty_file(tmp_path):
     write_game(
-        off_the_treasure(turns_per_pirate=1), [Steps(DIG), Steps(READ)], tmp_path
+        off_the_treasure(turns_per_pirate=1), [Steps(DIG), Steps(WAIT)], tmp_path
     )
     assert (tmp_path / "pirates-log.txt").read_text() == ""
 
 
 def test_two_logs_our_record_shows_what_each_turn_was_shown():
-    records = play(off_the_treasure(), Steps(write("first")), Steps(READ, DIG))
+    records = play(off_the_treasure(), Steps(saying(DIG, "ZEBRA"), DIG), Steps(DIG))
+    line = {"line": 1, "text": "ZEBRA", "by": "pirate-1", "turn": 1, "alert": False}
     assert records[0]["log_shown"] == []
-    assert records[1]["log_shown"] == [{"line": 1, "text": "first", "by": "pirate-1"}]
-    assert records[2]["log_shown"] == []
-    assert "first" not in records[1]["saw"]["prompt"]
-    assert "first" in records[3]["saw"]["prompt"]
+    assert records[1]["log_shown"] == [line]
+    assert records[2]["log_shown"] == [line]  # its own line, shown once too
+    assert records[3]["log_shown"] == []
+    assert "ZEBRA" not in records[0]["saw"]["prompt"]
+    assert "ZEBRA" in records[1]["saw"]["prompt"]
 
 
-def test_two_logs_a_read_shows_the_lines_it_found_and_its_turn_is_spent():
-    brains = [Steps(write("one"), DIG), Steps(DIG, READ, DIG)]
-    records = play(off_the_treasure(), *brains)
-    read_turn = records[3]
-    assert read_turn["did"] == [READ]
-    assert read_turn["log_shown"] == [{"line": 1, "text": "one", "by": "pirate-1"}]
-    assert read_turn["outcome"]["position"] == read_turn["saw"]["position"]
-    assert read_turn["result"].startswith("You read the scroll")
-
-
-def test_turn_view_a_pirate_that_never_reads_never_sees_a_note():
-    listener = Steps(DIG)
-    play(off_the_treasure(), Steps(write("dig at E1")), listener)
-    assert all("dig at E1" not in view.as_text() for view in listener.views)
-
-
-def test_reading_costs_a_read_tells_the_pirate_every_new_line_and_who_wrote_it():
-    reader = Steps(DIG, READ, READ, DIG)
-    play(off_the_treasure(turns_per_pirate=4), Steps(write("one")), reader)
-    first, second = reader.views[3].earlier_turns[1:3]
-    assert first.read_lines == [
-        {"line": 1, "text": "one", "by": "pirate-1"},
-        {"line": 2, "text": "one", "by": "pirate-1"},
+def test_shown_when_asked_each_line_is_shown_to_each_pirate_exactly_once():
+    chatter = [
+        Steps(saying(DIG, "a"), saying(go("E5"), "b", alert=True), WAIT),
+        Steps(saying(WAIT, "c"), go("E1"), saying(DIG, "d")),
+        Steps(DIG, saying(WAIT, "e", alert=True), WAIT),
     ]
-    assert second.read_lines == [{"line": 3, "text": "one", "by": "pirate-1"}]
-    assert "pirate-1" in reader.views[3].as_text()
+    records = play(off_the_treasure(crew_size=3, turns_per_pirate=8), *chatter)
+    said = [line for record in records for line in record["log_shown"]]
+    assert said, "nobody was shown anything"
+    for name in ("pirate-1", "pirate-2", "pirate-3"):
+        shown = [
+            line["line"]
+            for record in records
+            if record["agent"] == name
+            for line in record["log_shown"]
+        ]
+        assert shown == sorted(set(shown))
+        last_asked = max(
+            record["turn"]
+            for record in records
+            if record["agent"] == name and record["asked"]
+        )
+        before = {
+            line["line"]
+            for record in records[:last_asked]
+            for line in record["log_shown"]
+        }
+        assert before <= set(shown)
 
 
-def test_reading_costs_a_read_with_nothing_new_tells_the_pirate_so():
-    records = play(off_the_treasure(turns_per_pirate=1), Steps(READ), Steps(DIG))
-    assert "nothing" in records[0]["result"].lower()
-    assert records[0]["log_shown"] == []
+def test_turn_view_a_pirate_that_is_never_asked_again_is_never_shown_a_line():
+    listener = Steps(go("E4"))
+    records = play(
+        off_the_treasure(turns_per_pirate=4), Steps(saying(DIG, "x")), listener
+    )
+    # pirate-2 set off before the line was said, and walks without being asked.
+    assert [r["asked"] for r in records if r["agent"] == "pirate-2"] == [
+        True,
+        False,
+        False,
+        False,
+    ]
+    assert all("ZEBRA" not in view.sheet() for view in listener.views)
 
 
-def test_every_turn_a_line_a_turn_that_does_not_write_adds_nothing(tmp_path):
-    brains = [Steps(DIG, move("south")), Steps(READ, DIG)]
+def test_every_turn_a_line_a_turn_that_does_not_say_adds_nothing(tmp_path):
+    brains = [Steps(DIG, go("E5")), Steps(WAIT, DIG)]
     write_game(off_the_treasure(turns_per_pirate=2), brains, tmp_path)
     assert (tmp_path / "pirates-log.txt").read_text() == ""
 
@@ -257,8 +289,8 @@ def test_every_turn_a_line_a_turn_that_does_not_write_adds_nothing(tmp_path):
 def test_two_logs_the_same_config_and_seed_are_byte_identical(tmp_path):
     def brains():
         return [
-            Steps(move("east"), write("héllo there"), DIG),
-            Steps(READ, DIG, thinking="try the corner"),
+            Steps(go("C5"), saying(WAIT, "héllo there", alert=True), DIG),
+            Steps(DIG, go("E4"), thinking="try the corner"),
         ]
 
     for name in ("a", "b"):
@@ -272,19 +304,20 @@ def test_two_logs_the_same_config_and_seed_are_byte_identical(tmp_path):
 
 def test_story_record_says_who_did_what_in_plain_words():
     brains = [
-        Steps(move("west"), move("east"), DIG, write("over here"), READ),
-        Steps(DIG),
+        Steps(go("F5"), go("C5"), DIG, saying(WAIT, "over here", alert=True)),
+        Steps(DIG, WAIT),
     ]
-    game_config = config(turns_per_pirate=5)
-    stories = [record["story"] for record in play(game_config, *brains)]
+    stories = [record["story"] for record in play(config(turns_per_pirate=5), *brains)]
     assert stories[0].startswith("Turn 0: pirate-1 at A5, ")
-    assert "tried to move west" in stories[0]
-    assert "then moved east to B5" in stories[0]
-    assert stories[2].startswith(
-        "Turn 2: pirate-1 at B5, on undug sand, with no pirate beside it, dug at B5"
+    assert "tried to go to F5" in stories[0]
+    assert "then set off for C5 and walked east to B5" in stories[0]
+    assert stories[2] == "Turn 2: pirate-1 walked east to C5 and arrived."
+    assert stories[4].startswith(
+        "Turn 4: pirate-1 at C5, on undug sand, with no pirate beside it, "
+        "having arrived at C5, shown no new lines, dug at C5"
     )
-    assert 'wrote "over here"' in stories[4]
-    assert "read the scroll" in stories[6]
+    assert stories[6].endswith('waited at C5, saying "over here" as an alert.')
+    assert "waited at A4" in stories[3]
 
 
 def test_story_record_says_why_when_the_brain_gave_a_reason():
@@ -299,14 +332,15 @@ def test_story_record_says_why_when_the_brain_gave_a_reason():
 def test_story_record_runs_saw_then_thought_then_did():
     records = play(off_the_treasure(), Steps(DIG, thinking="corner first"), Steps(DIG))
     assert records[0]["story"] == (
-        "Turn 0: pirate-1 at A5, on undug sand, with pirate-2 to the south. "
-        "It thought: corner first. Then it dug at A5 and found nothing."
+        "Turn 0: pirate-1 at A5, on undug sand, with pirate-2 to the south, "
+        "shown no new lines. It thought: corner first. Then it dug at A5 and read "
+        "5 squares to the treasure."
     )
     # With nothing thought, the line is what it saw, then what it did.
     plain = play(off_the_treasure(), Steps(DIG), Steps(DIG))
     assert plain[0]["story"] == (
         "Turn 0: pirate-1 at A5, on undug sand, with pirate-2 to the south, "
-        "dug at A5 and found nothing."
+        "shown no new lines, dug at A5 and read 5 squares to the treasure."
     )
 
 
@@ -320,23 +354,24 @@ def test_story_record_is_a_file_with_one_line_per_turn_and_the_ending(tmp_path):
 
 
 def test_story_record_reads_cleanly_when_things_go_wrong():
-    brains = [Steps(move("west"), READ), Steps(DIG)]
+    brains = [Steps(go("A9"), WAIT), Steps(DIG)]
     stories = [record["story"] for record in play(config(turns_per_pirate=3), *brains)]
     assert stories[0] == (
-        "Turn 0: pirate-1 at A5, on undug sand, with pirate-2 to the south, tried to move west but it was at the grid's edge, "
-        "then read the scroll and found nothing new."
+        "Turn 0: pirate-1 at A5, on undug sand, with pirate-2 to the south, shown no "
+        "new lines, tried to go to A9 but that isn't a square on the island, then "
+        "waited at A5."
     )
     assert stories[2] == (
         "Turn 2: pirate-1 at A5, on undug sand, with pirate-2 to the south, "
-        "read the scroll and found nothing new."
+        "shown no new lines, waited at A5."
     )
 
 
 def test_story_record_keeps_a_note_on_one_line(tmp_path):
-    brains = [Steps(write("two\nlines")), Steps(DIG)]
+    brains = [Steps(saying(WAIT, "two\nlines")), Steps(DIG)]
     write_game(off_the_treasure(turns_per_pirate=1), brains, tmp_path)
     lines = (tmp_path / "story.txt").read_text().splitlines()
-    assert 'wrote "two lines"' in lines[0]
+    assert 'saying "two lines"' in lines[0]
     assert len(lines) == 2 + 1
 
 
@@ -348,6 +383,13 @@ def test_toggles_the_crew_size_changes_through_the_config_alone():
         "pirate-2",
         "pirate-3",
     ]
+
+
+def test_toggles_say_chars_is_a_lever_defaulting_to_200():
+    assert config().say_chars == 200
+    assert config(say_chars=20).say_chars == 20
+    with pytest.raises(ValueError, match="say_chars"):
+        config(say_chars=0)
 
 
 def test_no_token_strategies_a_whole_game_needs_no_network(tmp_path, monkeypatch):
@@ -364,13 +406,13 @@ def test_no_token_strategies_a_whole_game_needs_no_network(tmp_path, monkeypatch
 
 def test_no_vision_a_pirate_is_shown_only_its_own_position():
     # Pirate 2 stays on its starting square; pirate 1 walks away.
-    walker = Steps(move("east"), move("east"), move("south"), DIG)
+    walker = Steps(go("C4"), DIG)
     sitter = Steps(DIG)
     play(config(), walker, sitter)
     for view in sitter.views:
         assert view.position == (0, 1)
-        assert "(2, 1)" not in view.as_text()
-    assert walker.views[3].position == (2, 1)
+        assert "C4" not in view.sheet()
+    assert walker.views[1].position == (2, 1)
 
 
 def test_no_vision_the_treasure_never_reaches_a_brain():
@@ -381,24 +423,34 @@ def test_no_vision_the_treasure_never_reaches_a_brain():
     assert (x, y) != (0, 0)
     for view in brain.views:
         assert f"({x}, {y})" not in view.as_text()
+        assert "B1" not in view.turn_text()
 
 
 def test_no_vision_a_dig_result_reaches_only_the_digger():
-    brains = [Steps(DIG), Steps(write("nothing to report"))]
+    brains = [Steps(DIG), Steps(saying(WAIT, "nothing to report"))]
     records = play(off_the_treasure(turns_per_pirate=2), *brains)
-    assert "You dug here" in brains[0].views[1].as_text()
-    assert "You dug here" not in brains[1].views[1].as_text()
+    assert "The treasure is 5 squares away." in brains[0].views[1].as_text()
+    assert "The treasure is" not in brains[1].views[1].turn_text()
+    assert brains[1].views[1].readings == ()
     assert records[-1]["agent"] == "pirate-2"
+
+
+def test_dig_reading_the_sheet_lists_every_square_the_pirate_dug():
+    digger = Steps(DIG, go("B5"), DIG, WAIT)
+    play(off_the_treasure(turns_per_pirate=4), digger, Steps(WAIT))
+    last = digger.views[-1]
+    assert [(r.square, r.away) for r in last.readings] == [("A5", 5), ("B5", 4)]
+    assert "Squares you have dug: A5, 5 away; B5, 4 away." in last.sheet()
 
 
 def test_turn_view_says_which_neighbours_hold_a_pirate():
     # The crew starts down the left edge: pirate-1 on (0, 0), pirate-2 below it.
-    first, second = Steps(DIG, move("east")), Steps(DIG)
+    first, second = Steps(DIG, go("B5")), Steps(DIG)
     play(off_the_treasure(turns_per_pirate=2), first, second)
     assert first.views[0].neighbours == (("south", "pirate-2"),)
     assert "the way south by pirate-2 and the way west" in first.views[0].as_text()
     assert second.views[0].neighbours == (("north", "pirate-1"),)
-    # Once pirate-1 has moved east to (1, 0), nobody is next to pirate-2.
+    # Once pirate-1 has gone east to (1, 0), nobody is next to pirate-2.
     assert second.views[1].neighbours == ()
     # It is still on the west edge, and the edge blocks that way out.
     assert "The way west is blocked by the island's edge." in (
@@ -407,9 +459,9 @@ def test_turn_view_says_which_neighbours_hold_a_pirate():
 
 
 def test_turn_view_says_whether_the_pirate_s_square_has_been_dug():
-    # pirate-1 digs (0, 0) and walks east; pirate-2 then steps north onto it.
-    first = Steps(DIG, move("east"), DIG)
-    second = Steps(write("here"), move("north"), DIG)
+    # pirate-1 digs (0, 0) and goes east; pirate-2 then goes north onto it.
+    first = Steps(DIG, go("B5"), DIG)
+    second = Steps(WAIT, go("A5"), DIG)
     play(off_the_treasure(turns_per_pirate=3), first, second)
     assert [view.square_dug for view in first.views] == [False, True, False]
     assert [view.square_dug for view in second.views] == [False, False, True]
@@ -427,11 +479,11 @@ def test_no_vision_a_pirate_two_squares_away_is_never_shown():
 
 
 def test_no_vision_a_neighbouring_square_s_dig_is_never_shown():
-    # pirate-2 digs the square next to pirate-1 or writes instead: pirate-1's
+    # pirate-2 digs the square next to pirate-1 or waits instead: pirate-1's
     # next view is the same either way.
     seen = []
-    for neighbours_turn in (DIG, write("x")):
-        first = Steps(write("a"), write("b"))
+    for neighbours_turn in (DIG, WAIT):
+        first = Steps(WAIT, WAIT)
         play(off_the_treasure(turns_per_pirate=2), first, Steps(neighbours_turn))
         seen.append(first.views[1].turn_text())
         assert first.views[1].square_dug is False
@@ -439,7 +491,7 @@ def test_no_vision_a_neighbouring_square_s_dig_is_never_shown():
 
 
 def test_story_record_says_what_the_pirate_saw_of_its_neighbours_and_its_square():
-    first = Steps(DIG, move("east"))
+    first = Steps(DIG, go("B5"))
     records = play(off_the_treasure(turns_per_pirate=2), first, Steps(DIG))
     assert (
         "pirate-1 at A5, on undug sand, with pirate-2 to the south,"
@@ -454,11 +506,11 @@ def test_story_record_says_what_the_pirate_saw_of_its_neighbours_and_its_square(
     assert all(record_errors(record) == [] for record in records)
 
 
-def test_actions_write_and_read_each_end_the_turn_like_any_other():
+def test_actions_wait_and_dig_each_end_the_turn_like_any_other():
     records = play(
         off_the_treasure(turns_per_pirate=2),
-        Steps(write("note"), READ),
-        Steps(DIG, move("south")),
+        Steps(saying(WAIT, "note"), DIG),
+        Steps(DIG, go("E4")),
     )
     assert [record["agent"] for record in records] == [
         "pirate-1",
@@ -472,9 +524,9 @@ def find_then_walk_away():
     """Pirate 1 steps onto the treasure, digs it up and steps off; pirate 2 stays away."""
     # The treasure is one square east of pirate 1's starting corner.
     game_config = config(turns_per_pirate=3, seed=seed_for((1, 0)))
-    pirate_1 = Steps(move("east"), DIG, move("west"))
+    pirate_1 = Steps(go("B5"), DIG, go("A5"))
     return treasure_of(game_config), play(
-        game_config, pirate_1, Steps(write("still looking"))
+        game_config, pirate_1, Steps(saying(WAIT, "still looking"))
     )
 
 
@@ -491,7 +543,7 @@ def test_the_outcome_keeps_the_treasure_where_it_was_found_in_a_frame():
 
 
 def test_crew_positions_a_real_game_says_where_everyone_starts_each_turn():
-    walker = Steps(move("east"), DIG)
+    walker = Steps(go("B5"), DIG)
     records = play(config(), walker, Steps(DIG))
     assert records[0]["crew"] == {"pirate-1": [0, 0], "pirate-2": [0, 1]}
     assert records[1]["crew"] == {"pirate-1": [1, 0], "pirate-2": [0, 1]}
@@ -502,54 +554,37 @@ def test_crew_positions_the_first_frame_of_a_real_game_shows_the_whole_crew():
     assert set(scene(records[:1], 0, 5)["positions"]) == {"pirate-1", "pirate-2"}
 
 
-def test_agent_memory_keeps_the_lines_a_read_found_as_fields():
-    reader = Steps(READ, DIG)
-    play(off_the_treasure(turns_per_pirate=2), reader, Steps(write("note")))
-    # Pirate 1 reads first, before any note, so it finds nothing.
-    assert reader.views[1].earlier_turns[0].read_lines == []
-
-    reader = Steps(DIG, READ)
-    writer = Steps(write("note"), DIG)
-    play(off_the_treasure(turns_per_pirate=3), reader, writer)
-    remembered = reader.views[2].earlier_turns[1].read_lines
-    assert remembered == [{"line": 1, "text": "note", "by": "pirate-2"}]
-    assert "note" in reader.views[2].as_text()
+def test_agent_memory_keeps_the_lines_it_was_shown_as_fields():
+    listener = Steps(DIG, WAIT, WAIT)
+    talker = Steps(saying(WAIT, "note"), DIG)
+    play(off_the_treasure(turns_per_pirate=3), listener, talker)
+    # Pirate 1 is asked first, before any line, so it is shown nothing.
+    assert listener.views[1].earlier_turns[0].shown == ()
+    remembered = listener.views[2].earlier_turns[1].shown
+    assert [line["text"] for line in remembered] == ["note"]
+    assert "note" in listener.views[2].as_text()
 
 
-def test_story_record_a_read_names_its_new_lines_without_quoting_them():
-    brains = [Steps(write("one"), write("two"), write("three")), Steps(DIG, READ, READ)]
+def test_story_record_names_the_new_lines_it_was_shown_without_quoting_them():
+    brains = [
+        Steps(saying(WAIT, "one"), saying(WAIT, "three"), WAIT),
+        Steps(saying(WAIT, "two"), WAIT),
+    ]
     records = play(off_the_treasure(turns_per_pirate=3), *brains)
-    assert "read the scroll and got 2 new lines, lines 1 and 2." in records[3]["story"]
-    assert "read the scroll and got 1 new line, line 3." in records[5]["story"]
-    for words in ('"one"', '"two"', '"three"'):
-        assert words not in records[3]["story"] + records[5]["story"]
-    brains = [Steps(write("a"), write("b"), write("c")), Steps(DIG, DIG, READ)]
-    records = play(off_the_treasure(turns_per_pirate=3), *brains)
-    assert "got 3 new lines, lines 1 to 3." in records[5]["story"]
+    assert "shown no new lines," in records[0]["story"]
+    assert "shown 1 new line, line 1," in records[1]["story"]
+    assert "shown 2 new lines, lines 1 and 2," in records[2]["story"]
+    assert "shown 2 new lines, lines 2 and 3," in records[3]["story"]
+    for record in records:
+        seen = record["story"].split(", saying")[0]
+        assert all(f'"{word}"' not in seen for word in ("one", "two", "three"))
+    brains = [Steps(saying(WAIT, "a"), WAIT), Steps(saying(WAIT, "b"), WAIT)]
+    more = [Steps(saying(WAIT, "c"), WAIT)]
+    records = play(off_the_treasure(crew_size=3, turns_per_pirate=2), *brains, *more)
+    assert "shown 3 new lines, lines 1 to 3," in records[3]["story"]
 
 
-def test_story_record_a_read_of_an_empty_scroll_says_so():
-    records = play(off_the_treasure(turns_per_pirate=1), Steps(READ), Steps(DIG))
-    assert "read the scroll and found nothing new." in records[0]["story"]
-
-
-def test_story_record_keeps_what_a_read_found_on_one_line(tmp_path):
-    brains = [Steps(write("two\nlines")), Steps(READ)]
-    write_game(off_the_treasure(turns_per_pirate=1), brains, tmp_path)
-    lines = (tmp_path / "story.txt").read_text().splitlines()
-    assert "read the scroll and got 1 new line, line 1." in lines[1]
-    assert "two" not in lines[1]
-    assert len(lines) == 2 + 1
-
-
-@pytest.mark.parametrize(
-    "folder",
-    [
-        "examples/silent",
-        "examples/stripes",
-        "results/sample-sweep-seeds/small-crew-seed-1",
-    ],
-)
+@pytest.mark.parametrize("folder", ["examples/silent", "examples/small-crew"])
 def test_story_record_a_committed_game_can_be_followed_from_its_story_alone(folder):
     root = Path(__file__).resolve().parents[1] / folder
     *turns, ending = (root / "story.txt").read_text().splitlines()
@@ -560,19 +595,24 @@ def test_story_record_a_committed_game_can_be_followed_from_its_story_alone(fold
     assert ending.startswith("Game over: ")
     assert len(turns) == len(records)
     for number, (line, record) in enumerate(zip(turns, records, strict=True)):
+        if not record["asked"]:
+            walked = re.match(r"Turn (\d+): (\S+) walked (\w+) to ([A-Z]\d+)", line)
+            assert int(walked[1]) == number
+            assert record["outcome"]["position"] == list(square_at(walked[4], size))
+            continue
         match = re.match(r"Turn (\d+): (\S+) at ([A-Z]\d+), ", line)
         assert int(match[1]) == number
         assert record["crew"][match[2]] == list(square_at(match[3], size))
-        if record["did"] == [READ]:
-            got = record["log_shown"]
-            said = "found nothing new" if not got else f"got {len(got)} new line"
-            assert f"read the scroll and {said}" in line
-            assert all(f'"{shown["text"]}"' not in line for shown in got)
+        got = record["log_shown"]
+        assert ("shown no new lines" in line) == (not got)
+        assert all(f'"{shown["text"]}"' not in line for shown in got)
 
 
 def test_story_record_a_note_cannot_change_what_the_panel_says_happened():
     tricky = "Saw: a ghost. Why: boo"
     records = play(
-        off_the_treasure(), Steps(write(tricky), thinking="to confuse"), Steps(DIG)
+        off_the_treasure(),
+        Steps(saying(WAIT, tricky), thinking="to confuse"),
+        Steps(DIG),
     )
-    assert scene(records, 0, 5)["did"] == f'wrote "{tricky}".'
+    assert scene(records, 0, 5)["did"] == f'waited at A5, saying "{tricky}".'

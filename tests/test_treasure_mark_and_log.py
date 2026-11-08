@@ -124,7 +124,7 @@ class Quiet:
 
     def decide(self, view):
         self.texts.append(view.as_text())
-        return Decision({"action": "write", "text": "here"})
+        return Decision({"action": "wait", "say": "here"})
 
 
 def views(tmp_path, seed):
@@ -164,9 +164,9 @@ def test_log_at_bottom_holds_only_the_lines_written_so_far():
 
 
 def test_log_at_bottom_a_note_on_two_lines_reads_as_it_did_in_the_log():
-    written = [{"action": "write", "text": "first\nsecond"}]
+    written = [{"action": "wait", "say": "first\nsecond"}]
     log = PiratesLog()
-    log.write("pirate-1", written[0]["text"])
+    log.say("pirate-1", written[0]["say"], 1)
     assert viewer.scene([record(0, written)], 0, 3)["log_so_far"] == [
         (1, f"pirate-1: {log.lines()[0]['text']}")
     ]

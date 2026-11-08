@@ -6,7 +6,7 @@ This page is for a person working in this repository without the agent skills: w
 ## See a game first
 
 ```bash
-uv run treasure-island show examples/stripes
+uv run treasure-island show examples/silent
 ```
 
 That prints the paths of a GIF, an HTML page you step through with the arrow keys, and `transcript.md`, every turn's prompt, thinking, action and result. `story.txt` is the short version. `uv run treasure-island replay <folder>` plays any committed game again from its recorded actions, with no keys and no network. The README's table "What you can do today" lists every command.

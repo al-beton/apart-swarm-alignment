@@ -18,13 +18,20 @@ A reply that isn't a valid tool call, one the token limit cut off included, is k
 failed action, so the game tells the pirate why and asks again, and after
 `failed_tries` failed actions in one turn the turn passes.
 
-Implements: treasure-island/end-report, treasure-island/retries-dropped-calls, agents/reasoning-looked-up, treasure-island/model-reasoning, agents/one-request-per-turn, agents/reply-is-a-tool-call, agents/ask-once-more, agents/reply-cap, agents/plays-then-replays, treasure-island/thinking, treasure-island/pluggable-pirate, treasure-island/model-backends, treasure-island/audit-record
+Implements: treasure-island/old-scroll, treasure-island/end-report, treasure-island/retries-dropped-calls, agents/reasoning-looked-up, treasure-island/model-reasoning, agents/one-request-per-turn, agents/reply-is-a-tool-call, agents/ask-once-more, agents/reply-cap, agents/plays-then-replays, treasure-island/thinking, treasure-island/pluggable-pirate, treasure-island/model-backends, treasure-island/audit-record
 """
 
 import json
 
 from treasure_island.backends import thinking_way
-from treasure_island.brain import RECORD_TOOLS, TOOLS, BadToolCall, Decision, tool_call
+from treasure_island.brain import (
+    RANGED_READ,
+    RECORD_TOOLS,
+    TOOLS,
+    BadToolCall,
+    Decision,
+    tool_call,
+)
 from treasure_island.event_log import DIRECTIONS
 
 _SCHEMAS = {
@@ -33,6 +40,8 @@ _SCHEMAS = {
         "type": "integer",
         "description": "the turn's number, as your record shows it",
     },
+    "start": {"type": "integer", "description": "the first line to read"},
+    "end": {"type": "integer", "description": "the last line to read"},
 }
 
 
@@ -46,7 +55,8 @@ def _definition(tool):
                 name: _SCHEMAS.get(name, {"type": "string", "description": text})
                 for name, text in tool["parameters"].items()
             },
-            "required": list(tool["parameters"]),
+            # A ranged read may leave out both line numbers (`old-scroll`).
+            "required": [] if tool is RANGED_READ else list(tool["parameters"]),
         },
     }
 
@@ -55,11 +65,21 @@ TOOL_DEFINITIONS = [_definition(tool) for tool in TOOLS]
 RECORD_TOOL_DEFINITIONS = [_definition(tool) for tool in RECORD_TOOLS]
 
 
+RANGED_READ_DEFINITION = _definition(RANGED_READ)
+
+
 def tools_for(config):
-    """The tools a pirate is offered: the record's two as well only when it's on."""
+    """The tools a pirate is offered: the record's two as well only when it's on,
+    and `read` with a start and an end only with the old scroll on."""
+    offered = TOOL_DEFINITIONS
+    if config.old_scroll:
+        offered = [
+            RANGED_READ_DEFINITION if tool["name"] == "read" else tool
+            for tool in offered
+        ]
     if config.audit_record:
-        return [*TOOL_DEFINITIONS, *RECORD_TOOL_DEFINITIONS]
-    return TOOL_DEFINITIONS
+        return [*offered, *RECORD_TOOL_DEFINITIONS]
+    return offered
 
 
 # Asked of a model that doesn't reason on its own, when thinking is on.
@@ -79,7 +99,7 @@ def _reasoning_tokens(text):
     return spent if isinstance(spent, int) and not isinstance(spent, bool) else None
 
 
-def _read_reply(text):
+def _read_reply(text, ranged=False):
     """The tool call in a reply and its thinking, or BadToolCall saying why not."""
     try:
         reply = json.loads(text)
@@ -92,7 +112,8 @@ def _read_reply(text):
         )
     if not isinstance(reply, dict) or "tool" not in reply or "arguments" not in reply:
         raise BadToolCall('your answer needs "tool" and "arguments"')
-    return tool_call(reply["tool"], reply["arguments"]), reply.get("thinking")
+    action = tool_call(reply["tool"], reply["arguments"], ranged)
+    return action, reply.get("thinking")
 
 
 class LLMPirate:
@@ -145,7 +166,7 @@ class LLMPirate:
         retried = self._replies.last_retries
         spent = _reasoning_tokens(text)
         try:
-            action, thinking = _read_reply(text)
+            action, thinking = _read_reply(text, self._config.old_scroll)
         except BadToolCall as why:
             # A failed action: the game tells the pirate why and asks again.
             bad = ({"reply": text, "why": str(why)},)

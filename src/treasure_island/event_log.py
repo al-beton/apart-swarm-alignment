@@ -3,7 +3,7 @@
 The format is documented in product/spec/event-log.md. Only required fields are
 checked, so a record may carry more (event-log/room-to-grow).
 
-Implements: event-log/one-record-per-turn, event-log/who-acted, event-log/what-they-saw, event-log/what-they-did, event-log/what-the-log-showed, event-log/the-outcome, event-log/room-to-grow, event-log/validator, treasure-island/audit-record
+Implements: treasure-island/old-scroll, event-log/one-record-per-turn, event-log/who-acted, event-log/what-they-saw, event-log/what-they-did, event-log/what-the-log-showed, event-log/the-outcome, event-log/room-to-grow, event-log/validator, treasure-island/audit-record
 """
 
 import json
@@ -40,7 +40,11 @@ def _is_log_line(value):
 _ACTIONS = {
     "move": lambda action: action.get("direction") in DIRECTIONS,
     "dig": lambda action: True,
-    "read": lambda action: True,
+    # A read may name a start and an end line, with the old scroll on.
+    "read": lambda action: (
+        ("start" not in action and "end" not in action)
+        or (_is_int(action.get("start")) and _is_int(action.get("end")))
+    ),
     "write": lambda action: _is_text(action.get("text")),
     "enter": lambda action: True,
     # Only with the audit record on (`audit-record`).

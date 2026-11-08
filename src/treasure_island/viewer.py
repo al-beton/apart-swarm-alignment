@@ -9,6 +9,9 @@ the story, word for word, so a frame and the log can be matched up. `frame` draw
 Pillow. The browser page asks for `/frame/<turn>.png` and the GIF strings the
 same PNGs together, which is what keeps the two from ever disagreeing.
 
+Quicksand is drawn with the sinking-sand tile once a pirate has sunk into it, and
+as plain sand before.
+
 Tiles and marks are the PNGs in `assets/`, and a pirate is `pirate()` from the art,
 since a config can ask for any colour. There is no plain shape to fall back on, so
 missing art is an error. A pirate's looks come from the run's `config.json`, or the
@@ -33,7 +36,7 @@ with no note, and the scroll as parchment; on the right one entry for every turn
 `planned_turns` lists, each played turn's steps drawn ahead so stepping onto it
 plays them.
 
-Implements: treasure-island/share-reading, treasure-island/reading-bands, viewer/planned-turns, viewer/game-page-steps, viewer/scroll-written-live, viewer/cave-drawn, treasure-island/cave, viewer/turn-marked, viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/walks-between-squares, treasure-island/pokemon-style, viewer/slideshow-file, viewer/game-page, viewer/scroll-steps, viewer/score-counter, viewer/transcript, viewer/board-framed, viewer/dig-steps, viewer/enter-steps, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process, treasure-island/square-names, treasure-island/forced-discovery
+Implements: viewer/quicksand-drawn, treasure-island/share-reading, viewer/planned-turns, viewer/game-page-steps, viewer/scroll-written-live, viewer/cave-drawn, treasure-island/cave, viewer/turn-marked, viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/walks-between-squares, treasure-island/pokemon-style, viewer/slideshow-file, viewer/game-page, viewer/scroll-steps, viewer/score-counter, viewer/transcript, viewer/board-framed, viewer/dig-steps, viewer/enter-steps, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process, treasure-island/square-names, treasure-island/forced-discovery, treasure-island/reading-bands
 """
 
 import base64
@@ -161,6 +164,15 @@ def _dug(records, turn):
         tuple(record["saw"]["position"])
         for record in records[: turn + 1]
         if any(action["action"] == "dig" for action in record["did"])
+    }
+
+
+def _quicksand(records, turn):
+    """Every quicksand square a pirate has sunk into by this turn (`quicksand-drawn`)."""
+    return {
+        tuple(record["outcome"]["position"])
+        for record in records[: turn + 1]
+        if "sank" in record
     }
 
 
@@ -488,6 +500,7 @@ def scene(records, turn, size, treasure=None, step=None, scoring=None):  # noqa:
         "log_so_far": _log_so_far(records, turn),
         "poses": _poses(records, turn),
         "dug": _dug(records, turn),
+        "quicksand": _quicksand(records, turn),
         "inside": inside,
         "going_in": going,
     }
@@ -543,6 +556,8 @@ def _draw_ground(image, size, shown, pirates):
     for x in range(size):
         for y in range(size):
             name = "dug" if (x, y) in shown["dug"] else _ground_tile(x, y)
+            if (x, y) in shown.get("quicksand", ()):
+                name = "sinking-sand"  # found quicksand, dug or not
             image.paste(_art(f"tiles/{name}"), (x * TILE, y * TILE))
     if shown["digging"]:
         # The dig's ground first, so the mark or the cave on that square stays over it.

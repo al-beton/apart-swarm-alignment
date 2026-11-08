@@ -219,7 +219,7 @@ class Wanderer:
         return Decision(action)
 
 
-def test_shared_squares_never_two_pirates_on_a_square_and_the_game_always_ends():
+def test_shared_squares_never_two_pirates_on_a_square_but_the_open_cave_and_the_game_always_ends():
     for seed in range(15):
         crew = parse_config(
             {"grid_size": 4, "crew_size": 5, "turns_per_pirate": 12, "seed": seed}
@@ -228,9 +228,12 @@ def test_shared_squares_never_two_pirates_on_a_square_and_the_game_always_ends()
         records = play(crew, *brains)
         assert len(records) <= 5 * 12
         assert "game_over" in records[-1]
+        cave = None  # the open cave holds any number, so it isn't counted
         for record in records:
-            squares = [tuple(p) for p in record["crew"].values()]
+            squares = [tuple(p) for p in record["crew"].values() if tuple(p) != cave]
             assert len(squares) == len(set(squares))
+            if record["outcome"]["found_treasure"]:
+                cave = tuple(record["outcome"]["position"])
             assert record_errors(record) == []
             if not record["asked"]:
                 assert record["did"][0]["action"] == "move"

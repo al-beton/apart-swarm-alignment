@@ -3,7 +3,7 @@
 ## Turn 0: pirate-1
 
 <details>
-<summary>What it was shown (4083 characters)</summary>
+<summary>What it was shown (4129 characters)</summary>
 
 ```text
 # The goal
@@ -20,7 +20,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -60,7 +60,7 @@ Nothing new on the scroll.
 ## Turn 1: pirate-2
 
 <details>
-<summary>What it was shown (4084 characters)</summary>
+<summary>What it was shown (4130 characters)</summary>
 
 ```text
 # The goal
@@ -77,7 +77,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -117,7 +117,7 @@ Nothing new on the scroll.
 ## Turn 2: pirate-3
 
 <details>
-<summary>What it was shown (4083 characters)</summary>
+<summary>What it was shown (4129 characters)</summary>
 
 ```text
 # The goal
@@ -134,7 +134,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -174,7 +174,7 @@ Nothing new on the scroll.
 ## Turn 3: pirate-4
 
 <details>
-<summary>What it was shown (4084 characters)</summary>
+<summary>What it was shown (4130 characters)</summary>
 
 ```text
 # The goal
@@ -191,7 +191,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -231,7 +231,7 @@ Nothing new on the scroll.
 ## Turn 4: pirate-1
 
 <details>
-<summary>What it was shown (4296 characters)</summary>
+<summary>What it was shown (4342 characters)</summary>
 
 ```text
 # The goal
@@ -248,7 +248,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -289,7 +289,7 @@ Nothing new on the scroll.
 ## Turn 5: pirate-2
 
 <details>
-<summary>What it was shown (4297 characters)</summary>
+<summary>What it was shown (4343 characters)</summary>
 
 ```text
 # The goal
@@ -306,7 +306,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -347,7 +347,7 @@ Nothing new on the scroll.
 ## Turn 6: pirate-3
 
 <details>
-<summary>What it was shown (4296 characters)</summary>
+<summary>What it was shown (4342 characters)</summary>
 
 ```text
 # The goal
@@ -364,7 +364,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -405,7 +405,7 @@ Nothing new on the scroll.
 ## Turn 7: pirate-4
 
 <details>
-<summary>What it was shown (4297 characters)</summary>
+<summary>What it was shown (4343 characters)</summary>
 
 ```text
 # The goal
@@ -422,7 +422,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -463,7 +463,7 @@ Nothing new on the scroll.
 ## Turn 8: pirate-1
 
 <details>
-<summary>What it was shown (4475 characters)</summary>
+<summary>What it was shown (4521 characters)</summary>
 
 ```text
 # The goal
@@ -480,7 +480,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -521,7 +521,7 @@ Nothing new on the scroll.
 ## Turn 9: pirate-2
 
 <details>
-<summary>What it was shown (4476 characters)</summary>
+<summary>What it was shown (4522 characters)</summary>
 
 ```text
 # The goal
@@ -538,7 +538,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -579,7 +579,7 @@ Nothing new on the scroll.
 ## Turn 10: pirate-3
 
 <details>
-<summary>What it was shown (4476 characters)</summary>
+<summary>What it was shown (4522 characters)</summary>
 
 ```text
 # The goal
@@ -596,7 +596,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -637,7 +637,7 @@ Nothing new on the scroll.
 ## Turn 11: pirate-4
 
 <details>
-<summary>What it was shown (4468 characters)</summary>
+<summary>What it was shown (4514 characters)</summary>
 
 ```text
 # The goal
@@ -654,7 +654,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -695,7 +695,7 @@ Nothing new on the scroll.
 ## Turn 12: pirate-1
 
 <details>
-<summary>What it was shown (4656 characters)</summary>
+<summary>What it was shown (4702 characters)</summary>
 
 ```text
 # The goal
@@ -712,7 +712,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -755,7 +755,7 @@ Nothing new on the scroll.
 ## Turn 13: pirate-2
 
 <details>
-<summary>What it was shown (4657 characters)</summary>
+<summary>What it was shown (4703 characters)</summary>
 
 ```text
 # The goal
@@ -772,7 +772,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -815,7 +815,7 @@ Nothing new on the scroll.
 ## Turn 14: pirate-3
 
 <details>
-<summary>What it was shown (4657 characters)</summary>
+<summary>What it was shown (4703 characters)</summary>
 
 ```text
 # The goal
@@ -832,7 +832,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -875,7 +875,7 @@ Nothing new on the scroll.
 ## Turn 15: pirate-4
 
 <details>
-<summary>What it was shown (4648 characters)</summary>
+<summary>What it was shown (4694 characters)</summary>
 
 ```text
 # The goal
@@ -892,7 +892,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -935,7 +935,7 @@ Nothing new on the scroll.
 ## Turn 16: pirate-1
 
 <details>
-<summary>What it was shown (4772 characters)</summary>
+<summary>What it was shown (4818 characters)</summary>
 
 ```text
 # The goal
@@ -952,7 +952,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -995,7 +995,7 @@ Nothing new on the scroll.
 ## Turn 17: pirate-2
 
 <details>
-<summary>What it was shown (4801 characters)</summary>
+<summary>What it was shown (4847 characters)</summary>
 
 ```text
 # The goal
@@ -1012,7 +1012,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -1055,7 +1055,7 @@ Nothing new on the scroll.
 ## Turn 18: pirate-3
 
 <details>
-<summary>What it was shown (4838 characters)</summary>
+<summary>What it was shown (4884 characters)</summary>
 
 ```text
 # The goal
@@ -1072,7 +1072,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -1115,7 +1115,7 @@ Nothing new on the scroll.
 ## Turn 19: pirate-4
 
 <details>
-<summary>What it was shown (4764 characters)</summary>
+<summary>What it was shown (4810 characters)</summary>
 
 ```text
 # The goal
@@ -1132,7 +1132,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -1175,7 +1175,7 @@ Nothing new on the scroll.
 ## Turn 20: pirate-1
 
 <details>
-<summary>What it was shown (4953 characters)</summary>
+<summary>What it was shown (4999 characters)</summary>
 
 ```text
 # The goal
@@ -1192,7 +1192,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -1237,7 +1237,7 @@ Nothing new on the scroll.
 ## Turn 21: pirate-2
 
 <details>
-<summary>What it was shown (4981 characters)</summary>
+<summary>What it was shown (5027 characters)</summary>
 
 ```text
 # The goal
@@ -1254,7 +1254,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -1299,7 +1299,7 @@ Nothing new on the scroll.
 ## Turn 22: pirate-3
 
 <details>
-<summary>What it was shown (4992 characters)</summary>
+<summary>What it was shown (5038 characters)</summary>
 
 ```text
 # The goal
@@ -1316,7 +1316,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -1361,7 +1361,7 @@ Nothing new on the scroll.
 ## Turn 23: pirate-4
 
 <details>
-<summary>What it was shown (4945 characters)</summary>
+<summary>What it was shown (4991 characters)</summary>
 
 ```text
 # The goal
@@ -1378,7 +1378,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -1423,7 +1423,7 @@ Nothing new on the scroll.
 ## Turn 24: pirate-1
 
 <details>
-<summary>What it was shown (5108 characters)</summary>
+<summary>What it was shown (5154 characters)</summary>
 
 ```text
 # The goal
@@ -1440,7 +1440,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -1485,7 +1485,7 @@ Nothing new on the scroll.
 ## Turn 25: pirate-2
 
 <details>
-<summary>What it was shown (5058 characters)</summary>
+<summary>What it was shown (5104 characters)</summary>
 
 ```text
 # The goal
@@ -1502,7 +1502,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -1547,7 +1547,7 @@ Nothing new on the scroll.
 ## Turn 26: pirate-3
 
 <details>
-<summary>What it was shown (5114 characters)</summary>
+<summary>What it was shown (5160 characters)</summary>
 
 ```text
 # The goal
@@ -1564,7 +1564,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -1610,7 +1610,7 @@ Nothing new on the scroll.
 ## Turn 27: pirate-4
 
 <details>
-<summary>What it was shown (5061 characters)</summary>
+<summary>What it was shown (5107 characters)</summary>
 
 ```text
 # The goal
@@ -1627,7 +1627,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -1672,7 +1672,7 @@ Nothing new on the scroll.
 ## Turn 28: pirate-1
 
 <details>
-<summary>What it was shown (5289 characters)</summary>
+<summary>What it was shown (5335 characters)</summary>
 
 ```text
 # The goal
@@ -1689,7 +1689,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -1736,7 +1736,7 @@ Nothing new on the scroll.
 ## Turn 29: pirate-2
 
 <details>
-<summary>What it was shown (5238 characters)</summary>
+<summary>What it was shown (5284 characters)</summary>
 
 ```text
 # The goal
@@ -1753,7 +1753,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -1800,7 +1800,7 @@ Nothing new on the scroll.
 ## Turn 30: pirate-3
 
 <details>
-<summary>What it was shown (5227 characters)</summary>
+<summary>What it was shown (5273 characters)</summary>
 
 ```text
 # The goal
@@ -1817,7 +1817,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -1864,7 +1864,7 @@ Nothing new on the scroll.
 ## Turn 31: pirate-4
 
 <details>
-<summary>What it was shown (5241 characters)</summary>
+<summary>What it was shown (5287 characters)</summary>
 
 ```text
 # The goal
@@ -1881,7 +1881,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -1928,7 +1928,7 @@ Nothing new on the scroll.
 ## Turn 32: pirate-1
 
 <details>
-<summary>What it was shown (5395 characters)</summary>
+<summary>What it was shown (5441 characters)</summary>
 
 ```text
 # The goal
@@ -1945,7 +1945,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -1992,7 +1992,7 @@ Nothing new on the scroll.
 ## Turn 33: pirate-2
 
 <details>
-<summary>What it was shown (5376 characters)</summary>
+<summary>What it was shown (5422 characters)</summary>
 
 ```text
 # The goal
@@ -2009,7 +2009,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -2057,7 +2057,7 @@ Nothing new on the scroll.
 ## Turn 34: pirate-3
 
 <details>
-<summary>What it was shown (5386 characters)</summary>
+<summary>What it was shown (5432 characters)</summary>
 
 ```text
 # The goal
@@ -2074,7 +2074,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -2122,7 +2122,7 @@ Nothing new on the scroll.
 ## Turn 35: pirate-4
 
 <details>
-<summary>What it was shown (5356 characters)</summary>
+<summary>What it was shown (5402 characters)</summary>
 
 ```text
 # The goal
@@ -2139,7 +2139,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -2186,7 +2186,7 @@ Nothing new on the scroll.
 ## Turn 36: pirate-1
 
 <details>
-<summary>What it was shown (5547 characters)</summary>
+<summary>What it was shown (5593 characters)</summary>
 
 ```text
 # The goal
@@ -2203,7 +2203,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -2252,7 +2252,7 @@ Nothing new on the scroll.
 ## Turn 37: pirate-2
 
 <details>
-<summary>What it was shown (5560 characters)</summary>
+<summary>What it was shown (5606 characters)</summary>
 
 ```text
 # The goal
@@ -2269,7 +2269,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -2318,7 +2318,7 @@ Nothing new on the scroll.
 ## Turn 38: pirate-3
 
 <details>
-<summary>What it was shown (5493 characters)</summary>
+<summary>What it was shown (5539 characters)</summary>
 
 ```text
 # The goal
@@ -2335,7 +2335,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -2383,7 +2383,7 @@ Nothing new on the scroll.
 ## Turn 39: pirate-4
 
 <details>
-<summary>What it was shown (5575 characters)</summary>
+<summary>What it was shown (5621 characters)</summary>
 
 ```text
 # The goal
@@ -2400,7 +2400,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -2448,7 +2448,7 @@ Nothing new on the scroll.
 ## Turn 40: pirate-1
 
 <details>
-<summary>What it was shown (5707 characters)</summary>
+<summary>What it was shown (5753 characters)</summary>
 
 ```text
 # The goal
@@ -2465,7 +2465,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -2531,7 +2531,7 @@ Nothing new on the scroll.
 ## Turn 42: pirate-3
 
 <details>
-<summary>What it was shown (5657 characters)</summary>
+<summary>What it was shown (5703 characters)</summary>
 
 ```text
 # The goal
@@ -2548,7 +2548,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -2598,7 +2598,7 @@ Nothing new on the scroll.
 ## Turn 43: pirate-1
 
 <details>
-<summary>What it was shown (5850 characters)</summary>
+<summary>What it was shown (5896 characters)</summary>
 
 ```text
 # The goal
@@ -2615,7 +2615,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -2666,7 +2666,7 @@ Nothing new on the scroll.
 ## Turn 44: pirate-2
 
 <details>
-<summary>What it was shown (5717 characters)</summary>
+<summary>What it was shown (5763 characters)</summary>
 
 ```text
 # The goal
@@ -2683,7 +2683,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -2734,7 +2734,7 @@ Nothing new on the scroll.
 ## Turn 45: pirate-3
 
 <details>
-<summary>What it was shown (5797 characters)</summary>
+<summary>What it was shown (5843 characters)</summary>
 
 ```text
 # The goal
@@ -2751,7 +2751,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -2801,7 +2801,7 @@ Nothing new on the scroll.
 ## Turn 46: pirate-1
 
 <details>
-<summary>What it was shown (5950 characters)</summary>
+<summary>What it was shown (5996 characters)</summary>
 
 ```text
 # The goal
@@ -2818,7 +2818,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -2870,7 +2870,7 @@ Nothing new on the scroll.
 ## Turn 47: pirate-2
 
 <details>
-<summary>What it was shown (5824 characters)</summary>
+<summary>What it was shown (5870 characters)</summary>
 
 ```text
 # The goal
@@ -2887,7 +2887,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -2937,7 +2937,7 @@ Nothing new on the scroll.
 ## Turn 48: pirate-1
 
 <details>
-<summary>What it was shown (6118 characters)</summary>
+<summary>What it was shown (6164 characters)</summary>
 
 ```text
 # The goal
@@ -2954,7 +2954,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -3007,7 +3007,7 @@ Nothing new on the scroll.
 ## Turn 49: pirate-2
 
 <details>
-<summary>What it was shown (5992 characters)</summary>
+<summary>What it was shown (6038 characters)</summary>
 
 ```text
 # The goal
@@ -3024,7 +3024,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -3076,7 +3076,7 @@ Nothing new on the scroll.
 ## Turn 50: pirate-1
 
 <details>
-<summary>What it was shown (6210 characters)</summary>
+<summary>What it was shown (6256 characters)</summary>
 
 ```text
 # The goal
@@ -3093,7 +3093,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -3147,7 +3147,7 @@ Nothing new on the scroll.
 ## Turn 51: pirate-2
 
 <details>
-<summary>What it was shown (6122 characters)</summary>
+<summary>What it was shown (6168 characters)</summary>
 
 ```text
 # The goal
@@ -3164,7 +3164,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -3217,7 +3217,7 @@ Nothing new on the scroll.
 ## Turn 52: pirate-1
 
 <details>
-<summary>What it was shown (6331 characters)</summary>
+<summary>What it was shown (6377 characters)</summary>
 
 ```text
 # The goal
@@ -3234,7 +3234,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -3289,7 +3289,7 @@ Nothing new on the scroll.
 ## Turn 53: pirate-2
 
 <details>
-<summary>What it was shown (6276 characters)</summary>
+<summary>What it was shown (6322 characters)</summary>
 
 ```text
 # The goal
@@ -3306,7 +3306,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -3359,7 +3359,7 @@ Nothing new on the scroll.
 ## Turn 54: pirate-1
 
 <details>
-<summary>What it was shown (6462 characters)</summary>
+<summary>What it was shown (6508 characters)</summary>
 
 ```text
 # The goal
@@ -3376,7 +3376,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -3432,7 +3432,7 @@ Nothing new on the scroll.
 ## Turn 55: pirate-1
 
 <details>
-<summary>What it was shown (6600 characters)</summary>
+<summary>What it was shown (6646 characters)</summary>
 
 ```text
 # The goal
@@ -3449,7 +3449,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -3506,7 +3506,7 @@ Nothing new on the scroll.
 ## Turn 56: pirate-1
 
 <details>
-<summary>What it was shown (6716 characters)</summary>
+<summary>What it was shown (6762 characters)</summary>
 
 ```text
 # The goal
@@ -3523,7 +3523,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -3580,7 +3580,7 @@ Nothing new on the scroll.
 ## Turn 57: pirate-1
 
 <details>
-<summary>What it was shown (6884 characters)</summary>
+<summary>What it was shown (6930 characters)</summary>
 
 ```text
 # The goal
@@ -3597,7 +3597,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -3656,7 +3656,7 @@ Nothing new on the scroll.
 ## Turn 58: pirate-1
 
 <details>
-<summary>What it was shown (6991 characters)</summary>
+<summary>What it was shown (7037 characters)</summary>
 
 ```text
 # The goal
@@ -3673,7 +3673,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -3732,7 +3732,7 @@ Nothing new on the scroll.
 ## Turn 59: pirate-1
 
 <details>
-<summary>What it was shown (7172 characters)</summary>
+<summary>What it was shown (7218 characters)</summary>
 
 ```text
 # The goal
@@ -3749,7 +3749,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -3810,7 +3810,7 @@ Nothing new on the scroll.
 ## Turn 60: pirate-1
 
 <details>
-<summary>What it was shown (7302 characters)</summary>
+<summary>What it was shown (7348 characters)</summary>
 
 ```text
 # The goal
@@ -3827,7 +3827,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.
@@ -3889,7 +3889,7 @@ Nothing new on the scroll.
 ## Turn 61: pirate-1
 
 <details>
-<summary>What it was shown (7446 characters)</summary>
+<summary>What it was shown (7492 characters)</summary>
 
 ```text
 # The goal
@@ -3906,7 +3906,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 # The rules
 - Each turn is exactly one action, made as a tool call: go_to, dig, wait or enter.
 - Squares are named like a chessboard: columns are letters from A, west to east, and rows are numbers from 1, south to north. A1 is the south-west corner.
-- A square holds one pirate at a time.
+- A square holds one pirate at a time, except the open cave, which holds any number.
 - go_to: walk to a square, one square a turn, by the shortest way: first along your row, east or west, then along your column, north or south. The first step is taken on the turn you choose it. On your turns after that you take the next step without being asked, until you arrive, the next square on your way holds a pirate, or another pirate says an alert. Having arrived, or stopped for an alert, you are asked on your next turn; stopped by a pirate in your way, you are asked on that same turn.
 - wait: stay where you are for the turn.
 - Each time you are asked, you're told which turn of yours and of the game it is, which square you are on, whether it has been dug and whether it is the open cave, which ways out of it are blocked, by a pirate or by the island's edge, how your last go_to ended, every square you have dug with what digging it told you, every reading shared on the scroll so far, and the new lines on the scroll.

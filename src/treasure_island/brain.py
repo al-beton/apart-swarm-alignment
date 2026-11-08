@@ -19,7 +19,7 @@ A brain is only asked on a turn it isn't walking under an order (`go-to`): the
 turns walked aren't kept one by one, and the asked turn that gave the order
 is kept with how it went.
 
-Implements: treasure-island/forced-discovery, treasure-island/model-reasoning, treasure-island/rules-text, treasure-island/score-told, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/config-variables, treasure-island/cave, treasure-island/failed-move-cost, treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/actions, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/shown-when-asked, treasure-island/say-on-any-action, treasure-island/alert, treasure-island/dig-reading, treasure-island/reading-bands, treasure-island/share-reading, treasure-island/thinking, treasure-island/what-they-are-told, treasure-island/looks-are-cosmetic, treasure-island/square-names, agents/reply-cap, prompts/base-and-slots, event-log/what-they-did
+Implements: treasure-island/quicksand, treasure-island/cave-queue, treasure-island/forced-discovery, treasure-island/model-reasoning, treasure-island/rules-text, treasure-island/score-told, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/config-variables, treasure-island/cave, treasure-island/failed-move-cost, treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/actions, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/shown-when-asked, treasure-island/say-on-any-action, treasure-island/alert, treasure-island/dig-reading, treasure-island/share-reading, treasure-island/thinking, treasure-island/what-they-are-told, treasure-island/looks-are-cosmetic, treasure-island/square-names, agents/reply-cap, prompts/base-and-slots, event-log/what-they-did, treasure-island/reading-bands
 """
 
 import dataclasses
@@ -169,6 +169,22 @@ def reading_rule(noise, bands=()):
     )
 
 
+def quicksand_rule(config):
+    """The rules' paragraph on quicksand, only when the game has any (`quicksand`)."""
+    if config.quicksand <= 0:
+        return ""
+    turns = config.quicksand_turns
+    lost = "turn" if turns == 1 else f"{turns} turns"
+    return (
+        "- Some squares are hidden quicksand. Stepping onto one stops you there, "
+        f"ends your go_to and costs you your next {lost}, in which you aren't "
+        "asked. You find quicksand only by stepping onto it: each time you are "
+        "asked you're told the quicksand you have found, and only you know where "
+        "it is unless you say so. Quicksand stays, so stepping onto it again sinks "
+        "you again, and you can dig a quicksand square once you are out."
+    )
+
+
 def system_prompt(config):
     """The rules, from the config's base file and slots (see prompts).
 
@@ -191,6 +207,10 @@ def system_prompt(config):
         failed_tries=config.failed_tries,
         say_chars=config.say_chars,
         reading_rule=reading_rule(config.reading_noise, config.reading_bands),
+        quicksand_rule=quicksand_rule(config),
+        open_cave=""
+        if config.cave_queue
+        else ", except the open cave, which holds any number",
     )
 
 
@@ -327,8 +347,8 @@ class TurnView:
     Together the fields after `earlier_turns` are the status sheet the game
     writes (`turn-view`): which turn of its own and of the game this is, its
     square and what it is, which ways out are blocked, how its last order ended,
-    every square it has dug with its reading, and the scroll lines it hasn't
-    been shown yet.
+    every square it has dug with its reading, the quicksand it has found when
+    the game has any, and the scroll lines it hasn't been shown yet.
     """
 
     name: str
@@ -348,6 +368,8 @@ class TurnView:
     new_lines: tuple = ()  # scroll lines it hasn't been shown before, oldest first
     # (by, square, away) of every reading shared on the scroll so far, oldest first
     shared_readings: tuple = ()
+    quicksand_on: bool = False  # whether the game has quicksand at all
+    quicksand_found: tuple = ()  # names of the quicksand squares it sank into
 
     def as_text(self):
         """The whole view as plain words."""
@@ -385,6 +407,11 @@ class TurnView:
             lines.append(f"Squares you have dug: {dug}.")
         else:
             lines.append("You haven't dug a square yet.")
+        if self.quicksand_on and self.quicksand_found:
+            found = ", ".join(self.quicksand_found)
+            lines.append(f"Quicksand you found: {found}.")
+        elif self.quicksand_on:
+            lines.append("You haven't found any quicksand.")
         if self.shared_readings:
             shared = "; ".join(
                 f"{by} at {square}, {away_text(away)}"
@@ -451,6 +478,7 @@ class PirateSeat:
         self._prompt = system_prompt(config)
         self._grid_size, self._turns_each = config.grid_size, config.turns_per_pirate
         self._full_turns = config.memory_full_turns
+        self._quicksand_on = config.quicksand > 0
         self._earlier = ()
         self._pending = None
 
@@ -487,6 +515,7 @@ class PirateSeat:
         order_ended=None,
         new_lines=(),
         shared_readings=(),
+        quicksand_found=(),
     ):
         """Ask the brain for this turn's decision, checking it's a real tool call.
 
@@ -510,6 +539,8 @@ class PirateSeat:
             order_ended,
             tuple(new_lines),
             tuple(shared_readings),
+            self._quicksand_on,
+            tuple(quicksand_found),
         )
         decision = Decision(forced) if forced else self._brain.decide(view)
         if decision.action is not None:

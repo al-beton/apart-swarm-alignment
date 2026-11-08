@@ -1,17 +1,19 @@
 # Implements: treasure-island/reading-bands, treasure-island/rules-text, treasure-island/loner, treasure-island/sharer, event-log/what-they-did
 """Banded readings: a dig says hot, warm or cold, not a noisy number."""
 
+import json
+
 import pytest
 
 from treasure_island.bands import Band, band_names
 from treasure_island.brain import Decision, system_prompt
 from treasure_island.config import ConfigError, parse_config
-from treasure_island.event_log import record_errors
-from treasure_island.game_loop import Game
+from treasure_island.event_log import log_errors, record_errors
+from treasure_island.game_loop import Game, write_game
 from treasure_island.game_state import GameState, distance
 from treasure_island.judge import transcript
 from treasure_island.squares import square_name
-from treasure_island.strategies import possible
+from treasure_island.strategies import brains_for, possible
 from treasure_island.talk_stats import readings_in
 
 SHARE = {"action": "dig", "share": True}
@@ -174,3 +176,25 @@ def test_reading_bands_the_judge_and_talk_stats_read_a_banded_share():
     assert readings_in("Dug C4: warm (3-5).") == 1
     assert readings_in("C4 cold, E5 hot") == 2
     assert readings_in("It's cold out here.") == 0
+
+
+def test_reading_bands_and_quicksand_play_together_to_the_end(tmp_path):
+    both = parse_config(
+        {
+            "grid_size": 10,
+            "crew_size": 4,
+            "turns_per_pirate": 20,
+            "seed": 5,
+            "reading_noise": 0,
+            "reading_bands": [3, 6],
+            "quicksand": 0.10,
+        }
+    )
+    over = write_game(both, brains_for("sharer", both), tmp_path)
+    assert "score" in over
+    assert log_errors(tmp_path / "events.jsonl") == []
+    records = [json.loads(line) for line in (tmp_path / "events.jsonl").open()]
+    assert "game_over" in records[-1]
+    shared = [r["shared"] for r in records if "shared" in r]
+    assert shared and all("band" in s and "away" not in s for s in shared)
+    assert any("stuck in quicksand" in r.get("happened", "") for r in records)

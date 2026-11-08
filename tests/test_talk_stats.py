@@ -105,3 +105,15 @@ def test_talk_stats_prints_a_row_per_pirate_and_a_total_per_game(tmp_path, capsy
     assert len(rows) == 2 * (6 + 1)
     assert sum("| all |" in row for row in rows) == 2
     assert talk_stats.main([str(tmp_path / "nothing")]) == 1
+
+
+def test_talk_stats_counts_readings_shared_apart_from_readings_said(tmp_path):
+    folder = sharer_game(tmp_path / "sharer")
+    talk = talk_stats.game_talk(folder)
+    records = records_of(folder)
+    for name, counts in talk.items():
+        own = [r for r in records if r["agent"] == name]
+        assert counts.shared == sum("shared" in r for r in own)
+    assert sum(t.shared for t in talk.values()) > 0
+    assert "Readings shared" in talk_stats.COLUMNS
+    assert "Readings said" in talk_stats.COLUMNS

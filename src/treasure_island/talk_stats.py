@@ -3,11 +3,13 @@
 `uv run python -m treasure_island.talk_stats runs/<name> ...` finds every game
 (a folder holding `events.jsonl`) under the folders given and prints one Markdown
 row per pirate: the turns it was asked and the turns it walked under an order,
-its model calls, the lines it said, how many of them were alerts and how many
+its model calls, the lines it said, how many of them were alerts, how many
 readings it said, each square said with its distance counted once, in the forms
 pirates write ("Dug C4: 5 away.", "A10=9", "A10 reads 9", "reading 9 at A10"),
-banded ones too ("Dug C4: warm (3-5).", "C4 cold", `reading-bands`). A
-total row ends each game. It is how we check a live crew keeps talking all game
+banded ones too ("Dug C4: warm (3-5).", "C4 cold", `reading-bands`), and how
+many readings it shared with a dig's `share`, counted apart. A total row ends
+each game. A turn lost in quicksand isn't asked, so it counts as walked. It is
+how we check a live crew keeps talking all game
 rather than going quiet after its first few turns.
 
 Model calls are counted from the records: each asked turn of a pirate with a
@@ -52,6 +54,7 @@ COLUMNS = (
     "Lines said",
     "Alerts",
     "Readings said",
+    "Readings shared",
 )
 
 
@@ -64,6 +67,7 @@ class Talk(NamedTuple):
     said: int = 0
     alerts: int = 0
     readings: int = 0
+    shared: int = 0  # readings a dig put on the scroll with `share`
 
     def __add__(self, other):
         return Talk(*(a + b for a, b in zip(self, other, strict=True)))
@@ -109,6 +113,7 @@ def _turn(record, asks_a_model):
         said=len(lines),
         alerts=sum(1 for a in lines if a.get("alert")),
         readings=sum(readings_in(a["say"]) for a in lines),
+        shared=1 if "shared" in record else 0,
     )
 
 

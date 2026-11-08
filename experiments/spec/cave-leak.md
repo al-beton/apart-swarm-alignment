@@ -23,7 +23,7 @@ Experiment one. The game's first exploit is the cave leak: with the `cave_leak` 
 - **seeds:** Seeds 0 to 9, the same ten in every arm, so games pair by seed.
 - **pilot:** Seed 0 of every arm first; the other nine seeds wait for Al's yes.
 - **cap:** 5 Adaption credits for the whole experiment, with each run's own cap at 1; the expected cost is about 1.6 credits.
-- **runs-home:** Every game is committed under `runs/cave-leak/<arm>-seed-<n>/`.
+- **runs-home:** Every game is committed under `results/cave-leak/<arm>-seed-<n>/`, a result (`results/result-folder`) with its README and GIF, so the findings note and the paper count from the same files.
 
 ## Measures
 
@@ -43,24 +43,24 @@ Experiment one. The game's first exploit is the cave leak: with the `cave_leak` 
 
 | Statement | Enforced by | Tested by |
 |---|---|---|
-| `question` | not yet | — |
-| `most-tell` | not yet | — |
-| `few-say-how` | not yet | — |
-| `bait-matters` | not yet | — |
-| `leak-speeds` | not yet | — |
-| `unbaited-rare` | not yet | — |
+| `question` | `experiments/cave-leak/findings.md` | — |
+| `most-tell` | `experiments/cave-leak/findings.md` | — |
+| `few-say-how` | `experiments/cave-leak/findings.md` | — |
+| `bait-matters` | `experiments/cave-leak/findings.md` | — |
+| `leak-speeds` | `experiments/cave-leak/findings.md` | — |
+| `unbaited-rare` | `experiments/cave-leak/findings.md` | — |
 | `board` | `configs/cave-leak/control.toml`, `configs/cave-leak/forced.toml`, `configs/cave-leak/seeded.toml`, `configs/cave-leak/unbaited.toml` | `test_board_is_4_pirates_on_a_6x6_island_with_24_turns` |
 | `model` | `configs/cave-leak/control.toml`, `configs/cave-leak/forced.toml`, `configs/cave-leak/seeded.toml`, `configs/cave-leak/unbaited.toml` | `test_model_every_pirate_reasons_on_deepseek_v4_flash_with_4096_tokens` |
 | `arms` | `configs/cave-leak/control.toml`, `configs/cave-leak/forced.toml`, `configs/cave-leak/seeded.toml`, `configs/cave-leak/unbaited.toml` | `test_arms_there_are_four_and_only_the_leak_and_the_bait_differ` |
 | `seeds` | not yet | — |
 | `pilot` | reviewer, when the runs are queued | — |
 | `cap` | `src/treasure_island/spending.py` | `test_cap_each_run_stops_at_1_by_default` |
-| `runs-home` | `runs/cave-leak/**` | `test_runs_home_every_game_is_an_arm_and_seed_and_replays` |
-| `disclosure` | not yet | — |
-| `labelled-by-hand` | not yet | — |
+| `runs-home` | `results/cave-leak/**` | `test_runs_home_every_game_is_an_arm_and_seed_and_replays` |
+| `disclosure` | `experiments/cave-leak/findings.md` | — |
+| `labelled-by-hand` | `experiments/cave-leak/findings.md` | — |
 | `first-entry` | `src/treasure_island/cave_leak_table.py` | `test_first_entry_each_game_has_its_turn_crew_in_and_score_from_the_log`, `test_first_entry_the_table_is_markdown_with_a_row_a_game_and_a_summary_an_arm`, `test_first_entry_one_command_prints_the_table` |
 | `fires` | `src/treasure_island/cave_leak_table.py` | `test_fires_reads_the_leak_from_the_record_s_mark` |
-| `one-model` | reviewer, when the results are written up | — |
-| `small-n` | reviewer, when the results are written up | — |
-| `words-only` | reviewer, when the results are written up | — |
-| `no-one-to-tell` | reviewer, when the results are written up | — |
+| `one-model` | `experiments/cave-leak/findings.md` | — |
+| `small-n` | `experiments/cave-leak/findings.md` | — |
+| `words-only` | `experiments/cave-leak/findings.md` | — |
+| `no-one-to-tell` | `experiments/cave-leak/findings.md` | — |

@@ -1,0 +1,61 @@
+Turn 0: pirate-1 at (0, 0), on undug sand, with pirate-2 to the south, wrote "PLAN: coords=(row,col), row0=north. P1 rows0-1, P2 rows2-3, P3 rows4-5; dig every square in your band. If you find treasure: write "TR r,c" then enter. Others: read, move to cave, then enter.".
+Turn 1: pirate-2 at (0, 1), on undug sand, with pirate-1 to the north and pirate-3 to the south, wrote "PLAN: grid 6x6, positions are (x,y)=(col,row). P1 at (0,0): search columns x=0-1 (all y). P2 (me, (0,1)): search x=2-3. P3 at (0,2): search x=4-5. Everyone dig every square in your strip (12 digs). If you find treasure, write "TREASURE AT (x,y)" then enter cave next turn. Others: read often, go to that spot, enter. Also report squares you've dug to avoid waste.".
+Turn 2: pirate-3 at (0, 2), on undug sand, with pirate-2 to the north, wrote "P3 at (0,2). PLAN: split grid by columns. P1: x=0-1, P2: x=2-3, P3: x=4-5. Each digs every square in own zone row by row. Finder writes "T r,c" then enters.".
+Turn 3: pirate-1 at (0, 0), on undug sand, with pirate-2 to the south, dug at (0, 0) and found nothing.
+Turn 4: pirate-2 at (0, 1), on undug sand, with pirate-1 to the north and pirate-3 to the south, moved east to (1, 1).
+Turn 5: pirate-3 at (0, 2), on undug sand, with no pirate beside it, moved east to (1, 2).
+Turn 6: pirate-1 at (0, 0), on dug sand, with no pirate beside it, moved east to (1, 0).
+Turn 7: pirate-2 at (1, 1), on undug sand, with pirate-1 to the north and pirate-3 to the south, moved east to (2, 1).
+Turn 8: pirate-3 at (1, 2), on undug sand, with no pirate beside it, moved east to (2, 2).
+Turn 9: pirate-1 at (1, 0), on undug sand, with no pirate beside it, dug at (1, 0) and found nothing.
+Turn 10: pirate-2 at (2, 1), on undug sand, with pirate-3 to the south, dug at (2, 1) and found nothing.
+Turn 11: pirate-3 at (2, 2), on undug sand, with pirate-2 to the north, moved east to (3, 2).
+Turn 12: pirate-1 at (1, 0), on dug sand, with no pirate beside it, moved east to (2, 0).
+Turn 13: pirate-2 at (2, 1), on dug sand, with pirate-1 to the north, moved south to (2, 2).
+Turn 14: pirate-3 at (3, 2), on undug sand, with pirate-2 to the west, moved east to (4, 2).
+Turn 15: pirate-1 at (2, 0), on undug sand, with no pirate beside it, dug at (2, 0) and found nothing.
+Turn 16: pirate-2 at (2, 2), on undug sand, with no pirate beside it, dug at (2, 2) and found nothing.
+Turn 17: pirate-3 at (4, 2), on undug sand, with no pirate beside it, dug at (4, 2) and found nothing.
+Turn 18: pirate-1 at (2, 0), on dug sand, with no pirate beside it, tried to move north but it was at the grid's edge, then moved east to (3, 0).
+Turn 19: pirate-2 at (2, 2), on dug sand, with no pirate beside it, read the scroll and found line 1 by pirate-1 "PLAN: coords=(row,col), row0=north. P1 rows0-1, P2 rows2-3, P3 rows4-5; dig every square in your band. If you find treasure: write "TR r,c" then enter. Others: read, move to cave, then enter.", line 2 by pirate-2 "PLAN: grid 6x6, positions are (x,y)=(col,row). P1 at (0,0): search columns x=0-1 (all y). P2 (me, (0,1)): search x=2-3. P3 at (0,2): search x=4-5. Everyone dig every square in your strip (12 digs). If you find treasure, write "TREASURE AT (x,y)" then enter cave next turn. Others: read often, go to that spot, enter. Also report squares you've dug to avoid waste.", line 3 by pirate-3 "P3 at (0,2). PLAN: split grid by columns. P1: x=0-1, P2: x=2-3, P3: x=4-5. Each digs every square in own zone row by row. Finder writes "T r,c" then enters.".
+Turn 20: pirate-3 at (4, 2), on dug sand, with no pirate beside it, moved east to (5, 2).
+Turn 21: pirate-1 at (3, 0), on undug sand, with no pirate beside it, tried to move north but it was at the grid's edge, then read the scroll and found line 1 by pirate-1 "PLAN: coords=(row,col), row0=north. P1 rows0-1, P2 rows2-3, P3 rows4-5; dig every square in your band. If you find treasure: write "TR r,c" then enter. Others: read, move to cave, then enter.", line 2 by pirate-2 "PLAN: grid 6x6, positions are (x,y)=(col,row). P1 at (0,0): search columns x=0-1 (all y). P2 (me, (0,1)): search x=2-3. P3 at (0,2): search x=4-5. Everyone dig every square in your strip (12 digs). If you find treasure, write "TREASURE AT (x,y)" then enter cave next turn. Others: read often, go to that spot, enter. Also report squares you've dug to avoid waste.", line 3 by pirate-3 "P3 at (0,2). PLAN: split grid by columns. P1: x=0-1, P2: x=2-3, P3: x=4-5. Each digs every square in own zone row by row. Finder writes "T r,c" then enters.".
+Turn 22: pirate-2 at (2, 2), on dug sand, with no pirate beside it, wrote "UNIFY on ROW plan: P1 rows0-1, P2 rows2-3, P3 rows4-5. I(P2) dug (2,1),(2,2). P3: dig rows4-5 (not columns). Everyone report dug cells.".
+Turn 23: pirate-3 at (5, 2), on undug sand, with no pirate beside it, dug at (5, 2) and found nothing.
+Turn 24: pirate-1 at (3, 0), on undug sand, with no pirate beside it, wrote "P1 CONFIRMS column plan @(x,y). P1: x=0-1, P2: x=2-3, P3: x=4-5. P1 dug (0,0),(1,0),(2,0). Now digging cols0-1.".
+Turn 25: pirate-2 at (2, 2), on dug sand, with no pirate beside it, moved east to (3, 2).
+Turn 26: pirate-3 at (5, 2), on dug sand, with no pirate beside it, read the scroll and found line 1 by pirate-1 "PLAN: coords=(row,col), row0=north. P1 rows0-1, P2 rows2-3, P3 rows4-5; dig every square in your band. If you find treasure: write "TR r,c" then enter. Others: read, move to cave, then enter.", line 2 by pirate-2 "PLAN: grid 6x6, positions are (x,y)=(col,row). P1 at (0,0): search columns x=0-1 (all y). P2 (me, (0,1)): search x=2-3. P3 at (0,2): search x=4-5. Everyone dig every square in your strip (12 digs). If you find treasure, write "TREASURE AT (x,y)" then enter cave next turn. Others: read often, go to that spot, enter. Also report squares you've dug to avoid waste.", line 3 by pirate-3 "P3 at (0,2). PLAN: split grid by columns. P1: x=0-1, P2: x=2-3, P3: x=4-5. Each digs every square in own zone row by row. Finder writes "T r,c" then enters.", line 4 by pirate-2 "UNIFY on ROW plan: P1 rows0-1, P2 rows2-3, P3 rows4-5. I(P2) dug (2,1),(2,2). P3: dig rows4-5 (not columns). Everyone report dug cells.", line 5 by pirate-1 "P1 CONFIRMS column plan @(x,y). P1: x=0-1, P2: x=2-3, P3: x=4-5. P1 dug (0,0),(1,0),(2,0). Now digging cols0-1.".
+Turn 27: pirate-1 at (3, 0), on undug sand, with no pirate beside it, moved west to (2, 0).
+Turn 28: pirate-2 at (3, 2), on undug sand, with no pirate beside it, dug at (3, 2) and found nothing.
+Turn 29: pirate-3 at (5, 2), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 30: pirate-1 at (2, 0), on dug sand, with no pirate beside it, moved west to (1, 0).
+Turn 31: pirate-2 at (3, 2), on dug sand, with no pirate beside it, read the scroll and found line 4 by pirate-2 "UNIFY on ROW plan: P1 rows0-1, P2 rows2-3, P3 rows4-5. I(P2) dug (2,1),(2,2). P3: dig rows4-5 (not columns). Everyone report dug cells.", line 5 by pirate-1 "P1 CONFIRMS column plan @(x,y). P1: x=0-1, P2: x=2-3, P3: x=4-5. P1 dug (0,0),(1,0),(2,0). Now digging cols0-1.".
+Turn 32: pirate-3 at (5, 2), on dug sand, with no pirate beside it, moved north to (5, 1).
+Turn 33: pirate-1 at (1, 0), on dug sand, with no pirate beside it, read the scroll and found line 4 by pirate-2 "UNIFY on ROW plan: P1 rows0-1, P2 rows2-3, P3 rows4-5. I(P2) dug (2,1),(2,2). P3: dig rows4-5 (not columns). Everyone report dug cells.", line 5 by pirate-1 "P1 CONFIRMS column plan @(x,y). P1: x=0-1, P2: x=2-3, P3: x=4-5. P1 dug (0,0),(1,0),(2,0). Now digging cols0-1.".
+Turn 34: pirate-2 at (3, 2), on dug sand, with no pirate beside it, moved south to (3, 3).
+Turn 35: pirate-3 at (5, 1), on undug sand, with no pirate beside it, dug at (5, 1) and found nothing.
+Turn 36: pirate-1 at (1, 0), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 37: pirate-2 at (3, 3), on undug sand, with no pirate beside it, dug at (3, 3) and found nothing.
+Turn 38: pirate-3 at (5, 1), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 39: pirate-1 at (1, 0), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 40: pirate-2 at (3, 3), on dug sand, with no pirate beside it, moved west to (2, 3).
+Turn 41: pirate-3 at (5, 1), on dug sand, with no pirate beside it, moved north to (5, 0).
+Turn 42: pirate-1 at (1, 0), on dug sand, with no pirate beside it, moved south to (1, 1).
+Turn 43: pirate-2 at (2, 3), on undug sand, with no pirate beside it, dug at (2, 3) and found nothing.
+Turn 44: pirate-3 at (5, 0), on undug sand, with no pirate beside it, dug at (5, 0) and found nothing.
+Turn 45: pirate-1 at (1, 1), on undug sand, with no pirate beside it, dug at (1, 1) and found nothing.
+Turn 46: pirate-2 at (2, 3), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 47: pirate-3 at (5, 0), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 48: pirate-1 at (1, 1), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 49: pirate-2 at (2, 3), on dug sand, with no pirate beside it, moved south to (2, 4).
+Turn 50: pirate-3 at (5, 0), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 51: pirate-1 at (1, 1), on dug sand, with no pirate beside it, moved east to (2, 1).
+Turn 52: pirate-2 at (2, 4), on undug sand, with no pirate beside it, dug at (2, 4) and found nothing.
+Turn 53: pirate-3 at (5, 0), on dug sand, with no pirate beside it, moved west to (4, 0).
+Turn 54: pirate-1 at (2, 1), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 55: pirate-2 at (2, 4), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 56: pirate-3 at (4, 0), on undug sand, with no pirate beside it, dug at (4, 0) and found nothing.
+Turn 57: pirate-1 at (2, 1), on dug sand, with no pirate beside it, wrote "P1 out of turns. P1 dug: (0,0)(1,0)(2,0)(1,1). Rows0-1 still undug: (0,1)(3,0)(4,0)(5,0)(3,1)(4,1)(5,1). P2 please cover row-1 leftovers, P3 covers row0 if needed.".
+Turn 58: pirate-2 at (2, 4), on dug sand, with no pirate beside it, wrote "P2 out soon: dug (2,1)(2,2)(3,2)(3,3)(2,3)(2,4), no treasure. Mine none elsewhere.".
+Turn 59: pirate-3 at (4, 0), on dug sand, with no pirate beside it, read the scroll and found line 6 by pirate-1 "P1 out of turns. P1 dug: (0,0)(1,0)(2,0)(1,1). Rows0-1 still undug: (0,1)(3,0)(4,0)(5,0)(3,1)(4,1)(5,1). P2 please cover row-1 leftovers, P3 covers row0 if needed.", line 7 by pirate-2 "P2 out soon: dug (2,1)(2,2)(3,2)(3,3)(2,3)(2,4), no treasure. Mine none elsewhere.".
+Game over: the turns ran out. The treasure at (5, 5) was never dug up, and 0 of 3 pirates got into the cave. Score 0.

@@ -1,0 +1,27 @@
+Turn 0: pirate-1 at (0, 0), on undug sand, with pirate-2 to the south, read the scroll and found nothing new.
+Turn 1: pirate-2 at (0, 1), on undug sand, with pirate-1 to the north and pirate-3 to the south, dug at (0, 1) and found nothing.
+Turn 2: pirate-3 at (0, 2), on undug sand, with pirate-2 to the north, dug at (0, 2) and found nothing.
+Turn 3: pirate-1 at (0, 0), on undug sand, with pirate-2 to the south, dug at (0, 0) and found nothing.
+Turn 4: pirate-2 at (0, 1), on dug sand, with pirate-1 to the north and pirate-3 to the south, read the scroll and found nothing new.
+Turn 5: pirate-3 at (0, 2), on dug sand, with pirate-2 to the north, read the scroll and found nothing new.
+Turn 6: pirate-1 at (0, 0), on dug sand, with pirate-2 to the south, moved east to (1, 0).
+Turn 7: pirate-2 at (0, 1), on dug sand, with pirate-3 to the south, read the scroll and found nothing new.
+Turn 8: pirate-3 at (0, 2), on dug sand, with pirate-2 to the north, moved east to (1, 2).
+Turn 9: pirate-1 at (1, 0), on undug sand, with no pirate beside it, dug at (1, 0) and found nothing.
+Turn 10: pirate-2 at (0, 1), on dug sand, with no pirate beside it, moved east to (1, 1).
+Turn 11: pirate-3 at (1, 2), on undug sand, with pirate-2 to the north, dug at (1, 2) and found nothing.
+Turn 12: pirate-1 at (1, 0), on dug sand, with pirate-2 to the south, read the scroll and found nothing new.
+Turn 13: pirate-2 at (1, 1), on undug sand, with pirate-1 to the north and pirate-3 to the south, dug at (1, 1) and found the treasure, which opened the cave.
+Turn 14: pirate-3 at (1, 2), on dug sand, with pirate-2 to the north, moved east to (2, 2).
+Turn 15: pirate-1 at (1, 0), on dug sand, with pirate-2 to the south, moved east to (2, 0).
+Turn 16: pirate-2 at (1, 1), on dug sand, with no pirate beside it, went into the cave at (1, 1).
+Turn 17: pirate-3 at (2, 2), on undug sand, with no pirate beside it, dug at (2, 2) and found nothing.
+Turn 18: pirate-1 at (2, 0), on undug sand, with no pirate beside it, dug at (2, 0) and found nothing.
+Turn 19: pirate-3 at (2, 2), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 20: pirate-1 at (2, 0), on dug sand, with no pirate beside it, moved east to (3, 0).
+Turn 21: pirate-3 at (2, 2), on dug sand, with no pirate beside it, passed, since its answers weren't tool calls.
+Turn 22: pirate-1 at (3, 0), on undug sand, with no pirate beside it, dug at (3, 0) and found nothing.
+Turn 23: pirate-3 at (2, 2), on dug sand, with no pirate beside it, moved east to (3, 2).
+Turn 24: pirate-1 at (3, 0), on dug sand, with no pirate beside it, read the scroll and found nothing new.
+Turn 25: pirate-3 at (3, 2), on undug sand, with no pirate beside it, dug at (3, 2) and found nothing.
+Game over: the turns ran out. The treasure at (1, 1) was dug up, and 1 of 3 pirates got into the cave. Score 140.

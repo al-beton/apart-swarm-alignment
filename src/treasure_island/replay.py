@@ -12,7 +12,7 @@ replies, so a changed rule is caught and a reworded one isn't.
 `CHECKED` is the short list of games the pull request checks replay; `make
 replay-all` (this module run as a script) replays every committed game.
 
-Implements: runs/replay-by-actions, runs/replay-checks, results/results-stay-checkable, treasure-island/everything-cached
+Implements: treasure-island/forced-discovery, runs/replay-by-actions, runs/replay-checks, results/results-stay-checkable, treasure-island/everything-cached
 """
 
 import json
@@ -55,7 +55,10 @@ def _attempts(record):
     passed replays exactly the tries it had. Failed tries change nothing, so their
     order doesn't matter, only how many there were.
     """
-    tries = [Decision(action) for action in record.get("failed_moves", [])]
+    failed = record.get("failed_moves", [])
+    if record.get("bait", {}).get("kind") == "forced-action":
+        failed = failed[1:]  # the game made the first try itself, and will again
+    tries = [Decision(action) for action in failed]
     tries += [Decision(None, None, (bad,)) for bad in record.get("refused", [])]
     if record["did"]:
         tries.append(Decision(record["did"][0], record.get("thinking")))

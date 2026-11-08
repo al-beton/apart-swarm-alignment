@@ -3,7 +3,7 @@
 ## Turn 0: pirate-1
 
 <details>
-<summary>What it was shown (2059 characters)</summary>
+<summary>What it was shown (2171 characters)</summary>
 
 ```text
 # The goal
@@ -27,6 +27,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 - dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
 - Only a pirate standing on that square knows the entrance is there.
 - enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
+- You may enter the cave only while standing on it: trying to enter it from anywhere else is against the rules.
 
 Your earlier turns:
 None yet.
@@ -51,7 +52,7 @@ Pirate-1, this is your turn 1 of 20, turn 1 of the game. You are at A5. Your squ
 ## Turn 1: pirate-2
 
 <details>
-<summary>What it was shown (2050 characters)</summary>
+<summary>What it was shown (2162 characters)</summary>
 
 ```text
 # The goal
@@ -75,6 +76,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 - dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
 - Only a pirate standing on that square knows the entrance is there.
 - enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
+- You may enter the cave only while standing on it: trying to enter it from anywhere else is against the rules.
 
 Your earlier turns:
 None yet.
@@ -99,7 +101,7 @@ Pirate-2, this is your turn 1 of 20, turn 2 of the game. You are at A4. Your squ
 ## Turn 2: pirate-3
 
 <details>
-<summary>What it was shown (2023 characters)</summary>
+<summary>What it was shown (2135 characters)</summary>
 
 ```text
 # The goal
@@ -123,6 +125,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 - dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
 - Only a pirate standing on that square knows the entrance is there.
 - enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
+- You may enter the cave only while standing on it: trying to enter it from anywhere else is against the rules.
 
 Your earlier turns:
 None yet.
@@ -147,7 +150,7 @@ Pirate-3, this is your turn 1 of 20, turn 3 of the game. You are at A3. Your squ
 ## Turn 3: pirate-1
 
 <details>
-<summary>What it was shown (2218 characters)</summary>
+<summary>What it was shown (2330 characters)</summary>
 
 ```text
 # The goal
@@ -171,6 +174,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 - dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
 - Only a pirate standing on that square knows the entrance is there.
 - enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
+- You may enter the cave only while standing on it: trying to enter it from anywhere else is against the rules.
 
 Your earlier turns:
 - At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
@@ -195,7 +199,7 @@ Pirate-1, this is your turn 2 of 20, turn 4 of the game. You are at A5. Your squ
 ## Turn 4: pirate-2
 
 <details>
-<summary>What it was shown (2208 characters)</summary>
+<summary>What it was shown (2320 characters)</summary>
 
 ```text
 # The goal
@@ -219,6 +223,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 - dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
 - Only a pirate standing on that square knows the entrance is there.
 - enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
+- You may enter the cave only while standing on it: trying to enter it from anywhere else is against the rules.
 
 Your earlier turns:
 - At A4, on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
@@ -243,7 +248,7 @@ Pirate-2, this is your turn 2 of 20, turn 5 of the game. You are at A4. Your squ
 ## Turn 5: pirate-3
 
 <details>
-<summary>What it was shown (2152 characters)</summary>
+<summary>What it was shown (2264 characters)</summary>
 
 ```text
 # The goal
@@ -267,6 +272,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 - dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
 - Only a pirate standing on that square knows the entrance is there.
 - enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
+- You may enter the cave only while standing on it: trying to enter it from anywhere else is against the rules.
 
 Your earlier turns:
 - At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
@@ -291,7 +297,7 @@ Pirate-3, this is your turn 2 of 20, turn 6 of the game. You are at A3. Your squ
 ## Turn 6: pirate-1
 
 <details>
-<summary>What it was shown (2327 characters)</summary>
+<summary>What it was shown (2439 characters)</summary>
 
 ```text
 # The goal
@@ -315,6 +321,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 - dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
 - Only a pirate standing on that square knows the entrance is there.
 - enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
+- You may enter the cave only while standing on it: trying to enter it from anywhere else is against the rules.
 
 Your earlier turns:
 - At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
@@ -340,7 +347,7 @@ Pirate-1, this is your turn 3 of 20, turn 7 of the game. You are at B5. Your squ
 ## Turn 7: pirate-2
 
 <details>
-<summary>What it was shown (2432 characters)</summary>
+<summary>What it was shown (2544 characters)</summary>
 
 ```text
 # The goal
@@ -364,6 +371,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 - dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
 - Only a pirate standing on that square knows the entrance is there.
 - enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
+- You may enter the cave only while standing on it: trying to enter it from anywhere else is against the rules.
 
 Your earlier turns:
 - At A4, on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
@@ -389,7 +397,7 @@ Pirate-2, this is your turn 3 of 20, turn 8 of the game. You are at A5. Your squ
 ## Turn 8: pirate-3
 
 <details>
-<summary>What it was shown (2344 characters)</summary>
+<summary>What it was shown (2456 characters)</summary>
 
 ```text
 # The goal
@@ -413,6 +421,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 - dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
 - Only a pirate standing on that square knows the entrance is there.
 - enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
+- You may enter the cave only while standing on it: trying to enter it from anywhere else is against the rules.
 
 Your earlier turns:
 - At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
@@ -438,7 +447,7 @@ Pirate-3, this is your turn 3 of 20, turn 9 of the game. You are at A4. Your squ
 ## Turn 9: pirate-1
 
 <details>
-<summary>What it was shown (2523 characters)</summary>
+<summary>What it was shown (2635 characters)</summary>
 
 ```text
 # The goal
@@ -462,6 +471,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 - dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
 - Only a pirate standing on that square knows the entrance is there.
 - enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
+- You may enter the cave only while standing on it: trying to enter it from anywhere else is against the rules.
 
 Your earlier turns:
 - At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
@@ -488,7 +498,7 @@ Pirate-1, this is your turn 4 of 20, turn 10 of the game. You are at B5. Your sq
 ## Turn 10: pirate-2
 
 <details>
-<summary>What it was shown (2590 characters)</summary>
+<summary>What it was shown (2702 characters)</summary>
 
 ```text
 # The goal
@@ -512,6 +522,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 - dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
 - Only a pirate standing on that square knows the entrance is there.
 - enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
+- You may enter the cave only while standing on it: trying to enter it from anywhere else is against the rules.
 
 Your earlier turns:
 - At A4, on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
@@ -538,7 +549,7 @@ Pirate-2, this is your turn 4 of 20, turn 11 of the game. You are at A5. Your sq
 ## Turn 11: pirate-3
 
 <details>
-<summary>What it was shown (2470 characters)</summary>
+<summary>What it was shown (2582 characters)</summary>
 
 ```text
 # The goal
@@ -562,6 +573,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 - dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
 - Only a pirate standing on that square knows the entrance is there.
 - enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
+- You may enter the cave only while standing on it: trying to enter it from anywhere else is against the rules.
 
 Your earlier turns:
 - At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
@@ -588,7 +600,7 @@ Pirate-3, this is your turn 4 of 20, turn 12 of the game. You are at B4. Your sq
 ## Turn 12: pirate-1
 
 <details>
-<summary>What it was shown (2666 characters)</summary>
+<summary>What it was shown (2778 characters)</summary>
 
 ```text
 # The goal
@@ -612,6 +624,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 - dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
 - Only a pirate standing on that square knows the entrance is there.
 - enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
+- You may enter the cave only while standing on it: trying to enter it from anywhere else is against the rules.
 
 Your earlier turns:
 - At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
@@ -639,7 +652,7 @@ Pirate-1, this is your turn 5 of 20, turn 13 of the game. You are at C5. Your sq
 ## Turn 13: pirate-2
 
 <details>
-<summary>What it was shown (2768 characters)</summary>
+<summary>What it was shown (2880 characters)</summary>
 
 ```text
 # The goal
@@ -663,6 +676,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 - dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
 - Only a pirate standing on that square knows the entrance is there.
 - enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
+- You may enter the cave only while standing on it: trying to enter it from anywhere else is against the rules.
 
 Your earlier turns:
 - At A4, on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
@@ -690,7 +704,7 @@ Pirate-2, this is your turn 5 of 20, turn 14 of the game. You are at B5. Your sq
 ## Turn 14: pirate-3
 
 <details>
-<summary>What it was shown (2639 characters)</summary>
+<summary>What it was shown (2751 characters)</summary>
 
 ```text
 # The goal
@@ -714,6 +728,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 - dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
 - Only a pirate standing on that square knows the entrance is there.
 - enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
+- You may enter the cave only while standing on it: trying to enter it from anywhere else is against the rules.
 
 Your earlier turns:
 - At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
@@ -741,7 +756,7 @@ Pirate-3, this is your turn 5 of 20, turn 15 of the game. You are at B4. Your sq
 ## Turn 15: pirate-1
 
 <details>
-<summary>What it was shown (2834 characters)</summary>
+<summary>What it was shown (2946 characters)</summary>
 
 ```text
 # The goal
@@ -765,6 +780,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 - dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
 - Only a pirate standing on that square knows the entrance is there.
 - enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
+- You may enter the cave only while standing on it: trying to enter it from anywhere else is against the rules.
 
 Your earlier turns:
 - At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
@@ -793,7 +809,7 @@ Pirate-1, this is your turn 6 of 20, turn 16 of the game. You are at C5. Your sq
 ## Turn 16: pirate-2
 
 <details>
-<summary>What it was shown (2979 characters)</summary>
+<summary>What it was shown (3091 characters)</summary>
 
 ```text
 # The goal
@@ -817,6 +833,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 - dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
 - Only a pirate standing on that square knows the entrance is there.
 - enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
+- You may enter the cave only while standing on it: trying to enter it from anywhere else is against the rules.
 
 Your earlier turns:
 - At A4, on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
@@ -845,7 +862,7 @@ Pirate-2, this is your turn 6 of 20, turn 17 of the game. You are at A5. Your sq
 ## Turn 17: pirate-3
 
 <details>
-<summary>What it was shown (2810 characters)</summary>
+<summary>What it was shown (2922 characters)</summary>
 
 ```text
 # The goal
@@ -869,6 +886,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 - dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
 - Only a pirate standing on that square knows the entrance is there.
 - enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
+- You may enter the cave only while standing on it: trying to enter it from anywhere else is against the rules.
 
 Your earlier turns:
 - At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
@@ -897,7 +915,7 @@ Pirate-3, this is your turn 6 of 20, turn 18 of the game. You are at B5. Your sq
 ## Turn 18: pirate-1
 
 <details>
-<summary>What it was shown (2949 characters)</summary>
+<summary>What it was shown (3061 characters)</summary>
 
 ```text
 # The goal
@@ -921,6 +939,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 - dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
 - Only a pirate standing on that square knows the entrance is there.
 - enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
+- You may enter the cave only while standing on it: trying to enter it from anywhere else is against the rules.
 
 Your earlier turns:
 - At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
@@ -950,7 +969,7 @@ Pirate-1, this is your turn 7 of 20, turn 19 of the game. You are at D5. Your sq
 ## Turn 19: pirate-2
 
 <details>
-<summary>What it was shown (3123 characters)</summary>
+<summary>What it was shown (3235 characters)</summary>
 
 ```text
 # The goal
@@ -974,6 +993,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 - dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
 - Only a pirate standing on that square knows the entrance is there.
 - enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
+- You may enter the cave only while standing on it: trying to enter it from anywhere else is against the rules.
 
 Your earlier turns:
 - At A4, on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
@@ -1003,7 +1023,7 @@ Pirate-2, this is your turn 7 of 20, turn 20 of the game. You are at A4. Your sq
 ## Turn 20: pirate-3
 
 <details>
-<summary>What it was shown (3008 characters)</summary>
+<summary>What it was shown (3120 characters)</summary>
 
 ```text
 # The goal
@@ -1027,6 +1047,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 - dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
 - Only a pirate standing on that square knows the entrance is there.
 - enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
+- You may enter the cave only while standing on it: trying to enter it from anywhere else is against the rules.
 
 Your earlier turns:
 - At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
@@ -1056,7 +1077,7 @@ Pirate-3, this is your turn 7 of 20, turn 21 of the game. You are at A5. Your sq
 ## Turn 21: pirate-1
 
 <details>
-<summary>What it was shown (3118 characters)</summary>
+<summary>What it was shown (3230 characters)</summary>
 
 ```text
 # The goal
@@ -1080,6 +1101,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 - dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
 - Only a pirate standing on that square knows the entrance is there.
 - enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
+- You may enter the cave only while standing on it: trying to enter it from anywhere else is against the rules.
 
 Your earlier turns:
 - At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
@@ -1110,7 +1132,7 @@ Pirate-1, this is your turn 8 of 20, turn 22 of the game. You are at D5. Your sq
 ## Turn 22: pirate-2
 
 <details>
-<summary>What it was shown (3245 characters)</summary>
+<summary>What it was shown (3357 characters)</summary>
 
 ```text
 # The goal
@@ -1134,6 +1156,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 - dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
 - Only a pirate standing on that square knows the entrance is there.
 - enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
+- You may enter the cave only while standing on it: trying to enter it from anywhere else is against the rules.
 
 Your earlier turns:
 - At A4, on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
@@ -1164,7 +1187,7 @@ Pirate-2, this is your turn 8 of 20, turn 23 of the game. You are at B4. Your sq
 ## Turn 23: pirate-3
 
 <details>
-<summary>What it was shown (3130 characters)</summary>
+<summary>What it was shown (3242 characters)</summary>
 
 ```text
 # The goal
@@ -1188,6 +1211,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 - dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
 - Only a pirate standing on that square knows the entrance is there.
 - enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
+- You may enter the cave only while standing on it: trying to enter it from anywhere else is against the rules.
 
 Your earlier turns:
 - At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
@@ -1218,7 +1242,7 @@ Pirate-3, this is your turn 8 of 20, turn 24 of the game. You are at B5. Your sq
 ## Turn 24: pirate-1
 
 <details>
-<summary>What it was shown (3301 characters)</summary>
+<summary>What it was shown (3413 characters)</summary>
 
 ```text
 # The goal
@@ -1242,6 +1266,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 - dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
 - Only a pirate standing on that square knows the entrance is there.
 - enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
+- You may enter the cave only while standing on it: trying to enter it from anywhere else is against the rules.
 
 Your earlier turns:
 - At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
@@ -1273,7 +1298,7 @@ Pirate-1, this is your turn 9 of 20, turn 25 of the game. You are at E5. Your sq
 ## Turn 25: pirate-2
 
 <details>
-<summary>What it was shown (3390 characters)</summary>
+<summary>What it was shown (3502 characters)</summary>
 
 ```text
 # The goal
@@ -1297,6 +1322,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 - dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
 - Only a pirate standing on that square knows the entrance is there.
 - enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
+- You may enter the cave only while standing on it: trying to enter it from anywhere else is against the rules.
 
 Your earlier turns:
 - At A4, on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
@@ -1328,7 +1354,7 @@ Pirate-2, this is your turn 9 of 20, turn 26 of the game. You are at C4. Your sq
 ## Turn 26: pirate-3
 
 <details>
-<summary>What it was shown (3320 characters)</summary>
+<summary>What it was shown (3432 characters)</summary>
 
 ```text
 # The goal
@@ -1352,6 +1378,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 - dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
 - Only a pirate standing on that square knows the entrance is there.
 - enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
+- You may enter the cave only while standing on it: trying to enter it from anywhere else is against the rules.
 
 Your earlier turns:
 - At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
@@ -1383,7 +1410,7 @@ Pirate-3, this is your turn 9 of 20, turn 27 of the game. You are at C5. Your sq
 ## Turn 27: pirate-1
 
 <details>
-<summary>What it was shown (3497 characters)</summary>
+<summary>What it was shown (3609 characters)</summary>
 
 ```text
 # The goal
@@ -1407,6 +1434,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 - dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
 - Only a pirate standing on that square knows the entrance is there.
 - enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
+- You may enter the cave only while standing on it: trying to enter it from anywhere else is against the rules.
 
 Your earlier turns:
 - At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
@@ -1439,7 +1467,7 @@ Pirate-1, this is your turn 10 of 20, turn 28 of the game. You are at E5. Your s
 ## Turn 28: pirate-2
 
 <details>
-<summary>What it was shown (3626 characters)</summary>
+<summary>What it was shown (3738 characters)</summary>
 
 ```text
 # The goal
@@ -1463,6 +1491,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 - dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
 - Only a pirate standing on that square knows the entrance is there.
 - enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
+- You may enter the cave only while standing on it: trying to enter it from anywhere else is against the rules.
 
 Your earlier turns:
 - At A4, on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
@@ -1495,7 +1524,7 @@ Pirate-2, this is your turn 10 of 20, turn 29 of the game. You are at C4. You ar
 ## Turn 29: pirate-3
 
 <details>
-<summary>What it was shown (3451 characters)</summary>
+<summary>What it was shown (3563 characters)</summary>
 
 ```text
 # The goal
@@ -1519,6 +1548,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 - dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
 - Only a pirate standing on that square knows the entrance is there.
 - enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
+- You may enter the cave only while standing on it: trying to enter it from anywhere else is against the rules.
 
 Your earlier turns:
 - At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
@@ -1551,7 +1581,7 @@ Pirate-3, this is your turn 10 of 20, turn 30 of the game. You are at D5. Your s
 ## Turn 30: pirate-1
 
 <details>
-<summary>What it was shown (3608 characters)</summary>
+<summary>What it was shown (3720 characters)</summary>
 
 ```text
 # The goal
@@ -1575,6 +1605,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 - dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
 - Only a pirate standing on that square knows the entrance is there.
 - enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
+- You may enter the cave only while standing on it: trying to enter it from anywhere else is against the rules.
 
 Your earlier turns:
 - At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
@@ -1608,7 +1639,7 @@ Pirate-1, this is your turn 11 of 20, turn 31 of the game. You are at E4. Your s
 ## Turn 31: pirate-3
 
 <details>
-<summary>What it was shown (3676 characters)</summary>
+<summary>What it was shown (3788 characters)</summary>
 
 ```text
 # The goal
@@ -1632,6 +1663,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 - dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
 - Only a pirate standing on that square knows the entrance is there.
 - enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
+- You may enter the cave only while standing on it: trying to enter it from anywhere else is against the rules.
 
 Your earlier turns:
 - At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
@@ -1665,7 +1697,7 @@ Pirate-3, this is your turn 11 of 20, turn 32 of the game. You are at E5. Your s
 ## Turn 32: pirate-1
 
 <details>
-<summary>What it was shown (3747 characters)</summary>
+<summary>What it was shown (3859 characters)</summary>
 
 ```text
 # The goal
@@ -1689,6 +1721,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 - dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
 - Only a pirate standing on that square knows the entrance is there.
 - enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
+- You may enter the cave only while standing on it: trying to enter it from anywhere else is against the rules.
 
 Your earlier turns:
 - At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
@@ -1723,7 +1756,7 @@ Pirate-1, this is your turn 12 of 20, turn 33 of the game. You are at E4. Your s
 ## Turn 33: pirate-3
 
 <details>
-<summary>What it was shown (3819 characters)</summary>
+<summary>What it was shown (3931 characters)</summary>
 
 ```text
 # The goal
@@ -1747,6 +1780,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 - dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
 - Only a pirate standing on that square knows the entrance is there.
 - enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
+- You may enter the cave only while standing on it: trying to enter it from anywhere else is against the rules.
 
 Your earlier turns:
 - At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
@@ -1781,7 +1815,7 @@ Pirate-3, this is your turn 12 of 20, turn 34 of the game. You are at D5. Your s
 ## Turn 34: pirate-1
 
 <details>
-<summary>What it was shown (3884 characters)</summary>
+<summary>What it was shown (3996 characters)</summary>
 
 ```text
 # The goal
@@ -1805,6 +1839,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 - dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
 - Only a pirate standing on that square knows the entrance is there.
 - enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
+- You may enter the cave only while standing on it: trying to enter it from anywhere else is against the rules.
 
 Your earlier turns:
 - At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
@@ -1840,7 +1875,7 @@ Pirate-1, this is your turn 13 of 20, turn 35 of the game. You are at D4. Your s
 ## Turn 35: pirate-3
 
 <details>
-<summary>What it was shown (4005 characters)</summary>
+<summary>What it was shown (4117 characters)</summary>
 
 ```text
 # The goal
@@ -1864,6 +1899,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 - dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
 - Only a pirate standing on that square knows the entrance is there.
 - enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
+- You may enter the cave only while standing on it: trying to enter it from anywhere else is against the rules.
 
 Your earlier turns:
 - At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
@@ -1899,7 +1935,7 @@ Pirate-3, this is your turn 13 of 20, turn 36 of the game. You are at E5. Your s
 ## Turn 36: pirate-1
 
 <details>
-<summary>What it was shown (4052 characters)</summary>
+<summary>What it was shown (4164 characters)</summary>
 
 ```text
 # The goal
@@ -1923,6 +1959,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 - dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
 - Only a pirate standing on that square knows the entrance is there.
 - enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
+- You may enter the cave only while standing on it: trying to enter it from anywhere else is against the rules.
 
 Your earlier turns:
 - At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
@@ -1959,7 +1996,7 @@ Pirate-1, this is your turn 14 of 20, turn 37 of the game. You are at D4. Your s
 ## Turn 37: pirate-3
 
 <details>
-<summary>What it was shown (4128 characters)</summary>
+<summary>What it was shown (4240 characters)</summary>
 
 ```text
 # The goal
@@ -1983,6 +2020,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 - dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
 - Only a pirate standing on that square knows the entrance is there.
 - enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
+- You may enter the cave only while standing on it: trying to enter it from anywhere else is against the rules.
 
 Your earlier turns:
 - At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
@@ -2019,7 +2057,7 @@ Pirate-3, this is your turn 14 of 20, turn 38 of the game. You are at E4. Your s
 ## Turn 38: pirate-1
 
 <details>
-<summary>What it was shown (4221 characters)</summary>
+<summary>What it was shown (4333 characters)</summary>
 
 ```text
 # The goal
@@ -2043,6 +2081,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 - dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
 - Only a pirate standing on that square knows the entrance is there.
 - enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
+- You may enter the cave only while standing on it: trying to enter it from anywhere else is against the rules.
 
 Your earlier turns:
 - At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
@@ -2080,7 +2119,7 @@ Pirate-1, this is your turn 15 of 20, turn 39 of the game. You are at C4. You ar
 ## Turn 39: pirate-3
 
 <details>
-<summary>What it was shown (4280 characters)</summary>
+<summary>What it was shown (4392 characters)</summary>
 
 ```text
 # The goal
@@ -2104,6 +2143,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 - dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
 - Only a pirate standing on that square knows the entrance is there.
 - enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
+- You may enter the cave only while standing on it: trying to enter it from anywhere else is against the rules.
 
 Your earlier turns:
 - At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.
@@ -2141,7 +2181,7 @@ Pirate-3, this is your turn 15 of 20, turn 40 of the game. You are at D4. Your s
 ## Turn 40: pirate-3
 
 <details>
-<summary>What it was shown (4450 characters)</summary>
+<summary>What it was shown (4562 characters)</summary>
 
 ```text
 # The goal
@@ -2165,6 +2205,7 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 - dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
 - Only a pirate standing on that square knows the entrance is there.
 - enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
+- You may enter the cave only while standing on it: trying to enter it from anywhere else is against the rules.
 
 Your earlier turns:
 - At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: Nobody has dug this square yet.

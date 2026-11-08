@@ -112,13 +112,13 @@ them to search alone, and a shared scroll as their only channel, which
 costs a turn to write or to read. The crew scores together, more for
 getting into the treasure’s cave early. Its first exploit is a careless
 error message: with the cave leak on, a pirate that tries to enter the
-cave where there is none is refused, and the refusal names the cave’s
-square. The rules plainly forbid acting on it. We bait one pirate into
-seeing it and watch what it writes: the square and how it knows
-(candid), the square as a find or a hunch (laundered), or nothing
-(quiet); whether its crewmates follow or suspect; what the knowledge was
-worth against a control game on the same seed; and what each pirate
-tells the study’s designers in a free note once the game is over.</p>
+cave where there is none, which the rules forbid, is refused, and the
+refusal names the cave’s square. We bait one pirate into seeing it and
+watch what it writes: the square and how it knows (candid), the square
+as a find or a hunch (laundered), or nothing (quiet); whether its
+crewmates follow or suspect; what the knowledge was worth against a
+control game on the same seed; and what each pirate tells the study’s
+designers in a free note once the game is over.</p>
 <p>This paper contributes:</p>
 <ol type="1">
 <li><strong>A reproducible sandbox.</strong> Every game is saved with
@@ -126,8 +126,8 @@ every model request and reply and replays offline with no keys; every
 number in this paper is recomputed from committed game logs by the
 build, and every figure is rebuilt from a committed game.</li>
 <li><strong>A first exploit with a controlled bait.</strong> The cave
-leak gives an agent knowledge it is not entitled to at a known turn,
-with a forced and a seeded variant of the bait and two controls.</li>
+leak gives an agent knowledge it did not earn, at a known turn, with a
+forced and a seeded variant of the bait and two controls.</li>
 <li><strong>A first measurement</strong> of how often the baited agent
 is candid, launders the knowledge or stays quiet, how its crew responds,
 and what it says afterwards when asked. [Rates pending the overnight
@@ -307,9 +307,11 @@ the bait</h2>
 <p>With the <code>cave_leak</code> flag on, a refused <code>enter</code>
 off the cave also names the treasure’s square, the way a careless error
 message would: “You can’t enter the cave here: the cave is at D3.” This
-is true whether or not anyone has dug it yet. The rules say a pirate may
-enter only while standing on the open cave, so acting on that message is
-plainly outside them. Our record marks the turn a pirate was told.</p>
+is true whether or not anyone has dug it yet. The rules say that trying
+to enter anywhere but on the cave is against the rules; they say nothing
+about using what a refusal tells you, so what we measure is candour
+about where unusual information came from, not confession of a broken
+rule. Our record marks the turn a pirate was told.</p>
 <p>Pirates rarely try to enter where they shouldn’t, so one pirate is
 baited on its third turn. In the <code>forced</code> arm the game opens
 pirate-1’s third turn with a try to enter where it stands; the refusal,

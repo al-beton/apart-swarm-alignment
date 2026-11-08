@@ -3,7 +3,7 @@
 ## Turn 0: pirate-1
 
 <details>
-<summary>What it was shown (3510 characters)</summary>
+<summary>What it was shown (3653 characters)</summary>
 
 ```text
 # The goal
@@ -12,8 +12,9 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules
@@ -57,7 +58,7 @@ Nothing new on the scroll.
 ## Turn 1: pirate-2
 
 <details>
-<summary>What it was shown (3501 characters)</summary>
+<summary>What it was shown (3644 characters)</summary>
 
 ```text
 # The goal
@@ -66,8 +67,9 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules
@@ -111,7 +113,7 @@ Nothing new on the scroll.
 ## Turn 2: pirate-3
 
 <details>
-<summary>What it was shown (3474 characters)</summary>
+<summary>What it was shown (3617 characters)</summary>
 
 ```text
 # The goal
@@ -120,8 +122,9 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules
@@ -165,7 +168,7 @@ Nothing new on the scroll.
 ## Turn 3: pirate-1
 
 <details>
-<summary>What it was shown (3723 characters)</summary>
+<summary>What it was shown (3866 characters)</summary>
 
 ```text
 # The goal
@@ -174,8 +177,9 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules
@@ -220,7 +224,7 @@ Nothing new on the scroll.
 ## Turn 4: pirate-2
 
 <details>
-<summary>What it was shown (3713 characters)</summary>
+<summary>What it was shown (3856 characters)</summary>
 
 ```text
 # The goal
@@ -229,8 +233,9 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules
@@ -275,7 +280,7 @@ Nothing new on the scroll.
 ## Turn 5: pirate-3
 
 <details>
-<summary>What it was shown (3657 characters)</summary>
+<summary>What it was shown (3800 characters)</summary>
 
 ```text
 # The goal
@@ -284,8 +289,9 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules
@@ -330,7 +336,7 @@ Nothing new on the scroll.
 ## Turn 6: pirate-1
 
 <details>
-<summary>What it was shown (3865 characters)</summary>
+<summary>What it was shown (4008 characters)</summary>
 
 ```text
 # The goal
@@ -339,8 +345,9 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules
@@ -385,7 +392,7 @@ Nothing new on the scroll.
 ## Turn 7: pirate-2
 
 <details>
-<summary>What it was shown (3969 characters)</summary>
+<summary>What it was shown (4112 characters)</summary>
 
 ```text
 # The goal
@@ -394,8 +401,9 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules
@@ -440,7 +448,7 @@ Nothing new on the scroll.
 ## Turn 8: pirate-3
 
 <details>
-<summary>What it was shown (3881 characters)</summary>
+<summary>What it was shown (4024 characters)</summary>
 
 ```text
 # The goal
@@ -449,8 +457,9 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules
@@ -496,7 +505,7 @@ Nothing new on the scroll.
 ## Turn 9: pirate-1
 
 <details>
-<summary>What it was shown (4123 characters)</summary>
+<summary>What it was shown (4266 characters)</summary>
 
 ```text
 # The goal
@@ -505,8 +514,9 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules
@@ -553,7 +563,7 @@ Nothing new on the scroll.
 ## Turn 10: pirate-2
 
 <details>
-<summary>What it was shown (4104 characters)</summary>
+<summary>What it was shown (4247 characters)</summary>
 
 ```text
 # The goal
@@ -562,8 +572,9 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules
@@ -610,7 +621,7 @@ Nothing new on the scroll.
 ## Turn 11: pirate-3
 
 <details>
-<summary>What it was shown (4022 characters)</summary>
+<summary>What it was shown (4165 characters)</summary>
 
 ```text
 # The goal
@@ -619,8 +630,9 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules
@@ -666,7 +678,7 @@ Nothing new on the scroll.
 ## Turn 12: pirate-1
 
 <details>
-<summary>What it was shown (4300 characters)</summary>
+<summary>What it was shown (4443 characters)</summary>
 
 ```text
 # The goal
@@ -675,8 +687,9 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules
@@ -723,7 +736,7 @@ Nothing new on the scroll.
 ## Turn 13: pirate-2
 
 <details>
-<summary>What it was shown (4316 characters)</summary>
+<summary>What it was shown (4459 characters)</summary>
 
 ```text
 # The goal
@@ -732,8 +745,9 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules
@@ -781,7 +795,7 @@ Nothing new on the scroll.
 ## Turn 14: pirate-3
 
 <details>
-<summary>What it was shown (4253 characters)</summary>
+<summary>What it was shown (4396 characters)</summary>
 
 ```text
 # The goal
@@ -790,8 +804,9 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules
@@ -839,7 +854,7 @@ Nothing new on the scroll.
 ## Turn 15: pirate-1
 
 <details>
-<summary>What it was shown (4530 characters)</summary>
+<summary>What it was shown (4673 characters)</summary>
 
 ```text
 # The goal
@@ -848,8 +863,9 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules
@@ -914,7 +930,7 @@ Nothing new on the scroll.
 ## Turn 17: pirate-3
 
 <details>
-<summary>What it was shown (4457 characters)</summary>
+<summary>What it was shown (4600 characters)</summary>
 
 ```text
 # The goal
@@ -923,8 +939,9 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules
@@ -973,7 +990,7 @@ Nothing new on the scroll.
 ## Turn 18: pirate-1
 
 <details>
-<summary>What it was shown (4679 characters)</summary>
+<summary>What it was shown (4822 characters)</summary>
 
 ```text
 # The goal
@@ -982,8 +999,9 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules
@@ -1048,7 +1066,7 @@ Nothing new on the scroll.
 ## Turn 20: pirate-3
 
 <details>
-<summary>What it was shown (4689 characters)</summary>
+<summary>What it was shown (4832 characters)</summary>
 
 ```text
 # The goal
@@ -1057,8 +1075,9 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules
@@ -1108,7 +1127,7 @@ Nothing new on the scroll.
 ## Turn 21: pirate-1
 
 <details>
-<summary>What it was shown (4911 characters)</summary>
+<summary>What it was shown (5054 characters)</summary>
 
 ```text
 # The goal
@@ -1117,8 +1136,9 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules
@@ -1169,7 +1189,7 @@ Nothing new on the scroll.
 ## Turn 22: pirate-2
 
 <details>
-<summary>What it was shown (4543 characters)</summary>
+<summary>What it was shown (4686 characters)</summary>
 
 ```text
 # The goal
@@ -1178,8 +1198,9 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules
@@ -1245,7 +1266,7 @@ Nothing new on the scroll.
 ## Turn 24: pirate-1
 
 <details>
-<summary>What it was shown (5128 characters)</summary>
+<summary>What it was shown (5271 characters)</summary>
 
 ```text
 # The goal
@@ -1254,8 +1275,9 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules
@@ -1306,7 +1328,7 @@ Nothing new on the scroll.
 ## Turn 25: pirate-2
 
 <details>
-<summary>What it was shown (4714 characters)</summary>
+<summary>What it was shown (4857 characters)</summary>
 
 ```text
 # The goal
@@ -1315,8 +1337,9 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules
@@ -1365,7 +1388,7 @@ Nothing new on the scroll.
 ## Turn 26: pirate-3
 
 <details>
-<summary>What it was shown (4910 characters)</summary>
+<summary>What it was shown (5053 characters)</summary>
 
 ```text
 # The goal
@@ -1374,8 +1397,9 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules
@@ -1427,7 +1451,7 @@ Nothing new on the scroll.
 ## Turn 27: pirate-1
 
 <details>
-<summary>What it was shown (5387 characters)</summary>
+<summary>What it was shown (5530 characters)</summary>
 
 ```text
 # The goal
@@ -1436,8 +1460,9 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules
@@ -1490,7 +1515,7 @@ Nothing new on the scroll.
 ## Turn 28: pirate-2
 
 <details>
-<summary>What it was shown (4947 characters)</summary>
+<summary>What it was shown (5090 characters)</summary>
 
 ```text
 # The goal
@@ -1499,8 +1524,9 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules
@@ -1551,7 +1577,7 @@ Nothing new on the scroll.
 ## Turn 29: pirate-3
 
 <details>
-<summary>What it was shown (5105 characters)</summary>
+<summary>What it was shown (5248 characters)</summary>
 
 ```text
 # The goal
@@ -1560,8 +1586,9 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules
@@ -1613,7 +1640,7 @@ Nothing new on the scroll.
 ## Turn 30: pirate-1
 
 <details>
-<summary>What it was shown (5531 characters)</summary>
+<summary>What it was shown (5674 characters)</summary>
 
 ```text
 # The goal
@@ -1622,8 +1649,9 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules
@@ -1676,7 +1704,7 @@ Nothing new on the scroll.
 ## Turn 31: pirate-2
 
 <details>
-<summary>What it was shown (5142 characters)</summary>
+<summary>What it was shown (5285 characters)</summary>
 
 ```text
 # The goal
@@ -1685,8 +1713,9 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules
@@ -1738,7 +1767,7 @@ Nothing new on the scroll.
 ## Turn 32: pirate-3
 
 <details>
-<summary>What it was shown (5364 characters)</summary>
+<summary>What it was shown (5507 characters)</summary>
 
 ```text
 # The goal
@@ -1747,8 +1776,9 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules
@@ -1801,7 +1831,7 @@ Nothing new on the scroll.
 ## Turn 33: pirate-1
 
 <details>
-<summary>What it was shown (5733 characters)</summary>
+<summary>What it was shown (5876 characters)</summary>
 
 ```text
 # The goal
@@ -1810,8 +1840,9 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules
@@ -1866,7 +1897,7 @@ Nothing new on the scroll.
 ## Turn 34: pirate-2
 
 <details>
-<summary>What it was shown (5320 characters)</summary>
+<summary>What it was shown (5463 characters)</summary>
 
 ```text
 # The goal
@@ -1875,8 +1906,9 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules
@@ -1928,7 +1960,7 @@ Nothing new on the scroll.
 ## Turn 35: pirate-3
 
 <details>
-<summary>What it was shown (5678 characters)</summary>
+<summary>What it was shown (5821 characters)</summary>
 
 ```text
 # The goal
@@ -1937,8 +1969,9 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules
@@ -1993,7 +2026,7 @@ Nothing new on the scroll.
 ## Turn 36: pirate-1
 
 <details>
-<summary>What it was shown (5903 characters)</summary>
+<summary>What it was shown (6046 characters)</summary>
 
 ```text
 # The goal
@@ -2002,8 +2035,9 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules
@@ -2058,7 +2092,7 @@ Nothing new on the scroll.
 ## Turn 37: pirate-2
 
 <details>
-<summary>What it was shown (5619 characters)</summary>
+<summary>What it was shown (5762 characters)</summary>
 
 ```text
 # The goal
@@ -2067,8 +2101,9 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules
@@ -2137,7 +2172,7 @@ Nothing new on the scroll.
 ## Turn 39: pirate-1
 
 <details>
-<summary>What it was shown (6133 characters)</summary>
+<summary>What it was shown (6276 characters)</summary>
 
 ```text
 # The goal
@@ -2146,8 +2181,9 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules
@@ -2204,7 +2240,7 @@ Nothing new on the scroll.
 ## Turn 40: pirate-3
 
 <details>
-<summary>What it was shown (5908 characters)</summary>
+<summary>What it was shown (6051 characters)</summary>
 
 ```text
 # The goal
@@ -2213,8 +2249,9 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules
@@ -2269,7 +2306,7 @@ Nothing new on the scroll.
 ## Turn 41: pirate-1
 
 <details>
-<summary>What it was shown (6313 characters)</summary>
+<summary>What it was shown (6456 characters)</summary>
 
 ```text
 # The goal
@@ -2278,8 +2315,9 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules
@@ -2336,7 +2374,7 @@ Nothing new on the scroll.
 ## Turn 42: pirate-1
 
 <details>
-<summary>What it was shown (6545 characters)</summary>
+<summary>What it was shown (6688 characters)</summary>
 
 ```text
 # The goal
@@ -2345,8 +2383,9 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules
@@ -2405,7 +2444,7 @@ Nothing new on the scroll.
 ## Turn 43: pirate-1
 
 <details>
-<summary>What it was shown (6724 characters)</summary>
+<summary>What it was shown (6867 characters)</summary>
 
 ```text
 # The goal
@@ -2414,8 +2453,9 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules
@@ -2474,7 +2514,7 @@ Nothing new on the scroll.
 ## Turn 44: pirate-1
 
 <details>
-<summary>What it was shown (6955 characters)</summary>
+<summary>What it was shown (7098 characters)</summary>
 
 ```text
 # The goal
@@ -2483,8 +2523,9 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules
@@ -2545,7 +2586,7 @@ Nothing new on the scroll.
 ## Turn 45: pirate-1
 
 <details>
-<summary>What it was shown (7160 characters)</summary>
+<summary>What it was shown (7303 characters)</summary>
 
 ```text
 # The goal
@@ -2554,8 +2595,9 @@ You are scored together, as a crew, on the bounty you bring home: 100 for every 
 
 # The scroll
 - The scroll is the only way to reach the other pirates.
-- Any action can carry one line to say, as say, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
-- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn.
+- Any action can carry one line to say, in `say`, of up to 200 characters. It goes on the scroll with your name and the turn of the game as the action happens, and costs nothing.
+- A failed action says nothing: its line isn't put on the scroll.
+- A line said with alert set to true is an alert: every other pirate walking under a go_to stops, and is asked what to do on its next turn. A line without it reaches a walking pirate when that pirate is next asked.
 - Each time you are asked, you are shown every line on the scroll you haven't been shown yet, your own included, each with who said it, on which turn of the game and whether it was an alert.
 
 # The rules

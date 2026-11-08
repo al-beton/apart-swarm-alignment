@@ -1,11 +1,15 @@
 # Implements: results/examples-folder, results/examples-listed, results/examples-small, results/examples-stay-true
 """The committed example games, which always show what the code does today."""
 
+import base64
+import io
 import json
+import re
 import shutil
 from pathlib import Path
 
 import pytest
+from PIL import Image
 
 from treasure_island import examples, replay, saved_game, viewer
 
@@ -77,6 +81,26 @@ def test_examples_stay_true_a_stale_game_page_is_caught(tmp_path):
     shutil.copytree(FOLDER / "stripes", copy)
     (copy / "game.html").write_text("not this one")
     assert "game.html" in examples.problem(copy)
+
+
+def test_examples_stay_true_a_page_differing_only_in_png_bytes_is_the_same(tmp_path):
+    # Another machine's zlib packs the same frames into different PNG bytes.
+    copy = tmp_path / "stripes"
+    shutil.copytree(FOLDER / "stripes", copy)
+    page = (copy / "game.html").read_text()
+
+    def repack(match):
+        image = Image.open(io.BytesIO(base64.b64decode(match.group(1))))
+        out = io.BytesIO()
+        image.save(out, format="PNG", compress_level=1)
+        return f'"frame": "{base64.b64encode(out.getvalue()).decode()}"'
+
+    repacked = re.sub(r'"frame": "([A-Za-z0-9+/=]+)"', repack, page)
+    assert repacked != page
+    (copy / "game.html").write_text(repacked)
+    assert examples.problem(copy) is None
+    examples.draw(copy)
+    assert (copy / "game.html").read_text() == repacked  # left alone, not rewritten
 
 
 def test_examples_stay_true_the_llm_game_is_redrawn_not_replayed(tmp_path, monkeypatch):

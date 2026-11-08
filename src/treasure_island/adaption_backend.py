@@ -11,8 +11,9 @@ words, so the brain can say why and ask once more, and one the token limit cut o
 A reply costs its token usage at the model's rate in `RATES`, in credits per
 million tokens, from Adaption's price list (its model listing has no prices). A
 model with no rate is refused rather than run unpriced, and a reply that gives no
-token usage stops the run, since the spending cap couldn't count it. Default, Al to confirm:
-a credit counts as a dollar, so the manifest's `cost_usd` totals credits.
+token usage stops the run, since the spending cap couldn't count it. The manifest
+totals credits as `cost_credits`, apart from dollars; the cap counts a credit as a
+dollar (default, Al to confirm).
 
 `check_key` lists the hosted models the key can use, which asks no model anything
 and spends nothing. `backends` makes one for each run, with the key from `ADAPTION_API_KEY`, and the

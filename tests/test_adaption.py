@@ -197,7 +197,8 @@ def test_adaption_cost_is_totalled_in_the_manifest(tmp_path, monkeypatch, key):
     replies = (folder / "replies.jsonl").read_text().splitlines()
     assert len(replies) == 2  # one pirate, two turns, every reply a tool call
     one = (2_000 * 0.044 + 100 * 0.133) / 1_000_000
-    assert manifest["cost_usd"] == pytest.approx(one * len(replies))
+    assert manifest["cost_credits"] == pytest.approx(one * len(replies))
+    assert manifest["cost_usd"] == 0  # credits aren't dollars
     assert "test-key-not-real" not in "".join(
         file.read_text() for file in folder.iterdir()
     )

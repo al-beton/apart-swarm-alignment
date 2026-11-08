@@ -49,23 +49,25 @@ def stale(folder):
     return different
 
 
-_FRAME = re.compile(r'"frame": "([A-Za-z0-9+/=]+)"')
+# Every PNG a page embeds, as base64 in its data: frames, steps and faces alike.
+_PNG = re.compile(r'"(iVBORw0KGgo[A-Za-z0-9+/=]+)"')
 
 
 def _pixels(match):
     image = Image.open(io.BytesIO(base64.b64decode(match.group(1))))
     digest = hashlib.sha256(image.mode.encode() + repr(image.size).encode())
     digest.update(image.tobytes())
-    return f'"frame": "{digest.hexdigest()}"'
+    return f'"{digest.hexdigest()}"'
 
 
 def same_page(one, other):
     """Whether two game pages show the same thing, frame pixels and all.
 
-    A page embeds each turn's frame as a PNG, and another machine's zlib packs the
-    same pixels into different bytes, so frames compare by their pixels.
+    A page embeds PNGs (each turn's frame, its steps, each pirate's face), and
+    another machine's zlib packs the same pixels into different bytes, so every
+    embedded PNG compares by its pixels.
     """
-    return one == other or _FRAME.sub(_pixels, one) == _FRAME.sub(_pixels, other)
+    return one == other or _PNG.sub(_pixels, one) == _PNG.sub(_pixels, other)
 
 
 def draw(folder):

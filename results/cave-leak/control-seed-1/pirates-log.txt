@@ -1,0 +1,3 @@
+1 pirate-1: P1 starting A6. I'll dig row6 A6->B6->C6->D6->E6->F6, then row5. Please take other rows.
+2 pirate-3: p3 at C4. Searching row 4: B4,C4,D4,E4,F4 then down rows. Please claim rows so all covered. p1 row6->5; p4 row3?; p2 rows1-2?
+3 pirate-2: P2: I finished row5 A5-F5 all dug, no cave. I'll take rows1-2: going F5->F2 then sweep row2 west, then row1. Don't re-dig row5.

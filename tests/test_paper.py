@@ -1,7 +1,8 @@
-# Implements: paper/one-source, paper/built-two-ways, paper/sections-bind-to-evidence, paper/sprint-rules-checked, paper/preview-on-every-pr, paper/paper-plan
+# Implements: paper/one-source, paper/built-two-ways, paper/sections-bind-to-evidence, paper/sprint-rules-checked, paper/preview-on-every-pr, paper/paper-plan, paper/figures-carry-their-lines
 """The paper is one Markdown source whose results sections can only report
 committed evidence, built two ways and previewed on every pull request."""
 
+import json
 import re
 import shutil
 import subprocess
@@ -11,7 +12,8 @@ import pytest
 import yaml
 from PIL import Image
 
-from paper import check, stills
+from paper import check, lines, stills
+from treasure_island import figures
 
 ROOT = Path(__file__).resolve().parents[1]
 SKELETON = ROOT / "paper/paper.md"
@@ -213,3 +215,44 @@ def test_paper_plan_names_each_results_section():
         "## What each results section rests on",
     ):
         assert heading in plan
+
+
+def test_figures_carry_their_lines_each_shown_figure_s_lines_come_from_the_registry(
+    tmp_path,
+):
+    written = lines.write_lines(SKELETON, tmp_path)
+    shown = {
+        Path(image).stem
+        for image in check.images(SKELETON)
+        if image.startswith("figures/")
+    }
+    found = json.loads(written.read_text())["figure_lines"]
+    assert set(found) == shown and shown
+    for name in shown:
+        assert found[name] == [f"`{line}`" for line in figures.lines(name)]
+
+
+@pytest.mark.skipif(shutil.which("pandoc") is None, reason="pandoc isn't installed")
+def test_figures_carry_their_lines_the_built_html_holds_both_lines_under_each_figure(
+    tmp_path,
+):
+    build = tmp_path / "build"
+    subprocess.run(
+        ["make", "-s", "paper-html", f"PAPER_BUILD={build}"], cwd=ROOT, check=True
+    )
+    html = (build / "paper.html").read_text()
+    for image in check.images(SKELETON):
+        if not image.startswith("figures/"):
+            continue
+        rebuild, rerun = figures.lines(Path(image).stem)
+        caption = re.search(
+            rf'<img src="{re.escape(image)}".*?</figcaption>', html, re.DOTALL
+        )
+        assert caption, image
+        assert f"<code>{rebuild}</code>" in caption.group(0)
+        assert f"<code>{rerun}</code>" in caption.group(0)
+    # Written once, by the build: no section copies a figure's lines by hand.
+    for section in (ROOT / "paper/sections").rglob("*.md"):
+        for name in figures.FIGURES:
+            for line in figures.lines(name):
+                assert line not in section.read_text(), (section, line)

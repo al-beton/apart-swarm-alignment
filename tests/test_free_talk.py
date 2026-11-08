@@ -19,7 +19,7 @@ from treasure_island.llm import TOOL_DEFINITIONS, LLMPirate, tools_for
 BOARD = {"grid_size": 6, "crew_size": 3, "turns_per_pirate": 3, "seed": 0}
 TALK = {**BOARD, "free_talk": True}
 DIG = {"action": "dig"}
-WALK = {"action": "move", "direction": "north", "message": "heading north"}
+WALK = {"action": "move", "direction": "east", "message": "heading east"}
 SHOUT = {"action": "dig", "alert": True}
 
 
@@ -87,9 +87,9 @@ def test_free_talk_a_message_on_a_walk_lands_on_the_scroll_with_no_extra_turn():
     assert walk["did"] == [WALK]
     assert walk["outcome"]["position"] != walk["saw"]["position"]  # it walked
     assert records[1]["agent"] == "pirate-2"  # and its turn was over, no more
-    assert game.log.lines()[0] == {"line": 1, "text": "heading north", "by": "pirate-1"}
-    assert "and said 'heading north' on the scroll" in walk["story"]
-    assert "heading north" in walk["result"]
+    assert game.log.lines()[0] == {"line": 1, "text": "heading east", "by": "pirate-1"}
+    assert 'and said "heading east" on the scroll' in walk["story"]
+    assert "heading east" in walk["result"]
     mine = [record for record in records if record["agent"] == "pirate-1"]
     assert len(mine) == 3  # the message cost none of its three turns
 
@@ -130,7 +130,7 @@ def test_free_talk_a_game_with_messages_replays(tmp_path):
     config = parse_config(TALK)
     save_config(config, tmp_path / "config.json")
     write_game(config, [Steps(WALK, SHOUT), Steps(), Steps()], tmp_path)
-    assert (tmp_path / "pirates-log.txt").read_text() == "1 pirate-1: heading north\n"
+    assert (tmp_path / "pirates-log.txt").read_text() == "1 pirate-1: heading east\n"
     assert replay.problem(tmp_path) is None
 
 

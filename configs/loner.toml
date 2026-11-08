@@ -6,3 +6,4 @@ crew_size = 3
 turns_per_pirate = 20
 seed = 7
 brain = "loner"
+reading_noise = 0  # exact readings, so a small game is easy to follow

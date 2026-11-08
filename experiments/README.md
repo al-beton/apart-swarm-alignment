@@ -1,7 +1,7 @@
 <!-- Implements: specs-and-docs/folder-guides -->
 # Experiments
 
-What we set out to find with the game, written down before each experiment runs. `spec/` has one file per experiment, each statement a question or hypothesis with a name. Findings notes live here too.
+What we set out to find with the game, written down before each experiment runs. `spec/` has one file per experiment, each statement a question or hypothesis with a name. Findings notes live here too. `calibration.md` is the table `make calibrate` printed when it picked the default board.
 
 ## Tabling experiment one
 

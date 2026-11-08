@@ -451,7 +451,7 @@ def test_rules_text_the_prompt_says_the_rules_in_edu_s_order():
 
 
 def test_rules_text_says_how_far_off_a_reading_can_be():
-    assert "Readings are exact." in system_prompt(parse_config({}))
+    assert "Readings are exact." in system_prompt(parse_config({"reading_noise": 0}))
     noisy = system_prompt(parse_config({"reading_noise": 2}))
     assert "Readings are exact." not in noisy
     assert "A reading can be off by up to 2 either way, but is never below 1" in noisy

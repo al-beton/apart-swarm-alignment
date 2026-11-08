@@ -31,7 +31,13 @@ def test_calibrated_board_one_command_prints_a_table_per_board_and_crew():
 
 def test_calibrated_board_the_pin_is_the_own_turn_said_readings_leave_one_square():
     config = parse_config(
-        {"grid_size": 5, "crew_size": 3, "turns_per_pirate": 20, "seed": 7}
+        {
+            "grid_size": 5,
+            "crew_size": 3,
+            "turns_per_pirate": 20,
+            "seed": 7,
+            "reading_noise": 0,
+        }
     )
     records = list(Game(config, brains_for("sharer", config)).records())
     # Three readings said on each pirate's second turn leave only C4.

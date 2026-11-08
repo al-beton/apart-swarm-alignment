@@ -1,9 +1,14 @@
 # Implements: treasure-island/failed-move-cost, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition
 """A game config sets every lever, has the spec's defaults and rejects bad values."""
 
+import re
+from pathlib import Path
+
 import pytest
 
 from treasure_island.config import ConfigError, load_config, parse_config
+
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def write_config(tmp_path, text):
@@ -46,9 +51,9 @@ def test_config_variables_a_seed_plays_the_same_config_again():
     assert parse_config({"seed": 3}) != parse_config({"seed": 4})
 
 
-def test_grid_and_crew_defaults_are_a_10x10_grid_and_6_pirates():
+def test_grid_and_crew_defaults_are_a_12x12_grid_and_6_pirates():
     config = parse_config({})
-    assert config.grid_size == 10
+    assert config.grid_size == 12
     assert config.crew_size == 6
     assert len(config.pirates) == 6
 
@@ -69,6 +74,19 @@ def test_grid_and_crew_a_crew_bigger_than_the_grid_is_rejected():
 
 def test_scarce_turns_defaults_to_30_turns_per_pirate():
     assert parse_config({}).turns_per_pirate == 30
+
+
+def test_scarce_turns_the_default_board_is_the_one_calibration_picked():
+    kept = (ROOT / "experiments/calibration.md").read_text()
+    grid, crew, turns, noise = map(
+        int,
+        re.search(
+            r"The pick: (\d+)x\d+, (\d+) pirates, (\d+) turns, noise (\d+)\.", kept
+        ).groups(),
+    )
+    config = parse_config({})
+    assert (config.grid_size, config.crew_size) == (grid, crew)
+    assert (config.turns_per_pirate, config.reading_noise) == (turns, noise)
 
 
 @pytest.mark.parametrize("size", [1, 5, 20, 37])

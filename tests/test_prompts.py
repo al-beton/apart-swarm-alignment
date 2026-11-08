@@ -1,4 +1,4 @@
-# Implements: prompts/base-and-slots, prompts/base-file, prompts/slots, prompts/shipped-variants, prompts/unknown-slot, prompts/prompt-recorded
+# Implements: prompts/base-and-slots, prompts/base-file, prompts/slots, prompts/shipped-variants, prompts/unknown-slot, prompts/system-override, prompts/prompt-recorded
 """The system prompt is a fixed base file plus the slots an experiment arm names."""
 
 import hashlib
@@ -129,11 +129,64 @@ def test_prompt_recorded_in_the_run_s_config_and_manifest(tmp_path):
             "disclosure": "none",
             "identity": "none",
         },
+        "system": system_prompt(config),  # the exact words the pirates were told
     }
-    assert parse_config(saved) == config
+    assert system_prompt(parse_config(saved)) == system_prompt(config)
     manifest = json.loads((folder / "manifest.json").read_text())
     base = (ROOT / "prompts/base.md").read_bytes()
     assert manifest["prompt"] == {
         "base_sha256": hashlib.sha256(base).hexdigest(),
         "system_prompt": system_prompt(config),
     }
+
+
+def test_system_override_text_replaces_the_base_and_slots():
+    told = prompt_for(system="Dig well, crew.", slots={"framing": "competition"})
+    assert told == "Dig well, crew."
+
+
+def test_system_override_a_file_path_is_read(tmp_path):
+    path = tmp_path / "mine.md"
+    path.write_text("You are a pirate.\nFind the cave.\n")
+    assert prompt_for(system=str(path)) == "You are a pirate.\nFind the cave.\n"
+
+
+def test_system_override_is_told_word_for_word():
+    words = "A crew of {crew_size}, nothing filled in.\nA second line."
+    config = parse_config({**GAME, "cave_leak": True, "prompt": {"system": words}})
+    assert system_prompt(config) == words  # no numbers filled, no flag's rule added
+
+
+@pytest.mark.parametrize("system", [3, ["a list"]])
+def test_system_override_must_be_text(system):
+    with pytest.raises(ConfigError, match="prompt.system"):
+        parse_config({**GAME, "prompt": {"system": system}})
+
+
+def test_prompt_recorded_running_the_saved_config_again_tells_the_same_words(
+    tmp_path, monkeypatch
+):
+    base = tmp_path / "base.md"
+    base.write_text("A crew of {crew_size} on {grid_size} squares.\n")
+    config = parse_config(
+        {
+            **GAME,
+            "brain": "silent",
+            "turns_per_pirate": 2,
+            "prompt": {"base": str(base)},
+        }
+    )
+    for name in ("first", "again"):
+        (tmp_path / name).mkdir()
+    first = saved_game.write_saved(config, tmp_path / "first")
+    base.write_text("The base changed since.\n")
+    saved = json.loads((first / "config.json").read_text())
+    again = saved_game.write_saved(parse_config(saved), tmp_path / "again")
+    told = [
+        json.loads(line)["saw"]["prompt"]
+        for line in (again / "events.jsonl").read_text().splitlines()
+    ]
+    assert all(prompt.startswith("A crew of 4 on 9 squares.") for prompt in told)
+    assert (again / "events.jsonl").read_bytes() == (
+        first / "events.jsonl"
+    ).read_bytes()

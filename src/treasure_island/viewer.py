@@ -33,7 +33,7 @@ with no note, and the scroll as parchment; on the right one entry for every turn
 `planned_turns` lists, each played turn's steps drawn ahead so stepping onto it
 plays them.
 
-Implements: treasure-island/end-report, viewer/planned-turns, viewer/game-page-steps, viewer/scroll-written-live, viewer/cave-drawn, treasure-island/cave, viewer/turn-marked, viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/walks-between-squares, treasure-island/pokemon-style, viewer/slideshow-file, viewer/game-page, viewer/scroll-steps, viewer/score-counter, viewer/transcript, viewer/board-framed, viewer/dig-steps, viewer/enter-steps, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process, treasure-island/square-names, treasure-island/forced-discovery
+Implements: treasure-island/asked-why, treasure-island/old-scroll, treasure-island/end-report, viewer/planned-turns, viewer/game-page-steps, viewer/scroll-written-live, viewer/cave-drawn, treasure-island/cave, viewer/turn-marked, viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/walks-between-squares, treasure-island/pokemon-style, viewer/slideshow-file, viewer/game-page, viewer/scroll-steps, viewer/score-counter, viewer/transcript, viewer/board-framed, viewer/dig-steps, viewer/enter-steps, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process, treasure-island/square-names, treasure-island/forced-discovery
 """
 
 import base64
@@ -58,6 +58,7 @@ from assets.ui import panel, scroll_note
 from treasure_island.config import DEFAULTS, parse_config
 from treasure_island.game_state import GameState
 from treasure_island.looks import sprite_values
+from treasure_island.old_scroll import FORCED_READ
 from treasure_island.pirates_log import one_line
 
 ASSETS = Path(assets.__file__).parent
@@ -237,6 +238,8 @@ def _log_so_far(records, turn):
             if action["action"] == "write":
                 note = f"{record['agent']}: {one_line(action['text'])}"
                 lines.append((len(lines) + 1, note))
+        if asked := record.get("asked"):  # a crewmate's question (`asked-why`)
+            lines.append((len(lines) + 1, f"{asked['by']}: {asked['text']}"))
     return lines
 
 
@@ -902,6 +905,9 @@ def _scroll_writes(records):
                 # As the scroll keeps it, on one line; `did` keeps it as written.
                 text = one_line(action["text"])
                 wrote.append({"line": line, "by": record["agent"], "text": text})
+        if asked := record.get("asked"):  # a crewmate's question (`asked-why`)
+            line += 1
+            wrote.append({"line": line, "by": asked["by"], "text": asked["text"]})
         writes.append(wrote)
     return writes
 
@@ -1085,6 +1091,9 @@ def _bait_text(bait):
     """The bait a turn carries, said plainly (`forced-discovery`)."""
     if bait["kind"] == "forced-action":
         return f"The game made {bait['pirate']} try to enter here."
+    if bait["kind"] == "forced-read":
+        lines = f"lines {FORCED_READ['start']} to {FORCED_READ['end']}"
+        return f"The game made {bait['pirate']} read {lines} of the scroll."
     return f"{bait['pirate']}'s thought was seeded with: {bait['seeded']}"
 
 

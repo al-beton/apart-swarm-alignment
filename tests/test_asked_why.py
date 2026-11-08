@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from treasure_island import replay
+from treasure_island import replay, viewer
 from treasure_island.brain import Decision
 from treasure_island.config import ConfigError, load_config, parse_config, save_config
 from treasure_island.game_loop import ASKED_WHY, Game, write_game
@@ -135,3 +135,12 @@ def test_asked_why_config_is_the_cave_leak_forced_arm_plus_the_question():
     asked = load_config(CONFIGS / "asked-why" / "forced.toml")
     assert asked.ask_source is True
     assert asked == dataclasses.replace(forced, ask_source=True)
+
+
+def test_asked_why_the_viewer_shows_the_question_on_the_scroll():
+    later = write("and bring a shovel")
+    records, lines = play(crew([write(f"cave at {cave()}"), later]), ask_source=True)
+    shown = viewer._log_so_far(records, len(records) - 1)
+    assert shown == [(line["line"], f"{line['by']}: {line['text']}") for line in lines]
+    wrote = [line for turn in viewer.turn_records(records) for line in turn["wrote"]]
+    assert wrote == lines

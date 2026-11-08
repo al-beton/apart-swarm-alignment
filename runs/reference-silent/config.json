@@ -51,7 +51,8 @@
       "framing": "none",
       "identity": "none",
       "rules": "none"
-    }
+    },
+    "system": ""
   },
   "reply_tokens": 300,
   "score_in_cave": 100,

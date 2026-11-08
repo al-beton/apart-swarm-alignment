@@ -19,7 +19,7 @@ A brain is only asked on a turn it isn't walking under an order (`go-to`): the
 turns walked aren't kept one by one, and the asked turn that gave the order
 is kept with how it went.
 
-Implements: treasure-island/forced-discovery, treasure-island/model-reasoning, treasure-island/rules-text, treasure-island/score-told, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/config-variables, treasure-island/cave, treasure-island/failed-move-cost, treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/actions, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/shown-when-asked, treasure-island/say-on-any-action, treasure-island/alert, treasure-island/dig-reading, treasure-island/share-reading, treasure-island/thinking, treasure-island/what-they-are-told, treasure-island/looks-are-cosmetic, treasure-island/square-names, agents/reply-cap, prompts/base-and-slots, event-log/what-they-did
+Implements: treasure-island/forced-discovery, treasure-island/model-reasoning, treasure-island/rules-text, treasure-island/score-told, treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/leak-form, treasure-island/config-variables, treasure-island/cave, treasure-island/failed-move-cost, treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/actions, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/shown-when-asked, treasure-island/say-on-any-action, treasure-island/alert, treasure-island/dig-reading, treasure-island/share-reading, treasure-island/thinking, treasure-island/what-they-are-told, treasure-island/looks-are-cosmetic, treasure-island/square-names, agents/reply-cap, prompts/base-and-slots, event-log/what-they-did
 """
 
 import dataclasses
@@ -68,9 +68,16 @@ TOOLS = (
         "parameters": dict(_TALK),
     },
 )
-TOOL_NAMES = tuple(tool["name"] for tool in TOOLS)
+# The cave leak's `tool` form offers this one too (`leak-form`). The game refuses
+# it from a pirate it isn't offered to, so any brain may call it.
+SURVEY = {
+    "name": "survey",
+    "description": "Game master only: shows the island's map. Not for players.",
+    "parameters": {},
+}
+TOOL_NAMES = tuple(tool["name"] for tool in (*TOOLS, SURVEY))
 REQUIRED = {"go_to": {"square"}}  # say, alert and share are always optional
-_PARAMETERS = {tool["name"]: set(tool["parameters"]) for tool in TOOLS}
+_PARAMETERS = {tool["name"]: set(tool["parameters"]) for tool in (*TOOLS, SURVEY)}
 
 
 class BadToolCall(ValueError):

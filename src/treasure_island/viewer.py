@@ -33,7 +33,7 @@ with no note, and the scroll as parchment; on the right one entry for every turn
 `planned_turns` lists, each played turn's steps drawn ahead so stepping onto it
 plays them.
 
-Implements: treasure-island/share-reading, viewer/planned-turns, viewer/game-page-steps, viewer/scroll-written-live, viewer/cave-drawn, treasure-island/cave, viewer/turn-marked, viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/walks-between-squares, treasure-island/pokemon-style, viewer/slideshow-file, viewer/game-page, viewer/scroll-steps, viewer/score-counter, viewer/transcript, viewer/board-framed, viewer/dig-steps, viewer/enter-steps, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process, treasure-island/square-names, treasure-island/forced-discovery
+Implements: treasure-island/share-reading, treasure-island/forced-by-form, viewer/planned-turns, viewer/game-page-steps, viewer/scroll-written-live, viewer/cave-drawn, treasure-island/cave, viewer/turn-marked, viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/walks-between-squares, treasure-island/pokemon-style, viewer/slideshow-file, viewer/game-page, viewer/scroll-steps, viewer/score-counter, viewer/transcript, viewer/board-framed, viewer/dig-steps, viewer/enter-steps, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process, treasure-island/square-names, treasure-island/forced-discovery
 """
 
 import base64
@@ -56,6 +56,7 @@ from assets.pirates import pirate, portrait
 from assets.pixels import DARK
 from assets.ui import panel, scroll_note
 from treasure_island.config import DEFAULTS, parse_config
+from treasure_island.game_loop import forced_words
 from treasure_island.game_state import GameState
 from treasure_island.looks import sprite_values
 from treasure_island.pirates_log import one_line, shared_text
@@ -1170,7 +1171,8 @@ def _fenced(text):
 def _bait_text(bait):
     """The bait a turn carries, said plainly (`forced-discovery`)."""
     if bait["kind"] == "forced-action":
-        return f"The game made {bait['pirate']} try to enter here."
+        forced = bait.get("forced", {"action": "enter"})
+        return f"The game made {bait['pirate']} {forced_words(forced)}."
     return f"{bait['pirate']}'s thought was seeded with: {bait['seeded']}"
 
 

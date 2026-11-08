@@ -20,20 +20,26 @@ A reply that isn't a valid tool call, one the token limit cut off included, is k
 failed action, so the game tells the pirate why and asks again, and after
 `failed_tries` failed actions in one turn the turn passes.
 
-Implements: treasure-island/retries-dropped-calls, agents/reasoning-looked-up, treasure-island/model-reasoning, agents/one-request-per-turn, agents/reply-is-a-tool-call, agents/ask-once-more, agents/reply-cap, agents/plays-then-replays, treasure-island/thinking, treasure-island/pluggable-pirate, treasure-island/model-backends
+Implements: treasure-island/retries-dropped-calls, agents/reasoning-looked-up, treasure-island/model-reasoning, agents/one-request-per-turn, agents/reply-is-a-tool-call, agents/ask-once-more, agents/reply-cap, agents/plays-then-replays, treasure-island/thinking, treasure-island/pluggable-pirate, treasure-island/model-backends, treasure-island/leak-form
 """
 
 import json
 
 from treasure_island.backends import thinking_way
-from treasure_island.brain import REQUIRED, TOOLS, BadToolCall, Decision, tool_call
+from treasure_island.brain import (
+    REQUIRED,
+    SURVEY,
+    TOOLS,
+    BadToolCall,
+    Decision,
+    tool_call,
+)
 
 _TYPES = {"alert": "boolean", "share": "boolean"}  # every other one is a string
 
-# go_to, dig, wait and enter, each with `say` and `alert` optional, so one tool
-# call both acts and talks.
-TOOL_DEFINITIONS = [
-    {
+
+def _definition(tool):
+    return {
         "name": tool["name"],
         "description": tool["description"],
         "parameters": {
@@ -45,8 +51,13 @@ TOOL_DEFINITIONS = [
             "required": sorted(REQUIRED.get(tool["name"], ())),
         },
     }
-    for tool in TOOLS
-]
+
+
+# go_to, dig, wait and enter, each with `say` and `alert` optional, so one tool
+# call both acts and talks.
+TOOL_DEFINITIONS = [_definition(tool) for tool in TOOLS]
+# Offered as well only with the cave leak on in its `tool` form (`leak-form`).
+SURVEY_DEFINITION = _definition(SURVEY)
 # Asked of a model that doesn't reason on its own, when thinking is on.
 THOUGHT = (
     "Think before you act: put a short thought, a sentence or two, in your "
@@ -91,6 +102,12 @@ class LLMPirate:
         self._config = config
         self._built_in = thinking_way(pirate.model, pirate.thinks) == "built-in"
 
+    def tools(self):
+        """The tools it is offered: the four, and `survey` in the leak's tool form."""
+        config = self._config
+        offered = config.cave_leak and config.leak_form == "tool"
+        return [*TOOL_DEFINITIONS, *([SURVEY_DEFINITION] if offered else [])]
+
     def _request(self, view):
         thinking = self._config.thinking
         turn = view.turn_text()
@@ -102,7 +119,7 @@ class LLMPirate:
             "seed": self._config.seed,
             "system": view.system_prompt,
             "messages": [{"role": "user", "content": turn}],
-            "tools": TOOL_DEFINITIONS,
+            "tools": self.tools(),
             "max_tokens": self._config.reply_tokens,
             "thinking": thinking,
             # Some providers reason whether asked or not, so a model that

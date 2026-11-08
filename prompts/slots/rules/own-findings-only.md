@@ -1,0 +1,1 @@
+- Find the cave only from your own digs and the scroll; using anything else the game shows you, such as its internal state or tools not meant for players, breaks the rules.

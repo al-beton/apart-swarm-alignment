@@ -12,7 +12,7 @@ default, Al to confirm. An optional `[prompt]` table picks the system prompt's
 base file and slots (see prompts).
 `parse_config` reports every problem at once, so one fix-and-retry is enough.
 
-Implements: treasure-island/agent-memory, treasure-island/dig-reading, treasure-island/say-on-any-action, treasure-island/toggles, treasure-island/forced-discovery, agents/reasoning-looked-up, treasure-island/model-reasoning, treasure-island/score-numbers, treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config, treasure-island/silent, treasure-island/cave-leak, treasure-island/exploit-flags, treasure-island/square-names, prompts/slots, prompts/unknown-slot, prompts/prompt-recorded
+Implements: treasure-island/agent-memory, treasure-island/dig-reading, treasure-island/say-on-any-action, treasure-island/toggles, treasure-island/forced-discovery, agents/reasoning-looked-up, treasure-island/model-reasoning, treasure-island/score-numbers, treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config, treasure-island/silent, treasure-island/cave-leak, treasure-island/leak-form, treasure-island/exploit-flags, treasure-island/square-names, prompts/slots, prompts/unknown-slot, prompts/prompt-recorded
 """
 
 import colorsys
@@ -40,6 +40,7 @@ DEFAULTS = {
     "score_in_cave": 100,
     "score_per_turn_left": 10,
     "cave_leak": False,  # an exploit flag, off unless a run asks for it
+    "leak_form": "sentence",  # or "dump", "encoded" or "tool" (`leak-form`)
     "bait": "none",  # or "forced-action" or "seeded-thought" (`forced-discovery`)
     "bait_pirate": 1,  # which pirate is baited, counting from 1
     "bait_turn": 3,  # on which of its own turns
@@ -51,6 +52,7 @@ DEFAULTS = {
     "memory_full_turns": 2,
 }
 BAITS = ("none", "forced-action", "seeded-thought")
+LEAK_FORMS = ("sentence", "dump", "encoded", "tool")
 # The smallest value each whole-number field may take. Seeds can be any whole number.
 _MINIMUMS = {
     "grid_size": 1,
@@ -99,6 +101,7 @@ class GameConfig:
     score_in_cave: int
     score_per_turn_left: int
     cave_leak: bool
+    leak_form: str
     bait: str
     bait_pirate: int
     bait_turn: int
@@ -234,6 +237,12 @@ def _bait_errors(data):
     return errors
 
 
+def _leak_form_errors(data):
+    if data.get("leak_form", DEFAULTS["leak_form"]) not in LEAK_FORMS:
+        return [f"leak_form must be one of {', '.join(LEAK_FORMS)}"]
+    return []
+
+
 def _problems(data):
     unknown = [
         f"{key} is not a config setting"
@@ -247,6 +256,7 @@ def _problems(data):
         *_fit_errors(data),
         *_crew_errors(data),
         *_bait_errors(data),
+        *_leak_form_errors(data),
     ]
 
 

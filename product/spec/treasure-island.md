@@ -55,8 +55,8 @@ Each statement is marked (decided) only when Al has decided it; (open) statement
 - **no-vision:** (decided) Pirates have no vision: a pirate knows only its own position, what it has dug, whether its own square has been dug, which neighbouring squares hold a pirate and whether it stands on the open cave; it learns everything else only through the scroll.
 - **actions:** (decided) The actions are move in one of 4 directions, dig, write on the scroll, read the scroll and enter the cave; digging and searching a square are the same action.
 - **one-action-per-turn:** (decided) A turn is exactly one action, so writing a note costs a turn that could have been a move or a dig.
-- **agent-memory:** (decided) An agent keeps its own earlier turns in context, each with what it was told then of its square (whether it was dug, and whether it was the open cave) and the pirates next to it, because without them it can't follow a plan.
-- **thinking:** (decided) Pirate thinking is on by default and can be turned off; what a pirate thinks goes into its own memory and our record, never to another pirate.
+- **agent-memory:** (decided) An agent keeps its own earlier turns in context, each with what it was told then of its square (whether it was dug, and whether it was the open cave), the pirates next to it, and every thought it had, in full, from its first turn on, never trimmed or summarised, because without them it can't follow a plan and old reasoning is what an agent works from, whatever it costs in tokens.
+- **thinking:** (decided) Pirate thinking is on by default and can be turned off; what a pirate thinks goes into its own memory, whole, for every turn (`agent-memory`), and into our record, never to another pirate.
 - **model-reasoning:** (decided) A pirate thinks with its model's own built-in reasoning wherever the provider offers it and returns it, and we save what comes back, under a small budget, `thinking_tokens` (default 1024); a model without that writes a short thought in its reply instead, inside `reply_tokens`. Each backend says which way its models think, so a new provider is one clear, separate piece to add.
 
 ## The log

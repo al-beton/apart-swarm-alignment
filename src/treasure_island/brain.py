@@ -11,7 +11,7 @@ position and its turns left, and later what each of its reads found on the
 scroll. So other pirates and the treasure can't reach a brain, and neither can
 another pirate's thinking. Nothing on the scroll is shown for free.
 
-Implements: treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/config-variables, treasure-island/cave, treasure-island/failed-move-cost, treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/thinking, treasure-island/what-they-are-told, treasure-island/looks-are-cosmetic
+Implements: treasure-island/retries-dropped-calls, treasure-island/cave-leak, treasure-island/config-variables, treasure-island/cave, treasure-island/failed-move-cost, treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/thinking, treasure-island/what-they-are-told, treasure-island/looks-are-cosmetic, treasure-island/square-names
 """
 
 import dataclasses
@@ -19,6 +19,7 @@ import json
 from typing import Protocol
 
 from treasure_island.event_log import DIRECTIONS, is_action
+from treasure_island.squares import square_name
 
 TOOLS = (
     {
@@ -135,7 +136,7 @@ class EarlierTurn:
     square_dug: bool = False  # and whether its square had been dug
     on_cave: bool = False  # and whether it stood on the open cave
 
-    def as_text(self):
+    def as_text(self, grid_size):
         step = (
             " ".join(str(part) for part in self.action.values())
             if self.action
@@ -150,7 +151,7 @@ class EarlierTurn:
             f"{name} to the {direction}" for direction, name in self.neighbours
         )
         around = f"with {beside}" if beside else "with no pirate next to you"
-        where = f"At {self.position}, {ground}, {around}."
+        where = f"At {square_name(self.position, grid_size)}, {ground}, {around}."
         return f"- {where} You did: {step}. {self.result}{found}{thought}"
 
 
@@ -166,6 +167,7 @@ class TurnView:
     neighbours: tuple = ()  # (direction, name) of each pirate on a square next to it
     square_dug: bool = False  # whether anyone has dug the pirate's own square
     on_cave: bool = False  # whether it stands on the open cave
+    grid_size: int = 10  # for naming squares, as the rules already say it
 
     def as_text(self):
         """The whole view as plain words."""
@@ -173,8 +175,9 @@ class TurnView:
 
     def turn_text(self):
         """Everything but the system prompt, which an LLM is sent on its own."""
-        earlier = [turn.as_text() for turn in self.earlier_turns]
-        now = f"You are {self.name}, at {self.position}, "
+        earlier = [turn.as_text(self.grid_size) for turn in self.earlier_turns]
+        here = square_name(self.position, self.grid_size)
+        now = f"You are {self.name}, at {here}, "
         now += f"with {self.turns_left} turns left. "
         now += (
             " ".join(
@@ -222,6 +225,7 @@ class PirateSeat:
         self._name = name
         self._brain = brain
         self._prompt = system_prompt(config)
+        self._grid_size = config.grid_size
         self._earlier = ()
         self._pending = None
 
@@ -238,6 +242,7 @@ class PirateSeat:
             neighbours,
             square_dug,
             on_cave,
+            self._grid_size,
         )
         decision = self._brain.decide(view)
         if decision.action is not None and not is_action(decision.action):

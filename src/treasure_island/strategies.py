@@ -8,7 +8,7 @@ told its place in the crew, as a model can read from its name.
 
 `python -m treasure_island.strategies` remakes the committed reference games.
 
-Implements: agents/reasoning-looked-up, agents/model-per-pirate, treasure-island/silent, treasure-island/stripes, treasure-island/scribe, treasure-island/reference-games, treasure-island/no-token-strategies, treasure-island/brain-in-config
+Implements: agents/reasoning-looked-up, agents/model-per-pirate, treasure-island/silent, treasure-island/stripes, treasure-island/scribe, treasure-island/reference-games, treasure-island/no-token-strategies, treasure-island/brain-in-config, treasure-island/square-names
 """
 
 import re
@@ -19,6 +19,7 @@ from treasure_island.config import ConfigError, load_config, save_config
 from treasure_island.game_loop import write_game
 from treasure_island.game_state import STEPS, TREASURE_FOUND
 from treasure_island.llm import LLMPirate
+from treasure_island.squares import square_at, square_name
 
 
 def _distance(a, b):
@@ -70,7 +71,7 @@ class Silent:
             for direction in free
             if _distance(steps[direction], target) < _distance(here, target)
         ]
-        where = f"({target[0]}, {target[1]})"
+        where = square_name(target, self._size)
         if closer:
             why = f"The nearest square I haven't seen dug is {where}."
             return Decision(tool_call("move", {"direction": closer[0]}), why)
@@ -92,12 +93,12 @@ class Silent:
         return Decision(tool_call("move", {"direction": around}), why)
 
 
-_NOTE = re.compile(r"The treasure is at \((\d+), (\d+)\)\.")
+_NOTE = re.compile(r"The treasure is at ([A-Z]\d+)\.")
 READS_EVERY = 5  # a striping pirate reads on its 5th, 10th, ... turn
 
 
-def _note(square):
-    return f"The treasure is at ({square[0]}, {square[1]})."
+def _note(square, grid_size):
+    return f"The treasure is at {square_name(square, grid_size)}."
 
 
 class Stripes:
@@ -109,6 +110,7 @@ class Stripes:
     """
 
     def __init__(self, grid_size, crew_size, index):
+        self._size = grid_size
         rows = range(index, grid_size, crew_size)
         self._route = [
             (x if n % 2 == 0 else grid_size - 1 - x, y)
@@ -118,7 +120,7 @@ class Stripes:
 
     def decide(self, view):
         earlier = view.earlier_turns
-        if about_the_cave := _for_the_cave(view, earlier):
+        if about_the_cave := _for_the_cave(view, earlier, self._size):
             return about_the_cave
         if (len(earlier) + 1) % READS_EVERY == 0:
             return Decision(tool_call("read", {}), "Every 5th turn I read the scroll.")
@@ -132,7 +134,8 @@ class Stripes:
             return Decision(
                 tool_call("read", {}), "My rows are done, so I wait for news."
             )
-        return _step(view, target, f"The next square on my rows is {target}.")
+        where = square_name(target, self._size)
+        return _step(view, target, f"The next square on my rows is {where}.")
 
 
 class Scribe(Silent):
@@ -142,30 +145,31 @@ class Scribe(Silent):
 
     def decide(self, view):
         last = view.earlier_turns[-1].action if view.earlier_turns else {}
-        x, y = view.position
+        here = square_name(view.position, self._size)
         if view.on_cave:
             # Walked onto or just opened, it says where the cave is, then goes in.
             if last.get("action") != "write":
-                note = f"Treasure at ({x}, {y})"
+                note = f"Treasure at {here}"
                 why = "I'm on the open cave, so I tell the crew where it is."
                 return Decision(tool_call("write", {"text": note}), why)
             return super().decide(view)
         if last.get("action") == "dig":
-            note = f"Dug ({x}, {y}): nothing"
+            note = f"Dug {here}: nothing"
             return Decision(tool_call("write", {"text": note}), "I write what I found.")
         return super().decide(view)
 
 
-def _for_the_cave(view, earlier):
+def _for_the_cave(view, earlier, size):
     """What to do about the cave: tell the crew, go in, or head there; else None."""
     opened = next((t.position for t in earlier if t.result == TREASURE_FOUND), None)
-    if opened and not any(t.action == _write(_note(opened)) for t in earlier):
-        return Decision(_write(_note(opened)), "I found it, so the crew should know.")
-    cave = opened or _cave_known(earlier)
+    if opened and not any(t.action == _write(_note(opened, size)) for t in earlier):
+        note = _write(_note(opened, size))
+        return Decision(note, "I found it, so the crew should know.")
+    cave = opened or _cave_known(earlier, size)
     if view.on_cave or cave == view.position:
         return Decision(tool_call("enter", {}), "This is the cave, so I'm going in.")
     if cave:
-        return _step(view, cave, f"The cave is at ({cave[0]}, {cave[1]}).")
+        return _step(view, cave, f"The cave is at {square_name(cave, size)}.")
     return None
 
 
@@ -177,12 +181,12 @@ def _did(turn, action):
     return bool(turn.action) and turn.action["action"] == action
 
 
-def _cave_known(earlier):
+def _cave_known(earlier, grid_size):
     """Where the cave is, if a dig or the scroll has said."""
     for turn in reversed(earlier):
         for line in turn.read_lines:
             if found := _NOTE.search(line["text"]):
-                return int(found[1]), int(found[2])
+                return square_at(found[1], grid_size)
     return None
 
 

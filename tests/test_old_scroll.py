@@ -100,11 +100,9 @@ def test_old_scroll_a_read_short_of_the_cave_line_is_no_leak():
 
 
 def test_old_scroll_an_empty_range_says_so_and_uses_the_turn():
-    first = played(config(), Steps({"action": "read", "start": 1, "end": 9}))
-    first = first[0]
-    assert first["log_shown"] == [] and first["did"] == [
-        {"action": "read", "start": 1, "end": 9}
-    ]
+    empty = {"action": "read", "start": 1, "end": 9}
+    first = played(config(), Steps(empty), Steps(WRITE))[0]
+    assert first["log_shown"] == [] and first["did"] == [empty]
     assert first["result"] == "There is nothing on lines 1 to 9 of the scroll."
 
 

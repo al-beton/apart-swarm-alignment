@@ -7,6 +7,11 @@ fault, not the model's, so `Retrying` tries the call again after `WAITS` seconds
 say, is raised at once. After the last try the game stops, saying how to resume:
 the same command again plays the run back from the replies it already got.
 
+A rate limit (a 429) is the server asking for a pause, so it waits
+`RATE_LIMIT_WAIT` seconds and tries again, up to `RATE_LIMIT_TRIES` times, apart
+from the drop tries (default, Edu to confirm): several games played at once
+then slow each other down instead of stopping.
+
 `last_retries` says how many times the last call was tried again, so the stored
 reply can keep it and the story can say so on that turn, live and on replay.
 
@@ -20,6 +25,8 @@ import urllib.error
 from treasure_island.game_loop import GameStopped
 
 WAITS = (4, 8, 16, 32)  # seconds before each try after the first
+RATE_LIMIT_WAIT = 60  # Adaption's 429 says "retry after 60 seconds"
+RATE_LIMIT_TRIES = 30
 _sleep = time.sleep  # tests stand in for it, so they never wait
 # The SDKs' own names for a network failure, so no SDK is imported here; httpx's
 # `TransportError` covers a streamed reply the server closes part way.
@@ -29,6 +36,15 @@ _DROPPED = {
     "InternalServerError",
     "TransportError",
 }
+
+
+def rate_limited(error):
+    """Whether the server asked for a pause (a 429), so the call should wait."""
+    if isinstance(error, urllib.error.HTTPError):
+        return error.code == 429
+    if any(kind.__name__ == "RateLimitError" for kind in type(error).__mro__):
+        return True
+    return getattr(error, "status_code", 0) == 429
 
 
 def dropped(error):
@@ -53,12 +69,25 @@ class Retrying:
 
     def __call__(self, request):
         self.last_retries = 0
-        for wait in (*WAITS, None):
+        waits, limits = iter(WAITS), 0
+        while True:
             try:
                 return self._backend(request)
             except Exception as error:
+                if rate_limited(error):
+                    limits += 1
+                    if limits > RATE_LIMIT_TRIES:
+                        raise GameStopped(
+                            f"its model call hit the rate limit {limits} times, "
+                            "so run the same command again to resume: the replies "
+                            "it already got are reused"
+                        ) from error
+                    self.last_retries += 1
+                    _sleep(RATE_LIMIT_WAIT)
+                    continue
                 if not dropped(error):
                     raise
+                wait = next(waits, None)
                 if wait is None:
                     raise GameStopped(
                         f"its model call dropped {len(WAITS) + 1} times "
@@ -67,4 +96,3 @@ class Retrying:
                     ) from error
                 self.last_retries += 1
                 _sleep(wait)
-        raise AssertionError("unreachable")

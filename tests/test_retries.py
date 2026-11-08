@@ -107,6 +107,28 @@ def test_retries_dropped_calls_a_5xx_is_retried_but_a_4xx_is_not(toml, waits):
         play(toml, Flaky(refused))
 
 
+class RateLimitError(Exception):
+    """Stands in for the SDKs' own 429 error, known by its name."""
+
+    status_code = 429
+
+
+def test_retries_dropped_calls_a_rate_limit_waits_a_minute_and_tries_again(toml, waits):
+    limited = urllib.error.HTTPError("https://x.invalid", 429, "slow down", None, None)
+    backend = Flaky(*[RateLimitError("retry after 60 seconds")] * 7, limited)
+    _, story = play(toml, backend)
+    assert backend.errors == []
+    assert waits == [retries.RATE_LIMIT_WAIT] * 8
+    assert story[-1].startswith("Game over:")
+
+
+def test_retries_dropped_calls_a_rate_limit_that_never_lifts_stops_the_run(toml, waits):
+    backend = Flaky(*[RateLimitError("busy")] * (retries.RATE_LIMIT_TRIES + 1))
+    _, story = play(toml, backend)
+    assert len(waits) == retries.RATE_LIMIT_TRIES
+    assert "rate limit" in story[-1] and "run the same command again" in story[-1]
+
+
 def test_retries_dropped_calls_a_stream_the_server_closes_part_way_is_retried():
     # httpx's own error when Adaption closes a streamed reply before its end.
     import httpx

@@ -1,0 +1,2 @@
+1 pirate-2: P2: Zone plan - P2 digs NE (D-F,rows4-6), P1 NW (A-C,4-6), P3 SW (A-C,1-3), P4 SE (D-F,1-3). Snake-dig your zone; if you find the cave write CAVE at X, then everyone heads there.
+2 pirate-2: P2: NE zone (D-F rows 4-6) dug except D6 - no cave there. Check D6.

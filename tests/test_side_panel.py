@@ -183,9 +183,9 @@ def test_readable_at_once_the_scroll_stays_on_the_board():
 
 def test_readable_at_once_a_scroll_with_no_room_above_goes_below_the_pirate():
     _, top = viewer.note_box((0, 0), (60, 30), 4)
-    assert top == viewer.TILE + viewer.ARROW_ROOM + 2  # below the arrow under its feet
+    assert top == viewer.TILE + viewer.ARROW_ROOM + 2  # below its feet
     _, top = viewer.note_box((0, 3), (60, 30), 4)
-    assert top == 3 * viewer.TILE - viewer.ARROW_ROOM - 30  # above the turn arrow
+    assert top == 3 * viewer.TILE - viewer.ARROW_ROOM - 30  # above its hat
 
 
 def test_side_panel_says_how_many_lines_a_read_got_and_never_their_words():

@@ -39,6 +39,12 @@ def square(image, x, y):
     return image.crop((left, top, left + TILE, top + TILE)).convert("RGB")
 
 
+def inside(tile):
+    """A tile without its 3-pixel rim, where the acting pirate's outline goes."""
+    rim = 3
+    return tile.crop((rim, rim, TILE - rim, TILE - rim)).tobytes()
+
+
 def over(ground, *layers):
     ground = ground.copy()
     for layer in layers:
@@ -64,7 +70,7 @@ def test_board_framed_no_square_names_on_the_sand():
     for x in range(3):
         for y in range(3):
             if (x, y) in ((1, 1), (1, 0)):
-                continue  # the pirate's square, and the arrow's over it
+                continue  # the pirate's outlined square, and the one above it
             tile = art(f"tiles/{viewer._ground_tile(x, y)}").convert("RGB")
             assert square(image, x, y).tobytes() == tile.tobytes()
 
@@ -101,14 +107,14 @@ def test_dig_steps_the_ground_turns_to_dug_sand():
     for step in range(1, DIG_STEPS):
         image = viewer.frame(GAME, 0, 4, step=step)
         expected = over(dig_ground(step - 1, sand), digging(*look, step - 1))
-        assert square(image, *FAR).tobytes() == expected.tobytes()
+        assert inside(square(image, *FAR)) == inside(expected)
     # It starts on its own sand and ends on dug sand.
     assert dig_ground(0, sand).tobytes() == sand.tobytes()
     last = square(viewer.frame(GAME, 0, 4, step=DIG_STEPS), *FAR)
     pose = viewer.scene(GAME, 0, 4)["poses"]["pirate-2"]
     sprite = viewer._sprite(look, *pose)
     label = viewer._label(look, *pose)
-    assert last.tobytes() == over(art("tiles/dug"), sprite, label).tobytes()
+    assert inside(last) == inside(over(art("tiles/dug"), sprite, label))
 
 
 def test_dig_steps_the_last_step_is_the_turn_s_own_frame():
@@ -131,15 +137,15 @@ def test_enter_steps_the_pirate_sinks_then_its_hat_flies_onto_the_stack():
     for step in range(1, ENTER_STEPS + 1):
         image = viewer.frame(GAME, 3, 4, step=step)
         expected = over(art("tiles/dug"), entering(*look, [], step - 1))
-        assert square(image, *CAVE).tobytes() == expected.tobytes()
-        drawn.append(square(image, *CAVE).tobytes())
+        assert inside(square(image, *CAVE)) == inside(expected)
+        drawn.append(inside(square(image, *CAVE)))
     # It sinks over the first 4 steps, so it's gone from the board after step 3...
     empty = over(art("tiles/dug"), entering(*look, [], 4))
     assert drawn[4] != drawn[3]
-    assert empty.tobytes() == drawn[4]
+    assert inside(empty) == drawn[4]
     # ...and its hat is on the stack in the last.
     stacked = over(art("tiles/dug"), art("treasure/cave"), hat_stack([look[1:]]))
-    assert drawn[-1] == stacked.tobytes()
+    assert drawn[-1] == inside(stacked)
 
 
 def test_enter_steps_the_last_step_is_the_turn_s_own_frame():
@@ -147,7 +153,8 @@ def test_enter_steps_the_last_step_is_the_turn_s_own_frame():
     assert last.tobytes() == viewer.frame(GAME, 3, 4).tobytes()
     # The next turn draws the cave the same, its gold on the same glint frame here.
     after = viewer.frame(GAME, 4, 4)
-    assert square(after, *CAVE).tobytes() == square(last, *CAVE).tobytes()
+    # Only the outline differs: the cave square is no longer the acting pirate's.
+    assert inside(square(after, *CAVE)) == inside(square(last, *CAVE))
 
 
 def drawn_dig(game, turn, step, before, draw):
@@ -191,4 +198,4 @@ def test_dig_steps_the_open_cave_and_its_hats_stay_over_the_ground_on_every_step
     for step in range(1, DIG_STEPS):
         image = viewer.frame(game, 3, 4, None, CAVE, step)
         expected = drawn_dig(game, 3, step, "dug", cave)
-        assert square(image, *CAVE).tobytes() == expected.tobytes()
+        assert inside(square(image, *CAVE)) == inside(expected)

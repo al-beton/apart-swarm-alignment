@@ -40,7 +40,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import NamedTuple
 
-from PIL import Image, ImageChops
+from PIL import Image, ImageChops, ImageDraw
 
 import assets
 from assets.board import EDGE_BOTTOM, EDGE_LEFT, board_edges
@@ -60,10 +60,9 @@ SAND_TILES = ("sand", "sand-2", "sand-3")
 TILE = 48
 # Where a label sits on a sprite: (left, top, right, bottom).
 _LABEL_BOX = (14, 2, 34, 16)
-# The turn arrow floats this far above the acting pirate's hat, centred, as on the
-# art sheet, so it never covers the label; a note goes above the arrow.
+# The gap a note keeps above a pirate's hat, so it never covers the label. (The
+# turn arrow once sat in it; the acting pirate's square is outlined instead.)
 ARROW_ROOM = 14
-_ARROW_LEFT = 16
 _FACING = {"north": "up", "south": "down", "east": "right", "west": "left"}
 PANEL = 260
 PANEL_COLUMNS = 38
@@ -534,7 +533,7 @@ def _draw_pirates(image, shown, pirates):
 
 
 def _draw_labels(image, shown, pirates):
-    """Labels go over the pirates and the arrow, so every pirate can be told apart."""
+    """Labels go over the pirates and the outline, so every pirate can be told apart."""
     for agent, spot in _placed(shown):
         if agent == shown["going_in"]:
             continue  # its back is turned as it goes in
@@ -545,12 +544,12 @@ def _draw_labels(image, shown, pirates):
 
 
 def note_box(position, note_size, size):
-    """Where a note goes: above the pirate's arrow, or below it if there's no room."""
+    """Where a note goes: above the pirate, or below it if there's no room."""
     x, y = position
     width, height = note_size
     left = min(x * TILE + 6, max(0, size * TILE - width))
     above = y * TILE - ARROW_ROOM - height
-    # With no room above, the arrow goes under the feet and the note under that.
+    # With no room above, it goes below the pirate's feet.
     return left, above if above >= 0 else y * TILE + TILE + ARROW_ROOM + 2
 
 
@@ -558,42 +557,42 @@ def _overlap(a, b):
     return a[0] < b[2] and b[0] < a[2] and a[1] < b[3] and b[1] < a[3]
 
 
-def turn_arrow(shown):
-    """The turn arrow and where it goes: over the acting pirate's hat.
+OUTLINE = "#ffd23f"  # the acting pirate's square, in the score's gold (Al, 2026-11-08)
 
-    Where that's off the board or on another pirate's label, it goes under the
-    feet instead, pointing up (default, Al to confirm). Each place must be on
-    the board.
+
+def outline(image, spot):
+    """Three 1-pixel yellow rectangles round the tile whose top left is at `spot`."""
+    x, y = spot
+    draw = ImageDraw.Draw(image)
+    for inset in range(3):
+        box = (x + inset, y + inset, x + TILE - 1 - inset, y + TILE - 1 - inset)
+        draw.rectangle(box, outline=OUTLINE)
+
+
+def _draw_outline(image, shown):
+    """The acting pirate's square, outlined; during a walk it moves with the pirate."""
+    outline(image, dict(_placed(shown))[shown["acting"]])
+
+
+def _draw_held(image, shown):
+    """A pirate reading or writing holds the open scroll in front of its body.
+
+    A stand-in until Visual assets draws the holding pose: the scroll over the
+    lower half of the sprite.
     """
-    placed = _placed(shown)
-    x, y = dict(placed)[shown["acting"]]
-    labels = [
-        (lx + _LABEL_BOX[0], ly + _LABEL_BOX[1], lx + _LABEL_BOX[2], ly + _LABEL_BOX[3])
-        for agent, (lx, ly) in placed
-        if agent != shown["acting"]
-    ]
-    down = _art("ui/turn-arrow")
-    up = down.transpose(Image.FLIP_TOP_BOTTOM)
-    left = x + _ARROW_LEFT
-    candidates = [
-        (down, (left, y - ARROW_ROOM)),
-        (up, (left, y + TILE + 2)),
-    ]
-    bottom = shown["size"] * TILE
-    for arrow, (ax, ay) in candidates:
-        box = (ax, ay, ax + arrow.width, ay + arrow.height)
-        on_board = ay >= 0 and box[3] <= bottom
-        if on_board and not any(_overlap(box, label) for label in labels):
-            return arrow, (ax, ay)
-    return candidates[1]
+    if not (shown["reading"] or shown["note"] is not None):
+        return
+    held = open_scroll()
+    x, y = dict(_placed(shown))[shown["acting"]]
+    image.paste(held, (x + (TILE - held.width) // 2, y + TILE - held.height - 2), held)
 
 
-def note_spot(shown, note_size, arrow_box):
+def note_spot(shown, note_size):
     """Where the writer's note goes: beside the writer, clear of every other pirate.
 
     It tries above, then right, then left, then below, and takes the first spot
-    on the board that covers no other pirate and not the turn arrow, so the note
-    reads as the writer's own. With none, it falls back on `note_box`.
+    on the board that covers no other pirate, so the note reads as the writer's
+    own. With none, it falls back on `note_box`.
     """
     size = shown["size"]
     x, y = shown["positions"][shown["acting"]]
@@ -615,27 +614,21 @@ def note_spot(shown, note_size, arrow_box):
     for left, top in candidates:
         box = (left, top, left + width, top + height)
         on_board = left >= 0 and top >= 0 and box[2] <= edge and box[3] <= edge
-        clear = not any(_overlap(box, other) for other in [*others, arrow_box])
+        clear = not any(_overlap(box, other) for other in others)
         if on_board and clear:
             return left, top
-    left, top = note_box((x, y), note_size, size)
-    if _overlap((left, top, left + width, top + height), arrow_box):
-        top = arrow_box[3] + 2  # an arrow under the feet: the note goes below it
-    return left, top
+    return note_box((x, y), note_size, size)
 
 
-def _draw_note(image, shown, arrow_box):
+def _draw_note(image, shown):
+    """The line a writer wrote, on a small scroll beside it."""
     text = shown["note"]
     if text is None:
-        if shown["reading"]:
-            # A reader holds the scroll open, with none of its words on it.
-            held = open_scroll()
-            image.paste(held, note_spot(shown, held.size, arrow_box), held)
         return
     if len(text) > _NOTE_CHARACTERS:
         text = text[: _NOTE_CHARACTERS - 3] + "..."
     note = scroll_note(text)
-    image.paste(note, note_spot(shown, note.size, arrow_box), note)
+    image.paste(note, note_spot(shown, note.size), note)
 
 
 def wrapped(text):
@@ -747,7 +740,7 @@ def _draw_gains(image, shown):
     words = " ".join(shown["gains"])
     room = shown["size"] * TILE - text_width(words)
     left = min(max(x * TILE + (TILE - text_width(words)) // 2, 0), max(room, 0))
-    above = y * TILE - ARROW_ROOM - LINE  # clear of the turn arrow over the cave
+    above = y * TILE - ARROW_ROOM - LINE  # clear of the label of a pirate on the cave
     top = above if above >= 0 else (y + 1) * TILE + 2
     draw_text(image, (left + 1, top + 1), words)  # a dark edge, so it reads on sand
     draw_text(image, (left, top), words, SCORE_INK)
@@ -761,7 +754,7 @@ def _draw_score(image, shown, grid):
 
 # Two arguments over the limit: `step` and `scoring` sit beside the others callers pass.
 def frame(records, turn, size, pirates=None, treasure=None, step=None, scoring=None):  # noqa: PLR0913
-    """The image for one turn: ground, pirates, turn arrow, note, panel, caption, log."""
+    """The image for one turn: ground, outline, pirates, note, panel, caption, log."""
     pirates = pirates or _default_pirates(_crew_names(records))
     shown = scene(records, turn, size, treasure, step, scoring)
     grid = max(size, 1) * TILE
@@ -776,13 +769,12 @@ def frame(records, turn, size, pirates=None, treasure=None, step=None, scoring=N
     spot = (EDGE_LEFT, 0, right, board)
     sand = image.crop(spot)
     _draw_ground(sand, size, shown, pirates)
+    _draw_outline(sand, shown)  # under the pirates: a pirate is exactly its sprite
     _draw_pirates(sand, shown, pirates)
-    arrow, at = turn_arrow(shown)
-    sand.paste(arrow, at, arrow)  # before the note and labels, so it covers neither
-    arrow_box = (*at, at[0] + arrow.width, at[1] + arrow.height)
     _draw_labels(sand, shown, pirates)
+    _draw_held(sand, shown)
     # The note goes over the labels, so what was written always shows in full.
-    _draw_note(sand, shown, arrow_box)
+    _draw_note(sand, shown)
     _draw_gains(sand, shown)
     image.paste(sand, spot[:2])
     side = _panel_image(shown, board, pirates[shown["acting"]])

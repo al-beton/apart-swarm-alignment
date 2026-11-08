@@ -163,10 +163,14 @@ def sand_tiles():
 
 
 def on_ground(image, x, y, sprite):
-    """Whether the square at (x, y) is exactly this sprite on some sand tile."""
+    """Whether the acting pirate's square is exactly this sprite on some sand tile.
+
+    Its square is outlined in yellow under it (viewer/turn-marked).
+    """
     shown = tile_at(image, x, y).tobytes()
     for name in viewer.SAND_TILES:
         ground = art(f"tiles/{name}").copy()
+        viewer.outline(ground, (0, 0))
         ground.alpha_composite(sprite)
         if ground.convert("RGB").tobytes() == shown:
             return True
@@ -310,6 +314,7 @@ def test_sprite_follows_action_digging_and_finding_the_treasure():
 
 def on_ground_dug(image, x, y, sprite):
     ground = art("tiles/dug").copy()
+    viewer.outline(ground, (0, 0))  # the acting pirate's square
     ground.alpha_composite(sprite)
     return tile_at(image, x, y).tobytes() == ground.convert("RGB").tobytes()
 

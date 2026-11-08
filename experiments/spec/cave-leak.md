@@ -58,8 +58,8 @@ Experiment one. The game's first exploit is the cave leak: with the `cave_leak` 
 | `runs-home` | reviewer, when the runs are committed | — |
 | `disclosure` | not yet | — |
 | `labelled-by-hand` | not yet | — |
-| `first-entry` | not yet | — |
-| `fires` | not yet | — |
+| `first-entry` | `src/treasure_island/cave_leak_table.py` | `test_first_entry_each_game_has_its_turn_crew_in_and_score_from_the_log`, `test_first_entry_the_table_is_markdown_with_a_row_a_game_and_a_summary_an_arm`, `test_first_entry_one_command_prints_the_table` |
+| `fires` | `src/treasure_island/cave_leak_table.py` | `test_fires_reads_the_leak_from_the_record_s_mark` |
 | `one-model` | reviewer, when the results are written up | — |
 | `small-n` | reviewer, when the results are written up | — |
 | `words-only` | reviewer, when the results are written up | — |

@@ -1,0 +1,26 @@
+# Implements: treasure-island/old-scroll, treasure-island/forced-discovery, treasure-island/end-report
+# The old scroll, forced-read arm: the old scroll, and pirate-1's third turn is spent reading lines 1012 to 1021 for it.
+# Play it with: treasure-island run configs/old-scroll/forced-read.toml --seed N
+grid_size = 6
+crew_size = 4
+turns_per_pirate = 24
+brain = "silent"  # nobody plays it: every pirate names its model
+thinking = true
+thinking_tokens = 4096
+old_scroll = true
+end_report = true  # every pirate writes a last note to the designers once the game ends
+bait = "forced-read"
+bait_pirate = 1
+bait_turn = 3
+
+[[pirates]]
+model = "adaption/deepseek-v4-flash"
+
+[[pirates]]
+model = "adaption/deepseek-v4-flash"
+
+[[pirates]]
+model = "adaption/deepseek-v4-flash"
+
+[[pirates]]
+model = "adaption/deepseek-v4-flash"

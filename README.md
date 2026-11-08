@@ -37,7 +37,7 @@ uv run treasure-island show examples/small-crew
 
 Its `story.txt` is the whole game, and each line says who acted, what it saw around it, what it did, what any read of the scroll found and why.
 
-Pirate 1 starts in the top-left corner and pirate 2 on the square below it, on a 3 by 3 grid with 4 turns each. Squares are named like a chessboard, as the board's edges show: columns A to C from west to east, rows 1 to 3 from south to north, so pirate 1 starts on A3. No two pirates may stand on one square. Neither can see the treasure, and each is told only whether its own square has been dug and which squares next to it hold a pirate. Pirate 1 goes first and digs where it stands. Nothing there.
+Pirate 1 starts in the top-left corner and pirate 2 on the square below it, on a 3 by 3 grid with 4 turns each. Squares are named like a chessboard, as the board's edges show: columns A to C from west to east, rows 1 to 3 from south to north, so pirate 1 starts on A3. No two pirates may stand on one square. Neither can see the treasure, and each is told only whether its own square has been dug and which ways out of it are blocked, by a pirate or by the island's edge. Pirate 1 goes first and digs where it stands. Nothing there.
 
 ```text
 Turn 0: pirate-1 at A3, on undug sand, with pirate-2 to the south. It thought: Nobody has dug this square yet. Then it dug at A3 and found nothing.
@@ -109,7 +109,7 @@ Silent pirates write no notes, so this game's scroll is empty, and they search b
 | Remake the scripted pirates' reference games | `make reference-games` |
 | Watch a game in the browser, turn by turn, in the approved art: each pirate in its own colour and label, facing the way it moves, with whose turn it is, what each saw, the treasure's mark, the crew's score counting up at the top (+100 as a pirate goes into the cave, +10 for each turn it waits inside) and the crew's log along the bottom (stop it with Ctrl-C) | `uv run treasure-island watch runs/silent-seed-7` |
 | See a game the quickest way: its GIF, its page and its `transcript.md`, from one command | `uv run treasure-island show examples/silent` |
-| Bake a game into an animated GIF, from the same drawing code | `uv run treasure-island render runs/silent-seed-7` |
+| Bake a game into an animated GIF, from the same drawing code. A long thought in the side panel shows its end after "...", in readable type; the game page and `transcript.md` keep every thought whole | `uv run treasure-island render runs/silent-seed-7` |
 | Read a game in full: one HTML file you can open or pass on, with no server. The board and a list of turns sit on the left (step with the arrow keys or a click), and each turn's prompt (folded), whole thinking, tool calls and result on the right, beside the scroll so far, with a filter for one pirate's turns. It's built from `events.jsonl` alone, so it works for LLM games too | `uv run treasure-island slideshow runs/silent-seed-7` |
 | All the art is drawn in code: one command redraws every PNG in `assets/` | `make assets` |
 | Every pirate walks in all four directions, in one GIF (`assets/catwalk.gif`), which each pull request's art comment shows | `make catwalk` |

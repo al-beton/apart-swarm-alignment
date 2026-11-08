@@ -396,11 +396,14 @@ def test_turn_view_says_which_neighbours_hold_a_pirate():
     first, second = Steps(DIG, move("east")), Steps(DIG)
     play(off_the_treasure(turns_per_pirate=2), first, second)
     assert first.views[0].neighbours == (("south", "pirate-2"),)
-    assert "The way south is blocked by pirate-2." in first.views[0].as_text()
+    assert "the way south by pirate-2 and the way west" in first.views[0].as_text()
     assert second.views[0].neighbours == (("north", "pirate-1"),)
     # Once pirate-1 has moved east to (1, 0), nobody is next to pirate-2.
     assert second.views[1].neighbours == ()
-    assert "No way out of your square is blocked." in second.views[1].as_text()
+    # It is still on the west edge, and the edge blocks that way out.
+    assert "The way west is blocked by the island's edge." in (
+        second.views[1].as_text()
+    )
 
 
 def test_turn_view_says_whether_the_pirate_s_square_has_been_dug():

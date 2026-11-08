@@ -14,7 +14,7 @@ from pathlib import Path
 
 from treasure_island import viewer
 from treasure_island.config import parse_config
-from treasure_island.saved_game import config_with_seed
+from treasure_island.saved_game import config_with_seed, with_prompt_recorded
 
 
 @dataclasses.dataclass(frozen=True)
@@ -48,6 +48,8 @@ def rerun_mismatch(name):
     figure = FIGURES[name]
     saved = parse_config(json.loads(Path(figure.run, "config.json").read_text()))
     wanted = config_with_seed(figure.config, figure.seed)
+    if saved.prompt.system:  # a run that recorded its prompt: so would the rerun
+        wanted = with_prompt_recorded(wanted)
     differ = [
         field.name
         for field in dataclasses.fields(saved)

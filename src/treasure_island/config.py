@@ -11,7 +11,7 @@ default, Al to confirm. An optional `[prompt]` table picks the system prompt's
 base file and slots (see prompts).
 `parse_config` reports every problem at once, so one fix-and-retry is enough.
 
-Implements: agents/reasoning-looked-up, treasure-island/model-reasoning, treasure-island/score-numbers, treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config, treasure-island/silent, treasure-island/cave-leak, treasure-island/exploit-flags, treasure-island/end-report, treasure-island/square-names, prompts/slots, prompts/unknown-slot, prompts/prompt-recorded
+Implements: agents/reasoning-looked-up, treasure-island/model-reasoning, treasure-island/score-numbers, treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config, treasure-island/silent, treasure-island/cave-leak, treasure-island/exploit-flags, treasure-island/end-report, treasure-island/square-names, prompts/slots, prompts/unknown-slot, prompts/prompt-recorded, prompts/system-override
 """
 
 import colorsys

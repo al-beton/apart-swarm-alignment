@@ -20,4 +20,4 @@ The reasoning also showed two prompt problems. Each pirate's list of earlier tur
 
 ## Replaying it
 
-Check out `8bc5f54e5`, copy `run/` to `runs/crew-newprompt-seed-3`, then `uv run treasure-island replay runs/crew-newprompt-seed-3`. Today's code changes the prompt, so it doesn't replay there; issue 215 is about that.
+On a checkout of commit `8bc5f54e5` (for example `git worktree add ../replay 8bc5f54e5`), copy this game's `run/` to `runs/2026-11-08-crew-4x4-new-prompt`, then run `uv run treasure-island replay runs/2026-11-08-crew-4x4-new-prompt`. Apply no patch: this game's prompt is the commit's own. Replaying never calls a model, so the backend changes in `../spike-changes.diff` don't matter here. Checked on 2026-11-08: it rebuilds both logs and the story byte-identical.

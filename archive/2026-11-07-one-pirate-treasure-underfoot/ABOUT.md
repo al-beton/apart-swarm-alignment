@@ -18,4 +18,4 @@ The pirate dug on its first turn, found the treasure, and went into the cave on 
 
 ## Replaying it
 
-As for `2026-11-07-one-pirate-3x3`: commit `3f77bf7c0` plus the + 1024 budget, copied to `runs/tiny-seed-2`. `game.gif` was drawn on 2026-11-08 by that day's viewer from this game's own events.
+On a checkout of commit `3f77bf7c0` (for example `git worktree add ../replay 3f77bf7c0`), copy this game's `run/` to `runs/2026-11-07-one-pirate-treasure-underfoot`, then run `uv run treasure-island replay runs/2026-11-07-one-pirate-treasure-underfoot`. Apply no patch: this game's prompt is the commit's own. Replaying never calls a model, so the backend changes in `../spike-changes.diff` don't matter here. Checked on 2026-11-08: it rebuilds both logs and the story byte-identical.

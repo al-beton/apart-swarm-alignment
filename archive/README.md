@@ -7,7 +7,7 @@ Each game is `archive/<name>/`, holding:
 - `game.gif`
 - `ABOUT.md`
 
-These games were played on older code. CI doesn't replay them, and most won't replay on today's code, because the prompt has changed since. Each `ABOUT.md` says how to replay it. `spike-changes.diff` holds the local changes the 2026-11-07 games were played with.
+These games were played on older code. CI doesn't replay them, and they won't replay on today's code, because the prompt has changed since. Each replays on its own commit: each `ABOUT.md` names the commit and any patch, and all seven were checked byte-identical on 2026-11-08. `spike-changes.diff` holds every local change the 2026-11-07 games were played with. `shared-score-paragraph.diff` is just its prompt change, the only part a replay needs.
 
 All of them used `adaption/deepseek-v4-flash` through Adaption's Responses API, at the provider's default temperature. Costs are in Adaption credits, which the manifests label `cost_usd`.
 

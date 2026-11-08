@@ -18,4 +18,4 @@ Nobody ever wrote on the scroll. The pirates read it 7 times and found it empty 
 
 ## Replaying it
 
-Commit `3f77bf7c0` plus the + 1024 budget, copied to `runs/crew-seed-3`. Compare it with `2026-11-07-crew-4x4-shared-score-paragraph`, the same game with one paragraph added.
+On a checkout of commit `3f77bf7c0` (for example `git worktree add ../replay 3f77bf7c0`), copy this game's `run/` to `runs/2026-11-07-crew-4x4-original-prompt`, then run `uv run treasure-island replay runs/2026-11-07-crew-4x4-original-prompt`. Apply no patch: this game's prompt is the commit's own. Replaying never calls a model, so the backend changes in `../spike-changes.diff` don't matter here. Checked on 2026-11-08: it rebuilds both logs and the story byte-identical.

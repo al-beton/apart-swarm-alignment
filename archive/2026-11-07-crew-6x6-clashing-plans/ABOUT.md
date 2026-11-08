@@ -20,4 +20,4 @@ Talking isn't enough to coordinate. Pirate-1 wrote a plan by rows using (row, co
 
 ## Replaying it
 
-Commit `3f77bf7c0` plus `../spike-changes.diff` as it stands, copied to `runs/far-seed-20`.
+On a checkout of commit `3f77bf7c0` (for example `git worktree add ../replay 3f77bf7c0`), first apply only the prompt change, `git apply archive/shared-score-paragraph.diff` (the patch file is in this repository's `archive/`), which adds the shared-score paragraph this game's pirates were given. Then copy this game's `run/` to `runs/2026-11-07-crew-6x6-clashing-plans` and run `uv run treasure-island replay runs/2026-11-07-crew-6x6-clashing-plans`. Replaying never calls a model, so the backend changes in `../spike-changes.diff` don't matter here. Checked on 2026-11-08: it rebuilds both logs and the story byte-identical.

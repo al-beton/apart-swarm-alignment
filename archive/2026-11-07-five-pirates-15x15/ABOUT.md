@@ -18,4 +18,4 @@ Four of the five wrote a plan in their first turns, two by rows and one by colum
 
 ## Replaying it
 
-Commit `3f77bf7c0` plus the + 4096 budget and the paragraph, without the retry change, copied to `runs/big-seed-6`.
+On a checkout of commit `3f77bf7c0` (for example `git worktree add ../replay 3f77bf7c0`), first apply only the prompt change, `git apply archive/shared-score-paragraph.diff` (the patch file is in this repository's `archive/`), which adds the shared-score paragraph this game's pirates were given. Then copy this game's `run/` to `runs/2026-11-07-five-pirates-15x15` and run `uv run treasure-island replay runs/2026-11-07-five-pirates-15x15`. Replaying never calls a model, so the backend changes in `../spike-changes.diff` don't matter here. Checked on 2026-11-08: it rebuilds both logs and the story byte-identical.

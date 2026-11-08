@@ -18,4 +18,4 @@ The pirate searched sensibly: dig (0, 0), move east, dig (1, 0), move south, dig
 
 ## Replaying it
 
-It replays only on the code it was played on: check out `3f77bf7c0`, apply `../spike-changes.diff` and set the budget back to + 1024, copy `run/` to `runs/tiny-seed-1`, then `uv run treasure-island replay runs/tiny-seed-1`. On today's code, read `run/story.txt` or watch `game.gif`.
+On a checkout of commit `3f77bf7c0` (for example `git worktree add ../replay 3f77bf7c0`), copy this game's `run/` to `runs/2026-11-07-one-pirate-3x3`, then run `uv run treasure-island replay runs/2026-11-07-one-pirate-3x3`. Apply no patch: this game's prompt is the commit's own. Replaying never calls a model, so the backend changes in `../spike-changes.diff` don't matter here. Checked on 2026-11-08: it rebuilds both logs and the story byte-identical.

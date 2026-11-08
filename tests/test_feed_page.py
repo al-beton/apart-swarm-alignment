@@ -74,7 +74,7 @@ def test_game_page_each_entry_says_who_its_turn_and_what_it_was_told(saved):
     turns = data_in(viewer.slideshow_page(saved), "TURNS")
     first = turns[0]
     assert first["own"] == 1
-    assert first["told"].startswith("You are at A5.")
+    assert first["told"].startswith("You are at A12.")
     second_of_its_own = next(t for t in turns[1:] if t["agent"] == first["agent"])
     assert second_of_its_own["own"] == 2
 

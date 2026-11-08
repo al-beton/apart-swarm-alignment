@@ -26,7 +26,7 @@ def test_talk_stats_counts_each_pirate_s_turns_lines_alerts_and_readings(tmp_pat
     folder = sharer_game(tmp_path / "sharer")
     talk = talk_stats.game_talk(folder)
     records = records_of(folder)
-    assert list(talk) == ["pirate-1", "pirate-2", "pirate-3"]
+    assert list(talk) == [f"pirate-{n}" for n in range(1, 7)]
     for name, counts in talk.items():
         own = [r for r in records if r["agent"] == name]
         lines = [a for r in own for a in r["did"] if "say" in a]
@@ -102,6 +102,6 @@ def test_talk_stats_prints_a_row_per_pirate_and_a_total_per_game(tmp_path, capsy
     out = capsys.readouterr().out.splitlines()
     assert out[0].startswith("| Game | Pirate | Asked | Walked | Model calls")
     rows = [line for line in out[2:] if line.startswith("|")]
-    assert len(rows) == 2 * (3 + 1)
+    assert len(rows) == 2 * (6 + 1)
     assert sum("| all |" in row for row in rows) == 2
     assert talk_stats.main([str(tmp_path / "nothing")]) == 1

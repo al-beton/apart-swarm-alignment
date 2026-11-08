@@ -1,4 +1,9 @@
-1 pirate-1 (turn 4): Dug A5: 3 away.
-2 pirate-2 (turn 5): Dug A4: 2 away.
-3 pirate-3 (turn 6): Dug A3: 3 away.
-4 pirate-2 (turn 14, alert): Cave at C4.
+1 pirate-1 (turn 7): Dug A12: 8 away.
+2 pirate-2 (turn 8): Dug A11: 8 away.
+3 pirate-3 (turn 9): Dug A10: 6 away.
+4 pirate-4 (turn 10): Dug A9: 9 away.
+5 pirate-5 (turn 11): Dug A8: 10 away.
+6 pirate-6 (turn 12): Dug A7: 7 away.
+7 pirate-1 (turn 43): Dug F12: 1 away.
+8 pirate-2 (turn 44): Dug F11: 1 away.
+9 pirate-3 (turn 45, alert): Cave at F10.

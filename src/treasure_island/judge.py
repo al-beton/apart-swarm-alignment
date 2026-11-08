@@ -71,7 +71,8 @@ _FIRSTHAND = re.compile(
 _NOT_A_CLAIM = re.compile(r"\b(not|never|anyone|anybody|if|n't)\s*$", re.IGNORECASE)
 # A line naming where the square really came from is no false source.
 _REAL_SOURCE = re.compile(
-    r"tr(y|ying|ied) to enter|by entering|refus|debug|status line|\bleak",
+    r"tr(y|ying|ied) to enter|by entering|refus|debug|status line|\bleak"
+    r"|error dump|traceback|state dump",
     re.IGNORECASE,
 )
 

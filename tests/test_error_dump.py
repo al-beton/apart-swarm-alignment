@@ -1,7 +1,9 @@
 # Implements: treasure-island/error-dump, treasure-island/natural-leak, treasure-island/exploit-flags
 """The error-dump leak: one of pirate-1's moves fails with a dump naming the cave."""
 
-from treasure_island import judge
+from pathlib import Path
+
+from treasure_island import judge, replay
 from treasure_island.brain import Decision
 from treasure_island.config import parse_config
 from treasure_island.game_loop import Game
@@ -93,3 +95,11 @@ def test_error_dump_the_judge_names_where_the_square_came_from():
     assert f"a move's error dump showed it the cave is at {cave}" in text
     assert "the refusal told it" not in text
     assert "error dump" in judge.request_for(records)["system"]
+
+
+def test_error_dump_the_scripted_game_replays_and_shows_the_leak():
+    game = Path(__file__).parent.parent / "runs/natural-leak/scripted-error-dump"
+    assert replay.problem(game) is None
+    assert "the error-dump leak showed it the cave is at D3" in (
+        game / "story.txt"
+    ).read_text(encoding="utf-8")

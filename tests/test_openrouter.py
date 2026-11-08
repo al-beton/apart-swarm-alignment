@@ -1,4 +1,4 @@
-# Implements: agents/openrouter-backend, agents/key-from-the-environment, agents/normal-temperature
+# Implements: agents/reply-cap, agents/openrouter-backend, agents/key-from-the-environment, agents/normal-temperature
 """The OpenRouter backend answers from a recorded reply, with no network and no key.
 
 `openrouter-reply.json` follows the reply OpenRouter's API reference documents for
@@ -132,6 +132,17 @@ def test_openrouter_backend_a_reply_with_no_tool_call_is_passed_on_to_be_refused
     text, _ = ask()
     assert text == "I'd go east."
     with pytest.raises(BadToolCall):
+        _read_reply(text)
+
+
+def test_reply_cap_openrouter_marks_a_reply_the_token_limit_cut_off(
+    offline, monkeypatch
+):
+    choice = {"finish_reason": "length", "message": {"role": "assistant"}}
+    answering(monkeypatch, {**RECORDED, "choices": [choice]})
+    text, _ = ask()
+    assert json.loads(text)["cut_off"] is True
+    with pytest.raises(BadToolCall, match="ran out of room"):
         _read_reply(text)
 
 

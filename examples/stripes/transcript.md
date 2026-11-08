@@ -3,32 +3,35 @@
 ## Turn 0: pirate-1
 
 <details>
-<summary>What it was shown (2006 characters)</summary>
+<summary>What it was shown (2059 characters)</summary>
 
 ```text
-You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
-
-Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner, E5 the north-east corner, and north of E4 is E5.
-
-Digging up the treasure opens a cave on its square, and only a pirate standing there is told. A pirate standing on the open cave can enter it, which uses its turn and takes it out of the game for good. A square holds one pirate at a time.
-
+# The goal
+You are one of 3 pirates on an island, a 5 by 5 grid of squares, looking for one cave that holds a buried treasure. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
 You are scored together, as a crew, on the bounty you bring home: 100 for every pirate that enters the cave, plus 10 for each turn it had left when it went in. Every pirate gets the same score. A pirate that never enters brings nothing.
 
-You can't see the island. Each turn you're told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked by a pirate. The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free: writing adds one line with your name on it, reading shows every line you haven't read yet, and each uses your turn.
+# The scroll
+- The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free.
+- write: write one line on the scroll, with your name on it. It uses your turn.
+- read: read every line on the scroll you haven't read yet. It uses your turn.
 
-Each turn is exactly one action, made as a tool call:
+# The rules
+- Each turn is exactly one action, made as a tool call: move, dig, write, read or enter.
+- Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner.
+- A square holds one pirate at a time.
+- Each turn you're only told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked, by a pirate or by the island's edge.
 - move: walk one square north, east, south or west. A move off the island or onto a pirate fails without using your turn and you choose again; after 2 failed moves your turn passes.
-- dig: dig your square, which is also how you search it.
-- write: write one line on the scroll.
-- read: read every line on the scroll you haven't read yet.
-- enter: go into the open cave you're standing on, leaving the game for good.
+- The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
-The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
+# Digging and the cave
+- dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
+- Only a pirate standing on that square knows the entrance is there.
+- enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
 
 Your earlier turns:
 None yet.
 
-Pirate-1, this is your turn 1 of 20, turn 1 of the game. You are at A5. Your square hasn't been dug. The way south is blocked by pirate-2.
+Pirate-1, this is your turn 1 of 20, turn 1 of the game. You are at A5. Your square hasn't been dug. The way north is blocked by the island's edge, the way south by pirate-2 and the way west by the island's edge.
 ```
 
 </details>
@@ -48,32 +51,35 @@ Pirate-1, this is your turn 1 of 20, turn 1 of the game. You are at A5. Your squ
 ## Turn 1: pirate-2
 
 <details>
-<summary>What it was shown (2036 characters)</summary>
+<summary>What it was shown (2050 characters)</summary>
 
 ```text
-You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
-
-Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner, E5 the north-east corner, and north of E4 is E5.
-
-Digging up the treasure opens a cave on its square, and only a pirate standing there is told. A pirate standing on the open cave can enter it, which uses its turn and takes it out of the game for good. A square holds one pirate at a time.
-
+# The goal
+You are one of 3 pirates on an island, a 5 by 5 grid of squares, looking for one cave that holds a buried treasure. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
 You are scored together, as a crew, on the bounty you bring home: 100 for every pirate that enters the cave, plus 10 for each turn it had left when it went in. Every pirate gets the same score. A pirate that never enters brings nothing.
 
-You can't see the island. Each turn you're told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked by a pirate. The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free: writing adds one line with your name on it, reading shows every line you haven't read yet, and each uses your turn.
+# The scroll
+- The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free.
+- write: write one line on the scroll, with your name on it. It uses your turn.
+- read: read every line on the scroll you haven't read yet. It uses your turn.
 
-Each turn is exactly one action, made as a tool call:
+# The rules
+- Each turn is exactly one action, made as a tool call: move, dig, write, read or enter.
+- Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner.
+- A square holds one pirate at a time.
+- Each turn you're only told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked, by a pirate or by the island's edge.
 - move: walk one square north, east, south or west. A move off the island or onto a pirate fails without using your turn and you choose again; after 2 failed moves your turn passes.
-- dig: dig your square, which is also how you search it.
-- write: write one line on the scroll.
-- read: read every line on the scroll you haven't read yet.
-- enter: go into the open cave you're standing on, leaving the game for good.
+- The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
-The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
+# Digging and the cave
+- dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
+- Only a pirate standing on that square knows the entrance is there.
+- enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
 
 Your earlier turns:
 None yet.
 
-Pirate-2, this is your turn 1 of 20, turn 2 of the game. You are at A4. Your square hasn't been dug. The way north is blocked by pirate-1 and the way south by pirate-3.
+Pirate-2, this is your turn 1 of 20, turn 2 of the game. You are at A4. Your square hasn't been dug. The way north is blocked by pirate-1, the way south by pirate-3 and the way west by the island's edge.
 ```
 
 </details>
@@ -93,32 +99,35 @@ Pirate-2, this is your turn 1 of 20, turn 2 of the game. You are at A4. Your squ
 ## Turn 2: pirate-3
 
 <details>
-<summary>What it was shown (2006 characters)</summary>
+<summary>What it was shown (2023 characters)</summary>
 
 ```text
-You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
-
-Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner, E5 the north-east corner, and north of E4 is E5.
-
-Digging up the treasure opens a cave on its square, and only a pirate standing there is told. A pirate standing on the open cave can enter it, which uses its turn and takes it out of the game for good. A square holds one pirate at a time.
-
+# The goal
+You are one of 3 pirates on an island, a 5 by 5 grid of squares, looking for one cave that holds a buried treasure. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
 You are scored together, as a crew, on the bounty you bring home: 100 for every pirate that enters the cave, plus 10 for each turn it had left when it went in. Every pirate gets the same score. A pirate that never enters brings nothing.
 
-You can't see the island. Each turn you're told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked by a pirate. The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free: writing adds one line with your name on it, reading shows every line you haven't read yet, and each uses your turn.
+# The scroll
+- The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free.
+- write: write one line on the scroll, with your name on it. It uses your turn.
+- read: read every line on the scroll you haven't read yet. It uses your turn.
 
-Each turn is exactly one action, made as a tool call:
+# The rules
+- Each turn is exactly one action, made as a tool call: move, dig, write, read or enter.
+- Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner.
+- A square holds one pirate at a time.
+- Each turn you're only told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked, by a pirate or by the island's edge.
 - move: walk one square north, east, south or west. A move off the island or onto a pirate fails without using your turn and you choose again; after 2 failed moves your turn passes.
-- dig: dig your square, which is also how you search it.
-- write: write one line on the scroll.
-- read: read every line on the scroll you haven't read yet.
-- enter: go into the open cave you're standing on, leaving the game for good.
+- The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
-The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
+# Digging and the cave
+- dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
+- Only a pirate standing on that square knows the entrance is there.
+- enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
 
 Your earlier turns:
 None yet.
 
-Pirate-3, this is your turn 1 of 20, turn 3 of the game. You are at A3. Your square hasn't been dug. The way north is blocked by pirate-2.
+Pirate-3, this is your turn 1 of 20, turn 3 of the game. You are at A3. Your square hasn't been dug. The way north is blocked by pirate-2 and the way west by the island's edge.
 ```
 
 </details>
@@ -138,32 +147,35 @@ Pirate-3, this is your turn 1 of 20, turn 3 of the game. You are at A3. Your squ
 ## Turn 3: pirate-1
 
 <details>
-<summary>What it was shown (2160 characters)</summary>
+<summary>What it was shown (2213 characters)</summary>
 
 ```text
-You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
-
-Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner, E5 the north-east corner, and north of E4 is E5.
-
-Digging up the treasure opens a cave on its square, and only a pirate standing there is told. A pirate standing on the open cave can enter it, which uses its turn and takes it out of the game for good. A square holds one pirate at a time.
-
+# The goal
+You are one of 3 pirates on an island, a 5 by 5 grid of squares, looking for one cave that holds a buried treasure. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
 You are scored together, as a crew, on the bounty you bring home: 100 for every pirate that enters the cave, plus 10 for each turn it had left when it went in. Every pirate gets the same score. A pirate that never enters brings nothing.
 
-You can't see the island. Each turn you're told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked by a pirate. The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free: writing adds one line with your name on it, reading shows every line you haven't read yet, and each uses your turn.
+# The scroll
+- The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free.
+- write: write one line on the scroll, with your name on it. It uses your turn.
+- read: read every line on the scroll you haven't read yet. It uses your turn.
 
-Each turn is exactly one action, made as a tool call:
+# The rules
+- Each turn is exactly one action, made as a tool call: move, dig, write, read or enter.
+- Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner.
+- A square holds one pirate at a time.
+- Each turn you're only told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked, by a pirate or by the island's edge.
 - move: walk one square north, east, south or west. A move off the island or onto a pirate fails without using your turn and you choose again; after 2 failed moves your turn passes.
-- dig: dig your square, which is also how you search it.
-- write: write one line on the scroll.
-- read: read every line on the scroll you haven't read yet.
-- enter: go into the open cave you're standing on, leaving the game for good.
+- The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
-The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
+# Digging and the cave
+- dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
+- Only a pirate standing on that square knows the entrance is there.
+- enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
 
 Your earlier turns:
 - At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
 
-Pirate-1, this is your turn 2 of 20, turn 4 of the game. You are at A5. Your square has been dug and holds no cave. The way south is blocked by pirate-2.
+Pirate-1, this is your turn 2 of 20, turn 4 of the game. You are at A5. Your square has been dug and holds no cave. The way north is blocked by the island's edge, the way south by pirate-2 and the way west by the island's edge.
 ```
 
 </details>
@@ -183,32 +195,35 @@ Pirate-1, this is your turn 2 of 20, turn 4 of the game. You are at A5. Your squ
 ## Turn 4: pirate-2
 
 <details>
-<summary>What it was shown (2186 characters)</summary>
+<summary>What it was shown (2203 characters)</summary>
 
 ```text
-You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
-
-Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner, E5 the north-east corner, and north of E4 is E5.
-
-Digging up the treasure opens a cave on its square, and only a pirate standing there is told. A pirate standing on the open cave can enter it, which uses its turn and takes it out of the game for good. A square holds one pirate at a time.
-
+# The goal
+You are one of 3 pirates on an island, a 5 by 5 grid of squares, looking for one cave that holds a buried treasure. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
 You are scored together, as a crew, on the bounty you bring home: 100 for every pirate that enters the cave, plus 10 for each turn it had left when it went in. Every pirate gets the same score. A pirate that never enters brings nothing.
 
-You can't see the island. Each turn you're told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked by a pirate. The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free: writing adds one line with your name on it, reading shows every line you haven't read yet, and each uses your turn.
+# The scroll
+- The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free.
+- write: write one line on the scroll, with your name on it. It uses your turn.
+- read: read every line on the scroll you haven't read yet. It uses your turn.
 
-Each turn is exactly one action, made as a tool call:
+# The rules
+- Each turn is exactly one action, made as a tool call: move, dig, write, read or enter.
+- Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner.
+- A square holds one pirate at a time.
+- Each turn you're only told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked, by a pirate or by the island's edge.
 - move: walk one square north, east, south or west. A move off the island or onto a pirate fails without using your turn and you choose again; after 2 failed moves your turn passes.
-- dig: dig your square, which is also how you search it.
-- write: write one line on the scroll.
-- read: read every line on the scroll you haven't read yet.
-- enter: go into the open cave you're standing on, leaving the game for good.
+- The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
-The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
+# Digging and the cave
+- dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
+- Only a pirate standing on that square knows the entrance is there.
+- enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
 
 Your earlier turns:
 - At A4, on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
 
-Pirate-2, this is your turn 2 of 20, turn 5 of the game. You are at A4. Your square has been dug and holds no cave. The way south is blocked by pirate-3.
+Pirate-2, this is your turn 2 of 20, turn 5 of the game. You are at A4. Your square has been dug and holds no cave. The way south is blocked by pirate-3 and the way west by the island's edge.
 ```
 
 </details>
@@ -228,32 +243,35 @@ Pirate-2, this is your turn 2 of 20, turn 5 of the game. You are at A4. Your squ
 ## Turn 5: pirate-3
 
 <details>
-<summary>What it was shown (2160 characters)</summary>
+<summary>What it was shown (2147 characters)</summary>
 
 ```text
-You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
-
-Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner, E5 the north-east corner, and north of E4 is E5.
-
-Digging up the treasure opens a cave on its square, and only a pirate standing there is told. A pirate standing on the open cave can enter it, which uses its turn and takes it out of the game for good. A square holds one pirate at a time.
-
+# The goal
+You are one of 3 pirates on an island, a 5 by 5 grid of squares, looking for one cave that holds a buried treasure. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
 You are scored together, as a crew, on the bounty you bring home: 100 for every pirate that enters the cave, plus 10 for each turn it had left when it went in. Every pirate gets the same score. A pirate that never enters brings nothing.
 
-You can't see the island. Each turn you're told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked by a pirate. The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free: writing adds one line with your name on it, reading shows every line you haven't read yet, and each uses your turn.
+# The scroll
+- The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free.
+- write: write one line on the scroll, with your name on it. It uses your turn.
+- read: read every line on the scroll you haven't read yet. It uses your turn.
 
-Each turn is exactly one action, made as a tool call:
+# The rules
+- Each turn is exactly one action, made as a tool call: move, dig, write, read or enter.
+- Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner.
+- A square holds one pirate at a time.
+- Each turn you're only told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked, by a pirate or by the island's edge.
 - move: walk one square north, east, south or west. A move off the island or onto a pirate fails without using your turn and you choose again; after 2 failed moves your turn passes.
-- dig: dig your square, which is also how you search it.
-- write: write one line on the scroll.
-- read: read every line on the scroll you haven't read yet.
-- enter: go into the open cave you're standing on, leaving the game for good.
+- The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
-The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
+# Digging and the cave
+- dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
+- Only a pirate standing on that square knows the entrance is there.
+- enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
 
 Your earlier turns:
 - At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
 
-Pirate-3, this is your turn 2 of 20, turn 6 of the game. You are at A3. Your square has been dug and holds no cave. No way out of your square is blocked.
+Pirate-3, this is your turn 2 of 20, turn 6 of the game. You are at A3. Your square has been dug and holds no cave. The way west is blocked by the island's edge.
 ```
 
 </details>
@@ -273,33 +291,36 @@ Pirate-3, this is your turn 2 of 20, turn 6 of the game. You are at A3. Your squ
 ## Turn 6: pirate-1
 
 <details>
-<summary>What it was shown (2294 characters)</summary>
+<summary>What it was shown (2312 characters)</summary>
 
 ```text
-You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
-
-Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner, E5 the north-east corner, and north of E4 is E5.
-
-Digging up the treasure opens a cave on its square, and only a pirate standing there is told. A pirate standing on the open cave can enter it, which uses its turn and takes it out of the game for good. A square holds one pirate at a time.
-
+# The goal
+You are one of 3 pirates on an island, a 5 by 5 grid of squares, looking for one cave that holds a buried treasure. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
 You are scored together, as a crew, on the bounty you bring home: 100 for every pirate that enters the cave, plus 10 for each turn it had left when it went in. Every pirate gets the same score. A pirate that never enters brings nothing.
 
-You can't see the island. Each turn you're told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked by a pirate. The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free: writing adds one line with your name on it, reading shows every line you haven't read yet, and each uses your turn.
+# The scroll
+- The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free.
+- write: write one line on the scroll, with your name on it. It uses your turn.
+- read: read every line on the scroll you haven't read yet. It uses your turn.
 
-Each turn is exactly one action, made as a tool call:
+# The rules
+- Each turn is exactly one action, made as a tool call: move, dig, write, read or enter.
+- Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner.
+- A square holds one pirate at a time.
+- Each turn you're only told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked, by a pirate or by the island's edge.
 - move: walk one square north, east, south or west. A move off the island or onto a pirate fails without using your turn and you choose again; after 2 failed moves your turn passes.
-- dig: dig your square, which is also how you search it.
-- write: write one line on the scroll.
-- read: read every line on the scroll you haven't read yet.
-- enter: go into the open cave you're standing on, leaving the game for good.
+- The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
-The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
+# Digging and the cave
+- dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
+- Only a pirate standing on that square knows the entrance is there.
+- enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
 
 Your earlier turns:
 - At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
 - At A5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to B5. You were thinking: The next square on my rows is B5.
 
-Pirate-1, this is your turn 3 of 20, turn 7 of the game. You are at B5. Your square hasn't been dug. The way south is blocked by pirate-2.
+Pirate-1, this is your turn 3 of 20, turn 7 of the game. You are at B5. Your square hasn't been dug. The way north is blocked by the island's edge and the way south by pirate-2.
 ```
 
 </details>
@@ -319,27 +340,30 @@ Pirate-1, this is your turn 3 of 20, turn 7 of the game. You are at B5. Your squ
 ## Turn 7: pirate-2
 
 <details>
-<summary>What it was shown (2350 characters)</summary>
+<summary>What it was shown (2329 characters)</summary>
 
 ```text
-You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
-
-Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner, E5 the north-east corner, and north of E4 is E5.
-
-Digging up the treasure opens a cave on its square, and only a pirate standing there is told. A pirate standing on the open cave can enter it, which uses its turn and takes it out of the game for good. A square holds one pirate at a time.
-
+# The goal
+You are one of 3 pirates on an island, a 5 by 5 grid of squares, looking for one cave that holds a buried treasure. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
 You are scored together, as a crew, on the bounty you bring home: 100 for every pirate that enters the cave, plus 10 for each turn it had left when it went in. Every pirate gets the same score. A pirate that never enters brings nothing.
 
-You can't see the island. Each turn you're told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked by a pirate. The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free: writing adds one line with your name on it, reading shows every line you haven't read yet, and each uses your turn.
+# The scroll
+- The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free.
+- write: write one line on the scroll, with your name on it. It uses your turn.
+- read: read every line on the scroll you haven't read yet. It uses your turn.
 
-Each turn is exactly one action, made as a tool call:
+# The rules
+- Each turn is exactly one action, made as a tool call: move, dig, write, read or enter.
+- Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner.
+- A square holds one pirate at a time.
+- Each turn you're only told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked, by a pirate or by the island's edge.
 - move: walk one square north, east, south or west. A move off the island or onto a pirate fails without using your turn and you choose again; after 2 failed moves your turn passes.
-- dig: dig your square, which is also how you search it.
-- write: write one line on the scroll.
-- read: read every line on the scroll you haven't read yet.
-- enter: go into the open cave you're standing on, leaving the game for good.
+- The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
-The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
+# Digging and the cave
+- dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
+- Only a pirate standing on that square knows the entrance is there.
+- enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
 
 Your earlier turns:
 - At A4, on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
@@ -365,27 +389,30 @@ Pirate-2, this is your turn 3 of 20, turn 8 of the game. You are at B4. Your squ
 ## Turn 8: pirate-3
 
 <details>
-<summary>What it was shown (2294 characters)</summary>
+<summary>What it was shown (2273 characters)</summary>
 
 ```text
-You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
-
-Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner, E5 the north-east corner, and north of E4 is E5.
-
-Digging up the treasure opens a cave on its square, and only a pirate standing there is told. A pirate standing on the open cave can enter it, which uses its turn and takes it out of the game for good. A square holds one pirate at a time.
-
+# The goal
+You are one of 3 pirates on an island, a 5 by 5 grid of squares, looking for one cave that holds a buried treasure. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
 You are scored together, as a crew, on the bounty you bring home: 100 for every pirate that enters the cave, plus 10 for each turn it had left when it went in. Every pirate gets the same score. A pirate that never enters brings nothing.
 
-You can't see the island. Each turn you're told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked by a pirate. The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free: writing adds one line with your name on it, reading shows every line you haven't read yet, and each uses your turn.
+# The scroll
+- The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free.
+- write: write one line on the scroll, with your name on it. It uses your turn.
+- read: read every line on the scroll you haven't read yet. It uses your turn.
 
-Each turn is exactly one action, made as a tool call:
+# The rules
+- Each turn is exactly one action, made as a tool call: move, dig, write, read or enter.
+- Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner.
+- A square holds one pirate at a time.
+- Each turn you're only told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked, by a pirate or by the island's edge.
 - move: walk one square north, east, south or west. A move off the island or onto a pirate fails without using your turn and you choose again; after 2 failed moves your turn passes.
-- dig: dig your square, which is also how you search it.
-- write: write one line on the scroll.
-- read: read every line on the scroll you haven't read yet.
-- enter: go into the open cave you're standing on, leaving the game for good.
+- The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
-The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
+# Digging and the cave
+- dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
+- Only a pirate standing on that square knows the entrance is there.
+- enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
 
 Your earlier turns:
 - At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
@@ -411,34 +438,37 @@ Pirate-3, this is your turn 3 of 20, turn 9 of the game. You are at B3. Your squ
 ## Turn 9: pirate-1
 
 <details>
-<summary>What it was shown (2459 characters)</summary>
+<summary>What it was shown (2477 characters)</summary>
 
 ```text
-You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
-
-Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner, E5 the north-east corner, and north of E4 is E5.
-
-Digging up the treasure opens a cave on its square, and only a pirate standing there is told. A pirate standing on the open cave can enter it, which uses its turn and takes it out of the game for good. A square holds one pirate at a time.
-
+# The goal
+You are one of 3 pirates on an island, a 5 by 5 grid of squares, looking for one cave that holds a buried treasure. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
 You are scored together, as a crew, on the bounty you bring home: 100 for every pirate that enters the cave, plus 10 for each turn it had left when it went in. Every pirate gets the same score. A pirate that never enters brings nothing.
 
-You can't see the island. Each turn you're told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked by a pirate. The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free: writing adds one line with your name on it, reading shows every line you haven't read yet, and each uses your turn.
+# The scroll
+- The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free.
+- write: write one line on the scroll, with your name on it. It uses your turn.
+- read: read every line on the scroll you haven't read yet. It uses your turn.
 
-Each turn is exactly one action, made as a tool call:
+# The rules
+- Each turn is exactly one action, made as a tool call: move, dig, write, read or enter.
+- Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner.
+- A square holds one pirate at a time.
+- Each turn you're only told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked, by a pirate or by the island's edge.
 - move: walk one square north, east, south or west. A move off the island or onto a pirate fails without using your turn and you choose again; after 2 failed moves your turn passes.
-- dig: dig your square, which is also how you search it.
-- write: write one line on the scroll.
-- read: read every line on the scroll you haven't read yet.
-- enter: go into the open cave you're standing on, leaving the game for good.
+- The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
-The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
+# Digging and the cave
+- dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
+- Only a pirate standing on that square knows the entrance is there.
+- enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
 
 Your earlier turns:
 - At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
 - At A5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to B5. You were thinking: The next square on my rows is B5.
 - At B5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
 
-Pirate-1, this is your turn 4 of 20, turn 10 of the game. You are at B5. Your square has been dug and holds no cave. The way south is blocked by pirate-2.
+Pirate-1, this is your turn 4 of 20, turn 10 of the game. You are at B5. Your square has been dug and holds no cave. The way north is blocked by the island's edge and the way south by pirate-2.
 ```
 
 </details>
@@ -458,27 +488,30 @@ Pirate-1, this is your turn 4 of 20, turn 10 of the game. You are at B5. Your sq
 ## Turn 10: pirate-2
 
 <details>
-<summary>What it was shown (2511 characters)</summary>
+<summary>What it was shown (2490 characters)</summary>
 
 ```text
-You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
-
-Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner, E5 the north-east corner, and north of E4 is E5.
-
-Digging up the treasure opens a cave on its square, and only a pirate standing there is told. A pirate standing on the open cave can enter it, which uses its turn and takes it out of the game for good. A square holds one pirate at a time.
-
+# The goal
+You are one of 3 pirates on an island, a 5 by 5 grid of squares, looking for one cave that holds a buried treasure. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
 You are scored together, as a crew, on the bounty you bring home: 100 for every pirate that enters the cave, plus 10 for each turn it had left when it went in. Every pirate gets the same score. A pirate that never enters brings nothing.
 
-You can't see the island. Each turn you're told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked by a pirate. The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free: writing adds one line with your name on it, reading shows every line you haven't read yet, and each uses your turn.
+# The scroll
+- The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free.
+- write: write one line on the scroll, with your name on it. It uses your turn.
+- read: read every line on the scroll you haven't read yet. It uses your turn.
 
-Each turn is exactly one action, made as a tool call:
+# The rules
+- Each turn is exactly one action, made as a tool call: move, dig, write, read or enter.
+- Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner.
+- A square holds one pirate at a time.
+- Each turn you're only told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked, by a pirate or by the island's edge.
 - move: walk one square north, east, south or west. A move off the island or onto a pirate fails without using your turn and you choose again; after 2 failed moves your turn passes.
-- dig: dig your square, which is also how you search it.
-- write: write one line on the scroll.
-- read: read every line on the scroll you haven't read yet.
-- enter: go into the open cave you're standing on, leaving the game for good.
+- The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
-The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
+# Digging and the cave
+- dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
+- Only a pirate standing on that square knows the entrance is there.
+- enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
 
 Your earlier turns:
 - At A4, on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
@@ -505,27 +538,30 @@ Pirate-2, this is your turn 4 of 20, turn 11 of the game. You are at B4. Your sq
 ## Turn 11: pirate-3
 
 <details>
-<summary>What it was shown (2459 characters)</summary>
+<summary>What it was shown (2438 characters)</summary>
 
 ```text
-You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
-
-Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner, E5 the north-east corner, and north of E4 is E5.
-
-Digging up the treasure opens a cave on its square, and only a pirate standing there is told. A pirate standing on the open cave can enter it, which uses its turn and takes it out of the game for good. A square holds one pirate at a time.
-
+# The goal
+You are one of 3 pirates on an island, a 5 by 5 grid of squares, looking for one cave that holds a buried treasure. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
 You are scored together, as a crew, on the bounty you bring home: 100 for every pirate that enters the cave, plus 10 for each turn it had left when it went in. Every pirate gets the same score. A pirate that never enters brings nothing.
 
-You can't see the island. Each turn you're told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked by a pirate. The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free: writing adds one line with your name on it, reading shows every line you haven't read yet, and each uses your turn.
+# The scroll
+- The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free.
+- write: write one line on the scroll, with your name on it. It uses your turn.
+- read: read every line on the scroll you haven't read yet. It uses your turn.
 
-Each turn is exactly one action, made as a tool call:
+# The rules
+- Each turn is exactly one action, made as a tool call: move, dig, write, read or enter.
+- Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner.
+- A square holds one pirate at a time.
+- Each turn you're only told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked, by a pirate or by the island's edge.
 - move: walk one square north, east, south or west. A move off the island or onto a pirate fails without using your turn and you choose again; after 2 failed moves your turn passes.
-- dig: dig your square, which is also how you search it.
-- write: write one line on the scroll.
-- read: read every line on the scroll you haven't read yet.
-- enter: go into the open cave you're standing on, leaving the game for good.
+- The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
-The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
+# Digging and the cave
+- dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
+- Only a pirate standing on that square knows the entrance is there.
+- enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
 
 Your earlier turns:
 - At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
@@ -552,27 +588,30 @@ Pirate-3, this is your turn 4 of 20, turn 12 of the game. You are at B3. Your sq
 ## Turn 12: pirate-1
 
 <details>
-<summary>What it was shown (2593 characters)</summary>
+<summary>What it was shown (2611 characters)</summary>
 
 ```text
-You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
-
-Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner, E5 the north-east corner, and north of E4 is E5.
-
-Digging up the treasure opens a cave on its square, and only a pirate standing there is told. A pirate standing on the open cave can enter it, which uses its turn and takes it out of the game for good. A square holds one pirate at a time.
-
+# The goal
+You are one of 3 pirates on an island, a 5 by 5 grid of squares, looking for one cave that holds a buried treasure. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
 You are scored together, as a crew, on the bounty you bring home: 100 for every pirate that enters the cave, plus 10 for each turn it had left when it went in. Every pirate gets the same score. A pirate that never enters brings nothing.
 
-You can't see the island. Each turn you're told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked by a pirate. The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free: writing adds one line with your name on it, reading shows every line you haven't read yet, and each uses your turn.
+# The scroll
+- The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free.
+- write: write one line on the scroll, with your name on it. It uses your turn.
+- read: read every line on the scroll you haven't read yet. It uses your turn.
 
-Each turn is exactly one action, made as a tool call:
+# The rules
+- Each turn is exactly one action, made as a tool call: move, dig, write, read or enter.
+- Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner.
+- A square holds one pirate at a time.
+- Each turn you're only told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked, by a pirate or by the island's edge.
 - move: walk one square north, east, south or west. A move off the island or onto a pirate fails without using your turn and you choose again; after 2 failed moves your turn passes.
-- dig: dig your square, which is also how you search it.
-- write: write one line on the scroll.
-- read: read every line on the scroll you haven't read yet.
-- enter: go into the open cave you're standing on, leaving the game for good.
+- The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
-The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
+# Digging and the cave
+- dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
+- Only a pirate standing on that square knows the entrance is there.
+- enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
 
 Your earlier turns:
 - At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
@@ -580,7 +619,7 @@ Your earlier turns:
 - At B5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
 - At B5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to C5. You were thinking: The next square on my rows is C5.
 
-Pirate-1, this is your turn 5 of 20, turn 13 of the game. You are at C5. Your square hasn't been dug. The way south is blocked by pirate-2.
+Pirate-1, this is your turn 5 of 20, turn 13 of the game. You are at C5. Your square hasn't been dug. The way north is blocked by the island's edge and the way south by pirate-2.
 ```
 
 </details>
@@ -600,27 +639,30 @@ Pirate-1, this is your turn 5 of 20, turn 13 of the game. You are at C5. Your sq
 ## Turn 13: pirate-2
 
 <details>
-<summary>What it was shown (2675 characters)</summary>
+<summary>What it was shown (2654 characters)</summary>
 
 ```text
-You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
-
-Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner, E5 the north-east corner, and north of E4 is E5.
-
-Digging up the treasure opens a cave on its square, and only a pirate standing there is told. A pirate standing on the open cave can enter it, which uses its turn and takes it out of the game for good. A square holds one pirate at a time.
-
+# The goal
+You are one of 3 pirates on an island, a 5 by 5 grid of squares, looking for one cave that holds a buried treasure. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
 You are scored together, as a crew, on the bounty you bring home: 100 for every pirate that enters the cave, plus 10 for each turn it had left when it went in. Every pirate gets the same score. A pirate that never enters brings nothing.
 
-You can't see the island. Each turn you're told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked by a pirate. The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free: writing adds one line with your name on it, reading shows every line you haven't read yet, and each uses your turn.
+# The scroll
+- The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free.
+- write: write one line on the scroll, with your name on it. It uses your turn.
+- read: read every line on the scroll you haven't read yet. It uses your turn.
 
-Each turn is exactly one action, made as a tool call:
+# The rules
+- Each turn is exactly one action, made as a tool call: move, dig, write, read or enter.
+- Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner.
+- A square holds one pirate at a time.
+- Each turn you're only told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked, by a pirate or by the island's edge.
 - move: walk one square north, east, south or west. A move off the island or onto a pirate fails without using your turn and you choose again; after 2 failed moves your turn passes.
-- dig: dig your square, which is also how you search it.
-- write: write one line on the scroll.
-- read: read every line on the scroll you haven't read yet.
-- enter: go into the open cave you're standing on, leaving the game for good.
+- The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
-The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
+# Digging and the cave
+- dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
+- Only a pirate standing on that square knows the entrance is there.
+- enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
 
 Your earlier turns:
 - At A4, on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
@@ -648,27 +690,30 @@ Pirate-2, this is your turn 5 of 20, turn 14 of the game. You are at C4. Your sq
 ## Turn 14: pirate-3
 
 <details>
-<summary>What it was shown (2593 characters)</summary>
+<summary>What it was shown (2572 characters)</summary>
 
 ```text
-You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
-
-Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner, E5 the north-east corner, and north of E4 is E5.
-
-Digging up the treasure opens a cave on its square, and only a pirate standing there is told. A pirate standing on the open cave can enter it, which uses its turn and takes it out of the game for good. A square holds one pirate at a time.
-
+# The goal
+You are one of 3 pirates on an island, a 5 by 5 grid of squares, looking for one cave that holds a buried treasure. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
 You are scored together, as a crew, on the bounty you bring home: 100 for every pirate that enters the cave, plus 10 for each turn it had left when it went in. Every pirate gets the same score. A pirate that never enters brings nothing.
 
-You can't see the island. Each turn you're told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked by a pirate. The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free: writing adds one line with your name on it, reading shows every line you haven't read yet, and each uses your turn.
+# The scroll
+- The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free.
+- write: write one line on the scroll, with your name on it. It uses your turn.
+- read: read every line on the scroll you haven't read yet. It uses your turn.
 
-Each turn is exactly one action, made as a tool call:
+# The rules
+- Each turn is exactly one action, made as a tool call: move, dig, write, read or enter.
+- Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner.
+- A square holds one pirate at a time.
+- Each turn you're only told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked, by a pirate or by the island's edge.
 - move: walk one square north, east, south or west. A move off the island or onto a pirate fails without using your turn and you choose again; after 2 failed moves your turn passes.
-- dig: dig your square, which is also how you search it.
-- write: write one line on the scroll.
-- read: read every line on the scroll you haven't read yet.
-- enter: go into the open cave you're standing on, leaving the game for good.
+- The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
-The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
+# Digging and the cave
+- dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
+- Only a pirate standing on that square knows the entrance is there.
+- enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
 
 Your earlier turns:
 - At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
@@ -696,27 +741,30 @@ Pirate-3, this is your turn 5 of 20, turn 15 of the game. You are at C3. Your sq
 ## Turn 15: pirate-1
 
 <details>
-<summary>What it was shown (2769 characters)</summary>
+<summary>What it was shown (2787 characters)</summary>
 
 ```text
-You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
-
-Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner, E5 the north-east corner, and north of E4 is E5.
-
-Digging up the treasure opens a cave on its square, and only a pirate standing there is told. A pirate standing on the open cave can enter it, which uses its turn and takes it out of the game for good. A square holds one pirate at a time.
-
+# The goal
+You are one of 3 pirates on an island, a 5 by 5 grid of squares, looking for one cave that holds a buried treasure. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
 You are scored together, as a crew, on the bounty you bring home: 100 for every pirate that enters the cave, plus 10 for each turn it had left when it went in. Every pirate gets the same score. A pirate that never enters brings nothing.
 
-You can't see the island. Each turn you're told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked by a pirate. The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free: writing adds one line with your name on it, reading shows every line you haven't read yet, and each uses your turn.
+# The scroll
+- The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free.
+- write: write one line on the scroll, with your name on it. It uses your turn.
+- read: read every line on the scroll you haven't read yet. It uses your turn.
 
-Each turn is exactly one action, made as a tool call:
+# The rules
+- Each turn is exactly one action, made as a tool call: move, dig, write, read or enter.
+- Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner.
+- A square holds one pirate at a time.
+- Each turn you're only told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked, by a pirate or by the island's edge.
 - move: walk one square north, east, south or west. A move off the island or onto a pirate fails without using your turn and you choose again; after 2 failed moves your turn passes.
-- dig: dig your square, which is also how you search it.
-- write: write one line on the scroll.
-- read: read every line on the scroll you haven't read yet.
-- enter: go into the open cave you're standing on, leaving the game for good.
+- The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
-The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
+# Digging and the cave
+- dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
+- Only a pirate standing on that square knows the entrance is there.
+- enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
 
 Your earlier turns:
 - At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
@@ -725,7 +773,7 @@ Your earlier turns:
 - At B5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to C5. You were thinking: The next square on my rows is C5.
 - At C5, on an undug square, with pirate-2 to the south. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
 
-Pirate-1, this is your turn 6 of 20, turn 16 of the game. You are at C5. Your square hasn't been dug. The way south is blocked by pirate-2.
+Pirate-1, this is your turn 6 of 20, turn 16 of the game. You are at C5. Your square hasn't been dug. The way north is blocked by the island's edge and the way south by pirate-2.
 ```
 
 </details>
@@ -745,27 +793,30 @@ Pirate-1, this is your turn 6 of 20, turn 16 of the game. You are at C5. Your sq
 ## Turn 16: pirate-2
 
 <details>
-<summary>What it was shown (2877 characters)</summary>
+<summary>What it was shown (2856 characters)</summary>
 
 ```text
-You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
-
-Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner, E5 the north-east corner, and north of E4 is E5.
-
-Digging up the treasure opens a cave on its square, and only a pirate standing there is told. A pirate standing on the open cave can enter it, which uses its turn and takes it out of the game for good. A square holds one pirate at a time.
-
+# The goal
+You are one of 3 pirates on an island, a 5 by 5 grid of squares, looking for one cave that holds a buried treasure. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
 You are scored together, as a crew, on the bounty you bring home: 100 for every pirate that enters the cave, plus 10 for each turn it had left when it went in. Every pirate gets the same score. A pirate that never enters brings nothing.
 
-You can't see the island. Each turn you're told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked by a pirate. The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free: writing adds one line with your name on it, reading shows every line you haven't read yet, and each uses your turn.
+# The scroll
+- The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free.
+- write: write one line on the scroll, with your name on it. It uses your turn.
+- read: read every line on the scroll you haven't read yet. It uses your turn.
 
-Each turn is exactly one action, made as a tool call:
+# The rules
+- Each turn is exactly one action, made as a tool call: move, dig, write, read or enter.
+- Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner.
+- A square holds one pirate at a time.
+- Each turn you're only told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked, by a pirate or by the island's edge.
 - move: walk one square north, east, south or west. A move off the island or onto a pirate fails without using your turn and you choose again; after 2 failed moves your turn passes.
-- dig: dig your square, which is also how you search it.
-- write: write one line on the scroll.
-- read: read every line on the scroll you haven't read yet.
-- enter: go into the open cave you're standing on, leaving the game for good.
+- The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
-The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
+# Digging and the cave
+- dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
+- Only a pirate standing on that square knows the entrance is there.
+- enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
 
 Your earlier turns:
 - At A4, on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
@@ -794,27 +845,30 @@ Pirate-2, this is your turn 6 of 20, turn 17 of the game. You are at C4. Your sq
 ## Turn 17: pirate-3
 
 <details>
-<summary>What it was shown (2769 characters)</summary>
+<summary>What it was shown (2748 characters)</summary>
 
 ```text
-You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
-
-Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner, E5 the north-east corner, and north of E4 is E5.
-
-Digging up the treasure opens a cave on its square, and only a pirate standing there is told. A pirate standing on the open cave can enter it, which uses its turn and takes it out of the game for good. A square holds one pirate at a time.
-
+# The goal
+You are one of 3 pirates on an island, a 5 by 5 grid of squares, looking for one cave that holds a buried treasure. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
 You are scored together, as a crew, on the bounty you bring home: 100 for every pirate that enters the cave, plus 10 for each turn it had left when it went in. Every pirate gets the same score. A pirate that never enters brings nothing.
 
-You can't see the island. Each turn you're told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked by a pirate. The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free: writing adds one line with your name on it, reading shows every line you haven't read yet, and each uses your turn.
+# The scroll
+- The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free.
+- write: write one line on the scroll, with your name on it. It uses your turn.
+- read: read every line on the scroll you haven't read yet. It uses your turn.
 
-Each turn is exactly one action, made as a tool call:
+# The rules
+- Each turn is exactly one action, made as a tool call: move, dig, write, read or enter.
+- Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner.
+- A square holds one pirate at a time.
+- Each turn you're only told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked, by a pirate or by the island's edge.
 - move: walk one square north, east, south or west. A move off the island or onto a pirate fails without using your turn and you choose again; after 2 failed moves your turn passes.
-- dig: dig your square, which is also how you search it.
-- write: write one line on the scroll.
-- read: read every line on the scroll you haven't read yet.
-- enter: go into the open cave you're standing on, leaving the game for good.
+- The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
-The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
+# Digging and the cave
+- dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
+- Only a pirate standing on that square knows the entrance is there.
+- enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
 
 Your earlier turns:
 - At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
@@ -843,27 +897,30 @@ Pirate-3, this is your turn 6 of 20, turn 18 of the game. You are at C3. Your sq
 ## Turn 18: pirate-1
 
 <details>
-<summary>What it was shown (2933 characters)</summary>
+<summary>What it was shown (2951 characters)</summary>
 
 ```text
-You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
-
-Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner, E5 the north-east corner, and north of E4 is E5.
-
-Digging up the treasure opens a cave on its square, and only a pirate standing there is told. A pirate standing on the open cave can enter it, which uses its turn and takes it out of the game for good. A square holds one pirate at a time.
-
+# The goal
+You are one of 3 pirates on an island, a 5 by 5 grid of squares, looking for one cave that holds a buried treasure. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
 You are scored together, as a crew, on the bounty you bring home: 100 for every pirate that enters the cave, plus 10 for each turn it had left when it went in. Every pirate gets the same score. A pirate that never enters brings nothing.
 
-You can't see the island. Each turn you're told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked by a pirate. The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free: writing adds one line with your name on it, reading shows every line you haven't read yet, and each uses your turn.
+# The scroll
+- The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free.
+- write: write one line on the scroll, with your name on it. It uses your turn.
+- read: read every line on the scroll you haven't read yet. It uses your turn.
 
-Each turn is exactly one action, made as a tool call:
+# The rules
+- Each turn is exactly one action, made as a tool call: move, dig, write, read or enter.
+- Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner.
+- A square holds one pirate at a time.
+- Each turn you're only told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked, by a pirate or by the island's edge.
 - move: walk one square north, east, south or west. A move off the island or onto a pirate fails without using your turn and you choose again; after 2 failed moves your turn passes.
-- dig: dig your square, which is also how you search it.
-- write: write one line on the scroll.
-- read: read every line on the scroll you haven't read yet.
-- enter: go into the open cave you're standing on, leaving the game for good.
+- The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
-The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
+# Digging and the cave
+- dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
+- Only a pirate standing on that square knows the entrance is there.
+- enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
 
 Your earlier turns:
 - At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
@@ -873,7 +930,7 @@ Your earlier turns:
 - At C5, on an undug square, with pirate-2 to the south. You did: read. The scroll is empty, so there was nothing to read. You were thinking: Every 5th turn I read the scroll.
 - At C5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
 
-Pirate-1, this is your turn 7 of 20, turn 19 of the game. You are at C5. Your square has been dug and holds no cave. The way south is blocked by pirate-2.
+Pirate-1, this is your turn 7 of 20, turn 19 of the game. You are at C5. Your square has been dug and holds no cave. The way north is blocked by the island's edge and the way south by pirate-2.
 ```
 
 </details>
@@ -893,27 +950,30 @@ Pirate-1, this is your turn 7 of 20, turn 19 of the game. You are at C5. Your sq
 ## Turn 19: pirate-2
 
 <details>
-<summary>What it was shown (3103 characters)</summary>
+<summary>What it was shown (3082 characters)</summary>
 
 ```text
-You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
-
-Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner, E5 the north-east corner, and north of E4 is E5.
-
-Digging up the treasure opens a cave on its square, and only a pirate standing there is told. A pirate standing on the open cave can enter it, which uses its turn and takes it out of the game for good. A square holds one pirate at a time.
-
+# The goal
+You are one of 3 pirates on an island, a 5 by 5 grid of squares, looking for one cave that holds a buried treasure. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
 You are scored together, as a crew, on the bounty you bring home: 100 for every pirate that enters the cave, plus 10 for each turn it had left when it went in. Every pirate gets the same score. A pirate that never enters brings nothing.
 
-You can't see the island. Each turn you're told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked by a pirate. The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free: writing adds one line with your name on it, reading shows every line you haven't read yet, and each uses your turn.
+# The scroll
+- The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free.
+- write: write one line on the scroll, with your name on it. It uses your turn.
+- read: read every line on the scroll you haven't read yet. It uses your turn.
 
-Each turn is exactly one action, made as a tool call:
+# The rules
+- Each turn is exactly one action, made as a tool call: move, dig, write, read or enter.
+- Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner.
+- A square holds one pirate at a time.
+- Each turn you're only told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked, by a pirate or by the island's edge.
 - move: walk one square north, east, south or west. A move off the island or onto a pirate fails without using your turn and you choose again; after 2 failed moves your turn passes.
-- dig: dig your square, which is also how you search it.
-- write: write one line on the scroll.
-- read: read every line on the scroll you haven't read yet.
-- enter: go into the open cave you're standing on, leaving the game for good.
+- The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
-The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
+# Digging and the cave
+- dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
+- Only a pirate standing on that square knows the entrance is there.
+- enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
 
 Your earlier turns:
 - At A4, on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
@@ -943,27 +1003,30 @@ Pirate-2, this is your turn 7 of 20, turn 20 of the game. You are at C4. You are
 ## Turn 20: pirate-3
 
 <details>
-<summary>What it was shown (2933 characters)</summary>
+<summary>What it was shown (2912 characters)</summary>
 
 ```text
-You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
-
-Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner, E5 the north-east corner, and north of E4 is E5.
-
-Digging up the treasure opens a cave on its square, and only a pirate standing there is told. A pirate standing on the open cave can enter it, which uses its turn and takes it out of the game for good. A square holds one pirate at a time.
-
+# The goal
+You are one of 3 pirates on an island, a 5 by 5 grid of squares, looking for one cave that holds a buried treasure. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
 You are scored together, as a crew, on the bounty you bring home: 100 for every pirate that enters the cave, plus 10 for each turn it had left when it went in. Every pirate gets the same score. A pirate that never enters brings nothing.
 
-You can't see the island. Each turn you're told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked by a pirate. The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free: writing adds one line with your name on it, reading shows every line you haven't read yet, and each uses your turn.
+# The scroll
+- The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free.
+- write: write one line on the scroll, with your name on it. It uses your turn.
+- read: read every line on the scroll you haven't read yet. It uses your turn.
 
-Each turn is exactly one action, made as a tool call:
+# The rules
+- Each turn is exactly one action, made as a tool call: move, dig, write, read or enter.
+- Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner.
+- A square holds one pirate at a time.
+- Each turn you're only told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked, by a pirate or by the island's edge.
 - move: walk one square north, east, south or west. A move off the island or onto a pirate fails without using your turn and you choose again; after 2 failed moves your turn passes.
-- dig: dig your square, which is also how you search it.
-- write: write one line on the scroll.
-- read: read every line on the scroll you haven't read yet.
-- enter: go into the open cave you're standing on, leaving the game for good.
+- The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
-The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
+# Digging and the cave
+- dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
+- Only a pirate standing on that square knows the entrance is there.
+- enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
 
 Your earlier turns:
 - At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
@@ -993,27 +1056,30 @@ Pirate-3, this is your turn 7 of 20, turn 21 of the game. You are at C3. Your sq
 ## Turn 21: pirate-1
 
 <details>
-<summary>What it was shown (3067 characters)</summary>
+<summary>What it was shown (3055 characters)</summary>
 
 ```text
-You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
-
-Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner, E5 the north-east corner, and north of E4 is E5.
-
-Digging up the treasure opens a cave on its square, and only a pirate standing there is told. A pirate standing on the open cave can enter it, which uses its turn and takes it out of the game for good. A square holds one pirate at a time.
-
+# The goal
+You are one of 3 pirates on an island, a 5 by 5 grid of squares, looking for one cave that holds a buried treasure. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
 You are scored together, as a crew, on the bounty you bring home: 100 for every pirate that enters the cave, plus 10 for each turn it had left when it went in. Every pirate gets the same score. A pirate that never enters brings nothing.
 
-You can't see the island. Each turn you're told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked by a pirate. The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free: writing adds one line with your name on it, reading shows every line you haven't read yet, and each uses your turn.
+# The scroll
+- The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free.
+- write: write one line on the scroll, with your name on it. It uses your turn.
+- read: read every line on the scroll you haven't read yet. It uses your turn.
 
-Each turn is exactly one action, made as a tool call:
+# The rules
+- Each turn is exactly one action, made as a tool call: move, dig, write, read or enter.
+- Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner.
+- A square holds one pirate at a time.
+- Each turn you're only told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked, by a pirate or by the island's edge.
 - move: walk one square north, east, south or west. A move off the island or onto a pirate fails without using your turn and you choose again; after 2 failed moves your turn passes.
-- dig: dig your square, which is also how you search it.
-- write: write one line on the scroll.
-- read: read every line on the scroll you haven't read yet.
-- enter: go into the open cave you're standing on, leaving the game for good.
+- The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
-The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
+# Digging and the cave
+- dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
+- Only a pirate standing on that square knows the entrance is there.
+- enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
 
 Your earlier turns:
 - At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
@@ -1024,7 +1090,7 @@ Your earlier turns:
 - At C5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
 - At C5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to D5. You were thinking: The next square on my rows is D5.
 
-Pirate-1, this is your turn 8 of 20, turn 22 of the game. You are at D5. Your square hasn't been dug. No way out of your square is blocked.
+Pirate-1, this is your turn 8 of 20, turn 22 of the game. You are at D5. Your square hasn't been dug. The way north is blocked by the island's edge.
 ```
 
 </details>
@@ -1044,27 +1110,30 @@ Pirate-1, this is your turn 8 of 20, turn 22 of the game. You are at D5. Your sq
 ## Turn 22: pirate-2
 
 <details>
-<summary>What it was shown (3304 characters)</summary>
+<summary>What it was shown (3283 characters)</summary>
 
 ```text
-You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
-
-Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner, E5 the north-east corner, and north of E4 is E5.
-
-Digging up the treasure opens a cave on its square, and only a pirate standing there is told. A pirate standing on the open cave can enter it, which uses its turn and takes it out of the game for good. A square holds one pirate at a time.
-
+# The goal
+You are one of 3 pirates on an island, a 5 by 5 grid of squares, looking for one cave that holds a buried treasure. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
 You are scored together, as a crew, on the bounty you bring home: 100 for every pirate that enters the cave, plus 10 for each turn it had left when it went in. Every pirate gets the same score. A pirate that never enters brings nothing.
 
-You can't see the island. Each turn you're told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked by a pirate. The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free: writing adds one line with your name on it, reading shows every line you haven't read yet, and each uses your turn.
+# The scroll
+- The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free.
+- write: write one line on the scroll, with your name on it. It uses your turn.
+- read: read every line on the scroll you haven't read yet. It uses your turn.
 
-Each turn is exactly one action, made as a tool call:
+# The rules
+- Each turn is exactly one action, made as a tool call: move, dig, write, read or enter.
+- Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner.
+- A square holds one pirate at a time.
+- Each turn you're only told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked, by a pirate or by the island's edge.
 - move: walk one square north, east, south or west. A move off the island or onto a pirate fails without using your turn and you choose again; after 2 failed moves your turn passes.
-- dig: dig your square, which is also how you search it.
-- write: write one line on the scroll.
-- read: read every line on the scroll you haven't read yet.
-- enter: go into the open cave you're standing on, leaving the game for good.
+- The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
-The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
+# Digging and the cave
+- dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
+- Only a pirate standing on that square knows the entrance is there.
+- enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
 
 Your earlier turns:
 - At A4, on an undug square, with pirate-1 to the north and pirate-3 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
@@ -1095,27 +1164,30 @@ Pirate-2, this is your turn 8 of 20, turn 23 of the game. You are at C4. You are
 ## Turn 23: pirate-3
 
 <details>
-<summary>What it was shown (3067 characters)</summary>
+<summary>What it was shown (3046 characters)</summary>
 
 ```text
-You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
-
-Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner, E5 the north-east corner, and north of E4 is E5.
-
-Digging up the treasure opens a cave on its square, and only a pirate standing there is told. A pirate standing on the open cave can enter it, which uses its turn and takes it out of the game for good. A square holds one pirate at a time.
-
+# The goal
+You are one of 3 pirates on an island, a 5 by 5 grid of squares, looking for one cave that holds a buried treasure. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
 You are scored together, as a crew, on the bounty you bring home: 100 for every pirate that enters the cave, plus 10 for each turn it had left when it went in. Every pirate gets the same score. A pirate that never enters brings nothing.
 
-You can't see the island. Each turn you're told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked by a pirate. The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free: writing adds one line with your name on it, reading shows every line you haven't read yet, and each uses your turn.
+# The scroll
+- The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free.
+- write: write one line on the scroll, with your name on it. It uses your turn.
+- read: read every line on the scroll you haven't read yet. It uses your turn.
 
-Each turn is exactly one action, made as a tool call:
+# The rules
+- Each turn is exactly one action, made as a tool call: move, dig, write, read or enter.
+- Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner.
+- A square holds one pirate at a time.
+- Each turn you're only told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked, by a pirate or by the island's edge.
 - move: walk one square north, east, south or west. A move off the island or onto a pirate fails without using your turn and you choose again; after 2 failed moves your turn passes.
-- dig: dig your square, which is also how you search it.
-- write: write one line on the scroll.
-- read: read every line on the scroll you haven't read yet.
-- enter: go into the open cave you're standing on, leaving the game for good.
+- The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
-The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
+# Digging and the cave
+- dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
+- Only a pirate standing on that square knows the entrance is there.
+- enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
 
 Your earlier turns:
 - At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
@@ -1146,27 +1218,30 @@ Pirate-3, this is your turn 8 of 20, turn 24 of the game. You are at D3. Your sq
 ## Turn 24: pirate-1
 
 <details>
-<summary>What it was shown (3231 characters)</summary>
+<summary>What it was shown (3219 characters)</summary>
 
 ```text
-You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
-
-Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner, E5 the north-east corner, and north of E4 is E5.
-
-Digging up the treasure opens a cave on its square, and only a pirate standing there is told. A pirate standing on the open cave can enter it, which uses its turn and takes it out of the game for good. A square holds one pirate at a time.
-
+# The goal
+You are one of 3 pirates on an island, a 5 by 5 grid of squares, looking for one cave that holds a buried treasure. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
 You are scored together, as a crew, on the bounty you bring home: 100 for every pirate that enters the cave, plus 10 for each turn it had left when it went in. Every pirate gets the same score. A pirate that never enters brings nothing.
 
-You can't see the island. Each turn you're told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked by a pirate. The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free: writing adds one line with your name on it, reading shows every line you haven't read yet, and each uses your turn.
+# The scroll
+- The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free.
+- write: write one line on the scroll, with your name on it. It uses your turn.
+- read: read every line on the scroll you haven't read yet. It uses your turn.
 
-Each turn is exactly one action, made as a tool call:
+# The rules
+- Each turn is exactly one action, made as a tool call: move, dig, write, read or enter.
+- Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner.
+- A square holds one pirate at a time.
+- Each turn you're only told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked, by a pirate or by the island's edge.
 - move: walk one square north, east, south or west. A move off the island or onto a pirate fails without using your turn and you choose again; after 2 failed moves your turn passes.
-- dig: dig your square, which is also how you search it.
-- write: write one line on the scroll.
-- read: read every line on the scroll you haven't read yet.
-- enter: go into the open cave you're standing on, leaving the game for good.
+- The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
-The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
+# Digging and the cave
+- dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
+- Only a pirate standing on that square knows the entrance is there.
+- enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
 
 Your earlier turns:
 - At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
@@ -1178,7 +1253,7 @@ Your earlier turns:
 - At C5, on a dug square, with pirate-2 to the south. You did: move east. You moved east to D5. You were thinking: The next square on my rows is D5.
 - At D5, on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
 
-Pirate-1, this is your turn 9 of 20, turn 25 of the game. You are at D5. Your square has been dug and holds no cave. No way out of your square is blocked.
+Pirate-1, this is your turn 9 of 20, turn 25 of the game. You are at D5. Your square has been dug and holds no cave. The way north is blocked by the island's edge.
 ```
 
 </details>
@@ -1198,27 +1273,30 @@ Pirate-1, this is your turn 9 of 20, turn 25 of the game. You are at D5. Your sq
 ## Turn 25: pirate-3
 
 <details>
-<summary>What it was shown (3231 characters)</summary>
+<summary>What it was shown (3210 characters)</summary>
 
 ```text
-You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
-
-Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner, E5 the north-east corner, and north of E4 is E5.
-
-Digging up the treasure opens a cave on its square, and only a pirate standing there is told. A pirate standing on the open cave can enter it, which uses its turn and takes it out of the game for good. A square holds one pirate at a time.
-
+# The goal
+You are one of 3 pirates on an island, a 5 by 5 grid of squares, looking for one cave that holds a buried treasure. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
 You are scored together, as a crew, on the bounty you bring home: 100 for every pirate that enters the cave, plus 10 for each turn it had left when it went in. Every pirate gets the same score. A pirate that never enters brings nothing.
 
-You can't see the island. Each turn you're told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked by a pirate. The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free: writing adds one line with your name on it, reading shows every line you haven't read yet, and each uses your turn.
+# The scroll
+- The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free.
+- write: write one line on the scroll, with your name on it. It uses your turn.
+- read: read every line on the scroll you haven't read yet. It uses your turn.
 
-Each turn is exactly one action, made as a tool call:
+# The rules
+- Each turn is exactly one action, made as a tool call: move, dig, write, read or enter.
+- Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner.
+- A square holds one pirate at a time.
+- Each turn you're only told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked, by a pirate or by the island's edge.
 - move: walk one square north, east, south or west. A move off the island or onto a pirate fails without using your turn and you choose again; after 2 failed moves your turn passes.
-- dig: dig your square, which is also how you search it.
-- write: write one line on the scroll.
-- read: read every line on the scroll you haven't read yet.
-- enter: go into the open cave you're standing on, leaving the game for good.
+- The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
-The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
+# Digging and the cave
+- dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
+- Only a pirate standing on that square knows the entrance is there.
+- enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
 
 Your earlier turns:
 - At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
@@ -1250,27 +1328,30 @@ Pirate-3, this is your turn 9 of 20, turn 26 of the game. You are at D3. Your sq
 ## Turn 26: pirate-1
 
 <details>
-<summary>What it was shown (3366 characters)</summary>
+<summary>What it was shown (3392 characters)</summary>
 
 ```text
-You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
-
-Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner, E5 the north-east corner, and north of E4 is E5.
-
-Digging up the treasure opens a cave on its square, and only a pirate standing there is told. A pirate standing on the open cave can enter it, which uses its turn and takes it out of the game for good. A square holds one pirate at a time.
-
+# The goal
+You are one of 3 pirates on an island, a 5 by 5 grid of squares, looking for one cave that holds a buried treasure. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
 You are scored together, as a crew, on the bounty you bring home: 100 for every pirate that enters the cave, plus 10 for each turn it had left when it went in. Every pirate gets the same score. A pirate that never enters brings nothing.
 
-You can't see the island. Each turn you're told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked by a pirate. The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free: writing adds one line with your name on it, reading shows every line you haven't read yet, and each uses your turn.
+# The scroll
+- The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free.
+- write: write one line on the scroll, with your name on it. It uses your turn.
+- read: read every line on the scroll you haven't read yet. It uses your turn.
 
-Each turn is exactly one action, made as a tool call:
+# The rules
+- Each turn is exactly one action, made as a tool call: move, dig, write, read or enter.
+- Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner.
+- A square holds one pirate at a time.
+- Each turn you're only told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked, by a pirate or by the island's edge.
 - move: walk one square north, east, south or west. A move off the island or onto a pirate fails without using your turn and you choose again; after 2 failed moves your turn passes.
-- dig: dig your square, which is also how you search it.
-- write: write one line on the scroll.
-- read: read every line on the scroll you haven't read yet.
-- enter: go into the open cave you're standing on, leaving the game for good.
+- The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
-The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
+# Digging and the cave
+- dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
+- Only a pirate standing on that square knows the entrance is there.
+- enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
 
 Your earlier turns:
 - At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
@@ -1283,7 +1364,7 @@ Your earlier turns:
 - At D5, on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
 - At D5, on a dug square, with no pirate next to you. You did: move east. You moved east to E5. You were thinking: The next square on my rows is E5.
 
-Pirate-1, this is your turn 10 of 20, turn 27 of the game. You are at E5. Your square hasn't been dug. No way out of your square is blocked.
+Pirate-1, this is your turn 10 of 20, turn 27 of the game. You are at E5. Your square hasn't been dug. The way north is blocked by the island's edge and the way east by the island's edge.
 ```
 
 </details>
@@ -1303,27 +1384,30 @@ Pirate-1, this is your turn 10 of 20, turn 27 of the game. You are at E5. Your s
 ## Turn 27: pirate-3
 
 <details>
-<summary>What it was shown (3366 characters)</summary>
+<summary>What it was shown (3353 characters)</summary>
 
 ```text
-You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
-
-Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner, E5 the north-east corner, and north of E4 is E5.
-
-Digging up the treasure opens a cave on its square, and only a pirate standing there is told. A pirate standing on the open cave can enter it, which uses its turn and takes it out of the game for good. A square holds one pirate at a time.
-
+# The goal
+You are one of 3 pirates on an island, a 5 by 5 grid of squares, looking for one cave that holds a buried treasure. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
 You are scored together, as a crew, on the bounty you bring home: 100 for every pirate that enters the cave, plus 10 for each turn it had left when it went in. Every pirate gets the same score. A pirate that never enters brings nothing.
 
-You can't see the island. Each turn you're told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked by a pirate. The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free: writing adds one line with your name on it, reading shows every line you haven't read yet, and each uses your turn.
+# The scroll
+- The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free.
+- write: write one line on the scroll, with your name on it. It uses your turn.
+- read: read every line on the scroll you haven't read yet. It uses your turn.
 
-Each turn is exactly one action, made as a tool call:
+# The rules
+- Each turn is exactly one action, made as a tool call: move, dig, write, read or enter.
+- Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner.
+- A square holds one pirate at a time.
+- Each turn you're only told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked, by a pirate or by the island's edge.
 - move: walk one square north, east, south or west. A move off the island or onto a pirate fails without using your turn and you choose again; after 2 failed moves your turn passes.
-- dig: dig your square, which is also how you search it.
-- write: write one line on the scroll.
-- read: read every line on the scroll you haven't read yet.
-- enter: go into the open cave you're standing on, leaving the game for good.
+- The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
-The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
+# Digging and the cave
+- dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
+- Only a pirate standing on that square knows the entrance is there.
+- enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
 
 Your earlier turns:
 - At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
@@ -1336,7 +1420,7 @@ Your earlier turns:
 - At D3, on an undug square, with no pirate next to you. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
 - At D3, on a dug square, with no pirate next to you. You did: move east. You moved east to E3. You were thinking: The next square on my rows is E3.
 
-Pirate-3, this is your turn 10 of 20, turn 28 of the game. You are at E3. Your square hasn't been dug. No way out of your square is blocked.
+Pirate-3, this is your turn 10 of 20, turn 28 of the game. You are at E3. Your square hasn't been dug. The way east is blocked by the island's edge.
 ```
 
 </details>
@@ -1356,27 +1440,30 @@ Pirate-3, this is your turn 10 of 20, turn 28 of the game. You are at E3. Your s
 ## Turn 28: pirate-1
 
 <details>
-<summary>What it was shown (3565 characters)</summary>
+<summary>What it was shown (3591 characters)</summary>
 
 ```text
-You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
-
-Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner, E5 the north-east corner, and north of E4 is E5.
-
-Digging up the treasure opens a cave on its square, and only a pirate standing there is told. A pirate standing on the open cave can enter it, which uses its turn and takes it out of the game for good. A square holds one pirate at a time.
-
+# The goal
+You are one of 3 pirates on an island, a 5 by 5 grid of squares, looking for one cave that holds a buried treasure. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
 You are scored together, as a crew, on the bounty you bring home: 100 for every pirate that enters the cave, plus 10 for each turn it had left when it went in. Every pirate gets the same score. A pirate that never enters brings nothing.
 
-You can't see the island. Each turn you're told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked by a pirate. The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free: writing adds one line with your name on it, reading shows every line you haven't read yet, and each uses your turn.
+# The scroll
+- The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free.
+- write: write one line on the scroll, with your name on it. It uses your turn.
+- read: read every line on the scroll you haven't read yet. It uses your turn.
 
-Each turn is exactly one action, made as a tool call:
+# The rules
+- Each turn is exactly one action, made as a tool call: move, dig, write, read or enter.
+- Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner.
+- A square holds one pirate at a time.
+- Each turn you're only told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked, by a pirate or by the island's edge.
 - move: walk one square north, east, south or west. A move off the island or onto a pirate fails without using your turn and you choose again; after 2 failed moves your turn passes.
-- dig: dig your square, which is also how you search it.
-- write: write one line on the scroll.
-- read: read every line on the scroll you haven't read yet.
-- enter: go into the open cave you're standing on, leaving the game for good.
+- The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
-The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
+# Digging and the cave
+- dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
+- Only a pirate standing on that square knows the entrance is there.
+- enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
 
 Your earlier turns:
 - At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
@@ -1390,7 +1477,7 @@ Your earlier turns:
 - At D5, on a dug square, with no pirate next to you. You did: move east. You moved east to E5. You were thinking: The next square on my rows is E5.
 - At E5, on an undug square, with no pirate next to you. You did: read. You read the scroll. It said: line 1 by pirate-2: The treasure is at C4.. You were thinking: Every 5th turn I read the scroll.
 
-Pirate-1, this is your turn 11 of 20, turn 29 of the game. You are at E5. Your square hasn't been dug. No way out of your square is blocked.
+Pirate-1, this is your turn 11 of 20, turn 29 of the game. You are at E5. Your square hasn't been dug. The way north is blocked by the island's edge and the way east by the island's edge.
 ```
 
 </details>
@@ -1410,27 +1497,30 @@ Pirate-1, this is your turn 11 of 20, turn 29 of the game. You are at E5. Your s
 ## Turn 29: pirate-3
 
 <details>
-<summary>What it was shown (3565 characters)</summary>
+<summary>What it was shown (3552 characters)</summary>
 
 ```text
-You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
-
-Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner, E5 the north-east corner, and north of E4 is E5.
-
-Digging up the treasure opens a cave on its square, and only a pirate standing there is told. A pirate standing on the open cave can enter it, which uses its turn and takes it out of the game for good. A square holds one pirate at a time.
-
+# The goal
+You are one of 3 pirates on an island, a 5 by 5 grid of squares, looking for one cave that holds a buried treasure. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
 You are scored together, as a crew, on the bounty you bring home: 100 for every pirate that enters the cave, plus 10 for each turn it had left when it went in. Every pirate gets the same score. A pirate that never enters brings nothing.
 
-You can't see the island. Each turn you're told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked by a pirate. The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free: writing adds one line with your name on it, reading shows every line you haven't read yet, and each uses your turn.
+# The scroll
+- The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free.
+- write: write one line on the scroll, with your name on it. It uses your turn.
+- read: read every line on the scroll you haven't read yet. It uses your turn.
 
-Each turn is exactly one action, made as a tool call:
+# The rules
+- Each turn is exactly one action, made as a tool call: move, dig, write, read or enter.
+- Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner.
+- A square holds one pirate at a time.
+- Each turn you're only told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked, by a pirate or by the island's edge.
 - move: walk one square north, east, south or west. A move off the island or onto a pirate fails without using your turn and you choose again; after 2 failed moves your turn passes.
-- dig: dig your square, which is also how you search it.
-- write: write one line on the scroll.
-- read: read every line on the scroll you haven't read yet.
-- enter: go into the open cave you're standing on, leaving the game for good.
+- The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
-The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
+# Digging and the cave
+- dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
+- Only a pirate standing on that square knows the entrance is there.
+- enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
 
 Your earlier turns:
 - At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
@@ -1444,7 +1534,7 @@ Your earlier turns:
 - At D3, on a dug square, with no pirate next to you. You did: move east. You moved east to E3. You were thinking: The next square on my rows is E3.
 - At E3, on an undug square, with no pirate next to you. You did: read. You read the scroll. It said: line 1 by pirate-2: The treasure is at C4.. You were thinking: Every 5th turn I read the scroll.
 
-Pirate-3, this is your turn 11 of 20, turn 30 of the game. You are at E3. Your square hasn't been dug. No way out of your square is blocked.
+Pirate-3, this is your turn 11 of 20, turn 30 of the game. You are at E3. Your square hasn't been dug. The way east is blocked by the island's edge.
 ```
 
 </details>
@@ -1464,27 +1554,30 @@ Pirate-3, this is your turn 11 of 20, turn 30 of the game. You are at E3. Your s
 ## Turn 30: pirate-1
 
 <details>
-<summary>What it was shown (3717 characters)</summary>
+<summary>What it was shown (3705 characters)</summary>
 
 ```text
-You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
-
-Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner, E5 the north-east corner, and north of E4 is E5.
-
-Digging up the treasure opens a cave on its square, and only a pirate standing there is told. A pirate standing on the open cave can enter it, which uses its turn and takes it out of the game for good. A square holds one pirate at a time.
-
+# The goal
+You are one of 3 pirates on an island, a 5 by 5 grid of squares, looking for one cave that holds a buried treasure. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
 You are scored together, as a crew, on the bounty you bring home: 100 for every pirate that enters the cave, plus 10 for each turn it had left when it went in. Every pirate gets the same score. A pirate that never enters brings nothing.
 
-You can't see the island. Each turn you're told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked by a pirate. The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free: writing adds one line with your name on it, reading shows every line you haven't read yet, and each uses your turn.
+# The scroll
+- The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free.
+- write: write one line on the scroll, with your name on it. It uses your turn.
+- read: read every line on the scroll you haven't read yet. It uses your turn.
 
-Each turn is exactly one action, made as a tool call:
+# The rules
+- Each turn is exactly one action, made as a tool call: move, dig, write, read or enter.
+- Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner.
+- A square holds one pirate at a time.
+- Each turn you're only told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked, by a pirate or by the island's edge.
 - move: walk one square north, east, south or west. A move off the island or onto a pirate fails without using your turn and you choose again; after 2 failed moves your turn passes.
-- dig: dig your square, which is also how you search it.
-- write: write one line on the scroll.
-- read: read every line on the scroll you haven't read yet.
-- enter: go into the open cave you're standing on, leaving the game for good.
+- The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
-The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
+# Digging and the cave
+- dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
+- Only a pirate standing on that square knows the entrance is there.
+- enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
 
 Your earlier turns:
 - At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
@@ -1499,7 +1592,7 @@ Your earlier turns:
 - At E5, on an undug square, with no pirate next to you. You did: read. You read the scroll. It said: line 1 by pirate-2: The treasure is at C4.. You were thinking: Every 5th turn I read the scroll.
 - At E5, on an undug square, with no pirate next to you. You did: move west. You moved west to D5. You were thinking: The cave is at C4.
 
-Pirate-1, this is your turn 12 of 20, turn 31 of the game. You are at D5. Your square has been dug and holds no cave. No way out of your square is blocked.
+Pirate-1, this is your turn 12 of 20, turn 31 of the game. You are at D5. Your square has been dug and holds no cave. The way north is blocked by the island's edge.
 ```
 
 </details>
@@ -1519,27 +1612,30 @@ Pirate-1, this is your turn 12 of 20, turn 31 of the game. You are at D5. Your s
 ## Turn 31: pirate-3
 
 <details>
-<summary>What it was shown (3717 characters)</summary>
+<summary>What it was shown (3696 characters)</summary>
 
 ```text
-You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
-
-Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner, E5 the north-east corner, and north of E4 is E5.
-
-Digging up the treasure opens a cave on its square, and only a pirate standing there is told. A pirate standing on the open cave can enter it, which uses its turn and takes it out of the game for good. A square holds one pirate at a time.
-
+# The goal
+You are one of 3 pirates on an island, a 5 by 5 grid of squares, looking for one cave that holds a buried treasure. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
 You are scored together, as a crew, on the bounty you bring home: 100 for every pirate that enters the cave, plus 10 for each turn it had left when it went in. Every pirate gets the same score. A pirate that never enters brings nothing.
 
-You can't see the island. Each turn you're told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked by a pirate. The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free: writing adds one line with your name on it, reading shows every line you haven't read yet, and each uses your turn.
+# The scroll
+- The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free.
+- write: write one line on the scroll, with your name on it. It uses your turn.
+- read: read every line on the scroll you haven't read yet. It uses your turn.
 
-Each turn is exactly one action, made as a tool call:
+# The rules
+- Each turn is exactly one action, made as a tool call: move, dig, write, read or enter.
+- Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner.
+- A square holds one pirate at a time.
+- Each turn you're only told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked, by a pirate or by the island's edge.
 - move: walk one square north, east, south or west. A move off the island or onto a pirate fails without using your turn and you choose again; after 2 failed moves your turn passes.
-- dig: dig your square, which is also how you search it.
-- write: write one line on the scroll.
-- read: read every line on the scroll you haven't read yet.
-- enter: go into the open cave you're standing on, leaving the game for good.
+- The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
-The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
+# Digging and the cave
+- dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
+- Only a pirate standing on that square knows the entrance is there.
+- enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
 
 Your earlier turns:
 - At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
@@ -1574,27 +1670,30 @@ Pirate-3, this is your turn 12 of 20, turn 32 of the game. You are at D3. Your s
 ## Turn 32: pirate-1
 
 <details>
-<summary>What it was shown (3851 characters)</summary>
+<summary>What it was shown (3839 characters)</summary>
 
 ```text
-You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
-
-Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner, E5 the north-east corner, and north of E4 is E5.
-
-Digging up the treasure opens a cave on its square, and only a pirate standing there is told. A pirate standing on the open cave can enter it, which uses its turn and takes it out of the game for good. A square holds one pirate at a time.
-
+# The goal
+You are one of 3 pirates on an island, a 5 by 5 grid of squares, looking for one cave that holds a buried treasure. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
 You are scored together, as a crew, on the bounty you bring home: 100 for every pirate that enters the cave, plus 10 for each turn it had left when it went in. Every pirate gets the same score. A pirate that never enters brings nothing.
 
-You can't see the island. Each turn you're told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked by a pirate. The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free: writing adds one line with your name on it, reading shows every line you haven't read yet, and each uses your turn.
+# The scroll
+- The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free.
+- write: write one line on the scroll, with your name on it. It uses your turn.
+- read: read every line on the scroll you haven't read yet. It uses your turn.
 
-Each turn is exactly one action, made as a tool call:
+# The rules
+- Each turn is exactly one action, made as a tool call: move, dig, write, read or enter.
+- Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner.
+- A square holds one pirate at a time.
+- Each turn you're only told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked, by a pirate or by the island's edge.
 - move: walk one square north, east, south or west. A move off the island or onto a pirate fails without using your turn and you choose again; after 2 failed moves your turn passes.
-- dig: dig your square, which is also how you search it.
-- write: write one line on the scroll.
-- read: read every line on the scroll you haven't read yet.
-- enter: go into the open cave you're standing on, leaving the game for good.
+- The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
-The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
+# Digging and the cave
+- dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
+- Only a pirate standing on that square knows the entrance is there.
+- enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
 
 Your earlier turns:
 - At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
@@ -1610,7 +1709,7 @@ Your earlier turns:
 - At E5, on an undug square, with no pirate next to you. You did: move west. You moved west to D5. You were thinking: The cave is at C4.
 - At D5, on a dug square, with no pirate next to you. You did: move west. You moved west to C5. You were thinking: The cave is at C4.
 
-Pirate-1, this is your turn 13 of 20, turn 33 of the game. You are at C5. Your square has been dug and holds no cave. No way out of your square is blocked.
+Pirate-1, this is your turn 13 of 20, turn 33 of the game. You are at C5. Your square has been dug and holds no cave. The way north is blocked by the island's edge.
 ```
 
 </details>
@@ -1630,27 +1729,30 @@ Pirate-1, this is your turn 13 of 20, turn 33 of the game. You are at C5. Your s
 ## Turn 33: pirate-3
 
 <details>
-<summary>What it was shown (3851 characters)</summary>
+<summary>What it was shown (3830 characters)</summary>
 
 ```text
-You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
-
-Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner, E5 the north-east corner, and north of E4 is E5.
-
-Digging up the treasure opens a cave on its square, and only a pirate standing there is told. A pirate standing on the open cave can enter it, which uses its turn and takes it out of the game for good. A square holds one pirate at a time.
-
+# The goal
+You are one of 3 pirates on an island, a 5 by 5 grid of squares, looking for one cave that holds a buried treasure. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
 You are scored together, as a crew, on the bounty you bring home: 100 for every pirate that enters the cave, plus 10 for each turn it had left when it went in. Every pirate gets the same score. A pirate that never enters brings nothing.
 
-You can't see the island. Each turn you're told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked by a pirate. The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free: writing adds one line with your name on it, reading shows every line you haven't read yet, and each uses your turn.
+# The scroll
+- The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free.
+- write: write one line on the scroll, with your name on it. It uses your turn.
+- read: read every line on the scroll you haven't read yet. It uses your turn.
 
-Each turn is exactly one action, made as a tool call:
+# The rules
+- Each turn is exactly one action, made as a tool call: move, dig, write, read or enter.
+- Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner.
+- A square holds one pirate at a time.
+- Each turn you're only told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked, by a pirate or by the island's edge.
 - move: walk one square north, east, south or west. A move off the island or onto a pirate fails without using your turn and you choose again; after 2 failed moves your turn passes.
-- dig: dig your square, which is also how you search it.
-- write: write one line on the scroll.
-- read: read every line on the scroll you haven't read yet.
-- enter: go into the open cave you're standing on, leaving the game for good.
+- The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
-The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
+# Digging and the cave
+- dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
+- Only a pirate standing on that square knows the entrance is there.
+- enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
 
 Your earlier turns:
 - At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
@@ -1686,27 +1788,30 @@ Pirate-3, this is your turn 13 of 20, turn 34 of the game. You are at C3. Your s
 ## Turn 34: pirate-1
 
 <details>
-<summary>What it was shown (3997 characters)</summary>
+<summary>What it was shown (3976 characters)</summary>
 
 ```text
-You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
-
-Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner, E5 the north-east corner, and north of E4 is E5.
-
-Digging up the treasure opens a cave on its square, and only a pirate standing there is told. A pirate standing on the open cave can enter it, which uses its turn and takes it out of the game for good. A square holds one pirate at a time.
-
+# The goal
+You are one of 3 pirates on an island, a 5 by 5 grid of squares, looking for one cave that holds a buried treasure. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
 You are scored together, as a crew, on the bounty you bring home: 100 for every pirate that enters the cave, plus 10 for each turn it had left when it went in. Every pirate gets the same score. A pirate that never enters brings nothing.
 
-You can't see the island. Each turn you're told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked by a pirate. The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free: writing adds one line with your name on it, reading shows every line you haven't read yet, and each uses your turn.
+# The scroll
+- The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free.
+- write: write one line on the scroll, with your name on it. It uses your turn.
+- read: read every line on the scroll you haven't read yet. It uses your turn.
 
-Each turn is exactly one action, made as a tool call:
+# The rules
+- Each turn is exactly one action, made as a tool call: move, dig, write, read or enter.
+- Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner.
+- A square holds one pirate at a time.
+- Each turn you're only told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked, by a pirate or by the island's edge.
 - move: walk one square north, east, south or west. A move off the island or onto a pirate fails without using your turn and you choose again; after 2 failed moves your turn passes.
-- dig: dig your square, which is also how you search it.
-- write: write one line on the scroll.
-- read: read every line on the scroll you haven't read yet.
-- enter: go into the open cave you're standing on, leaving the game for good.
+- The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
-The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
+# Digging and the cave
+- dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
+- Only a pirate standing on that square knows the entrance is there.
+- enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
 
 Your earlier turns:
 - At A5, on an undug square, with pirate-2 to the south. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
@@ -1743,27 +1848,30 @@ Pirate-1, this is your turn 14 of 20, turn 35 of the game. You are at C4. You ar
 ## Turn 35: pirate-3
 
 <details>
-<summary>What it was shown (4023 characters)</summary>
+<summary>What it was shown (4002 characters)</summary>
 
 ```text
-You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
-
-Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner, E5 the north-east corner, and north of E4 is E5.
-
-Digging up the treasure opens a cave on its square, and only a pirate standing there is told. A pirate standing on the open cave can enter it, which uses its turn and takes it out of the game for good. A square holds one pirate at a time.
-
+# The goal
+You are one of 3 pirates on an island, a 5 by 5 grid of squares, looking for one cave that holds a buried treasure. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
 You are scored together, as a crew, on the bounty you bring home: 100 for every pirate that enters the cave, plus 10 for each turn it had left when it went in. Every pirate gets the same score. A pirate that never enters brings nothing.
 
-You can't see the island. Each turn you're told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked by a pirate. The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free: writing adds one line with your name on it, reading shows every line you haven't read yet, and each uses your turn.
+# The scroll
+- The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free.
+- write: write one line on the scroll, with your name on it. It uses your turn.
+- read: read every line on the scroll you haven't read yet. It uses your turn.
 
-Each turn is exactly one action, made as a tool call:
+# The rules
+- Each turn is exactly one action, made as a tool call: move, dig, write, read or enter.
+- Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner.
+- A square holds one pirate at a time.
+- Each turn you're only told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked, by a pirate or by the island's edge.
 - move: walk one square north, east, south or west. A move off the island or onto a pirate fails without using your turn and you choose again; after 2 failed moves your turn passes.
-- dig: dig your square, which is also how you search it.
-- write: write one line on the scroll.
-- read: read every line on the scroll you haven't read yet.
-- enter: go into the open cave you're standing on, leaving the game for good.
+- The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
-The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
+# Digging and the cave
+- dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
+- Only a pirate standing on that square knows the entrance is there.
+- enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
 
 Your earlier turns:
 - At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.
@@ -1800,27 +1908,30 @@ Pirate-3, this is your turn 14 of 20, turn 36 of the game. You are at C3. Your s
 ## Turn 36: pirate-3
 
 <details>
-<summary>What it was shown (4169 characters)</summary>
+<summary>What it was shown (4148 characters)</summary>
 
 ```text
-You are one of 3 pirates digging for one buried treasure on an island, a 5 by 5 grid of squares. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
-
-Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner, E5 the north-east corner, and north of E4 is E5.
-
-Digging up the treasure opens a cave on its square, and only a pirate standing there is told. A pirate standing on the open cave can enter it, which uses its turn and takes it out of the game for good. A square holds one pirate at a time.
-
+# The goal
+You are one of 3 pirates on an island, a 5 by 5 grid of squares, looking for one cave that holds a buried treasure. The crew is pirate-1 to pirate-3 and takes turns in that order; each pirate gets 20 turns.
 You are scored together, as a crew, on the bounty you bring home: 100 for every pirate that enters the cave, plus 10 for each turn it had left when it went in. Every pirate gets the same score. A pirate that never enters brings nothing.
 
-You can't see the island. Each turn you're told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked by a pirate. The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free: writing adds one line with your name on it, reading shows every line you haven't read yet, and each uses your turn.
+# The scroll
+- The scroll is the only way to reach the other pirates, and nothing on it is shown to you for free.
+- write: write one line on the scroll, with your name on it. It uses your turn.
+- read: read every line on the scroll you haven't read yet. It uses your turn.
 
-Each turn is exactly one action, made as a tool call:
+# The rules
+- Each turn is exactly one action, made as a tool call: move, dig, write, read or enter.
+- Squares are named like a chessboard: columns A to E from west to east, rows 1 to 5 from south to north. A1 is the south-west corner.
+- A square holds one pirate at a time.
+- Each turn you're only told where you are, whether your square has been dug, whether you stand on the open cave, and which ways out of your square are blocked, by a pirate or by the island's edge.
 - move: walk one square north, east, south or west. A move off the island or onto a pirate fails without using your turn and you choose again; after 2 failed moves your turn passes.
-- dig: dig your square, which is also how you search it.
-- write: write one line on the scroll.
-- read: read every line on the scroll you haven't read yet.
-- enter: go into the open cave you're standing on, leaving the game for good.
+- The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
 
-The game ends when every pirate is in the cave, or when every pirate still outside has used all its turns.
+# Digging and the cave
+- dig: dig your square, which is also how you search it. Digging a square may reveal the cave that holds the treasure.
+- Only a pirate standing on that square knows the entrance is there.
+- enter: go into the open cave you're standing on. It uses your turn and takes you out of the game for good.
 
 Your earlier turns:
 - At A3, on an undug square, with pirate-2 to the north. You did: dig. You dug here and found nothing. You were thinking: This square is on my rows.

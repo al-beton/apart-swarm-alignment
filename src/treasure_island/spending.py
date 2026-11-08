@@ -24,7 +24,7 @@ import math
 from treasure_island.backends import bills_in, price_for
 from treasure_island.brain import system_prompt
 from treasure_island.game_loop import GameStopped
-from treasure_island.llm import TOOL_DEFINITIONS
+from treasure_island.llm import tools_for
 from treasure_island.runs import earlier_rows
 
 TURN_CHARS = 300  # an earlier turn's line in a request, at most, for the estimate
@@ -81,7 +81,7 @@ def estimate(config):
     # A failed action, a bad reply included, asks again in the same turn.
     tries = config.turns_per_pirate * config.failed_tries
     per_pirate = tries + (1 if config.end_report else 0)  # the end report's note
-    fixed = len(system_prompt(config)) + len(json.dumps(TOOL_DEFINITIONS))
+    fixed = len(system_prompt(config)) + len(json.dumps(tools_for(config)))
     # Each reply, and the model's own reasoning on top, thinking on or off.
     out = config.reply_tokens + config.thinking_tokens
     # Every try, failed or not, adds a line to the pirate's own earlier turns.

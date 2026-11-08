@@ -78,12 +78,11 @@ def test_scarce_turns_defaults_to_20_turns_per_pirate():
 
 def test_scarce_turns_the_default_board_is_the_one_calibration_picked():
     kept = (ROOT / "experiments/calibration.md").read_text()
-    grid, crew, turns, noise = map(
-        int,
-        re.search(
-            r"The pick: (\d+)x\d+, (\d+) pirates, (\d+) turns, noise (\d+)\.", kept
-        ).groups(),
-    )
+    # While the kept run is provisional, it names the board still in force.
+    said = r"(\d+)x\d+, (\d+) pirates, (\d+) turns, noise (\d+)[.,]"
+    found = re.search(r"The default board in `config.py`[^:]*: " + said, kept)
+    found = found or re.search(r"The pick: " + said, kept)
+    grid, crew, turns, noise = map(int, found.groups())
     config = parse_config({})
     assert (config.grid_size, config.crew_size) == (grid, crew)
     assert (config.turns_per_pirate, config.reading_noise) == (turns, noise)

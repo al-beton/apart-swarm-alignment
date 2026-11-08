@@ -1,0 +1,263 @@
+\documentclass[10pt,letterpaper]{article}
+\usepackage[letterpaper,textwidth=5.5in,textheight=9in,top=1in,headheight=12pt,headsep=25pt,footskip=30pt]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}% the classic LaTeX look; times: true in the front matter for Times
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{booktabs,longtable,array,calc}
+\usepackage[skins]{tcolorbox}
+\usepackage[font=small,labelfont=bf,labelsep=colon,skip=4pt]{caption}
+\usepackage{fancyhdr}
+\usepackage[round]{natbib}
+\renewcommand{\bibsection}{}
+\bibliographystyle{plainnat}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5.5pt}
+\setcounter{secnumdepth}{2}
+
+% NeurIPS-style headings
+\makeatletter
+\renewcommand{\section}{\@startsection{section}{1}{\z@}{-2.0ex \@plus -0.5ex \@minus -0.2ex}{1.5ex \@plus 0.3ex \@minus 0.2ex}{\large\bfseries\raggedright}}
+\renewcommand{\subsection}{\@startsection{subsection}{2}{\z@}{-1.8ex \@plus -0.5ex \@minus -0.2ex}{0.8ex \@plus 0.2ex}{\normalsize\bfseries\raggedright}}
+\renewcommand{\subsubsection}{\@startsection{subsubsection}{3}{\z@}{-1.5ex \@plus -0.5ex \@minus -0.2ex}{0.5ex \@plus 0.2ex}{\normalsize\bfseries\raggedright}}
+\makeatother
+
+% What pandoc's output needs
+\providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{%
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi}
+\def\fps@figure{htbp}% figures stay near where they're written
+\makeatother
+\def\LTcaptype{table}
+
+\definecolor{linkblue}{rgb}{0,0,0.8}
+\usepackage[colorlinks=true,linkcolor=linkblue,citecolor=linkblue,urlcolor=linkblue]{hyperref}
+\hypersetup{pdftitle={Treasure Island}}
+
+% No running header, only the page number; the sprint and the code link are
+% said once, in the first page's footnote, under a rule the text's full width
+\pagestyle{fancy}\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\footnoterule}{\vspace*{-3pt}\noindent\rule{\textwidth}{0.4pt}\vspace{2.6pt}}
+\fancypagestyle{plain}{\fancyhf{}\renewcommand{\headrulewidth}{0pt}\fancyfoot[C]{\small\thepage}}
+
+\begin{document}
+
+\thispagestyle{plain}
+\begin{center}
+\rule{\textwidth}{4pt}\par\vspace{0.22in}
+{\LARGE\bfseries Treasure Island\par}
+\vspace{0.08in}{\large When does a swarm of LLM agents whistleblow, and
+what in their environment changes that?\par}
+\vspace{0.2in}\rule{\textwidth}{1pt}\par\vspace{0.22in}
+\begin{tabular}[t]{c}\textbf{Alistair Wakelin}\\ Independent
+Researcher\end{tabular}\hspace{1.5em}
+\begin{tabular}[t]{c}\textbf{Eduard Rodriguez Lopez}\\ Independent
+Researcher\end{tabular}\par
+\end{center}
+
+{\makeatletter\long\def\@makefntext#1{\noindent#1}\makeatother\let\thefootnote\relax\footnotetext{\raggedright Research conducted for the \href{https://apartresearch.com/sprints}{Multi-Agent
+Oversight and Control Research
+Sprint} hackathon run by Apart Research, November
+2026.\\Code, every committed game and its model replies are at \url{https://github.com/al-beton/apart-swarm-alignment}.}}
+
+\vspace{0.04in}
+\noindent\rule{\textwidth}{0.4pt}\par\vspace{0.3ex}
+\noindent{\large\bfseries Abstract}\par\vspace{0.4ex}
+\noindent Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit
+in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
+officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde
+omnis iste natus error sit voluptatem accusantium doloremque laudantium,
+totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi
+architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem
+quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur
+magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro
+quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur,
+adipisci velit, sed quia non numquam eius modi tempora incidunt ut
+labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima
+veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam,
+nisi ut aliquid ex ea commodi consequatur. Quis autem vel eum iure
+reprehenderit qui in ea voluptate velit esse quam nihil molestiae
+consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla
+pariatur.\par
+\vspace{0.2ex}\noindent\rule{\textwidth}{0.4pt}\par
+
+\begin{center}
+\includegraphics[width=0.8\linewidth]{results/sample-sweep-seeds/game.png}
+\captionof{figure}{A placeholder teaser: one committed game, replayed
+from its log. The real one is a still from an exploit
+game.}\label{fig:teaser}
+\end{center}
+
+\vspace{0.06in}
+{\setcounter{tocdepth}{2}\setlength{\parskip}{0pt}\tableofcontents}
+
+
+\section{Introduction}\label{introduction}
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+commodo consequat \citep{perez2022discovering}. Duis aute irure dolor in
+reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+pariatur.
+
+Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
+officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde
+omnis iste natus error sit voluptatem accusantium doloremque laudantium,
+totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi
+architecto beatae vitae dicta sunt explicabo.
+
+\section{Related Work}\label{related-work}
+
+Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut
+fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem
+sequi nesciunt \citep{park2023generative}. Neque porro quisquam est, qui
+dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia
+non numquam eius modi tempora incidunt ut labore et dolore magnam
+aliquam quaerat voluptatem.
+
+\section{Methods}\label{methods}
+
+\subsection{The game}\label{the-game}
+
+Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis
+suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur. Quis
+autem vel eum iure reprehenderit qui in ea voluptate velit esse quam
+nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo
+voluptas nulla pariatur.
+
+\subsection{The agents}\label{the-agents}
+
+At vero eos et accusamus et iusto odio dignissimos ducimus qui
+blanditiis praesentium voluptatum deleniti atque corrupti quos dolores
+et quas molestias excepturi sint occaecati cupiditate non provident,
+similique sunt in culpa qui officia deserunt mollitia animi, id est
+laborum et dolorum fuga.
+
+\subsection{Measuring whistleblowing}\label{measuring-whistleblowing}
+
+Et harum quidem rerum facilis est et expedita distinctio. Nam libero
+tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo
+minus id quod maxime placeat facere possimus, omnis voluptas assumenda
+est, omnis dolor repellendus.
+
+\section{Results}\label{results}
+
+Temporibus autem quibusdam et aut officiis debitis aut rerum
+necessitatibus saepe eveniet ut et voluptates repudiandae sint et
+molestiae non recusandae. Each subsection below reports one experiment,
+and each rests on games committed to this repository that replay with no
+keys.
+
+\subsection{Where the treasure lands decides the silent crew's
+score}\label{where-the-treasure-lands-decides-the-silent-crews-score}
+
+Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis
+voluptatibus maiores alias consequatur aut perferendis doloribus
+asperiores repellat. Lorem ipsum dolor sit amet, consectetur adipiscing
+elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio,alt={A silent crew
+searching the grid alone, replayed from the committed run
+runs/silent-seed-7. Rebuild it with make figure NAME=silent-game; play
+the game again with uv run treasure-island run configs/silent.toml
+-\/-seed 7.}]{figures/silent-game.png}}
+\caption{A silent crew searching the grid alone, replayed from the
+committed run \protect\texttt{runs/silent-seed-7}. Rebuild it with
+\protect\texttt{make\ figure\ NAME=silent-game}; play the game again
+with
+\protect\texttt{uv\ run\ treasure-island\ run\ configs/silent.toml\ -\/-seed\ 7}.}
+\end{figure}
+
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi
+ut aliquip ex ea commodo consequat. The games behind this section are in
+\texttt{results/sample-sweep-seeds/}, and
+\texttt{uv\ run\ treasure-island\ replay\ results/sample-sweep-seeds/small-crew-seed-1}
+plays one back.
+
+\section{Discussion and Limitations}\label{discussion-and-limitations}
+
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+\subsection{Future Work}\label{future-work}
+
+Sed ut perspiciatis unde omnis iste natus error sit voluptatem
+accusantium doloremque laudantium, totam rem aperiam.
+
+\section{Conclusion}\label{conclusion}
+
+Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut
+fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem
+sequi nesciunt.
+
+\label{main-end}
+
+\section*{References}\label{references}
+\addcontentsline{toc}{section}{References}
+
+\bibliography{references}
+\appendix
+
+\section{LLM Usage Statement}\label{llm-usage-statement}
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. The authors
+chose the questions, designed the game and the experiments and directed
+the work; a team of Claude agents built the sandbox, its tests and the
+figures through a pull-request workflow, and OpenAI Codex reviewed each
+change. The authors take responsibility for every claim in the paper.
+
+\section{Code and Data}\label{code-and-data}
+
+Code, configs, run logs and archived model replies, MIT licensed:
+\url{https://github.com/al-beton/apart-swarm-alignment}. Every committed
+game replays offline with no API keys, and every figure rebuilds from
+those games.
+
+\section{Limitations and Dual-Use / Ethical
+Considerations}\label{limitations-and-dual-use-ethical-considerations}
+
+\subsection{Limitations}\label{limitations}
+
+Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis
+suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur.
+
+\subsection{Dual-use risks}\label{dual-use-risks}
+
+Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse
+quam nihil molestiae consequatur.
+
+\subsection{Ethical considerations}\label{ethical-considerations}
+
+At vero eos et accusamus et iusto odio dignissimos ducimus qui
+blanditiis praesentium voluptatum deleniti atque corrupti.
+
+\section{Reproducibility}\label{reproducibility}
+
+Every game the paper reports is committed under \texttt{results/} and
+replays with
+\texttt{uv\ run\ treasure-island\ replay\ \textless{}folder\textgreater{}},
+with no keys and no network. Every figure is named in
+\texttt{src/treasure\_island/figures.py} and rebuilds with
+\texttt{make\ figure\ NAME=\textless{}name\textgreater{}}.
+
+\end{document}

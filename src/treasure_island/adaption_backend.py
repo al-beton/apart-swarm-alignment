@@ -121,8 +121,8 @@ class AdaptionBackend:
             instructions=request["system"],
             input=request["messages"],
             tools=[{"type": "function", **tool} for tool in request["tools"]],
-            # The Responses API counts reasoning as output, so its budget adds on,
-            # exactly, as the prompt's budget sentence tells the model.
+            # The Responses API counts reasoning as output, so its budget adds on;
+            # the prompt tells the model less (`thinking_said`), so it has room.
             max_output_tokens=request["max_tokens"] + request["thinking_tokens"],
         )
         usage = response.usage

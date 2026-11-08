@@ -178,8 +178,12 @@ def system_prompt(config):
 
 
 def budget_sentence(config):
-    """What a model that reasons is told of its budget; it matches the cap sent."""
-    budget, tries = config.thinking_tokens, config.failed_tries
+    """What a model that reasons is told of its budget, `thinking_said`.
+
+    It is less than the cap sent, `thinking_tokens`, so a model that thinks to
+    the budget it is told still has room to answer.
+    """
+    budget, tries = config.thinking_said, config.failed_tries
     return (
         f"You have exactly {budget} tokens to think. If you reach {budget} without "
         "making a tool call, your answer is cut off, you're told so and "

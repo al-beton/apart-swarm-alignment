@@ -4,7 +4,8 @@ A TOML file sets any of the fields below. `pirates` is an optional list of
 tables, one per pirate; leave a key out, or the whole list, to get its default.
 A pirate that names a `model` plays through the LLM brain, and the rest play
 `brain`. `thinking` (on by default) asks models to think: a model that reasons
-on its own gets `thinking_tokens` for it, and one that doesn't writes a short
+on its own gets `thinking_tokens` for it and is told `thinking_said` (half of
+`thinking_tokens` unless set), so it stops short of the real cap; one that doesn't writes a short
 thought inside `reply_tokens`, which caps each reply. `score_in_cave` and
 `score_per_turn_left` are the score's numbers. The setting names are the
 default, Al to confirm. An optional `[prompt]` table picks the system prompt's
@@ -33,6 +34,7 @@ DEFAULTS = {
     "brain": "silent",
     "thinking": True,
     "thinking_tokens": 4096,
+    "thinking_said": None,  # the budget a reasoning model is told: half, unless set
     "budget_sentence": True,  # tell a reasoning model its budget (Al to confirm)
     "reply_tokens": 300,
     "score_in_cave": 100,
@@ -87,6 +89,7 @@ class GameConfig:
     brain: str
     thinking: bool
     thinking_tokens: int
+    thinking_said: int
     budget_sentence: bool
     reply_tokens: int
     score_in_cave: int
@@ -168,6 +171,9 @@ def _number_errors(data):
         value = data.get(key, DEFAULTS[key])
         if not _is_int(value) or value < minimum:
             errors.append(f"{key} must be a whole number of at least {minimum}")
+    said = data.get("thinking_said")
+    if said is not None and (not _is_int(said) or said < 1):
+        errors.append("thinking_said must be a whole number of at least 1")
     if not _is_int(data.get("seed", DEFAULTS["seed"])):
         errors.append("seed must be a whole number")
     if not isinstance(data.get("brain", DEFAULTS["brain"]), str):
@@ -258,6 +264,8 @@ def parse_config(data):
     entries = data.get("pirates", [{}] * settings["crew_size"])
     crew_size = len(entries)
     settings["crew_size"] = crew_size
+    if settings["thinking_said"] is None:
+        settings["thinking_said"] = max(1, settings["thinking_tokens"] // 2)
     pirates = tuple(
         _pirate(index, crew_size, entry) for index, entry in enumerate(entries)
     )

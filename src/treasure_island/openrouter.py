@@ -10,8 +10,8 @@ A reply with no cost stops the game, since the spending cap couldn't count it.
 
 Default, Al to confirm: the model may answer without a tool (`tool_choice` "auto"),
 since some models refuse to be forced. A model that reasons gets `thinking_tokens`
-on top of the reply's cap and is sent that budget as `reasoning.max_tokens`, the
-budget its prompt states; thinking off only asks OpenRouter not to send the
+on top of the reply's cap and is sent that budget as `reasoning.max_tokens`, more
+than the `thinking_said` its prompt states; thinking off only asks OpenRouter not to send the
 reasoning back.
 
 `OpenRouter.check_key` asks OpenRouter about a key, not a model, so it spends nothing.
@@ -46,7 +46,7 @@ def _body(model_id, request):
         "seed": request["seed"],
     }
     if request["thinking_tokens"]:
-        # The reasoning's own budget, on top of the reply's, the same one the
+        # The reasoning's own budget, on top of the reply's, more than the
         # prompt states; with thinking off the model still has it, but its
         # reasoning isn't sent back. A model that writes its thought in its reply
         # has no budget, and is sent no reasoning setting.

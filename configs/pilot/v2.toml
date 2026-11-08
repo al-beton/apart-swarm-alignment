@@ -4,7 +4,7 @@
 # Play it with: treasure-island run configs/pilot/v2.toml --seed N
 brain = "silent"  # nobody plays it: every pirate names its model
 thinking = true
-thinking_tokens = 4096
+thinking_tokens = 12288  # a harder board means longer reasoning; at 4096 every second turn was cut off
 
 [[pirates]]
 model = "adaption/deepseek-v4-flash"

@@ -148,3 +148,47 @@ def test_enter_steps_the_last_step_is_the_turn_s_own_frame():
     # The next turn draws the cave the same, its gold on the same glint frame here.
     after = viewer.frame(GAME, 4, 4)
     assert square(after, *CAVE).tobytes() == square(last, *CAVE).tobytes()
+
+
+def drawn_dig(game, turn, step, before, draw):
+    """The digger's square as it should be: the dig's ground, `draw` over it, then
+    the digging pirate on top."""
+    x, y = game[turn]["saw"]["position"]
+    board = Image.new("RGB", (4 * TILE, 4 * TILE))
+    board.paste(dig_ground(step - 1, art(f"tiles/{before}")), (x * TILE, y * TILE))
+    draw(board, viewer.scene(game, turn, 4, CAVE, step=step))
+    ground = board.crop((x * TILE, y * TILE, (x + 1) * TILE, (y + 1) * TILE))
+    look = LOOKS[game[turn]["agent"]]
+    return over(ground.convert("RGBA"), digging(*look, step - 1))
+
+
+def test_dig_steps_the_question_mark_stays_over_the_ground_on_every_step():
+    # The digger stands on the mark and hides it, so look at the ground it stands on.
+    sand = art(f"tiles/{viewer._ground_tile(*CAVE)}")
+    x, y = CAVE
+    for step in range(1, DIG_STEPS):
+        shown = viewer.scene(GAME, 1, 4, CAVE, step=step)
+        assert shown["mark"] == ("mark-question", CAVE)
+        board = Image.new("RGB", (4 * TILE, 4 * TILE))
+        viewer._draw_ground(board, 4, shown, LOOKS)
+        ground = board.crop((x * TILE, y * TILE, (x + 1) * TILE, (y + 1) * TILE))
+        expected = over(dig_ground(step - 1, sand), art("treasure/mark-question"))
+        assert ground.tobytes() == expected.tobytes()
+
+
+def test_dig_steps_the_open_cave_and_its_hats_stay_over_the_ground_on_every_step():
+    # Pirate 1 opens the cave and goes in; pirate 2 then stands on it and digs.
+    game = [
+        *GAME[:2],
+        record(2, "pirate-1", CAVE, ["enter"], in_cave=True, crew=BOTH),
+        record(3, "pirate-2", CAVE, ["dig"], crew={"pirate-2": list(CAVE)}),
+    ]
+    assert viewer.scene(game, 3, 4, CAVE)["inside"] == ["pirate-1"]
+
+    def cave(board, shown):
+        viewer._draw_cave(board, shown, LOOKS)
+
+    for step in range(1, DIG_STEPS):
+        image = viewer.frame(game, 3, 4, None, CAVE, step)
+        expected = drawn_dig(game, 3, step, "dug", cave)
+        assert square(image, *CAVE).tobytes() == expected.tobytes()

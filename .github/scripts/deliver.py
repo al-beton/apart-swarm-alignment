@@ -133,12 +133,16 @@ def review_finished(state, head):
     )
 
 
-def reviewed_commit(number, head, run=run_command):
-    """The commit Codex must have reviewed: the head, or under plain merges of main.
+def review_stands_on(number, head, run=run_command):
+    """The commits a review counts for: the head, then each under plain merges of main.
 
     A merge commit whose diff against its first parent touches none of the pull
-    request's own files only brought main in, so the commit it was made on stands.
+    request's own files only brought main in, so a review of the commit it was made
+    on still stands. The branch's own files are the pull request's now and those it
+    had changed before each merge, so a merge that puts one back as main has it
+    still needs a review.
     """
+    yield head
     files = json.loads(run("pr", "view", str(number), "--json", "files"))["files"]
     own = {f["path"] for f in files}
     run("git", "fetch", "--quiet", "origin", f"pull/{number}/head")
@@ -146,11 +150,14 @@ def reviewed_commit(number, head, run=run_command):
     while True:
         parents = run("git", "rev-list", "--parents", "-n", "1", commit).split()[1:]
         if len(parents) != 2:  # a merge has two parents
-            return commit
+            return
+        base = run("git", "merge-base", *parents).strip()
+        before = run("git", "diff", "--name-only", base, parents[0]).split()
         changed = run("git", "diff", "--name-only", parents[0], commit).split()
-        if own & set(changed):
-            return commit
+        if (own | set(before)) & set(changed):
+            return
         commit = parents[0]
+        yield commit
 
 
 def closing_lines(body):
@@ -232,9 +239,8 @@ def merge(number, run=run_command, pause=time.sleep):
         raise MergeRefused("blocking-checks isn't green on the latest commit.")
     state = review_state(_comments(number, run))
     head = pr["headRefOid"]
-    if not review_finished(state, head) and not review_finished(
-        state, reviewed_commit(number, head, run)
-    ):
+    stands = review_stands_on(number, head, run)
+    if not any(review_finished(state, commit) for commit in stands):
         raise MergeRefused("Codex hasn't finished reviewing the latest commit.")
     if open_threads := unresolved_threads(number, run):
         raise MergeRefused(f"{len(open_threads)} review threads are unresolved.")

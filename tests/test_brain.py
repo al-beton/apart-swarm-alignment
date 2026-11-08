@@ -262,6 +262,8 @@ def test_no_vision_a_view_only_has_room_for_the_pirate_s_own_knowledge():
         "order_ended",
         "new_lines",
         "shared_readings",
+        "quicksand_on",
+        "quicksand_found",
     }
 
 

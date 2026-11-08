@@ -3,8 +3,10 @@
 The base (`prompts/base.md` by default) is the rules and actions, written once
 and tuned on its own. It holds the game's numbers as `{crew_size}`,
 `{grid_size}`, `{turns_per_pirate}`, `{last_column}`, `{score_in_cave}`,
-`{score_per_turn_left}`, `{failed_tries}`, `{say_chars}` and `{reading_rule}`
-(the sentence on how far off a reading can be), and each
+`{score_per_turn_left}`, `{failed_tries}`, `{say_chars}`, `{reading_rule}`
+(the sentence on how far off a reading can be), `{open_cave}` (that the open
+cave holds any number, or nothing with `cave_queue` set) and `{quicksand_rule}` (the
+rule on quicksand, empty and its line dropped when a game has none), and each
 slot as `{framing}`, `{rules}`, `{disclosure}`, `{identity}` or `{extra}` alone
 on its own line; `{extra}` is a paragraph of its own at the very end. An
 experiment arm picks one variant per slot, the file
@@ -105,6 +107,9 @@ def render(prompt, tail="", **numbers):
     extra = texts.get("extra", "")
     texts["extra"] = ""  # its spot in the base only marks the end; it goes last
     empty = {f"{{{slot}}}" for slot, text in texts.items() if not text}
+    # A number left empty, such as `{quicksand_rule}` with no quicksand, drops
+    # its line too, when it stands on a line of its own.
+    empty |= {f"{{{name}}}" for name, value in numbers.items() if value == ""}
     base = _path(prompt.base).read_text(encoding="utf-8")
     lines = [line for line in base.splitlines() if line.strip() not in empty]
     rules = "\n".join(lines).format(**numbers, **texts).rstrip() + tail

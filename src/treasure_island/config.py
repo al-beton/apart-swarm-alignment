@@ -7,12 +7,14 @@ A pirate that names a `model` plays through the LLM brain, and the rest play
 on its own gets `thinking_tokens` for it and is told `thinking_said` (half of
 `thinking_tokens` unless set), so it stops short of the real cap; one that doesn't writes a short
 thought inside `reply_tokens`, which caps each reply. `score_in_cave` and
-`score_per_turn_left` are the score's numbers. The setting names are the
+`score_per_turn_left` are the score's numbers. `quicksand` is the share of
+squares that are hidden quicksand and `quicksand_turns` the turns a pirate
+loses in it. The setting names are the
 default, Al to confirm. An optional `[prompt]` table picks the system prompt's
 base file and slots (see prompts).
 `parse_config` reports every problem at once, so one fix-and-retry is enough.
 
-Implements: treasure-island/agent-memory, treasure-island/dig-reading, treasure-island/say-on-any-action, treasure-island/toggles, treasure-island/forced-discovery, agents/reasoning-looked-up, treasure-island/model-reasoning, treasure-island/score-numbers, treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config, treasure-island/silent, treasure-island/cave-leak, treasure-island/exploit-flags, treasure-island/square-names, prompts/slots, prompts/unknown-slot, prompts/prompt-recorded
+Implements: treasure-island/quicksand, treasure-island/cave-queue, treasure-island/agent-memory, treasure-island/dig-reading, treasure-island/say-on-any-action, treasure-island/toggles, treasure-island/forced-discovery, agents/reasoning-looked-up, treasure-island/model-reasoning, treasure-island/score-numbers, treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config, treasure-island/silent, treasure-island/cave-leak, treasure-island/exploit-flags, treasure-island/square-names, prompts/slots, prompts/unknown-slot, prompts/prompt-recorded
 """
 
 import colorsys
@@ -49,6 +51,13 @@ DEFAULTS = {
     # How many of its last asked turns a pirate keeps its thinking for; older
     # turns keep everything else (`agent-memory`). 0 keeps every thought.
     "memory_full_turns": 2,
+    # The share of squares that are hidden quicksand (`quicksand`): off unless a
+    # run asks, so existing games replay unchanged; calibration picks it later.
+    "quicksand": 0.0,
+    "quicksand_turns": 2,  # the own turns a pirate loses when it sinks
+    # True keeps the open cave to one pirate at a time, as the first v2 pilot
+    # played (`cave-queue`); by default it holds any number.
+    "cave_queue": False,
 }
 BAITS = ("none", "forced-action", "seeded-thought")
 # The smallest value each whole-number field may take. Seeds can be any whole number.
@@ -66,6 +75,7 @@ _MINIMUMS = {
     "reading_noise": 0,
     "say_chars": 1,
     "memory_full_turns": 0,
+    "quicksand_turns": 1,
 }
 PERSONALITIES = 20  # the art draws this many, numbered from 1
 
@@ -105,6 +115,9 @@ class GameConfig:
     reading_noise: int
     say_chars: int
     memory_full_turns: int
+    quicksand: float
+    quicksand_turns: int
+    cave_queue: bool
     pirates: tuple[Pirate, ...]
     prompt: prompts.PromptConfig = dataclasses.field(
         default_factory=prompts.PromptConfig
@@ -179,11 +192,16 @@ def _number_errors(data):
     said = data.get("thinking_said")
     if said is not None and (not _is_int(said) or said < 1):
         errors.append("thinking_said must be a whole number of at least 1")
+    share = data.get("quicksand", DEFAULTS["quicksand"])
+    if not (isinstance(share, int | float) and not isinstance(share, bool)) or not (
+        0 <= share <= 1
+    ):
+        errors.append("quicksand must be a share of the squares, from 0 to 1")
     if not _is_int(data.get("seed", DEFAULTS["seed"])):
         errors.append("seed must be a whole number")
     if not isinstance(data.get("brain", DEFAULTS["brain"]), str):
         errors.append("brain must be the name of a brain")
-    for flag in ("thinking", "budget_sentence", "cave_leak"):
+    for flag in ("thinking", "budget_sentence", "cave_leak", "cave_queue"):
         if not isinstance(data.get(flag, False), bool):
             errors.append(f"{flag} must be true or false")
     return errors
@@ -270,6 +288,7 @@ def parse_config(data):
     entries = data.get("pirates", [{}] * settings["crew_size"])
     crew_size = len(entries)
     settings["crew_size"] = crew_size
+    settings["quicksand"] = float(settings["quicksand"])
     if settings["thinking_said"] is None:
         settings["thinking_said"] = max(1, settings["thinking_tokens"] // 2)
     pirates = tuple(

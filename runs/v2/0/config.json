@@ -5,6 +5,7 @@
   "brain": "silent",
   "budget_sentence": true,
   "cave_leak": false,
+  "cave_queue": true,
   "crew_size": 6,
   "failed_tries": 2,
   "grid_size": 10,

@@ -8,7 +8,8 @@ Errors (exit 1, the build stops):
   `<!-- result: name -->` on its first lines), or its marker names an
   experiment spec or a result folder that isn't in the repository;
 - an image is neither a named figure (`figures/<name>.<ext>`, name in the
-  registry) nor a committed file.
+  registry) nor a committed file. Committed means git tracks it: a file that
+  only exists locally would be missing from a clean clone.
 
 Warnings (printed, the build goes on): the abstract outside the sprint's word
 range, or the main text past the sprint's page cap. Both limits are in the
@@ -20,7 +21,9 @@ Usage: python -m paper.check paper/paper.md [paper/build/paper.aux]
 """
 
 import re
+import subprocess
 import sys
+from functools import cache
 from pathlib import Path
 
 import yaml
@@ -35,11 +38,22 @@ IMAGE = re.compile(r"!\[[^\]]*\]\(([^)\s]+)")
 MARKER = re.compile(r"<!--\s*(experiment|result):\s*([a-z0-9-]+)\s*-->")
 MARKER_LINES = 5  # the marker sits in the file's first lines, with the Implements line
 EVIDENCE = {
-    "experiment": lambda root, name: (
-        root / "experiments/spec" / f"{name}.md"
-    ).is_file(),
-    "result": lambda root, name: (root / "results" / name / "README.md").is_file(),
+    "experiment": lambda name: f"experiments/spec/{name}.md",
+    "result": lambda name: f"results/{name}/README.md",
 }
+
+
+@cache
+def committed(root):
+    """The files git tracks under `root`: what a clean clone would hold. Outside
+    a repository, every file there is."""
+    try:
+        listed = subprocess.run(
+            ["git", "ls-files"], cwd=root, capture_output=True, text=True, check=True
+        ).stdout.split("\n")
+    except (OSError, subprocess.CalledProcessError):
+        listed = [p.relative_to(root).as_posix() for p in Path(root).rglob("*")]
+    return frozenset(filter(None, listed))
 
 
 def sections(skeleton):
@@ -108,7 +122,7 @@ def problems(skeleton, root=ROOT, figures=None):
         if image.startswith("figures/"):
             if Path(image).stem not in figures:
                 found.append(f"{image}: no named figure called {Path(image).stem!r}")
-        elif not (root / image).is_file():
+        elif image not in committed(Path(root)):
             found.append(f"{image}: not a committed file")
     return found
 
@@ -122,7 +136,7 @@ def _evidence_problems(part, root):
     return [
         f"{part}: {kind} {name!r} isn't in the repository"
         for kind, name in markers
-        if not EVIDENCE[kind](root, name)
+        if EVIDENCE[kind](name) not in committed(Path(root))
     ]
 
 

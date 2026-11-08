@@ -1,5 +1,5 @@
-# Implements: treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/game-ends, treasure-island/score-numbers, treasure-island/actions, treasure-island/tools-only, treasure-island/failed-move
-"""Digging the treasure opens a cave, and the crew goes in one by one."""
+# Implements: treasure-island/shared-squares, treasure-island/revealed-treasure, treasure-island/cave, treasure-island/cave-queue, treasure-island/game-ends, treasure-island/score-numbers, treasure-island/actions, treasure-island/tools-only, treasure-island/failed-move
+"""Digging the treasure opens a cave, which holds any number of pirates."""
 
 import pytest
 
@@ -14,6 +14,7 @@ pytestmark = pytest.mark.usefixtures("left_edge_starts")
 
 DIG = {"action": "dig"}
 ENTER = {"action": "enter"}
+WAIT = {"action": "wait"}
 GO_A5 = {"action": "go_to", "square": "A5"}
 NORTH = {"action": "move", "direction": "north"}
 
@@ -108,22 +109,28 @@ def test_cave_entering_writes_nothing_on_the_scroll(tmp_path):
     assert log_errors(tmp_path / "events.jsonl") == []
 
 
-def test_cave_queue_the_cave_square_holds_one_pirate_and_frees_once_it_goes_in():
-    # Pirate 2 can't step onto the cave while pirate 1 stands on it, but can once
-    # pirate 1 has gone in; then it enters too.
-    second = Steps(GO_A5, GO_A5, GO_A5, ENTER)
-    records = play(config(), Steps(DIG, ENTER), second)
-    assert records[1]["agent"] == "pirate-2"
+def test_cave_queue_the_open_cave_holds_any_number_of_pirates():
+    # Pirate 2 steps onto the open cave while pirate 1 still stands on it, and
+    # both go in, each on its own turn.
+    records = play(config(), Steps(DIG, WAIT, ENTER), Steps(GO_A5, ENTER))
+    assert records[1]["did"] == [GO_A5, NORTH]
+    assert records[1]["outcome"]["position"] == [0, 0]
+    assert records[2]["crew"] == {"pirate-1": [0, 0], "pirate-2": [0, 0]}
+    assert records[3]["did"] == [ENTER]
+    assert records[-1]["game_over"]["in_cave"] == ["pirate-2", "pirate-1"]
+    assert all(record_errors(record) == [] for record in records)
+
+
+def test_cave_queue_before_it_is_dug_the_cave_s_square_holds_one_pirate():
+    records = play(config(), Steps(WAIT), Steps(GO_A5, WAIT))
     assert records[1]["failed_moves"] == [GO_A5, GO_A5]
-    assert records[3]["did"] == [GO_A5, NORTH]
-    assert records[3]["outcome"]["position"] == [0, 0]
-    assert records[4]["did"] == [ENTER]
+    assert records[1]["outcome"]["position"] == [0, 1]
 
 
 def test_game_ends_when_every_pirate_is_in_the_cave():
-    records = play(config(), Steps(DIG, ENTER), Steps(GO_A5, GO_A5, GO_A5, ENTER))
+    records = play(config(), Steps(DIG, ENTER), Steps(GO_A5, ENTER))
     over = records[-1]["game_over"]
-    assert len(records) == 5
+    assert len(records) == 4
     assert over["reason"] == "everyone is in the cave"
     assert over["in_cave"] == ["pirate-1", "pirate-2"]
 
@@ -139,7 +146,7 @@ def test_game_ends_when_everyone_outside_has_used_their_turns():
 def test_score_numbers_each_pirate_in_the_cave_scores_100_plus_10_per_turn_left():
     # Pirate 1 enters on its 2nd of 6 turns, leaving 4: 140. Pirate 2 enters on
     # its 3rd, leaving 3: 130. The crew's score is the sum.
-    records = play(config(), Steps(DIG, ENTER), Steps(GO_A5, GO_A5, GO_A5, ENTER))
+    records = play(config(), Steps(DIG, ENTER), Steps(GO_A5, WAIT, ENTER))
     assert records[-1]["game_over"]["score"] == 140 + 130
     assert "Score 270" in records[-1]["game_over"]["story"]
 

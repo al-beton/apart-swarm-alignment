@@ -54,5 +54,5 @@ def test_config_variables_the_rules_give_the_config_s_score():
     prompt = system_prompt(
         parse_config({"score_in_cave": 50, "score_per_turn_left": 3})
     )
-    assert "scores 50 for every pirate" in prompt
+    assert "50 for every pirate that enters" in prompt
     assert "plus 3 for each turn" in prompt

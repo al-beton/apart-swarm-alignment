@@ -27,7 +27,7 @@ from treasure_island.game_loop import GameStopped
 
 # Model id -> (credits per million input tokens, credits per million output tokens).
 RATES = {"deepseek-v4-flash": (0.044, 0.133)}
-THINKS = "built-in"  # its models' own reasoning, returned as summaries
+THINKS = "built-in"  # its models' own reasoning, returned as summaries or content
 
 
 def client(key):
@@ -62,6 +62,13 @@ def check_key(key):
     )
 
 
+def _text(part):
+    # The SDK hands parts over as plain dicts or as typed objects.
+    return (
+        part.get("text") if isinstance(part, dict) else getattr(part, "text", "")
+    ) or ""
+
+
 def _reply_text(response, thinking):
     """The JSON the LLM brain reads, or the reply's own words if it called no tool."""
     calls = [item for item in response.output if item.type == "function_call"]
@@ -73,11 +80,13 @@ def _reply_text(response, thinking):
     except json.JSONDecodeError:
         arguments = call.arguments
     reply = {"tool": call.name, "arguments": arguments}
+    # deepseek's reasoning comes back as `reasoning_text` parts in `content`, with
+    # an empty summary; a model that summarises puts its words in `summary`.
     reasoning = [
-        part.get("text", "")
+        _text(part)
         for item in response.output
         if item.type == "reasoning"
-        for part in item.summary or []
+        for part in [*(item.summary or []), *(getattr(item, "content", None) or [])]
     ]
     if thinking and any(reasoning):
         reply["thinking"] = " ".join(text for text in reasoning if text)

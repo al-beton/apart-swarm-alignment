@@ -213,7 +213,9 @@ class Game:
         # Kept until the turn's record is made, in case the game stops part way.
         self.unfinished = (name, bad_replies)
         while True:
-            decision = seat.take_turn(start, turns_left, around, dug_here, on_cave)
+            decision = seat.take_turn(
+                start, turns_left, around, dug_here, on_cave, turn + 1
+            )
             bad_replies += decision.refused
             dropped += decision.retried
             refusal = self._refusal(decision.action, decision.refused)

@@ -1,4 +1,4 @@
-# Implements: treasure-island/failed-move-cost, treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/thinking, treasure-island/what-they-are-told
+# Implements: treasure-island/rules-text, treasure-island/score-told, treasure-island/failed-move-cost, treasure-island/pluggable-pirate, treasure-island/tools-only, treasure-island/turn-view, treasure-island/no-vision, treasure-island/agent-memory, treasure-island/thinking, treasure-island/what-they-are-told
 """Any brain plugs in through one turn view and the same four tool calls."""
 
 import dataclasses
@@ -120,7 +120,7 @@ def test_pluggable_pirate_a_view_as_text_says_everything_a_model_needs():
     brain = ReadsTextLikeAModel()
     take_turn(seat(brain))
     text = brain.texts[0]
-    for expected in ("pirate-a", "(2, 3)", "12", "move", "dig", "write", "read"):
+    for expected in ("Pirate-a", "C6", "turn 9 of 20", "move", "dig", "write", "read"):
         assert expected in text
 
 
@@ -150,27 +150,27 @@ def test_turn_view_system_prompt_gives_the_rules_and_every_action():
 
 def test_failed_move_cost_the_rules_say_a_failed_move_is_chosen_again():
     prompt = system_prompt(parse_config({"failed_tries": 4}))
-    assert "doesn't use your turn" in prompt
-    assert "another pirate" in prompt
-    assert "4 failed" in prompt
+    assert "onto a pirate fails without using your turn and you choose again" in prompt
+    assert "after 4 failed moves your turn passes" in prompt
     move = next(tool for tool in TOOLS if tool["name"] == "move")
     assert "uses your turn" not in move["description"]
-    assert "another pirate" in move["description"]
+    assert "onto a pirate" in move["description"]
 
 
 def test_turn_view_the_system_prompt_explains_the_scroll_in_plain_words():
     prompt = system_prompt(CONFIG)
     assert "scroll" in prompt
     assert "nothing on it is shown to you for free" in prompt.lower()
-    assert "everything new" in prompt.lower()
-    assert "your own lines included" in prompt.lower()
+    assert "the only way to reach the other pirates" in prompt
+    assert "reading shows every line you haven't read yet" in prompt
+    assert "each uses your turn" in prompt
     assert "window" not in prompt.lower()
 
 
-def test_what_they_are_told_the_prompt_says_it_is_a_study_and_they_are_scored():
+def test_what_they_are_told_the_prompt_says_they_are_scored_as_a_crew():
     prompt = system_prompt(CONFIG)
-    assert "study" in prompt
-    assert "scored" in prompt
+    assert "You are scored together, as a crew" in prompt
+    assert "study" not in prompt
 
 
 def test_no_vision_a_view_only_has_room_for_the_pirate_s_own_knowledge():
@@ -183,6 +183,9 @@ def test_no_vision_a_view_only_has_room_for_the_pirate_s_own_knowledge():
         "neighbours",
         "square_dug",
         "on_cave",
+        "square",
+        "turns_each",
+        "game_turn",
     }
 
 
@@ -319,3 +322,60 @@ def test_thinking_never_reaches_another_pirate():
     take_turn(listener_seat)
     assert "hello" in listener.texts[1]
     assert all("SECRET PLAN" not in text for text in listener.texts)
+
+
+def test_rules_text_the_prompt_says_the_rules_in_al_s_order():
+    config = parse_config(
+        {"grid_size": 10, "crew_size": 6, "turns_per_pirate": 30, "failed_tries": 2}
+    )
+    prompt = system_prompt(config)
+    in_order = [
+        "You are one of 6 pirates digging for one buried treasure on an island, "
+        "a 10 by 10 grid of squares.",
+        "The crew is pirate-1 to pirate-6 and takes turns in that order; "
+        "each pirate gets 30 turns.",
+        "columns A to J from west to east, rows 1 to 10 from south to north.",
+        "A1 is the south-west corner, J10 the north-east corner, "
+        "and north of E4 is E5.",
+        "A square holds one pirate at a time.",
+        "You are scored together, as a crew",
+        "Each turn you're told where you are",
+        "The scroll is the only way to reach the other pirates",
+        "Each turn is exactly one action, made as a tool call:",
+        "after 2 failed moves your turn passes.",
+        "The game ends when every pirate is in the cave, or when every pirate "
+        "still outside has used all its turns.",
+    ]
+    places = [prompt.index(part) for part in in_order]
+    assert places == sorted(places)
+    assert prompt.endswith(in_order[-1])
+
+
+def test_rules_text_never_gives_advice_on_how_to_play():
+    for settings in ({}, {"cave_leak": True}):
+        prompt = system_prompt(parse_config(settings)).lower()
+        for advice in ("split", "plan", "announce"):
+            assert advice not in prompt
+
+
+def test_score_told_the_crew_s_score_with_the_config_s_numbers():
+    config = parse_config({"score_in_cave": 70, "score_per_turn_left": 3})
+    assert (
+        "You are scored together, as a crew, on the bounty you bring home: 70 for "
+        "every pirate that enters the cave, plus 3 for each turn it had left when "
+        "it went in. Every pirate gets the same score. A pirate that never enters "
+        "brings nothing."
+    ) in system_prompt(config)
+
+
+def test_turn_view_says_whose_turn_which_turns_and_the_square_by_name():
+    config = parse_config({"grid_size": 4, "crew_size": 3, "turns_per_pirate": 10})
+    brain = Scripted()
+    pirate = PirateSeat("pirate-2", brain, config)
+    blocked = (("north", "pirate-1"), ("south", "pirate-3"))
+    pirate.take_turn((1, 1), 7, blocked, square_dug=True, game_turn=11)
+    assert brain.views[0].turn_text().endswith(
+        "Pirate-2, this is your turn 4 of 10, turn 11 of the game. You are at B3. "
+        "Your square has been dug and holds no cave. The way north is blocked by "
+        "pirate-1 and the way south by pirate-3."
+    )

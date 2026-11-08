@@ -411,9 +411,7 @@ def test_turn_view_says_whether_the_pirate_s_square_has_been_dug():
     assert [view.square_dug for view in first.views] == [False, True, False]
     assert [view.square_dug for view in second.views] == [False, False, True]
     assert "Your square hasn't been dug." in second.views[1].as_text()
-    assert "Your square has been dug and holds no cave." in (
-        second.views[2].as_text()
-    )
+    assert "Your square has been dug and holds no cave." in (second.views[2].as_text())
 
 
 def test_no_vision_a_pirate_two_squares_away_is_never_shown():

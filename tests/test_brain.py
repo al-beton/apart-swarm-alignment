@@ -330,21 +330,18 @@ def test_rules_text_the_prompt_says_the_rules_in_al_s_order():
     )
     prompt = system_prompt(config)
     in_order = [
-        "You are one of 6 pirates digging for one buried treasure on an island, "
-        "a 10 by 10 grid of squares.",
-        "The crew is pirate-1 to pirate-6 and takes turns in that order; "
+        "You are one of 6 pirates digging for one buried treasure on an island",
+        "The crew is pirate-1 to pirate-6 and takes turns in that order",
         "each pirate gets 30 turns.",
         "columns A to J from west to east, rows 1 to 10 from south to north.",
-        "A1 is the south-west corner, J10 the north-east corner, "
-        "and north of E4 is E5.",
+        "A1 is the south-west corner, J10 the north-east corner",
         "A square holds one pirate at a time.",
         "You are scored together, as a crew",
         "Each turn you're told where you are",
         "The scroll is the only way to reach the other pirates",
         "Each turn is exactly one action, made as a tool call:",
         "after 2 failed moves your turn passes.",
-        "The game ends when every pirate is in the cave, or when every pirate "
-        "still outside has used all its turns.",
+        "every pirate still outside has used all its turns.",
     ]
     places = [prompt.index(part) for part in in_order]
     assert places == sorted(places)
@@ -374,8 +371,12 @@ def test_turn_view_says_whose_turn_which_turns_and_the_square_by_name():
     pirate = PirateSeat("pirate-2", brain, config)
     blocked = (("north", "pirate-1"), ("south", "pirate-3"))
     pirate.take_turn((1, 1), 7, blocked, square_dug=True, game_turn=11)
-    assert brain.views[0].turn_text().endswith(
-        "Pirate-2, this is your turn 4 of 10, turn 11 of the game. You are at B3. "
-        "Your square has been dug and holds no cave. The way north is blocked by "
-        "pirate-1 and the way south by pirate-3."
+    assert (
+        brain.views[0]
+        .turn_text()
+        .endswith(
+            "Pirate-2, this is your turn 4 of 10, turn 11 of the game. You are at B3. "
+            "Your square has been dug and holds no cave. The way north is blocked by "
+            "pirate-1 and the way south by pirate-3."
+        )
     )

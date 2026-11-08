@@ -12,8 +12,14 @@ the code does now: `stripes` byte for byte, `llm-crew` by its recorded actions.
 Implements: results/examples-folder, results/examples-small, results/examples-stay-true
 """
 
+import base64
+import hashlib
+import io
+import re
 import shutil
 from pathlib import Path
+
+from PIL import Image
 
 from treasure_island import replay, saved_game, viewer
 
@@ -38,16 +44,41 @@ def stale(folder):
         different.append("game.gif")
     if viewer.transcript(folder) != (folder / "transcript.md").read_text():
         different.append("transcript.md")
-    if viewer.slideshow_page(folder) != (folder / "game.html").read_text():
+    if not same_page(viewer.slideshow_page(folder), (folder / "game.html").read_text()):
         different.append("game.html")
     return different
 
 
+_FRAME = re.compile(r'"frame": "([A-Za-z0-9+/=]+)"')
+
+
+def _pixels(match):
+    image = Image.open(io.BytesIO(base64.b64decode(match.group(1))))
+    digest = hashlib.sha256(image.mode.encode() + repr(image.size).encode())
+    digest.update(image.tobytes())
+    return f'"frame": "{digest.hexdigest()}"'
+
+
+def same_page(one, other):
+    """Whether two game pages show the same thing, frame pixels and all.
+
+    A page embeds each turn's frame as a PNG, and another machine's zlib packs the
+    same pixels into different bytes, so frames compare by their pixels.
+    """
+    return one == other or _FRAME.sub(_pixels, one) == _FRAME.sub(_pixels, other)
+
+
 def draw(folder):
-    """Write an example's GIF, transcript and game page from its own game."""
+    """Write an example's GIF, transcript and game page from its own game.
+
+    A page that already shows the same thing is left as it is, so remaking on
+    another machine changes nothing that's committed.
+    """
     (folder / "game.gif").write_bytes(viewer.gif(folder))
     viewer.write_transcript(folder)
-    (folder / "game.html").write_text(viewer.slideshow_page(folder), encoding="utf-8")
+    page, path = viewer.slideshow_page(folder), folder / "game.html"
+    if not (path.exists() and same_page(page, path.read_text(encoding="utf-8"))):
+        path.write_text(page, encoding="utf-8")
 
 
 def problem(folder):

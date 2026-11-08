@@ -898,6 +898,14 @@ def _scroll_writes(records):
     return writes
 
 
+def reasoned_text(record):
+    """How many tokens a turn's model spent reasoning, in words, or "" if unknown."""
+    spent = record.get("reasoning_tokens")
+    if spent is None:
+        return ""
+    return f"Its model spent {spent} tokens reasoning."
+
+
 def turn_records(records):
     """Each turn's whole record as the game page and the transcript both show it."""
     return [
@@ -908,6 +916,7 @@ def turn_records(records):
             "happened": record.get("happened", ""),
             "prompt": record.get("saw", {}).get("prompt", ""),
             "thinking": record.get("thinking") or "",
+            "reasoned": reasoned_text(record),
             "refused": record.get("refused", []),
             "did": record.get("did", []),
             "result": record.get("result", ""),
@@ -1073,6 +1082,8 @@ def _transcript_turn(turn):
         parts.append("*No prompt recorded: a scripted pirate reads no words.*")
     thinking = _quoted(turn["thinking"]) if turn["thinking"] else None
     parts.append("**Its thinking**\n\n" + (thinking or "*No thinking recorded.*"))
+    if turn["reasoned"]:
+        parts.append(turn["reasoned"])
     for bad in turn["refused"]:
         refused = f"{bad['reply']}\n({bad['why']})"
         parts.append("**A reply that wasn't a tool call**\n\n" + _quoted(refused))
@@ -1208,6 +1219,7 @@ details summary { cursor: pointer; color: var(--mut); overflow-wrap: anywhere; }
 <section class="left">
 <img class="board" id="board" alt="the board on the current turn">
 <div class="mut" id="where"></div>
+<div class="mut" id="reasoned"></div>
 <div class="parchment"><div class="title">The scroll</div><div id="scroll"></div></div>
 <div class="ending" id="ending"></div>
 </section>
@@ -1287,6 +1299,7 @@ for (const slot of GAME.slots) {
       el("summary", {}, "thought " + words(t.thinking) + " words: “" + lastSentence(t.thinking) + "”"),
       el("div", { class: "think" }, t.thinking)));
   }
+  if (t.reasoned) body.append(el("div", { class: "mut" }, t.reasoned));
   for (const bad of t.refused) {
     body.append(el("div", { class: "refused" }, "Reply rejected: " + bad.why, el("pre", {}, bad.reply || "(empty)")));
   }
@@ -1376,6 +1389,7 @@ function paint(scroll) {
   $("prev").disabled = at === 0;
   $("next").disabled = at === N - 1;
   $("where").textContent = "Turn " + (at + 1) + " of " + N + " played · " + t.agent + " · score " + t.score;
+  $("reasoned").textContent = t.reasoned;
   showBoard(t, forward);
   writeScroll(forward);
   for (const entry of entries) {

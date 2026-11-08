@@ -132,3 +132,13 @@ def test_transcript_the_same_game_writes_the_same_text(saved):
 def test_transcript_the_readmes_point_to_the_stripes_transcript_first():
     assert "examples/stripes/transcript.md" in (ROOT / "README.md").read_text()
     assert "stripes/transcript.md" in (ROOT / "examples/README.md").read_text()
+
+
+def test_transcript_shows_the_reasoning_tokens_a_turn_spent(saved):
+    records = records_of(saved)
+    records[1]["reasoning_tokens"] = 812
+    rewrite(saved, records)
+    section = turn_section(viewer.transcript(saved), records[1]["turn"])
+    assert "Its model spent 812 tokens reasoning." in section
+    first = turn_section(viewer.transcript(saved), records[0]["turn"])
+    assert "tokens reasoning" not in first

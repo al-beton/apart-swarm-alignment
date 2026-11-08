@@ -17,7 +17,7 @@ NAMES = sorted(examples.EXAMPLES)
 
 
 def turn(number, agent, did, *, in_cave=False, at=(1, 1)):
-    outcome = {"position": None if in_cave else list(at), "found_treasure": False}
+    outcome = {"position": list(at), "found_treasure": False}  # as the game records it
     if in_cave:
         outcome["in_cave"] = True
     return {
@@ -46,6 +46,16 @@ EARLY = [
     turn(3, "pirate-2", "dig", at=(0, 1)),
 ]
 THREE_TURNS = Scoring(turns_per_pirate=3, in_cave=100, per_turn_left=10)
+
+
+# One pirate with 4 turns digs once, then goes in with 2 turns left: game over.
+ALONE = [
+    turn(0, "pirate-1", "dig"),
+    {
+        **turn(1, "pirate-1", "enter", in_cave=True),
+        "game_over": {"score": 120, "treasure": [2, 2]},
+    },
+]
 
 
 def records_of(name):
@@ -87,8 +97,7 @@ def test_score_counter_going_in_early_counts_up_to_more():
 
 
 def test_score_counter_owed_turns_play_out_quickly_before_the_last_frame():
-    # One pirate with 4 turns digs once, then goes in with 2 turns left: game over.
-    alone = [turn(0, "pirate-1", "dig"), turn(1, "pirate-1", "enter", in_cave=True)]
+    alone = ALONE
     scoring = Scoring(4, 100, 10)
     steps = viewer.walk_steps(alone, 1, scoring)
     assert steps == [1, 2, None]
@@ -120,9 +129,10 @@ def test_score_counter_the_last_frame_s_count_is_the_game_s_score(name):
 
 
 def test_score_counter_is_drawn_at_the_top_of_the_frame():
-    before = viewer.frame(EARLY, 1, 3, scoring=THREE_TURNS)
-    after = viewer.frame(EARLY, 2, 3, scoring=THREE_TURNS)
-    # Turn 1 to turn 2 changes the score; compare only the panel's top line.
+    scoring = Scoring(4, 100, 10)
+    before = viewer.frame(ALONE, 1, 3, step=1, scoring=scoring)  # 110
+    after = viewer.frame(ALONE, 1, 3, step=2, scoring=scoring)  # 120, the same turn
+    # Only the score differs; compare the panel's top line.
     grid = 3 * viewer.TILE
     top = (grid, 0, before.width, 30)
     changed = ImageChops.difference(before.crop(top), after.crop(top)).getbbox()

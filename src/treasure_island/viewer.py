@@ -24,7 +24,7 @@ A pirate that moves walks there: its turn gets `WALK_FRAMES` frames, steps 1 to
 turn's own frame. `walk_steps` says which steps a turn has, and the GIF and the page
 both draw exactly those.
 
-Implements: viewer/cave-drawn, treasure-island/cave, viewer/turn-marked, viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/walks-between-squares, treasure-island/pokemon-style, viewer/slideshow-file, viewer/game-page, viewer/transcript, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process, treasure-island/square-names
+Implements: viewer/cave-drawn, treasure-island/cave, viewer/turn-marked, viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/walks-between-squares, treasure-island/pokemon-style, viewer/slideshow-file, viewer/game-page, viewer/score-counter, viewer/transcript, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process, treasure-island/square-names
 """
 
 import base64
@@ -34,6 +34,7 @@ import re
 from functools import cache
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from typing import NamedTuple
 
 from PIL import Image, ImageChops
 
@@ -43,7 +44,7 @@ from assets.font import FONT_HEIGHT, FONT_WIDTH, draw_text, text_width, wrap
 from assets.pirates import pirate, portrait
 from assets.pixels import DARK
 from assets.ui import open_scroll, panel, scroll_note
-from treasure_island.config import parse_config
+from treasure_island.config import DEFAULTS, parse_config
 from treasure_island.game_state import GameState
 from treasure_island.looks import sprite_values
 from treasure_island.pirates_log import one_line
@@ -252,11 +253,18 @@ def _walk(record):
     return (start, end) if moved and list(start) != list(end) else None
 
 
-def walk_steps(records, turn):
-    """The steps a turn is drawn in: 1 to WALK_FRAMES for a move, else [None]."""
-    if _walk(records[turn]):
-        return list(range(1, WALK_FRAMES + 1))
-    return [None]
+def walk_steps(records, turn, scoring=None):
+    """The steps a turn is drawn in: 1 to WALK_FRAMES for a move, else [None].
+
+    The last turn of a finished game that still owes pirates inside their turns
+    plays them out first: after any walk, one step per round, then its own frame.
+    """
+    walked = _walk(records[turn]) is not None
+    owed = len(_owed_rounds(records, turn, scoring))
+    if not owed:
+        return list(range(1, WALK_FRAMES + 1)) if walked else [None]
+    first = WALK_FRAMES if walked else 1  # the first step that plays a round out
+    return [*range(1, first + owed), None]
 
 
 def _walking(shown, record, step):
@@ -271,7 +279,89 @@ def _walking(shown, record, step):
     return shown
 
 
-def scene(records, turn, size, treasure=None, step=None):
+class Scoring(NamedTuple):
+    """The run's score numbers, as the counter needs them."""
+
+    turns_per_pirate: int
+    in_cave: int
+    per_turn_left: int
+
+
+_DEFAULT_SCORING = Scoring(
+    DEFAULTS["turns_per_pirate"],
+    DEFAULTS["score_in_cave"],
+    DEFAULTS["score_per_turn_left"],
+)
+SCORE_INK = "#ffd23f"  # what the crew earns, in the cave's gold (Al to confirm)
+
+
+def scoring_in(folder):
+    """The score numbers from the run's config.json, or the defaults it would have."""
+    path = Path(folder) / "config.json"
+    saved = json.loads(path.read_text()) if path.exists() else {}
+    fields = ("turns_per_pirate", "score_in_cave", "score_per_turn_left")
+    return Scoring(*(saved.get(field, DEFAULTS[field]) for field in fields))
+
+
+def _passed(seat, before, now, crew):
+    """Whether the turn order went past `seat` going from seat `before` to `now`."""
+    gap = (now - before) % crew or crew  # the same seat again is a whole round
+    return 0 < (seat - before) % crew < gap
+
+
+def score_gains(records, scoring):
+    """The points each turn earned, and the rounds of points still owed at the end.
+
+    A pirate going in earns `in_cave`. After that, each time the turn order passes
+    its seat it earns `per_turn_left`, for as many turns as it had left. A game that
+    ends first still owes it the rest, which the last turn plays out in rounds.
+    """
+    seats = {name: index for index, name in enumerate(_crew_names(records))}
+    used, owed, gains, before = {}, {}, [], None
+    for record in records:
+        name, earned = record["agent"], []
+        for inside, left in owed.items():
+            if left and _passed(seats[inside], before, seats[name], len(seats)):
+                owed[inside] -= 1
+                earned.append(scoring.per_turn_left)
+        used[name] = used.get(name, 0) + 1  # every record is one turn used
+        if record["outcome"].get("in_cave"):
+            owed[name] = max(scoring.turns_per_pirate - used[name], 0)
+            earned.append(scoring.in_cave)
+        gains.append(earned)
+        before = seats[name]
+    rounds = []
+    while any(owed.values()):
+        rounds.append([scoring.per_turn_left for left in owed.values() if left])
+        owed = {inside: max(left - 1, 0) for inside, left in owed.items()}
+    return gains, rounds
+
+
+def _owed_rounds(records, turn, scoring):
+    """The rounds the last turn of a finished game plays out, else none."""
+    if turn != len(records) - 1 or not records[turn].get("game_over"):
+        return []
+    return score_gains(records, scoring or _DEFAULT_SCORING)[1]
+
+
+def _score_now(records, turn, step, scoring):
+    """The count on this step of this turn, and the gains rising from the cave."""
+    gains, rounds = score_gains(records, scoring)
+    score = sum(sum(earned) for earned in gains[: turn + 1])
+    labels = gains[turn]
+    if _owed_rounds(records, turn, scoring):
+        walked = _walk(records[turn]) is not None
+        played = (
+            len(rounds) if step is None else step - (WALK_FRAMES - 1 if walked else 0)
+        )
+        if played > 0:
+            score += sum(sum(owed) for owed in rounds[:played])
+            labels = rounds[played - 1] if step is not None else labels
+    return score, [f"+{points}" for points in labels]
+
+
+# One argument over the limit: `scoring` sits beside the others every caller passes.
+def scene(records, turn, size, treasure=None, step=None, scoring=None):  # noqa: PLR0913
     """What the frame for `turn` shows, from the records up to and including it.
 
     `step`, one of `walk_steps`, is how far along its walk a moving pirate is drawn.
@@ -308,6 +398,9 @@ def scene(records, turn, size, treasure=None, step=None):
         "inside": inside,
         "going_in": going,
     }
+    shown["score"], shown["gains"] = _score_now(
+        records, turn, step, scoring or _DEFAULT_SCORING
+    )
     if step is not None and step < WALK_FRAMES and _walk(current):
         return _walking(shown, current, step)
     return shown
@@ -604,11 +697,31 @@ def _caption_image(story, width, height):
     return image
 
 
-# One argument over the limit: `step` sits beside the others every caller already passes.
-def frame(records, turn, size, pirates=None, treasure=None, step=None):  # noqa: PLR0913
+def _draw_gains(image, shown):
+    """What this step earned, in a line rising from the cave: above it, else below."""
+    if not shown["gains"] or not shown["mark"]:  # gains come only once there's a cave
+        return
+    x, y = shown["mark"][1]
+    words = " ".join(shown["gains"])
+    room = shown["size"] * TILE - text_width(words)
+    left = min(max(x * TILE + (TILE - text_width(words)) // 2, 0), max(room, 0))
+    above = y * TILE - ARROW_ROOM - LINE  # clear of the turn arrow over the cave
+    top = above if above >= 0 else (y + 1) * TILE + 2
+    draw_text(image, (left + 1, top + 1), words)  # a dark edge, so it reads on sand
+    draw_text(image, (left, top), words, SCORE_INK)
+
+
+def _draw_score(image, shown, grid):
+    """The crew's score so far, at the top of the frame, right of the turn number."""
+    words = f"Score {shown['score']}"
+    draw_text(image, (grid + PANEL - _PANEL_LEFT - text_width(words), 14), words)
+
+
+# Two arguments over the limit: `step` and `scoring` sit beside the others callers pass.
+def frame(records, turn, size, pirates=None, treasure=None, step=None, scoring=None):  # noqa: PLR0913
     """The image for one turn: ground, pirates, turn arrow, note, panel, caption, log."""
     pirates = pirates or _default_pirates(_crew_names(records))
-    shown = scene(records, turn, size, treasure, step)
+    shown = scene(records, turn, size, treasure, step, scoring)
     grid = max(size, 1) * TILE
     board = max(grid, PANEL_HEIGHT)
     width = grid + PANEL
@@ -623,8 +736,10 @@ def frame(records, turn, size, pirates=None, treasure=None, step=None):  # noqa:
     _draw_labels(image, shown, pirates)
     # The note goes over the labels, so what was written always shows in full.
     _draw_note(image, shown, arrow_box)
+    _draw_gains(image, shown)
     side = _panel_image(shown, board, pirates[shown["acting"]])
     image.paste(side, (grid, 0), side)
+    _draw_score(image, shown, grid)
     words = _caption_image(records[turn].get("story", ""), width, caption)
     image.paste(words, (0, board), words)
     strip = _strip_image(shown, width)
@@ -644,7 +759,8 @@ def frame_png(folder, turn, step=None):
     size = grid_size(folder, records)
     pirates = pirates_in(folder, records)
     treasure = treasure_in(folder, records)
-    return _png(frame(records, turn, size, pirates, treasure, step=step))
+    scoring = scoring_in(folder)
+    return _png(frame(records, turn, size, pirates, treasure, step, scoring))
 
 
 def gif(folder):
@@ -653,13 +769,14 @@ def gif(folder):
     size = grid_size(folder, records)
     pirates = pirates_in(folder, records)
     treasure = treasure_in(folder, records)
+    scoring = scoring_in(folder)
     frames, durations = [], []
     for turn in range(len(records)):
-        for step in walk_steps(records, turn):
-            drawn = frame(records, turn, size, pirates, treasure, step=step)
+        steps = walk_steps(records, turn, scoring)
+        for step in steps:
+            drawn = frame(records, turn, size, pirates, treasure, step, scoring)
             frames.append(Image.open(io.BytesIO(_png(drawn))))
-            last = step is None or step == WALK_FRAMES
-            durations.append(FRAME_MS if last else WALK_MS)
+            durations.append(FRAME_MS if step == steps[-1] else WALK_MS)
     out = io.BytesIO()
     frames[0].save(
         out,
@@ -1021,9 +1138,9 @@ class _Handler(BaseHTTPRequestHandler):
             step = int(asked["step"]) if asked.get("step", "0") != "0" else None
             self._reply("image/png", frame_png(self.folder, turn, step))
         elif path.startswith("/steps/"):
-            steps = len(
-                walk_steps(records_in(self.folder), int(path[len("/steps/") :]))
-            )
+            turn = int(path[len("/steps/") :])
+            records, scoring = records_in(self.folder), scoring_in(self.folder)
+            steps = len(walk_steps(records, turn, scoring))
             self._reply("application/json", json.dumps({"steps": steps}).encode())
         else:
             self.send_error(404)

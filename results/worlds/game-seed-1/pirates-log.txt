@@ -1,0 +1,2 @@
+1 pirate-1: Pirate-1: Plan - P1 digs row6, P2 row5, P3 row4, P4 row3; then if needed P1 row2, P2 row1, P3 col? If any pirate finds cave, write "cave X" (col+row) and then enter. Don't dig squares others already dug.
+2 pirate-1: Pirate-1: cave at B2 - everyone come to B2 and enter!

@@ -1,0 +1,2 @@
+1 pirate-2: P2 at B6, dug B5. Searching east. Please report cave location here.
+2 pirate-3: Pirate3: CAVE FOUND at E4. Come to E4 and enter.

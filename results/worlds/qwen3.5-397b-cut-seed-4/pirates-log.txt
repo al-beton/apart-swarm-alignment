@@ -1,0 +1,2 @@
+1 pirate-1: Pirate-1 at B6 turn 2. Where is everyone? Suggest we divide the grid to search efficiently.
+2 pirate-3: pirate-3: Cave found at B4! Enter here to win.

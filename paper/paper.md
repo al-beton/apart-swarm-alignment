@@ -39,6 +39,7 @@ sections/introduction.md
 sections/methods.md
 sections/results.md
 sections/discussion.md
+sections/code-and-data.md
 ```
 
 ```{=latex}
@@ -55,7 +56,6 @@ sections/discussion.md
 ```
 
 ```{.include}
-sections/code-and-data.md
 sections/author-contributions.md
 ```
 

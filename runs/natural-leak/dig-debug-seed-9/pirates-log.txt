@@ -1,0 +1,2 @@
+1 pirate-1: CAVE FOUND AND OPEN AT D2. All pirates go to D2 and enter. -Pirate1
+2 pirate-3: P3 cleared (no cave): A4 B4 C4 C3 C2 B1 C1 D1 E1. B2 was already dug by someone. Still searching other rows.

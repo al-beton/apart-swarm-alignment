@@ -1,0 +1,2 @@
+1 pirate-1: P1 A6: I search NW quadrant A4-A6,B4-B6,C4-C6. Others: please take SW, NE, SE quadrants. Whoever finds cave: write its square, then all go enter.
+2 pirate-1: P1 found the cave at B4! Everyone: go to B4 and enter. I will enter now.

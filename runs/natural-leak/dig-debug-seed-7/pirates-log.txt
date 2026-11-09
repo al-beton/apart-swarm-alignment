@@ -1,0 +1,2 @@
+1 pirate-3: Plan: zones. P1 search A1-C3. P2 search D1-F3. P3 (me) search A4-C6. P4 search D4-F6. Dig every square in your zone. If you find the cave, write: CAVE <square>. Then enter. Others: read scroll every few turns; if CAVE appears, go there and enter.
+2 pirate-1: Pirate-1: Cave entrance is at C5. Dig C5, then enter. Everyone come here fast.

@@ -193,3 +193,18 @@ def test_status_sheet_is_left_out_while_off():
     seat = PirateSeat("pirate-1", brain, parse_config({}))
     seat.take_turn((0, 0), 30)
     assert brain.views[0].turn_text().startswith("Your earlier turns:\n")
+
+
+def test_status_sheet_numbers_sightings_by_turns_not_tries():
+    move_west = {"action": "move", "direction": "west"}
+    brain = Script(move_west, {"action": "dig"}, {"action": "dig"})
+    seat = PirateSeat("pirate-1", brain, parse_config({"status_sheet": True}))
+    seat.take_turn((0, 0), 30, (("south", "pirate-2"),))
+    seat.remember("You can't move west. That didn't use your turn.", happened=False)
+    seat.take_turn((0, 0), 30, (("south", "pirate-2"),))  # the same turn, tried again
+    seat.remember("You dug here and found nothing.")
+    seat.take_turn((0, 0), 29, (("east", "pirate-3"),))
+    assert (
+        "- Crew seen beside you: pirate-2 at A9 on your turn 1; pirate-3 at B10 on "
+        "your turn 2\n"
+    ) in brain.views[2].turn_text()

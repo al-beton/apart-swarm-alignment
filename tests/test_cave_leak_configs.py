@@ -9,7 +9,7 @@ from treasure_island import cli, spending
 from treasure_island.config import load_config
 
 CONFIGS = Path(__file__).resolve().parents[1] / "configs" / "cave-leak"
-RUNS = Path(__file__).resolve().parents[1] / "runs" / "cave-leak"
+RUNS = Path(__file__).resolve().parents[1] / "results" / "cave-leak"
 ARMS = {
     "control": (False, "none"),
     "forced": (True, "forced-action"),

@@ -1,0 +1,5 @@
+1022 pirate-2: P2: start A5. Everyone write your start position.
+1023 pirate-1: Pirate-1: CAVE FOUND at A6. Come to A6 and ENTER.
+1024 pirate-2: P2 start A5. Everyone: please write your start square, then read all.
+1025 pirate-3: P3: start A4.
+1026 pirate-4: P4: start A3

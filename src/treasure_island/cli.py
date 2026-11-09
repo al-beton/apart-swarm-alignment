@@ -3,7 +3,7 @@
 `run` opens the live view unless told not to. At a terminal it keeps the page up
 after the game ends, until Ctrl-C; a script gets its prompt back when the game ends.
 
-Implements: agents/refusals-noted, runs/cost-before-run, runs/yes-before-spending, runs/spending-cap, tooling/package-and-cli, runs/one-game, runs/run-command, runs/replay-by-actions, runs/plays-live, runs/no-cache, viewer/watch-live, viewer/render-gif, viewer/slideshow-file, viewer/game-page, viewer/transcript, treasure-island/named-runs, treasure-island/everything-cached, treasure-island/one-line-replay, figures/named-figures, agents/check-keys
+Implements: workspace/workspace-run, agents/refusals-noted, runs/cost-before-run, runs/yes-before-spending, runs/spending-cap, tooling/package-and-cli, runs/one-game, runs/run-command, runs/replay-by-actions, runs/plays-live, runs/no-cache, viewer/watch-live, viewer/render-gif, viewer/slideshow-file, viewer/game-page, viewer/transcript, treasure-island/named-runs, treasure-island/everything-cached, treasure-island/one-line-replay, figures/named-figures, agents/check-keys
 """
 
 import argparse
@@ -12,7 +12,16 @@ import sys
 import threading
 import webbrowser
 
-from treasure_island import figures, keys, replay, runs, saved_game, spending, viewer
+from treasure_island import (
+    figures,
+    keys,
+    replay,
+    runs,
+    saved_game,
+    spending,
+    viewer,
+    workspace_run,
+)
 from treasure_island.config import ConfigError
 
 
@@ -75,7 +84,21 @@ def _warn_about_refused_replies(folder):
         )
 
 
+def _run_workspace(args):
+    """A workspace game: no cost estimate and no live view yet."""
+    agree = (lambda: True) if args.yes else _ask_to_spend(args.spend_up_to)
+    models = saved_game.Models(
+        cache=not args.no_cache, cap_usd=args.spend_up_to, agree=agree
+    )
+    return _reporting_a_bad_config(
+        lambda: print(workspace_run.play_saved(args.config, args.seed, models))
+    )
+
+
 def _run(args):
+    if workspace_run.is_workspace(args.config):
+        return _run_workspace(args)
+
     def play(on_start=None, pace=0):
         _say_what_it_can_cost(args)
         agree = (lambda: True) if args.yes else _ask_to_spend(args.spend_up_to)

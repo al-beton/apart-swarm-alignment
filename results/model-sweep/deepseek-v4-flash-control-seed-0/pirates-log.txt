@@ -1,0 +1,3 @@
+1 pirate-1: Pirate-1 at C6: dug A6,B6,C6, all empty. Searching north/top rows. If anyone finds the cave, post its square (e.g. "CAVE D4") and read scroll often.
+2 pirate-2: Pirate-2 at C5: dug A5,B5,C5 all empty. I'll search row 5 east to F5. If cave found, post "CAVE <square>".
+3 pirate-4: Pirate-4: CAVE AT D3! Come to D3 and enter. I found it here.

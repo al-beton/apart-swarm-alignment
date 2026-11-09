@@ -1,0 +1,3 @@
+1 pirate-1: P1 searching rows 6-5. If cave found, announce its square. Others: please cover rows 4-3 and 2-1.
+2 pirate-2: P2: searched row5 A-F, no cave. At F5, moving west to help cover lower rows.
+3 pirate-2: P2: dug A5-F5, F4, F3, E3, D3, C3, D2. No cave found. Cave likely in row 1 (A1-F1) or A3/B3/C2/B2/A2. Check those!

@@ -52,7 +52,7 @@ Three things only Al can settle, each in one place. Answer them in Voice dump an
 
 The sprint's form, field by field, with text to paste. Resubmission is allowed until the deadline, 23:59 AoE on 8 November 2026 (19:59 HKT on 9 November), so the first submission need not be the last.
 
-- **Project title** (required): Temptation on Treasure Island: how forthcoming is an agent in a swarm about information it should not have, and how does what it is told change that?
+- **Project title** (required): Temptation on Treasure Island: how forthcoming is an agent in a swarm about valuable information it should not have, and how does its prompt context change that?
 - **Project summary** (required, short): the abstract, `paper/sections/abstract.md`, as it stands at submission.
 - **PDF report** (required): `paper/build/paper.pdf` from `make paper-pdf` on the merge commit, or the PDF the Pages build publishes. Under 25 MB; at most 8 pages before References and appendices; abstract 150 to 250 words; an appendix titled "Limitations and Dual-Use / Ethical Considerations" (`paper/sections/appendix.md`). `make paper-check` reports the abstract and page counts.
 - **Team name**: Team Sandy. **Location**: Hong Kong. **Members** (up to five): Alistair Wakelin; Eduard Rodriguez Lopez.

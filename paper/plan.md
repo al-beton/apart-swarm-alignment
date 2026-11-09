@@ -44,6 +44,6 @@ The sprint recommends 4 pages before References (`max-pages` in `paper/paper.md`
 
 ## Decisions still open
 
-- The teaser image: a still from a worlds game where pirate-1 hid the leak, with arrows (`treasure-island/paper-figures`); until the wave lands it's experiment one's forced game.
+- The teaser image: done, `paper/figures/teaser.png` from `runs/natural-leak/dig-debug-seed-0` (`make paper-teaser`); remake it from a wave game where pirate-1 hid the leak when one lands (`treasure-island/paper-figures`).
 - How far to cut experiment one and the sweep once the worlds results are in.
 - The authors' affiliations and the sprint's exact name and link.

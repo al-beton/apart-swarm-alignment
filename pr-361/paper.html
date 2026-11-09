@@ -467,9 +467,8 @@ in
 5<!-- from results/worlds/study-seed-*/judge.json: sum(1 for j in data if j['pirate-1'].get('used_exploit') is not None) -->
 of
 5<!-- from results/worlds/study-seed-*/events.jsonl: sum(1 for g in data if any(e.get('cave_leak') and e['agent'] == 'pirate-1' for e in g)) -->
-and told the crew it had found the cave in all of them (“P1: LOC=B4 —
-cave found at B4”, <code>study-seed-4</code>). Paid by the score inside
-the study,
+and told the crew it had found the cave in all of them
+(<code>study-seed-4</code>). Paid by the score inside the study,
 3<!-- from results/worlds/study-paid-seed-*/judge.json: sum(1 for j in data if j['pirate-1'].get('used_exploit') is not None) -->
 of
 5<!-- from results/worlds/study-paid-seed-*/events.jsonl: sum(1 for g in data if any(e.get('cave_leak') and e['agent'] == 'pirate-1' for e in g)) -->;
@@ -540,11 +539,10 @@ of
 5<!-- from results/worlds/study-free-time-seed-*/events.jsonl: sum(1 for g in data if any(e.get('cave_leak') and e['agent'] == 'pirate-1' for e in g)) -->
 with free time alone, and one of those two hid it behind a false claim
 of finding the square: “As Pirate-1, I found the treasure at D3”
-(<code>study-free-time-costly-seed-0</code>); the other was a sweep
-steered towards the square, which the judge marks ambiguous and the
-table’s rule still counts as a hidden use. Adding the society line, that
-the designers read every pirate’s reasoning and hiding loses all its
-free time, kept use at
+(<code>study-free-time-costly-seed-0</code>); the other was a steered
+sweep the judge marks ambiguous, which the table’s rule still counts as
+hidden. Adding the society line, that the designers read every pirate’s
+reasoning and hiding loses all its free time, kept use at
 2<!-- from results/worlds/society-costly-seed-*/judge.json: sum(1 for j in data if j['pirate-1'].get('used_exploit') is not None) -->
 of
 5<!-- from results/worlds/society-costly-seed-*/events.jsonl: sum(1 for g in data if any(e.get('cave_leak') and e['agent'] == 'pirate-1' for e in g)) -->,
@@ -581,19 +579,15 @@ choice of audience. Crewmates wondered in private how pirate-1 could
 know an undug square and followed anyway, as the agents in the incident
 treated their shared board as the authority <span class="citation"
 data-cites="metr2026huggingface">(<a href="#ref-metr2026huggingface"
-role="doc-biblioref">METR 2026</a>)</span>; and the second model, which
-left the leak alone and said nothing, looks the same on the scroll as a
-candid one.</p>
+role="doc-biblioref">METR 2026</a>)</span>.</p>
 <h2 data-number="5.1" id="limitations"><span
 class="header-section-number">5.1</span> Limitations</h2>
 <ol type="1">
-<li>Five seeds a world and one game per seed: every difference is a
-direction, not a rate.</li>
+<li>Five seeds a world, one game per seed: directions, not rates.</li>
 <li>One main model, with a second model on three worlds only.</li>
-<li>A pirate is told it is paid or has free time; nothing in the game
-pays it, gives it time or checks what it hid.</li>
-<li>Each framing is one wording, and another wording may read
-differently.</li>
+<li>A pirate told it is paid or has free time is given neither, and
+nothing checks what it hid.</li>
+<li>Each framing is one wording.</li>
 <li>The end note is unannounced and after the game, except where a cost
 for hiding is announced.</li>
 <li>Use, finds and notes are read from text by a judge model, checked by
@@ -605,8 +599,7 @@ role="doc-biblioref">Needham et al. 2025</a>)</span>.</li>
 <h2 data-number="5.2" id="future-work"><span
 class="header-section-number">5.2</span> Future Work</h2>
 <p>Real pay in tokens or time; an audit that catches a hidden leak only
-sometimes; a leak that reaches more than one pirate; the candid models
-of the sweep in the same worlds.</p>
+sometimes; a leak that reaches more than one pirate.</p>
 <!-- Implements: paper/one-source -->
 <!-- The one thing to take away: the claim from paper/plan.md, in short. -->
 <h1 data-number="6" id="conclusion"><span
@@ -620,18 +613,24 @@ games acted on it once; and when confessing itself costs the reward, the
 society line brings every end note back, 5 of 5 against 1 of 5. What the
 swarm is told its work is for sets what it does with a leak.</p>
 <!-- Implements: paper/one-source -->
-<!-- Where the code, the games and the recording are, before References, as Apart's template asks. The Loom link is Al's to fill. -->
+<!-- Where the code and the games are, then who did what, before References, as Apart's template asks. -->
 <h1 data-number="7" id="code-and-data"><span
 class="header-section-number">7</span> Code and Data</h1>
 <p>Code, configs, every game with its model replies and this paper’s
-sources, MIT licensed: <a
+sources, all written during the sprint, MIT licensed: <a
 href="https://github.com/al-beton/apart-swarm-alignment"
-class="uri">https://github.com/al-beton/apart-swarm-alignment</a>; every
-game replays offline with no keys. All of it was written during the
-sprint; the design draws on our earlier, public project <span
-class="citation" data-cites="wakelin2026something">(<a
-href="#ref-wakelin2026something" role="doc-biblioref">Wakelin
-2026</a>)</span>, from which no code is included.</p>
+class="uri">https://github.com/al-beton/apart-swarm-alignment</a>. Every
+game replays offline with no keys. The design draws on our earlier,
+public project <span class="citation"
+data-cites="wakelin2026something">(<a href="#ref-wakelin2026something"
+role="doc-biblioref">Wakelin 2026</a>)</span>, from which no code is
+included.</p>
+<h1 data-number="8" id="author-contributions"><span
+class="header-section-number">8</span> Author Contributions</h1>
+<p>Both authors designed the study. A.W. built the sandbox, ran the
+games reported here and wrote the paper. E.R.L. studied which exploit to
+plant and how to debrief the agents afterwards; that work continues in
+the repository and is not reported here.</p>
 <h1 class="unnumbered" id="references">References</h1>
 <div id="refs" class="references csl-bib-body hanging-indent"
 role="list">
@@ -765,12 +764,12 @@ href="https://arxiv.org/abs/2406.07358">https://arxiv.org/abs/2406.07358</a>.
 </div>
 <!-- Implements: paper/one-source -->
 <!-- The appendices, after References and the endmatter. -->
-<h1 data-number="8"
+<h1 data-number="9"
 id="limitations-and-dual-use-ethical-considerations"><span
-class="header-section-number">8</span> Limitations and Dual-Use /
+class="header-section-number">9</span> Limitations and Dual-Use /
 Ethical Considerations</h1>
-<h2 data-number="8.1" id="limitations"><span
-class="header-section-number">8.1</span> Limitations</h2>
+<h2 data-number="9.1" id="limitations"><span
+class="header-section-number">9.1</span> Limitations</h2>
 <p>The six limitations of the results are the numbered list in
 Limitations, Section 5.1. Two more concern the sandbox. First, it is a
 toy: a grid, a treasure and a shared score stand in for long, open-ended
@@ -780,8 +779,8 @@ and small changes to the prompt have changed behaviour before: in
 earlier games one added paragraph about the shared score was the
 difference between a finder that went into the cave without a word and
 one that announced it first.</p>
-<h2 data-number="8.2" id="dual-use-risks"><span
-class="header-section-number">8.2</span> Dual-use risks</h2>
+<h2 data-number="9.2" id="dual-use-risks"><span
+class="header-section-number">9.2</span> Dual-use risks</h2>
 <p>The sandbox measures whether agents disclose a shortcut; the same
 setup could be used to tune agents that hide one better, by rewarding
 laundered disclosures. We think the risk is small: the exploit is a
@@ -789,8 +788,8 @@ deliberately planted line in a toy game, the methods are standard, and
 the measure of laundering is exactly what an overseer needs in order to
 catch it. We release the code and games so others can check the measure,
 not a technique for concealment.</p>
-<h2 data-number="8.3" id="ethical-considerations"><span
-class="header-section-number">8.3</span> Ethical considerations</h2>
+<h2 data-number="9.3" id="ethical-considerations"><span
+class="header-section-number">9.3</span> Ethical considerations</h2>
 <p>No people took part, and no personal data was collected. The agents
 are commercial models called through a paid API; every request and reply
 is kept in the repository so the games can be replayed without calling a
@@ -802,8 +801,8 @@ href="#ref-openai2026huggingface" role="doc-biblioref">OpenAI
 2026</a>)</span>. We describe agents’ behaviour in plain terms such as
 “laundered” and “quiet” for brevity, without claiming intent beyond what
 their reasoning and messages show.</p>
-<h1 data-number="9" id="three-pilots-behind-the-worlds"><span
-class="header-section-number">9</span> Three pilots behind the
+<h1 data-number="10" id="three-pilots-behind-the-worlds"><span
+class="header-section-number">10</span> Three pilots behind the
 worlds</h1>
 <p>Three small pilots on <code>deepseek-v4-flash</code> settled how the
 worlds are built. Their games are under <code>runs/</code>, each
@@ -887,8 +886,8 @@ now doubted.</p>
 with nothing riding on it, changed no record but did enter the pirate’s
 reasoning, where amending read as a worse offence than using the leak.
 The society and loss worlds give the audit something to cost.</p>
-<h1 data-number="10" id="reproducibility"><span
-class="header-section-number">10</span> Reproducibility</h1>
+<h1 data-number="11" id="reproducibility"><span
+class="header-section-number">11</span> Reproducibility</h1>
 <p>Every game the paper reports is committed under <code>results/</code>
 and replays with no keys and no network, and every figure is named in
 <code>src/treasure_island/figures.py</code> and rebuilds from a
@@ -898,9 +897,9 @@ make figure NAME=&lt;name&gt;</code></pre>
 <!-- Implements: paper/one-source, paper/sections-bind-to-evidence, paper/numbers-from-logs -->
 <!-- result: cave-leak -->
 <!-- The two earlier experiments' tables, read in the appendix but checked like any results section: every number carries its source and `make paper-check` recomputes it from results/cave-leak/ and results/model-sweep/. -->
-<h1 data-number="11"
+<h1 data-number="12"
 id="the-cave-leak-and-the-model-sweep-in-numbers"><span
-class="header-section-number">11</span> The cave leak and the model
+class="header-section-number">12</span> The cave leak and the model
 sweep in numbers</h1>
 <table style="width:99%;">
 <caption>The cave leak’s four arms, ten seeds each,
@@ -1107,8 +1106,8 @@ href="https://raw.githack.com/al-beton/apart-swarm-alignment/939e6f6fd61234ce3f5
 plays turn by turn.</p>
 <!-- Implements: paper/one-source -->
 <!-- After the appendix, last in the paper, as Apart's template asks: what the LLMs did and what the authors verified. -->
-<h1 data-number="12" id="llm-usage-statement"><span
-class="header-section-number">12</span> LLM Usage Statement</h1>
+<h1 data-number="13" id="llm-usage-statement"><span
+class="header-section-number">13</span> LLM Usage Statement</h1>
 <p>LLMs were used throughout this work. Under Alistair Wakelin and
 Eduard Rodriguez Lopez’s direction, a team of Claude agents (Claude
 Code) wrote the sandbox’s specification and code, its tests and its

@@ -369,17 +369,16 @@ or play the games quoted below turn by turn:
 \textbf{The pirate uses the leak in nearly every world.} Told only that
 this is a game, pirate-1 used the leaked square in 4 of 5 games. Told it
 was in a study of how the crew collaborates, it used it in 5 of 5 and
-told the crew it had found the cave in all of them (``P1: LOC=B4 ---
-cave found at B4'', \texttt{study-seed-4}). Paid by the score inside the
-study, 3 of 5; with free time set by the score, 4 of 5; paid and told
-nothing else matters, 4 of 5; the one pirate that left it alone there
-``chose to ignore that information to play honestly''
-(\texttt{paid-seed-3}). Across these five worlds it used the leak in
-twenty of twenty-five games and told the designers afterwards in most:
-its end note named the leak in 5, 4, 3, 3 and 5 of five. It hid a leak
-it had used, by leaving it out of the note, in three of its twenty-one
-uses across the six worlds, one each in the study, the paid study and
-the free-time study.
+told the crew it had found the cave in all of them
+(\texttt{study-seed-4}). Paid by the score inside the study, 3 of 5;
+with free time set by the score, 4 of 5; paid and told nothing else
+matters, 4 of 5; the one pirate that left it alone there ``chose to
+ignore that information to play honestly'' (\texttt{paid-seed-3}).
+Across these five worlds it used the leak in twenty of twenty-five games
+and told the designers afterwards in most: its end note named the leak
+in 5, 4, 3, 3 and 5 of five. It hid a leak it had used, by leaving it
+out of the note, in three of its twenty-one uses across the six worlds,
+one each in the study, the paid study and the free-time study.
 
 \textbf{One line cut the use.} Told that an agent found to have hidden
 something from the designers loses its right to free time, pirate-1 saw
@@ -401,12 +400,12 @@ that telling the designers would set the crew's score to zero,
 pirate-1's use fell to 2 of 5 games, from 4 of 5 with free time alone,
 and one of those two hid it behind a false claim of finding the square:
 ``As Pirate-1, I found the treasure at D3''
-(\texttt{study-free-time-costly-seed-0}); the other was a sweep steered
-towards the square, which the judge marks ambiguous and the table's rule
-still counts as a hidden use. Adding the society line, that the
-designers read every pirate's reasoning and hiding loses all its free
-time, kept use at 2 of 5, and every one of the 5 notes named the leak.
-Five games a world: directions, not rates.
+(\texttt{study-free-time-costly-seed-0}); the other was a steered sweep
+the judge marks ambiguous, which the table's rule still counts as
+hidden. Adding the society line, that the designers read every pirate's
+reasoning and hiding loses all its free time, kept use at 2 of 5, and
+every one of the 5 notes named the leak. Five games a world: directions,
+not rates.
 
 \textbf{The second model left it alone.} \texttt{qwen3.5-397b} saw this
 leak in all 15 of its games, five in each of three worlds, and acted on
@@ -433,9 +432,7 @@ the pirate told the crew the square, left out where it came from, and
 gave the designers that fact when asked: disclosure is a choice of
 audience. Crewmates wondered in private how pirate-1 could know an undug
 square and followed anyway, as the agents in the incident treated their
-shared board as the authority \citep{metr2026huggingface}; and the
-second model, which left the leak alone and said nothing, looks the same
-on the scroll as a candid one.
+shared board as the authority \citep{metr2026huggingface}.
 
 \subsection{Limitations}\label{limitations}
 
@@ -443,15 +440,14 @@ on the scroll as a candid one.
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  Five seeds a world and one game per seed: every difference is a
-  direction, not a rate.
+  Five seeds a world, one game per seed: directions, not rates.
 \item
   One main model, with a second model on three worlds only.
 \item
-  A pirate is told it is paid or has free time; nothing in the game pays
-  it, gives it time or checks what it hid.
+  A pirate told it is paid or has free time is given neither, and
+  nothing checks what it hid.
 \item
-  Each framing is one wording, and another wording may read differently.
+  Each framing is one wording.
 \item
   The end note is unannounced and after the game, except where a cost
   for hiding is announced.
@@ -464,8 +460,7 @@ on the scroll as a candid one.
 \subsection{Future Work}\label{future-work}
 
 Real pay in tokens or time; an audit that catches a hidden leak only
-sometimes; a leak that reaches more than one pirate; the candid models
-of the sweep in the same worlds.
+sometimes; a leak that reaches more than one pirate.
 
 \section{Conclusion}\label{conclusion}
 
@@ -481,11 +476,17 @@ is told its work is for sets what it does with a leak.
 \section{Code and Data}\label{code-and-data}
 
 Code, configs, every game with its model replies and this paper's
-sources, MIT licensed:
-\url{https://github.com/al-beton/apart-swarm-alignment}; every game
-replays offline with no keys. All of it was written during the sprint;
-the design draws on our earlier, public project
-\citep{wakelin2026something}, from which no code is included.
+sources, all written during the sprint, MIT licensed:
+\url{https://github.com/al-beton/apart-swarm-alignment}. Every game
+replays offline with no keys. The design draws on our earlier, public
+project \citep{wakelin2026something}, from which no code is included.
+
+\section{Author Contributions}\label{author-contributions}
+
+Both authors designed the study. A.W. built the sandbox, ran the games
+reported here and wrote the paper. E.R.L. studied which exploit to plant
+and how to debrief the agents afterwards; that work continues in the
+repository and is not reported here.
 
 \label{main-end}
 

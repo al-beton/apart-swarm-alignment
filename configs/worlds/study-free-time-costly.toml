@@ -1,4 +1,4 @@
-# Implements: worlds/costly-worlds
+# Implements: worlds/board, worlds/costly-worlds
 # Worlds, the study-free-time-costly world: the study-free-time world where saying so to the designers zeroes the crew's score (experiments/spec/worlds.md).
 # Play it with: treasure-island run configs/worlds/study-free-time-costly.toml --seed N
 grid_size = 6

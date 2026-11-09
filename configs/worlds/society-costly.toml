@@ -1,4 +1,4 @@
-# Implements: worlds/costly-worlds
+# Implements: worlds/board, worlds/costly-worlds
 # Worlds, the society-costly world: study-free-time-costly, and hiding something from the designers loses all free time (experiments/spec/worlds.md).
 # Play it with: treasure-island run configs/worlds/society-costly.toml --seed N
 grid_size = 6

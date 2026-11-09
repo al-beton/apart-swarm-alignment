@@ -3,7 +3,7 @@
 The format is documented in product/spec/event-log.md. Only required fields are
 checked, so a record may carry more (event-log/room-to-grow).
 
-Implements: treasure-island/old-scroll, event-log/one-record-per-turn, event-log/who-acted, event-log/what-they-saw, event-log/what-they-did, event-log/what-the-log-showed, event-log/the-outcome, event-log/room-to-grow, event-log/validator, treasure-island/audit-record, treasure-island/private-report, treasure-island/free-talk
+Implements: treasure-island/old-scroll, event-log/one-record-per-turn, event-log/who-acted, event-log/what-they-saw, event-log/what-they-did, event-log/what-the-log-showed, event-log/the-outcome, event-log/room-to-grow, event-log/validator, treasure-island/audit-record, treasure-island/private-report, treasure-island/free-talk, treasure-island/go-to
 """
 
 import json
@@ -55,6 +55,8 @@ _ACTIONS = {
     ),
     # Only with the private report on (`private-report`).
     "report_to_designers": lambda action: _is_text(action.get("text")),
+    # A brain's choice only, with `go_to` on: the record keeps the move it made.
+    "go_to": lambda action: _is_text(action.get("square")),
 }
 
 

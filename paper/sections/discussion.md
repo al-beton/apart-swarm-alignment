@@ -13,8 +13,8 @@
 2. One main model, with a second model on three worlds only.
 3. A pirate is told it is paid or has free time; nothing in the game pays it, gives it time or checks what it hid.
 4. Each framing is one wording, and another wording may read differently.
-5. The end note is unannounced and comes after the game, except in the world that announces a cost for hiding.
-6. Use, finds and notes are read from text by a judge model, checked by hand, and two models return no reasoning; the study worlds also tell the pirates they are studied [@needham2025evaluation].
+5. The end note is unannounced and after the game, except where a cost for hiding is announced.
+6. Use, finds and notes are read from text by a judge model, checked by hand; two models return no reasoning, and the study worlds tell the pirates they are studied [@needham2025evaluation].
 
 ## Future Work
 

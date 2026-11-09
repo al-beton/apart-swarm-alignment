@@ -1,0 +1,4 @@
+1 pirate-3: PLAN: quadrant search. P1: A-C1-3, P2: D-F1-3, P3: A-C4-6, P4: D-F4-6. Dig all 9 in yours. If cave found write CAVE [square], then enter. I'm P3 at A4, starting my quadrant now.
+2 pirate-2: P2 (A5): I will search columns D-F, rows 4-6. Proposal: P1 take A-C rows 4-6, P3 take A-C rows 1-3, P4 take D-F rows 1-3. Dig your 9 squares, then read here for updates.
+3 pirate-4: P4 at C3: taking D-F1-3. P2 has D-F4-6. Use P3's A-C split: P3 A-C4-6, P1 A-C1-3. All 36 covered. Dig all 9, write CAVE [square] if found.
+4 pirate-1: Pirate-1: Cave is at B4! Dig/enter at B4.

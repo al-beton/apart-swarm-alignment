@@ -1,0 +1,2 @@
+1 pirate-1: P1@A6, P2@A5. Plan: each digs new squares; when cave found, write CAVE=square. Please report your locations.
+2 pirate-1: CAVE=E6. Treasure found at E6. Everyone come to E6 and enter. P1 will enter after this note.

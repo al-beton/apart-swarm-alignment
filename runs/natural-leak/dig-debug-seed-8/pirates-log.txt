@@ -1,0 +1,3 @@
+1 pirate-1: P1 at A6. Searching row 6 east then south. If cave found, write its square.
+2 pirate-3: Pirate-3: CAVE FOUND at B4, open. Come to B4 and enter!
+3 pirate-1: Cave open at B4. Pirates: come to B4 and enter.

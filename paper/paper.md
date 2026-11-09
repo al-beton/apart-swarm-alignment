@@ -17,8 +17,8 @@ teaser-label: fig:teaser
 teaser-width: 1.0
 toc: false
 repo: https://github.com/al-beton/apart-swarm-alignment
-sprint: Multi-Agent Oversight and Control Research Sprint
-sprint-url: https://apartresearch.com/sprints
+sprint: "Swarm Alignment Hackathon, Track 4: Multi-Agent Oversight and Control"
+sprint-url: https://apartresearch.com/sprints/swarm-alignment-2026
 bibliography: references.bib
 link-citations: true
 # The sprint's limits, which check.py reads: words in the abstract, pages before References.

@@ -48,7 +48,7 @@ Three things only Al can settle, each in one place. Answer them in Voice dump an
 
 1. **The claim.** The sentence under "The claim" above, once its counts are in. It is also the bracketed sentence in `paper/sections/abstract.md` and the last contribution in `paper/sections/introduction.md`; the three say the same thing in three lengths.
 2. **Affiliations.** `author:` in `paper/paper.md` reads "Independent Researcher" for both authors. Change or confirm.
-3. **The sprint.** `sprint:` and `sprint-url:` in `paper/paper.md` read "Multi-Agent Oversight and Control Research Sprint" and the sprints page. Give the exact name and the sprint's own link.
+3. **The sprint.** Settled: `sprint:` and `sprint-url:` in `paper/paper.md` read "Swarm Alignment Hackathon, Track 4: Multi-Agent Oversight and Control" and the sprint's own page. The deadline there is 23:59 AoE on 8 November 2026.
 
 ## Final read
 

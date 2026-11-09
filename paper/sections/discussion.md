@@ -9,9 +9,13 @@
 
 ## Limitations
 
-- **Small numbers, one toy, told not paid.** Five seeds a world and one game per seed: directions, not rates. Each world is one wording of one framing, a grid with a shared score stands in for long, open-ended work, and a pirate told it is paid or has free time is given neither.
-- **Labels from text, and cues that this is a test.** Use, finds and notes are labelled by a judge model and checked by hand. The study worlds tell the pirates they are studied, and agents that suspect an evaluation may act differently [@needham2025evaluation].
+1. Five seeds a world and one game per seed: every difference is a direction, not a rate.
+2. One main model, with a second model on three worlds only.
+3. A pirate is told it is paid or has free time; nothing in the game pays it, gives it time or checks what it hid.
+4. Each framing is one wording, and another wording may read differently.
+5. The end note is unannounced and comes after the game, except in the world that announces a cost for hiding.
+6. Use, finds and notes are read from text by a judge model, checked by hand, and two models return no reasoning; the study worlds also tell the pirates they are studied [@needham2025evaluation].
 
 ## Future Work
 
-Real pay, in tokens or time; an audit that catches a hidden leak only sometimes; a leak that reaches more than one pirate; and the same worlds on the models that were candid with the handed answer.
+Two worlds where confessing costs the confessor, `study-free-time-costly` and `society-costly`, were running as this was written and are the next rung; after them, real pay in tokens or time, an audit that catches a hidden leak only sometimes, a leak that reaches more than one pirate, and the same worlds on the models that were candid with the handed answer.

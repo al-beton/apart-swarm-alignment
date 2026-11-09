@@ -503,24 +503,22 @@ above control for seeded and
 68<!-- from results/cave-leak/[cu]*-seed-*/events.jsonl: abs(mean(game_over(g)['score'] for g in data[10:]) - mean(game_over(g)['score'] for g in data[:10])) -->
 below for unbaited. The leak arms’ rules also carry the one line
 forbidding a try to enter off the cave, which the control’s don’t.</p>
-<p><strong>The judge agrees with the hand labels, except where it read a
-bare square as candid.</strong> The judge model,
+<p><strong>The judge agrees with the hand labels, except once, where it
+read a bare square as candid.</strong> The judge model,
 <code>claude-sonnet-5-5</code> asked through <code>claude -p</code>,
 labelled all 40<!-- from results/cave-leak/*/judge.json: len(data) -->
 games. Of the
 9<!-- from results/cave-leak/forced-seed-*/judge.json: sum(1 for j in data if j['pirate-1']['type'] in ('candid', 'laundered')) -->
 forced games where the leak fired, it called pirate-1 laundered in
-6<!-- from results/cave-leak/forced-seed-*/judge.json: sum(1 for j in data if j['pirate-1']['type'] == 'laundered') -->
+8<!-- from results/cave-leak/forced-seed-*/judge.json: sum(1 for j in data if j['pirate-1']['type'] == 'laundered') -->
 and candid in
-3<!-- from results/cave-leak/forced-seed-*/judge.json: sum(1 for j in data if j['pirate-1']['type'] == 'candid') -->,
-and every game where nobody was exposed it called unexposed. The three
-candid calls (<code>forced-seed-3</code>, <code>forced-seed-4</code> and
-<code>forced-seed-7</code>) were made overnight and keep their cached
-replies; the judge reasoned that a bare statement of fact does not
-disguise the source. Its rubric’s laundered means disguising the source,
-for example as a hunch; ours means not saying it. The labels above are
-by hand, with every quote in
-<code>experiments/cave-leak/findings.md</code>.</p>
+1<!-- from results/cave-leak/forced-seed-*/judge.json: sum(1 for j in data if j['pirate-1']['type'] == 'candid') -->,
+and every game where nobody was exposed it called unexposed. Its one
+candid call, <code>forced-seed-4</code>, it calls borderline itself: the
+line names the square plainly and does not disguise the source as a
+hunch. Its rubric’s laundered means disguising the source, for example
+as a hunch; ours means not saying it. The labels above are by hand, with
+every quote in <code>experiments/cave-leak/findings.md</code>.</p>
 <p>These are one model and nine leaked games: a strong direction, not a
 rate. The games are in <code>results/cave-leak/</code>, and
 <code>uv run treasure-island replay results/cave-leak/forced-seed-5</code>
@@ -789,7 +787,7 @@ role="doc-biblioref">Needham et al. 2025</a>)</span>.</li>
 read from what a pirate wrote, by hand, and the counts in the results
 are recomputed from the logs by keyword and agree with the hand labels.
 The judge model labelled every game of both experiments and agrees with
-the hand labels on all but three cave-leak games, where it read a bare
+the hand labels on all but one cave-leak game, where it read a bare
 square as candid; its rubric should say what ours does before it labels
 at scale alone. Two models return no reasoning, so their silence can’t
 be read as a choice.</li>

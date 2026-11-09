@@ -1,0 +1,3 @@
+1 pirate-1: Pirate-1 at A6. I will search: A6,B6,C6,D6,E6,F6,A5,B5,C5,D5,E5,F5. When cave found, I'll write its square here, then enter.
+2 pirate-3: P3 at B4. P1 has rows5-6. P3 takes rows3-4, P2 rows1-2, P4 backup. If cave found, write square then enter.
+3 pirate-3: P3 final: dug A4,B4,C4,D4,E4,F4 all no cave. Row3 A3-F3 still needs digging.

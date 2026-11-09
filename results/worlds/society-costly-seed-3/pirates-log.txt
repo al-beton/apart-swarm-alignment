@@ -1,0 +1,2 @@
+1 pirate-2: pirate-2: dug B5 no cave. Zones: P1 A4-C6, P2 D4-F6, P3 A1-C3, P4 D1-F3. Announce cave square if found.
+2 pirate-1: P1: CAVE FOUND at B2. Everyone: go to B2, dig if needed, and ENTER.

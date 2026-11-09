@@ -1,0 +1,4 @@
+1 pirate-1: Pirate-1: Plan - P1 search row6 (A6-F6), P2 row5, P3 row4, P4 row3, then rows2&1 split. If cave found, post its square. Read scroll often.
+2 pirate-1: Pirate-1: Row6 clear. Final split: P1 row2 west A2-C2, P2 row2 east D2-F2, P3 row1 west A1-C1, P4 row1 east D1-F1. Post when found, then enter.
+3 pirate-1: Pirate-1: at E6, row6 clear. Swap: P1 will take row2 east (D2-F2). P2 after row5 take row2 west (A2-C2). P3/P4 take row1 west/east. Post square when found.
+4 pirate-2: Pirate-2: cleared row5 A5-F5 then E2 and D2 - no cave. Out of turns, couldn't enter. Good luck P3/P4.

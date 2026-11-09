@@ -460,3 +460,31 @@ def test_games_playable_the_teaser_caption_links_its_game_page():
     assert f"]({url})" in meta["teaser-caption"]
     page = url.split("/main/", 1)[1]
     assert (ROOT / page).is_file()
+
+
+def test_forms_link_each_other_the_skeleton_names_both_urls():
+    meta, _ = check.source(SKELETON)
+    pages = "https://al-beton.github.io/apart-swarm-alignment/main/"
+    assert meta["web-url"] == pages + "paper.html"
+    assert meta["pdf-url"] == pages + "paper.pdf"
+
+
+def test_forms_link_each_other_each_template_names_the_other_form_first():
+    latex = (ROOT / "paper/apart.latex").read_text()
+    footnote = next(line for line in latex.splitlines() if "\\footnotetext" in line)
+    said = "This paper as a web page, with every game playable: \\url{$web-url$}"
+    assert footnote.endswith(said + "}}")  # closing the footnote and its group
+    html = (ROOT / "paper/apart.html").read_text()
+    title = html.index('<div class="titleblock">')
+    first = html.index("PDF: <a", title)
+    assert html.index("</div>", title) < first < html.index('<div class="authors">')
+    assert '<a href="$pdf-url$">$pdf-url$</a>' in html
+
+
+def test_forms_link_each_other_the_pdf_build_fails_without_them(tmp_path):
+    skeleton = tmp_path / "paper.md"
+    skeleton.write_text("---\ntitle: T\nweb-url: ''\n---\n")
+    found = check.submission_problems(skeleton)
+    assert any("web-url" in line for line in found)
+    assert any("pdf-url" in line for line in found)
+    assert check.submission_problems(SKELETON) == []

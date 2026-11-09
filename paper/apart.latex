@@ -2,7 +2,7 @@ $-- Pandoc LaTeX template in the style of an Apart preprint (NeurIPS-like).
 $-- The .tex it produces goes to Overleaf as it is, with references.bib and figures/.
 $-- Never set, so never printed: the line spec-check reads.
 $if(spec-check-only)$
-Implements: paper/built-two-ways
+Implements: paper/built-two-ways, paper/forms-link-each-other
 $endif$
 \documentclass[10pt,letterpaper]{article}
 \usepackage[letterpaper,textwidth=5.5in,textheight=9in,top=1in,headheight=12pt,headsep=25pt,footskip=30pt]{geometry}
@@ -82,7 +82,7 @@ $endfor$
 \par
 \end{center}
 
-{\makeatletter\long\def\@makefntext#1{\noindent#1}\makeatother\let\thefootnote\relax\footnotetext{\raggedright Research conducted $if(hub)$at the $hub$ $endif$for the \href{$sprint-url$}{$sprint$} hackathon run by Apart Research, $if(date)$$date$$else$October 2026$endif$.\\Code, every committed game and its model replies are at \url{$repo$}.}}
+{\makeatletter\long\def\@makefntext#1{\noindent#1}\makeatother\let\thefootnote\relax\footnotetext{\raggedright Research conducted $if(hub)$at the $hub$ $endif$for the \href{$sprint-url$}{$sprint$} hackathon run by Apart Research, $if(date)$$date$$else$October 2026$endif$.\\Code, every committed game and its model replies are at \url{$repo$}.\\This paper as a web page, with every game playable: \url{$web-url$}}}
 
 $if(abstract)$
 \vspace{0.04in}

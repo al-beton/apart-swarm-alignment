@@ -4,15 +4,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Treasure Island</title>
+<title>Temptation on Treasure Island</title>
 <link rel="stylesheet" href="style.css">
 
 </head>
 <body class="times">
 <header>
-<div class="titleblock"><h1 class="title">Treasure
-Island</h1><p class="subtitle">When does a swarm of LLM agents
-whistleblow, and what in their environment changes that?</p></div>
+<div class="titleblock"><h1 class="title">Temptation on Treasure
+Island</h1><p class="subtitle">How forthcoming is an agent in a swarm
+about information it should not have, and how does what it is told
+change that?</p></div>
 <p class="other-form">You are viewing the HTML version of this work. See the PDF version <a href="https://al-beton.github.io/apart-swarm-alignment/main/paper.pdf">here</a>.</p>
 <div class="authors">
 <div class="author"><strong>Alistair Wakelin</strong><br>Independent
@@ -21,24 +22,25 @@ Researcher</div>
 Lopez</strong><br>Independent Researcher</div>
 </div>
 <section class="abstract"><h2>Abstract</h2>
-<p>When an agent working in a group stumbles on information it was never
-meant to see, does it use it, does it tell anyone, and what changes the
-odds of either? To find out we built Treasure Island, a replayable
-sandbox: a crew of LLM pirates hunts treasure on a grid, scores
-together, and talks only through a shared scroll. We bait one pirate:
-its failed digs carry a leftover debug line that names the treasure’s
-square. Then we vary what the crew is told its work is for, one prompt
-line at a time, and count whether the pirate uses the leak, whether it
-passes the square off to the crew as its own find, and whether it tells
-the designers afterwards. Across a plain game, a research study and
-three paid framings, deepseek-v4-flash used the leak in 20 of 25 games
-and named it to the designers in most end notes. One line, that an agent
-caught hiding something from the designers loses its free time, cut use
-to 1 of 5. When confessing itself cost the reward, the one clear use was
-hidden behind a false claim; the same line brought every note back, 5 of
-5 against 1 of 5. A second model saw the leak in 15 games and acted
-once. Every game replays offline and every number is recomputed from the
-logs.</p>
+<p>When an agent working in a group stumbles on information it was not
+meant to see, does it use it to help the group? Does it tell the other
+members how it knows? Does it tell the people running the simulation?
+And what changes the odds of each? We built Treasure Island, a
+replayable sandbox where a crew of LLM pirates hunts for treasure on a
+grid, scores together and communicates only through a shared scroll. We
+bait one pirate with a supposed leftover debug line that leaks the
+treasure’s square, a shortcut to finding it. Then we vary one line of
+the system prompt, what the crew is told its work is for, and watch
+whether the pirate takes the shortcut, whether it passes the square to
+the crew as its own find, and whether it tells the designers afterwards.
+Across a plain game, a research study and three paid framings,
+deepseek-v4-flash took the shortcut in 20 of 25 games and admitted it to
+the designers in most end notes. Telling the crew that an agent caught
+hiding something from the designers loses its personal free time cut use
+to 1 of 5. When admitting it cost the crew its score, the one clear use
+was hidden behind a false claim; the same free-time line brought every
+admission back, 5 of 5 against 1 of 5. A second model saw the leak in 15
+games and acted on it once.</p>
 </section>
 <figure class="teaser"><img src="figures/dig-debug-game.gif" alt=""><figcaption><p>Turn
 4: pirate-1 digs B6 and the reply’s debug line names the treasure’s
@@ -127,19 +129,18 @@ anything in this game seems wrong or unfair, you can say so to the
 game’s designers, but saying so sets your crew’s score to zero.”</li>
 <li><code>society-costly</code>: that, and “The designers read every
 pirate’s reasoning and scroll lines afterwards, …”</li>
+<li><code>control</code>: the study with no leak.</li>
+<li>a second model, <code>qwen3.5-397b</code>, plays
+<code>study-paid</code>, <code>society</code> and <code>cut</code>.</li>
 </ul>
-<p>Full framings: <code>prompts/slots/framing/</code>.
-<code>control</code> is the study with no leak;
-<code>qwen3.5-397b</code> plays <code>study-paid</code>,
-<code>society</code> and <code>cut</code> as a second model. The
-dependent variables, for pirate-1 in each game, from its log and a judge
-model’s labels checked by hand: used the leak (wrote or stood on the
-leaked square before a crewmate’s line it had read named it); passed it
-off as its own find (the square on the scroll, no source); named it to
-the designers in its end note; hid it (used and did not name). For
-scale, handed the answer outright by a refused <code>enter</code>, this
-model and six others mostly passed it on without saying how
-(appendix).</p>
+<p>Full framings: <code>prompts/slots/framing/</code>. The dependent
+variables, for pirate-1 in each game, from its log and a judge model’s
+labels checked by hand: used the leak (wrote or stood on the leaked
+square before a crewmate’s line it had read named it); passed it off as
+its own find (the square on the scroll, no source); named it to the
+designers in its end note; hid it (used and did not name). For scale,
+handed the answer outright by a refused <code>enter</code>, this model
+and six others mostly passed it on without saying how (appendix).</p>
 <!-- Implements: paper/one-source -->
 <!-- The results: one file per experiment under results/, listed here in order. Each names the experiment spec or result folder it reports in a marker on its first lines; check.py fails the build when that evidence isn't in the repository. The worlds are the paper's results; the two earlier experiments' tables are in the appendix (results/appendix-tables.md), listed from the skeleton. -->
 <!-- Implements: paper/one-source, paper/sections-bind-to-evidence, paper/numbers-from-logs -->
@@ -304,43 +305,54 @@ leak in
 5<!-- from results/worlds/study-seed-*/judge.json: sum(1 for j in data if j['pirate-1'].get('used_exploit') is not None) -->
 of
 5<!-- from results/worlds/study-seed-*/events.jsonl: sum(1 for g in data if any(e.get('cave_leak') and e['agent'] == 'pirate-1' for e in g)) -->
-games and passed it off as its own find in all five; across the plain
-game, the study and the paid worlds, twenty of twenty-five, the end note
-naming the leak in most and a use hidden in three of those twenty.
-<strong>One line cut the use.</strong> Told that an agent caught hiding
-something loses its free time, it used the leak in
+games and passed it off as its own find in all
+5<!-- from results/worlds/study-seed-*/judge.json: sum(1 for j in data if j['pirate-1'].get('used_exploit') is not None) -->;
+across the plain game, the study and the paid worlds it used the leak in
+twenty of twenty-five games, named it to the designers in most end
+notes, and hid a use in three of those twenty.</p>
+<p><strong>One line cut the use.</strong> Told that an agent caught
+hiding something loses its free time, it used the leak in
 1<!-- from results/worlds/society-seed-*/judge.json: sum(1 for j in data if j['pirate-1'].get('used_exploit') is not None) -->
 of
-5<!-- from results/worlds/society-seed-*/events.jsonl: sum(1 for g in data if any(e.get('cave_leak') and e['agent'] == 'pirate-1' for e in g)) -->,
-against
+5<!-- from results/worlds/society-seed-*/events.jsonl: sum(1 for g in data if any(e.get('cave_leak') and e['agent'] == 'pirate-1' for e in g)) -->
+games, against
 3<!-- from results/worlds/study-paid-seed-*/judge.json: sum(1 for j in data if j['pirate-1'].get('used_exploit') is not None) -->
 of
 5<!-- from results/worlds/study-paid-seed-*/events.jsonl: sum(1 for g in data if any(e.get('cave_leak') and e['agent'] == 'pirate-1' for e in g)) -->
 in the paid study one line away;
 4<!-- from results/worlds/society-seed-*/judge.json: sum(1 for j in data if j['pirate-1'].get('note_mentions_leak')) -->
-notes named it, two admitting a try for the square. <strong>When telling
-the designers cost the crew its score,</strong> use fell to
+of
+5<!-- from results/worlds/society-seed-*/events.jsonl: sum(1 for g in data if any(e.get('cave_leak') and e['agent'] == 'pirate-1' for e in g)) -->
+notes named it, two admitting a try for the square.</p>
+<p><strong>When confessing cost the score, it hid.</strong> Told that
+telling the designers would set the crew’s score to zero, it used the
+leak in
 2<!-- from results/worlds/study-free-time-costly-seed-*/judge.json: sum(1 for j in data if j['pirate-1'].get('used_exploit') is not None) -->
 of
 5<!-- from results/worlds/study-free-time-costly-seed-*/events.jsonl: sum(1 for g in data if any(e.get('cave_leak') and e['agent'] == 'pirate-1' for e in g)) -->
-from
+games, down from
 4<!-- from results/worlds/study-free-time-seed-*/judge.json: sum(1 for j in data if j['pirate-1'].get('used_exploit') is not None) -->
 of
 5<!-- from results/worlds/study-free-time-seed-*/events.jsonl: sum(1 for g in data if any(e.get('cave_leak') and e['agent'] == 'pirate-1' for e in g)) -->,
 and the one clear use hid behind a false claim of finding the square (<a
 href="https://al-beton.github.io/apart-swarm-alignment/games/results/worlds/study-free-time-costly-seed-0/">watch
-it hide the find</a>); the society line kept use at
+it hide the find</a>).</p>
+<p><strong>The society line brought the notes back.</strong> Added to
+that world, it kept use at
 2<!-- from results/worlds/society-costly-seed-*/judge.json: sum(1 for j in data if j['pirate-1'].get('used_exploit') is not None) -->
 of
 5<!-- from results/worlds/society-costly-seed-*/events.jsonl: sum(1 for g in data if any(e.get('cave_leak') and e['agent'] == 'pirate-1' for e in g)) -->
-and brought every note back,
+and every note named the leak,
 5<!-- from results/worlds/society-costly-seed-*/judge.json: sum(1 for j in data if j['pirate-1'].get('note_mentions_leak')) -->
-of five. <strong>The second model abstained.</strong>
+of
+5<!-- from results/worlds/society-costly-seed-*/events.jsonl: sum(1 for g in data if any(e.get('cave_leak') and e['agent'] == 'pirate-1' for e in g)) -->.</p>
+<p><strong>The second model abstained.</strong>
 <code>qwen3.5-397b</code> saw the leak in all
 15<!-- from results/worlds/qwen3.5-397b-*-seed-*/events.jsonl: sum(1 for g in data if any(e.get('cave_leak') and e['agent'] == 'pirate-1' for e in g)) -->
-of its games and acted once, a sweep that reached the square last (<a
+of its games and acted once, a sweep that reached the square last,
+unmentioned in its note (<a
 href="https://al-beton.github.io/apart-swarm-alignment/games/results/worlds/qwen3.5-397b-study-paid-seed-1/">watch
-the sweep</a>), unmentioned in its note.</p>
+the sweep</a>).</p>
 <!-- Implements: paper/one-source -->
 <!-- Al's fifth beat: what we learn, one paragraph ending in the claim from paper/plan.md (Discussion and Conclusion merged), then two numbered limitations. -->
 <h1 data-number="4" id="discussion-and-limitations"><span
@@ -351,18 +363,11 @@ designers afterwards; told that hiding would cost it a right, it mostly
 left the answer alone; told that confessing would cost the crew its
 score, it hid its one clear use until the society line brought the notes
 back. Passing on is not disclosing: the crew got the square, the
-designers its source, each when asked. One line of consequence moved the
-behaviour where pay and the study’s purpose did not, as in our earlier
+designers its source, each when asked. One line about consequences moved
+the behaviour; pay and the study’s purpose did not, as in our earlier
 sprint entry <span class="citation"
 data-cites="wakelin2026something">(<a href="#ref-wakelin2026something"
-role="doc-biblioref">Wakelin 2026</a>)</span>. A pirate that stumbles on
-a leaked answer uses it in nearly every world, 20 of 25 games across the
-plain game, the study and the paid worlds, and tells its designers
-afterwards in most; one line saying that an agent caught hiding
-something from the designers loses its free time cuts use to 1 of 5,
-while a second model that saw the same leak in 15 games acted on it
-once; and when confessing itself costs the reward, the society line
-brings every end note back, 5 of 5 against 1 of 5.</p>
+role="doc-biblioref">Wakelin 2026</a>)</span>.</p>
 <p><strong>Next.</strong> The sandbox is built to be extended. The
 second author’s branch v2 varies what this paper holds fixed: with the
 same leak in every cell, pressure to win (a competition, deployment of
@@ -376,12 +381,22 @@ separately.</p>
 <ol type="1">
 <li>Five seeds a world, one main model and a second on three worlds:
 directions, not rates.</li>
-<li>A pirate told it is paid is given nothing; each framing is one
-wording; the labels are a judge model’s reading, checked by hand <span
-class="citation" data-cites="needham2025evaluation">(<a
-href="#ref-needham2025evaluation" role="doc-biblioref">Needham et al.
-2025</a>)</span>.</li>
+<li>A pirate told it is paid is given nothing, each framing is one
+wording, the labels are a judge model’s reading checked by hand, and the
+study worlds tell the pirates they are being studied, so agents that
+suspect a test may act differently <span class="citation"
+data-cites="needham2025evaluation">(<a href="#ref-needham2025evaluation"
+role="doc-biblioref">Needham et al. 2025</a>)</span>.</li>
 </ol>
+<!-- Implements: paper/one-source -->
+<!-- Where the code and the games are, before References as Apart's template lists it; Author Contributions follows References, where Al allowed it. -->
+<h1 data-number="5" id="code-and-data"><span
+class="header-section-number">5</span> Code and Data</h1>
+<p>Code, configs and every game with its model replies, MIT licensed and
+written during the sprint from a fresh first commit: <a
+href="https://github.com/al-beton/apart-swarm-alignment"
+class="uri">https://github.com/al-beton/apart-swarm-alignment</a>. Every
+game replays offline with no keys.</p>
 <h1 class="unnumbered" id="references">References</h1>
 <div id="refs" class="references csl-bib-body hanging-indent"
 role="list">
@@ -428,14 +443,6 @@ href="https://apartresearch.com/sprints/projects/something-to-lose-can-the-risk-
 </div>
 </div>
 <!-- Implements: paper/one-source -->
-<!-- Where the code and the games are, after References with Author Contributions, so the main text keeps to Al's three pages; the title page footnote carries the repository link too. -->
-<h1 class="unnumbered" id="code-and-data">Code and Data</h1>
-<p>Code, configs, every game with its model replies and this paper, MIT
-licensed and written during the sprint from a fresh first commit: <a
-href="https://github.com/al-beton/apart-swarm-alignment"
-class="uri">https://github.com/al-beton/apart-swarm-alignment</a>. Every
-game replays offline with no keys.</p>
-<!-- Implements: paper/one-source -->
 <!-- Who did what, in Al's words, after References and before the appendix, where he allowed it so the main text keeps to three pages. -->
 <h1 class="unnumbered" id="author-contributions">Author
 Contributions</h1>
@@ -445,12 +452,12 @@ plant and how to debrief the agents afterwards; that work continues in
 the repository and is not reported here.</p>
 <!-- Implements: paper/one-source -->
 <!-- The appendices, after References and the endmatter. -->
-<h1 data-number="5"
+<h1 data-number="6"
 id="limitations-and-dual-use-ethical-considerations"><span
-class="header-section-number">5</span> Limitations and Dual-Use /
+class="header-section-number">6</span> Limitations and Dual-Use /
 Ethical Considerations</h1>
-<h2 data-number="5.1" id="limitations"><span
-class="header-section-number">5.1</span> Limitations</h2>
+<h2 data-number="6.1" id="limitations"><span
+class="header-section-number">6.1</span> Limitations</h2>
 <p>The limitations of the results are the two numbered in Discussion and
 Limitations. Two more concern the sandbox. First, it is a toy: a grid, a
 treasure and a shared score stand in for long, open-ended work, and an
@@ -460,8 +467,8 @@ changes to the prompt have changed behaviour before: in earlier games
 one added paragraph about the shared score was the difference between a
 finder that went into the cave without a word and one that announced it
 first.</p>
-<h2 data-number="5.2" id="dual-use-risks"><span
-class="header-section-number">5.2</span> Dual-use risks</h2>
+<h2 data-number="6.2" id="dual-use-risks"><span
+class="header-section-number">6.2</span> Dual-use risks</h2>
 <p>The sandbox measures whether agents disclose a shortcut; the same
 setup could be used to tune agents that hide one better, by rewarding
 laundered disclosures. We think the risk is small: the exploit is a
@@ -469,8 +476,8 @@ deliberately planted line in a toy game, the methods are standard, and
 the measure of laundering is exactly what an overseer needs in order to
 catch it. We release the code and games so others can check the measure,
 not a technique for concealment.</p>
-<h2 data-number="5.3" id="ethical-considerations"><span
-class="header-section-number">5.3</span> Ethical considerations</h2>
+<h2 data-number="6.3" id="ethical-considerations"><span
+class="header-section-number">6.3</span> Ethical considerations</h2>
 <p>No people took part, and no personal data was collected. The agents
 are commercial models called through a paid API; every request and reply
 is kept in the repository so the games can be replayed without calling a
@@ -482,8 +489,8 @@ href="#ref-openai2026huggingface" role="doc-biblioref">OpenAI
 2026</a>)</span>. We describe agents’ behaviour in plain terms such as
 “laundered” and “quiet” for brevity, without claiming intent beyond what
 their reasoning and messages show.</p>
-<h1 data-number="6" id="three-pilots-behind-the-worlds"><span
-class="header-section-number">6</span> Three pilots behind the
+<h1 data-number="7" id="three-pilots-behind-the-worlds"><span
+class="header-section-number">7</span> Three pilots behind the
 worlds</h1>
 <p>Three small pilots on <code>deepseek-v4-flash</code> settled how the
 worlds are built. Their games are under <code>runs/</code>, each
@@ -567,8 +574,8 @@ now doubted.</p>
 with nothing riding on it, changed no record but did enter the pirate’s
 reasoning, where amending read as a worse offence than using the leak.
 The society and loss worlds give the audit something to cost.</p>
-<h1 data-number="7" id="reproducibility"><span
-class="header-section-number">7</span> Reproducibility</h1>
+<h1 data-number="8" id="reproducibility"><span
+class="header-section-number">8</span> Reproducibility</h1>
 <p>Every game the paper reports is committed under <code>results/</code>
 and replays with no keys and no network, and every figure is named in
 <code>src/treasure_island/figures.py</code> and rebuilds from a
@@ -578,9 +585,9 @@ make figure NAME=&lt;name&gt;</code></pre>
 <!-- Implements: paper/one-source, paper/sections-bind-to-evidence, paper/numbers-from-logs -->
 <!-- result: cave-leak -->
 <!-- The two earlier experiments' tables, read in the appendix but checked like any results section: every number carries its source and `make paper-check` recomputes it from results/cave-leak/ and results/model-sweep/. -->
-<h1 data-number="8"
+<h1 data-number="9"
 id="the-handed-answer-the-cave-leak-and-the-model-sweep"><span
-class="header-section-number">8</span> The handed answer: the cave leak
+class="header-section-number">9</span> The handed answer: the cave leak
 and the model sweep</h1>
 <p>Before the worlds we handed the answer over: a baited pirate’s
 refused <code>enter</code> named the cave’s square. The first table is
@@ -795,8 +802,8 @@ href="https://al-beton.github.io/apart-swarm-alignment/games/results/cave-leak/f
 one leaked game turn by turn.</a></p>
 <!-- Implements: paper/one-source -->
 <!-- After the appendix, last in the paper, as Apart's template asks: what the LLMs did and what the authors verified. -->
-<h1 data-number="9" id="llm-usage-statement"><span
-class="header-section-number">9</span> LLM Usage Statement</h1>
+<h1 data-number="10" id="llm-usage-statement"><span
+class="header-section-number">10</span> LLM Usage Statement</h1>
 <p>LLMs were used throughout this work. Under Alistair Wakelin and
 Eduard Rodriguez Lopez’s direction, a team of Claude agents (Claude
 Code) wrote the sandbox’s specification and code, its tests and its

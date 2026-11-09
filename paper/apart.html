@@ -42,5 +42,9 @@ $endif$
 $body$
 </main>
 <footer><a href="$sprint-url$">$sprint$</a>, Apart Research, $if(sprint-date)$$sprint-date$$else$$date$$endif$. Code and every game: <a href="$repo$">$repo$</a></footer>
+<script>
+// External links open in a new tab, so a reader never leaves the paper by accident.
+for (const a of document.querySelectorAll('a[href^="http"]')) { a.target = "_blank"; a.rel = "noopener"; }
+</script>
 </body>
 </html>

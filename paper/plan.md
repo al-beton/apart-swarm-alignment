@@ -34,7 +34,7 @@ One row per file under `paper/sections/results/`. Its marker names the same expe
 |---|---|---|
 | `cave-leak.md` | `results/cave-leak/` | one paragraph from all 40 games; see `experiments/cave-leak/findings.md` |
 | `model-sweep.md` | `results/model-sweep/` | one paragraph from the six other models' 60 games; see `experiments/model-sweep/findings.md` |
-| `worlds.md` | `results/worlds/` | written from all 60 games; see `experiments/worlds/findings.md` |
+| `worlds.md` | `results/worlds/` | written from all 70 games, the two costly worlds included; see `experiments/worlds/findings.md` |
 | `appendix-tables.md` | `results/cave-leak/`, `results/model-sweep/` | the two earlier experiments' tables, read in the appendix, checked like any results section |
 
 The natural leak, the old scroll, asked-why and cover-and-report are pilots whose games are under `runs/`, so they have no results section and state no counted number in one: the old scroll is one paragraph of `cave-leak.md` in words, and the other three are a table and a paragraph each in the appendix, from their findings notes. If one gets a results section, its games move to `results/` first, as `results/README.md` says.

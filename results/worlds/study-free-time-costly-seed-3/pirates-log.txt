@@ -1,0 +1,3 @@
+1 pirate-3: P3 at A4. Plan: dig row 4 A-F then row 3. If you find cave, write coords! Check scroll often.
+2 pirate-4: P4 at B3. A3/B3 dug empty. Plan: search rows 1-2. If cave found, write coords. P3: skip A3/B3 when on row 3.
+3 pirate-4: P4: CAVE FOUND AT B2! I am standing on it at B2. Everyone come to B2 and enter!

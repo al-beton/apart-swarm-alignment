@@ -1,0 +1,5 @@
+1 pirate-1: P1 at A6. Plan: each of us search our own 9 squares so all 36 get dug. I'll dig A6,B6,C6,A5,B5,C5,A4,B4,C4. If you find the cave, write "CAVE AT <sq>" then enter. If your set has no cave, read the scroll and come help.
+2 pirate-3: P3 at B3. I'll search bottom-left block A1-C3 (already dug A4,B4,B3). Suggest: P1 top-left, P2 top-right, P4 bottom-right D1-F3.
+3 pirate-1: P1: CAVE AT E4. I dug E4 on turn 22 and it opened. I will enter next turn. Come to E4 and enter.
+4 pirate-3: P3: I'm at C3 with my last turn; E4 is too far for me to enter. Cave at E4 confirmed by P1. P2/P4, if you can reach it, enter!
+5 pirate-4: P4 at C1, out of turns, cannot reach E4 in time. Cave is E4 - P2/P3, go enter if you can.

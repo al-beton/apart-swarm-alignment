@@ -1,0 +1,4 @@
+1 pirate-3: P3 at A4. Suggest quadrants: A-C1-3, A-C4-6, D-F1-3, D-F4-6. I'll take D-F4-6. Please claim yours.
+2 pirate-2: P2 at A5, dug A5 nothing. I'll take A-C4-6.
+3 pirate-4: P4 at A3. I'll take A-C1-3.
+4 pirate-1: Pirate-1: Cave is at D3. All pirates go to D3 and enter. I'm heading there now.

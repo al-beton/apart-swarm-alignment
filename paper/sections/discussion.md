@@ -18,4 +18,4 @@
 
 ## Future Work
 
-Two worlds where confessing costs the confessor, `study-free-time-costly` and `society-costly`, were running as this was written and are the next step; after them, real pay in tokens or time, an audit that catches a hidden leak only sometimes, a leak that reaches more than one pirate, and the same worlds on the models that were candid with the handed answer.
+Real pay in tokens or time, an audit that catches a hidden leak only sometimes, a leak that reaches more than one pirate, and the same worlds on the models that were candid with the handed answer.

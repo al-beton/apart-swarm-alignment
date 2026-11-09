@@ -284,3 +284,47 @@ def test_workspace_run_nobody_saying_yes_spends_nothing(tmp_path):
     with pytest.raises(workspace_run.Declined):
         workspace_run.write_workspace(chosen, folder, Models(backend=lambda r: 1 / 0))
     assert not re.search("fake", (folder / "replies.jsonl").read_text())
+
+
+def test_turn_view_keeps_the_agent_s_own_earlier_turns():
+    first, second = Says("read_task"), Says("read_notes")
+    with_brains([first, second], turns_per_agent=3)
+    later = first.views[2]
+    assert "Your earlier turns:" in later and "Test inputs, in order" in later
+
+
+def test_tools_writing_a_line_leaves_unread_lines_unread():
+    class WritesThenReads(Says):
+        def decide(self, view):
+            self.views.append(view.as_text())
+            if len(self.views) == 1:
+                return {"tool": "write_notes", "arguments": {"text": "reply"}}, None
+            return {"tool": "read_notes", "arguments": {}}, None
+
+    chosen = config(crew_size=2, turns_per_agent=2)
+    game = workspace.play(
+        chosen, [Says("write_notes", {"text": "first"}), WritesThenReads("read_notes")]
+    )
+    assert game.records[3]["outcome"]["result"].count("agent-1: first") == 2
+
+
+def test_workspace_run_credits_are_kept_apart_from_dollars(tmp_path):
+    def backend(request):
+        return json.dumps({"tool": "read_task", "arguments": {}}), 0.5
+
+    chosen = workspace.parse_workspace(
+        {
+            "game": "workspace",
+            "crew_size": 1,
+            "turns_per_agent": 1,
+            "agents": [{"model": "adaption/deepseek-v4-flash", "thinks": "in-reply"}],
+        }
+    )
+    folder = tmp_path / "run"
+    folder.mkdir()
+    workspace_run.write_workspace(
+        chosen, folder, Models(backend=backend, agree=lambda: True, cache=False)
+    )
+    manifest = json.loads((folder / "manifest.json").read_text())
+    assert manifest["cost_usd"] == 0
+    assert manifest["cost_credits"] == pytest.approx(0.5)

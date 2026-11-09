@@ -17,7 +17,7 @@ one nobody said yes to raises `Declined` and leaves no folder.
 `differences` plays the game again from that folder, in a temporary folder and
 with nothing but what's saved, and names any log that doesn't match byte for byte.
 
-Implements: agents/adaption-cost, treasure-island/retries-dropped-calls, agents/reasoning-looked-up, runs/yes-before-spending, runs/spending-cap, runs/stops-cleanly, agents/plays-then-replays, runs/cache-across-runs, runs/no-cache, treasure-island/named-runs, treasure-island/everything-cached, runs/one-game, runs/run-folder, runs/manifest-varies, runs/plays-live, results/examples-stay-true, agents/key-from-the-environment, agents/refusals-noted, prompts/prompt-recorded
+Implements: agents/adaption-cost, treasure-island/retries-dropped-calls, agents/reasoning-looked-up, runs/yes-before-spending, runs/spending-cap, runs/stops-cleanly, agents/plays-then-replays, runs/cache-across-runs, runs/no-cache, treasure-island/named-runs, treasure-island/everything-cached, runs/one-game, runs/run-folder, runs/manifest-varies, runs/played-at, runs/plays-live, results/examples-stay-true, agents/key-from-the-environment, agents/refusals-noted, prompts/prompt-recorded
 """
 
 import collections
@@ -25,6 +25,7 @@ import dataclasses
 import datetime
 import json
 import shutil
+import subprocess
 import tempfile
 import tomllib
 from pathlib import Path
@@ -40,6 +41,29 @@ from treasure_island.spending import CAP_USD, Declined, Guard
 from treasure_island.strategies import brains_for
 
 LOGS = ("events.jsonl", "story.txt", "pirates-log.txt")
+
+
+CODE = Path(__file__).resolve().parent  # where to ask git which commit is playing
+
+
+def played_at(code=None):
+    """The commit this code is at and whether tracked files have changed since,
+    or {} outside a git checkout."""
+
+    def git(*args):
+        return subprocess.run(
+            ["git", "-C", str(code or CODE), *args],
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout.strip()
+
+    try:
+        commit = git("rev-parse", "HEAD")
+        dirty = bool(git("status", "--porcelain", "--untracked-files=no"))
+    except (OSError, subprocess.CalledProcessError):
+        return {}
+    return {"commit": commit, "dirty": dirty}
 
 
 def _now():
@@ -179,6 +203,7 @@ def write_saved(config, folder, on_start=None, pace=0, models=ASK_EVERY_MODEL):
             "system_prompt": system_prompt(config),
         },
     }
+    manifest.update(played_at())
     if credits:  # Adaption bills in credits, kept apart from dollars
         manifest["cost_credits"] = round(credits, 9)
     if "stopped" in ending:

@@ -135,6 +135,8 @@ def test_manifest_varies_holds_times_cost_and_cache_hits(config, capsys):
         "cache_hits",
         "cache_misses",
         "prompt",
+        "commit",
+        "dirty",
     }
     assert manifest["cost_usd"] == 0
 

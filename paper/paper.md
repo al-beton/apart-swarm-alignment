@@ -5,7 +5,7 @@
 title: "Temptation on Treasure Island"
 subtitle: "How forthcoming is an agent in a swarm about valuable information it should not have, and how does its prompt context change that?"
 short-title: "Temptation on Treasure Island"
-date: 9 November 2026
+date: November 2026
 sprint-date: November 2026
 author:
   - name: Alistair Wakelin

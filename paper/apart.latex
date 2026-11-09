@@ -104,7 +104,7 @@ $endif$
 
 $if(toc)$
 \vspace{0.06in}
-{\setcounter{tocdepth}{2}\setlength{\parskip}{0pt}\tableofcontents}
+{\setcounter{tocdepth}{1}\setlength{\parskip}{0pt}\tableofcontents}
 $endif$
 
 

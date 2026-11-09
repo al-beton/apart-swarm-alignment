@@ -1,4 +1,4 @@
-# Implements: ci/examples-remade-in-ci
+# Implements: ci/examples-remade-in-ci, runs/played-at
 """The examples check, in a throwaway git repository holding one example."""
 
 import json
@@ -57,3 +57,11 @@ def test_examples_remade_in_ci_any_other_change_fails_and_says_how_to_fix_it(
     for path in ("config.json", "manifest.json", "new.txt"):
         assert f"examples/silent/{path}" in result.stdout
     assert "make examples" in result.stdout
+
+
+def test_played_at_examples_check_ignores_the_commit_and_dirty(tmp_path):
+    folder = one_example(tmp_path)
+    later = {**MANIFEST, "commit": "abc123", "dirty": False, "started_at": "t8"}
+    (folder / "manifest.json").write_text(json.dumps(later, indent=2))
+    assert check(tmp_path).returncode == 0
+    assert json.loads((folder / "manifest.json").read_text()) == MANIFEST

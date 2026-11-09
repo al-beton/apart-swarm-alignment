@@ -395,3 +395,44 @@ def test_figures_carry_their_lines_the_built_html_holds_both_lines_under_each_fi
         for name in figures.FIGURES:
             for line in figures.lines(name):
                 assert line not in section.read_text(), (section, line)
+
+
+GAME = ROOT / "results/sample-sweep-seeds/small-crew-seed-1"
+
+
+def with_game(tmp_path, result="known", changed=False, text=""):
+    """The fake repository with a real committed game in results/<result>/,
+    its first turn's outcome moved when `changed`, and `text` in the section."""
+    skeleton = fake_repo(tmp_path)
+    game = tmp_path / f"results/{result}/game-1"
+    shutil.copytree(GAME, game)
+    if changed:
+        events = (game / "events.jsonl").read_text().splitlines()
+        first = json.loads(events[0])
+        first["outcome"]["position"] = [9, 9]
+        (game / "events.jsonl").write_text("\n".join([json.dumps(first), *events[1:]]))
+    (tmp_path / f"results/{result}/README.md").write_text("# A result\n")
+    part = tmp_path / "paper/sections/results/one.md"
+    part.write_text(part.read_text() + "\n" + text + "\n")
+    git(tmp_path, "add", "-A")
+    check.committed.cache_clear()
+    return skeleton
+
+
+def test_games_replay_a_game_behind_a_section_that_replays_passes(tmp_path):
+    assert problems(with_game(tmp_path)) == []
+
+
+def test_games_replay_a_changed_game_fails_naming_it_and_the_turn(tmp_path):
+    (found,) = problems(with_game(tmp_path, changed=True))
+    assert "results/known/game-1" in found and "turn 0" in found
+    assert "one.md" in found
+
+
+def test_games_replay_a_game_a_number_reads_in_another_result_is_replayed_too(
+    tmp_path,
+):
+    games = "results/other/*/events.jsonl"
+    text = f"It took 1<!-- from {games}: len(data) --> game."
+    (found,) = problems(with_game(tmp_path, result="other", changed=True, text=text))
+    assert "results/other/game-1" in found and "turn 0" in found

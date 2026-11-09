@@ -18,19 +18,19 @@ $endif$
 <body$if(times)$ class="times"$endif$>
 <header>
 <div class="titleblock"><h1 class="title">$title$</h1>$if(subtitle)$<p class="subtitle">$subtitle$</p>$endif$</div>
-$if(pdf-url)$<p class="other-form">You are viewing the HTML version of this work. See the PDF version <a href="$pdf-url$">here</a>.</p>$endif$
 <div class="authors">
 $for(author)$
 <div class="author"><strong>$author.name$</strong>$if(author.affiliation)$<br>$author.affiliation$$endif$$if(author.email)$<br><a class="mono" href="mailto:$author.email$">$author.email$</a>$endif$</div>
 $endfor$
 </div>
+$if(pdf-url)$<p class="other-form">This is the HTML version of this work. See the PDF version <a href="$pdf-url$">here</a>.</p>$endif$
 $if(abstract)$
 <section class="abstract"><h2>Abstract</h2>
 $abstract$
 </section>
 $endif$
 $if(teaser)$
-<figure class="teaser"><img src="$teaser$" alt=""><figcaption>$teaser-caption$$if(figure_lines.dig-debug-game)$<br><span class="figure-lines">Remake or rerun it: $for(figure_lines.dig-debug-game)$$it$$sep$; $endfor$.</span>$endif$</figcaption></figure>
+<figure class="teaser"><img src="$teaser$" alt=""><figcaption>$teaser-caption$$if(figure_lines.dig-debug-game)$<br><span class="figure-lines">Remake the figure or replay the game: $for(figure_lines.dig-debug-game)$$it$$sep$; $endfor$.</span>$endif$</figcaption></figure>
 $endif$
 </header>
 $if(toc)$

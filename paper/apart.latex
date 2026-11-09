@@ -82,9 +82,10 @@ $for(author)$
 $endfor$
 \par
 $if(date)$\vspace{0.12in}{$date$\par}$endif$
+$if(web-url)$\vspace{0.08in}{\small This is the PDF version of this work. See the HTML version, with every game watchable, \href{$web-url$}{here}.\par}$endif$
 \end{center}
 
-{\makeatletter\long\def\@makefntext#1{\noindent#1}\makeatother\let\thefootnote\relax\footnotetext{\raggedright \href{$sprint-url$}{$sprint$}, Apart Research, $if(sprint-date)$$sprint-date$$else$$date$$endif$.\\Code and every game: \url{$repo$}\\An interactive HTML version of this work, with every game watchable, is \href{$web-url$}{here}.}}
+{\makeatletter\long\def\@makefntext#1{\noindent#1}\makeatother\let\thefootnote\relax\footnotetext{\raggedright \href{$sprint-url$}{$sprint$}, Apart Research, $if(sprint-date)$$sprint-date$$else$$date$$endif$.\\Code and every game: \url{$repo$}}}
 
 $if(abstract)$
 \vspace{0.04in}
@@ -97,7 +98,7 @@ $endif$
 $if(teaser)$
 \begin{center}
 \includegraphics[width=$if(teaser-width)$$teaser-width$$else$0.85$endif$\linewidth]{$teaser$}
-\captionof{figure}{$teaser-caption$$if(figure_lines.dig-debug-game)$\\{\footnotesize\raggedright Remake or rerun it: $for(figure_lines.dig-debug-game)$$it$$sep$; $endfor$.}$endif$}$if(teaser-label)$\label{$teaser-label$}$endif$
+\captionof{figure}{$teaser-caption$$if(figure_lines.dig-debug-game)$\\{\footnotesize\raggedright Remake the figure or replay the game: $for(figure_lines.dig-debug-game)$$it$$sep$; $endfor$.}$endif$}$if(teaser-label)$\label{$teaser-label$}$endif$
 \end{center}
 $endif$
 

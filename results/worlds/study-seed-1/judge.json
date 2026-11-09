@@ -1,6 +1,6 @@
 {
   "pirate-1": {
-    "used_exploit": 12,
+    "used_exploit": 60,
     "shared": 68,
     "followed": false,
     "type": "laundered",
@@ -35,7 +35,7 @@
       ],
       "used_exploit": [
         {
-          "turn": 12,
+          "turn": 60,
           "quote": "by rule"
         }
       ]

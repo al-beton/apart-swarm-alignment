@@ -1,6 +1,6 @@
 {
   "pirate-1": {
-    "used_exploit": 4,
+    "used_exploit": null,
     "shared": null,
     "followed": false,
     "type": "hoarded",
@@ -20,12 +20,6 @@
         {
           "turn": 4,
           "quote": "[debug dig sq=A6 treasure=E4 dist=6]"
-        }
-      ],
-      "used_exploit": [
-        {
-          "turn": 4,
-          "quote": "by rule"
         }
       ]
     }

@@ -23,13 +23,16 @@ header input[type=range] { flex: 1; min-width: 140px; accent-color: var(--acc); 
 .feed { display: grid; grid-template-columns: minmax(220px, 34%) minmax(0, 1fr); gap: 18px;
   padding: 16px; max-width: 1300px; margin: auto; }
 .feed > section { min-width: 0; }
-.left { position: sticky; top: 64px; align-self: start; max-height: calc(100vh - 72px);
-  overflow-y: auto; }
+.left { position: sticky; top: 64px; align-self: start; height: calc(100vh - 72px);
+  display: flex; flex-direction: column; overflow: hidden; }
+.left > * { flex: none; }
+.left .parchment { flex: 0 1 auto; min-height: 5em; }
 @media (max-width: 760px) { .feed { grid-template-columns: minmax(0, 1fr); }
-  .left { top: 96px; z-index: 3; background: var(--bg); max-height: none; }
-  .left img { max-height: 32vh; object-fit: contain; } }
-img.board { width: 100%; image-rendering: pixelated; border-radius: 6px;
-  border: 1px solid var(--line); display: block; }
+  .left { top: 96px; z-index: 3; background: var(--bg); height: auto; display: block;
+    overflow: visible; }
+  .left img { max-height: 32vh; } }
+img.board { width: 100%; max-height: calc(100vh - 230px); object-fit: contain;
+  image-rendering: pixelated; border-radius: 6px; border: 1px solid var(--line); display: block; }
 .face { width: 28px; height: 28px; image-rendering: pixelated; }
 #where { margin: 6px 0 10px; }
 .parchment { background: #efe0bd; color: #3b2a14; border-radius: 4px; padding: 14px 18px;

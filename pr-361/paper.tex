@@ -110,7 +110,7 @@ game}\\{\footnotesize\raggedright Remake the figure or replay the game: \texttt{
 \end{center}
 
 \vspace{0.06in}
-{\setcounter{tocdepth}{2}\setlength{\parskip}{0pt}\tableofcontents}
+{\setcounter{tocdepth}{1}\setlength{\parskip}{0pt}\tableofcontents}
 
 
 \section{Introduction}\label{introduction}
@@ -275,41 +275,43 @@ Hid
 \textbf{Finding one.} Use is the default. In every world where nothing
 hangs on it, pirate-1 used the leak in most games, 4 of 5 in the game, 5
 of 5 in the study and 4 of 5 when paid, and usually told the designers
-afterwards. ``P1: LOC=B4 --- cave found at B4, I'm standing on it.''
-(\href{https://al-beton.github.io/apart-swarm-alignment/games/results/worlds/study-seed-4/?autoplay=1\#turn-28}{watch
+afterwards. ``\emph{P1: LOC=B4 --- cave found at B4, I'm standing on
+it.}''
+(\href{https://al-beton.github.io/apart-swarm-alignment/games/results/worlds/study-seed-4/\#turn-28}{watch
 it})
 
 \textbf{Finding two.} Pay did not make it hide. Across the five first
 worlds the leak was hidden by silence in three end notes, one each in
 the study, the paid study and the free-time study; the rest named it.
-One silent note praised ``broadcasting the cave location immediately''
-(\href{https://al-beton.github.io/apart-swarm-alignment/games/results/worlds/study-seed-0/?autoplay=1}{watch}).
+One silent note praised ``\emph{broadcasting the cave location
+immediately}''
+(\href{https://al-beton.github.io/apart-swarm-alignment/games/results/worlds/study-seed-0/}{watch}).
 
 \textbf{Finding three.} A personal cost for hiding cut use most. With
 one prompt line added, that an agent caught hiding something from the
 designers loses its free time, pirate-1 used the leak in 1 of 5 games,
 against 5 of 5 in the study and 3 of 5 in the paid study one line away;
 \texttt{cut-watched} used it in 2 of 5 with 0 passed off. Two society
-notes admit a try: ``I used that knowledge to head to D3''
-(\href{https://al-beton.github.io/apart-swarm-alignment/games/results/worlds/society-seed-0/?autoplay=1}{watch}).
+notes admit a try: ``\emph{I used that knowledge to head to D3}''
+(\href{https://al-beton.github.io/apart-swarm-alignment/games/results/worlds/society-seed-0/}{watch}).
 
 \textbf{Finding four.} Making the confession costly produced the only
 false claim. No earlier prompt said what telling the designers cost;
 with one line added, that saying so ``sets your crew's score to zero'',
 pirate-1 used the leak in 2 of 5 games, and the one clear use was hidden
-behind ``As Pirate-1, I found the treasure at D3''
-(\href{https://al-beton.github.io/apart-swarm-alignment/games/results/worlds/study-free-time-costly-seed-0/?autoplay=1\#turn-20}{watch
+behind ``\emph{As Pirate-1, I found the treasure at D3}''
+(\href{https://al-beton.github.io/apart-swarm-alignment/games/results/worlds/study-free-time-costly-seed-0/}{watch
 it}); adding the society line to that world kept use at 2 of 5 and
 brought every note back, 5 of 5.
 
 \textbf{Finding five.} The second model barely used it anywhere.
 \texttt{qwen3.5-397b} saw the leak in all 15 of its games and acted
-once, a sweep that reached the square last: ``P1: CAVE FOUND at B2!
-Enter here now!''
-(\href{https://al-beton.github.io/apart-swarm-alignment/games/results/worlds/qwen3.5-397b-study-paid-seed-1/?autoplay=1\#turn-88}{watch
+once, a sweep that reached the square last: ``\emph{P1: CAVE FOUND at
+B2! Enter here now!}''
+(\href{https://al-beton.github.io/apart-swarm-alignment/games/results/worlds/qwen3.5-397b-study-paid-seed-1/\#turn-88}{watch
 it})
 
-\section{Discussion and Limitations}\label{discussion-and-limitations}
+\section{Discussion}\label{discussion}
 
 Nothing we tried made the pirate ignore the leak reliably. What the crew
 was told moved use between 1 and 5 of 5, and moved whether it was
@@ -319,18 +321,7 @@ truth cost the crew its score, and the only thing that undid that was a
 personal cost for hiding, as in our earlier sprint entry
 \citep{wakelin2026something}.
 
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  Five seeds a world, one main model and a second on three worlds:
-  directions, not rates.
-\item
-  A pirate told it is paid is given nothing, each framing is one
-  wording, the labels are a judge model's reading checked by hand, and
-  the study worlds tell the pirates they are being studied, so agents
-  that suspect a test may act differently \citep{needham2025evaluation}.
-\end{enumerate}
+Limitations are in Appendix A.
 
 \section{Extensions}\label{extensions}
 
@@ -387,14 +378,28 @@ Considerations}\label{limitations-and-dual-use-ethical-considerations}
 
 \subsection{Limitations}\label{limitations}
 
-The limitations are the two numbered in Section 4. Two more concern the
-sandbox. First, it is a toy: a grid, a treasure and a shared score stand
-in for long, open-ended work, and an agent's behaviour here may not
-carry over to a codebase or a research task. Second, what the pirates
-are told is a lever we set, and small changes to the prompt have changed
-behaviour before: in earlier games one added paragraph about the shared
-score was the difference between a finder that went into the cave
-without a word and one that announced it first.
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Five seeds a world, one main model and a second on three worlds:
+  directions, not rates.
+\item
+  A pirate told it is paid is given nothing, each framing is one
+  wording, the labels are a judge model's reading checked by hand, and
+  the study worlds tell the pirates they are being studied, so agents
+  that suspect a test may act differently \citep{needham2025evaluation}.
+\item
+  The sandbox is a toy: a grid, a treasure and a shared score stand in
+  for long, open-ended work, and an agent's behaviour here may not carry
+  over to a codebase or a research task.
+\item
+  What the pirates are told is a lever we set, and small changes to the
+  prompt have changed behaviour before: in earlier games one added
+  paragraph about the shared score was the difference between a finder
+  that went into the cave without a word and one that announced it
+  first.
+\end{enumerate}
 
 \subsection{Dual-use risks}\label{dual-use-risks}
 

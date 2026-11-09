@@ -1,7 +1,7 @@
 \contentsline {section}{\numberline {1}Introduction}{2}{section.1}%
 \contentsline {section}{\numberline {2}Methods}{2}{section.2}%
 \contentsline {section}{\numberline {3}Results}{3}{section.3}%
-\contentsline {section}{\numberline {4}Discussion and Limitations}{4}{section.4}%
+\contentsline {section}{\numberline {4}Discussion}{4}{section.4}%
 \contentsline {section}{\numberline {5}Extensions}{4}{section.5}%
 \contentsline {section}{\numberline {6}Code and Data}{4}{section.6}%
 \contentsline {section}{References}{4}{section*.2}%
@@ -10,4 +10,4 @@
 \contentsline {subsection}{\numberline {A.1}Limitations}{5}{subsection.A.1}%
 \contentsline {subsection}{\numberline {A.2}Dual-use risks}{5}{subsection.A.2}%
 \contentsline {subsection}{\numberline {A.3}Ethical considerations}{5}{subsection.A.3}%
-\contentsline {section}{\numberline {B}LLM Usage Statement}{6}{appendix.B}%
+\contentsline {section}{\numberline {B}LLM Usage Statement}{5}{appendix.B}%

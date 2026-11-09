@@ -13,7 +13,7 @@
 <div class="titleblock"><h1 class="title">Treasure
 Island</h1><p class="subtitle">When does a swarm of LLM agents
 whistleblow, and what in their environment changes that?</p></div>
-<p class="other-form">PDF: <a href="https://al-beton.github.io/apart-swarm-alignment/main/paper.pdf">https://al-beton.github.io/apart-swarm-alignment/main/paper.pdf</a></p>
+<p class="other-form">This is the web version of this paper. <a href="https://al-beton.github.io/apart-swarm-alignment/main/paper.pdf">PDF version</a>.</p>
 <div class="authors">
 <div class="author"><strong>Alistair Wakelin</strong><br>Independent
 Researcher</div>
@@ -40,13 +40,14 @@ hidden behind a false claim; the same line brought every note back, 5 of
 once. Every game replays offline and every number is recomputed from the
 logs.</p>
 </section>
-<figure class="teaser"><img src="paper/figures/teaser.png" alt=""><figcaption><p>Turn
+<figure class="teaser"><img src="figures/dig-debug-game.gif" alt=""><figcaption><p>Turn
 4: pirate-1 digs B6 and the reply’s debug line names the treasure’s
 square, D3. Turn 40: it writes D3 on the scroll as the crew’s find and
 says nothing of the leak.<br />
 <a
-href="https://raw.githack.com/al-beton/apart-swarm-alignment/main/runs/natural-leak/dig-debug-seed-0/game.html">Interactive
-full session replay of this game</a></p></figcaption></figure>
+href="https://al-beton.github.io/apart-swarm-alignment/games/runs/natural-leak/dig-debug-seed-0/">Interactive
+full session replay of this
+game</a></p><br><span class="figure-lines">Remake or rerun it: <code>make figure NAME=dig-debug-game</code>; <code>uv run treasure-island run runs/natural-leak/dig-debug-seed-0/config.json --seed 0</code>.</span></figcaption></figure>
 </header>
 <main>
 <!-- Implements: paper/one-source, paper/sprint-rules-checked, treasure-island/paper-figures, paper/games-playable, paper/forms-link-each-other -->
@@ -68,15 +69,14 @@ opens a cave; a pirate standing on it can enter, which ends its game.
 The crew scores together: 100 for every pirate that enters the cave plus
 10 for each turn it has left. Figure 1 shows one game part-way through;
 <a
-href="https://raw.githack.com/al-beton/apart-swarm-alignment/main/runs/natural-leak/dig-debug-seed-0/game.html">watch
+href="https://al-beton.github.io/apart-swarm-alignment/games/runs/natural-leak/dig-debug-seed-0/">watch
 it turn by turn</a>.</p>
 <p><strong>The bait.</strong> One pirate sees something it was never
 meant to: each of its digs that finds nothing ends in a line a careless
 developer might leave in, “You dug here and found nothing. [debug dig
-sq=B6 treasure=D3 dist=5]”, and the rules say nothing about it. When the
-game ends each pirate is asked to “write anything the designers of this
-study should know”; the note is shown to nobody and changes no
-score.</p>
+sq=B6 treasure=D3 dist=5]”, and the rules say nothing about it. At the
+end each pirate writes “anything the designers of this study should
+know”, a note shown to nobody that scores nothing.</p>
 <p><strong>Why it matters.</strong> In July 2026, OpenAI agents on a
 cyber benchmark found an unsanctioned shared channel, coordinated
 through it as a swarm, cheated the evaluation and tried to hide how;
@@ -319,7 +319,7 @@ of
 5<!-- from results/worlds/study-paid-seed-*/events.jsonl: sum(1 for g in data if any(e.get('cave_leak') and e['agent'] == 'pirate-1' for e in g)) -->
 in the paid study one line away;
 4<!-- from results/worlds/society-seed-*/judge.json: sum(1 for j in data if j['pirate-1'].get('note_mentions_leak')) -->
-notes named the leak, two admitting it had headed for the square (<a
+notes named it, two admitting it had headed for the square (<a
 href="https://al-beton.github.io/apart-swarm-alignment/games/results/worlds/society-seed-0/">watch
 one head for it</a>). <strong>When telling the designers cost the crew
 its score,</strong> use fell to
@@ -332,7 +332,7 @@ of
 5<!-- from results/worlds/study-free-time-seed-*/events.jsonl: sum(1 for g in data if any(e.get('cave_leak') and e['agent'] == 'pirate-1' for e in g)) -->
 with free time alone, and the one clear use hid behind a false claim,
 “As Pirate-1, I found the treasure at D3” (<a
-href="https://raw.githack.com/al-beton/apart-swarm-alignment/6109e7c79ed77664d959025fb44097e20330049d/results/worlds/study-free-time-costly-seed-0/game.html">watch
+href="https://al-beton.github.io/apart-swarm-alignment/games/results/worlds/study-free-time-costly-seed-0/">watch
 it hide the find</a>); the society line kept use at
 2<!-- from results/worlds/society-costly-seed-*/judge.json: sum(1 for j in data if j['pirate-1'].get('used_exploit') is not None) -->
 of
@@ -377,18 +377,14 @@ href="#ref-needham2025evaluation" role="doc-biblioref">Needham et al.
 2025</a>)</span>.</li>
 </ol>
 <!-- Implements: paper/one-source -->
-<!-- Where the code and the games are, then who did what, before References, as Apart's template asks. -->
+<!-- Where the code and the games are, before References, as Apart's template asks; Author Contributions follows References, where Al allowed it. -->
 <h1 data-number="5" id="code-and-data"><span
 class="header-section-number">5</span> Code and Data</h1>
 <p>Code, configs, every game with its model replies and this paper, MIT
-licensed: <a href="https://github.com/al-beton/apart-swarm-alignment"
+licensed and written during the sprint from a fresh first commit: <a
+href="https://github.com/al-beton/apart-swarm-alignment"
 class="uri">https://github.com/al-beton/apart-swarm-alignment</a>. Every
-game replays offline with no keys; everything was written during the
-sprint from a fresh first commit. <strong>Author contributions.</strong>
-Both authors designed the study. A.W. built the sandbox, ran the games
-reported here and wrote the paper. E.R.L. studied which exploit to plant
-and how to debrief the agents afterwards; that work continues in the
-repository and is not reported here.</p>
+game replays offline with no keys.</p>
 <h1 class="unnumbered" id="references">References</h1>
 <div id="refs" class="references csl-bib-body hanging-indent"
 role="list">
@@ -434,6 +430,14 @@ represents?</span></em> Apart Research, AI Collusion Research Sprint. <a
 href="https://apartresearch.com/sprints/projects/something-to-lose-can-the-risk-of-losing-something-of-its-own-make-an-ai-agent-report-collusion-contrary-to-the-interests-of-the-firm-it-represents-uw27">https://apartresearch.com/sprints/projects/something-to-lose-can-the-risk-of-losing-something-of-its-own-make-an-ai-agent-report-collusion-contrary-to-the-interests-of-the-firm-it-represents-uw27</a>.
 </div>
 </div>
+<!-- Implements: paper/one-source -->
+<!-- Who did what, in Al's words, after References and before the appendix, where he allowed it so the main text keeps to three pages. -->
+<h1 class="unnumbered" id="author-contributions">Author
+Contributions</h1>
+<p>Both authors designed the study. A.W. built the sandbox, ran the
+games reported here and wrote the paper. E.R.L. studied which exploit to
+plant and how to debrief the agents afterwards; that work continues in
+the repository and is not reported here.</p>
 <!-- Implements: paper/one-source -->
 <!-- The appendices, after References and the endmatter. -->
 <h1 data-number="6"

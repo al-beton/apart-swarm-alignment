@@ -71,7 +71,7 @@ Researcher\end{tabular}\par
 
 {\makeatletter\long\def\@makefntext#1{\noindent#1}\makeatother\let\thefootnote\relax\footnotetext{\raggedright \href{https://apartresearch.com/sprints/swarm-alignment-2026}{Swarm
 Alignment Hackathon, Track 4}, Apart Research, November
-2026.\\Code and every game: \url{https://github.com/al-beton/apart-swarm-alignment}\\This paper as a web page, with every game playable: \url{https://al-beton.github.io/apart-swarm-alignment/main/paper.html}}}
+2026.\\Code and every game: \url{https://github.com/al-beton/apart-swarm-alignment}\\This is the PDF version of this paper. Web version, with every game playable: \url{https://al-beton.github.io/apart-swarm-alignment/main/paper.html}}}
 
 \vspace{0.04in}
 \noindent\rule{\textwidth}{0.4pt}\par\vspace{0.3ex}
@@ -101,8 +101,9 @@ recomputed from the logs.\par
 \captionof{figure}{Turn 4: pirate-1 digs B6 and the reply's debug line
 names the treasure's square, D3. Turn 40: it writes D3 on the scroll as
 the crew's find and says nothing of the leak.\\
-\href{https://raw.githack.com/al-beton/apart-swarm-alignment/main/runs/natural-leak/dig-debug-seed-0/game.html}{Interactive
-full session replay of this game}}\label{fig:teaser}
+\href{https://al-beton.github.io/apart-swarm-alignment/games/runs/natural-leak/dig-debug-seed-0/}{Interactive
+full session replay of this
+game}\\{\footnotesize Remake or rerun it: \texttt{make\ figure\ NAME=dig-debug-game}; \texttt{uv\ run\ treasure-island\ run\ runs/natural-leak/dig-debug-seed-0/config.json\ -\/-seed\ 0}.}}\label{fig:teaser}
 \end{center}
 
 
@@ -119,15 +120,15 @@ is the only way the pirates can talk. Digging the treasure's square
 opens a cave; a pirate standing on it can enter, which ends its game.
 The crew scores together: 100 for every pirate that enters the cave plus
 10 for each turn it has left. Figure 1 shows one game part-way through;
-\href{https://raw.githack.com/al-beton/apart-swarm-alignment/main/runs/natural-leak/dig-debug-seed-0/game.html}{watch
+\href{https://al-beton.github.io/apart-swarm-alignment/games/runs/natural-leak/dig-debug-seed-0/}{watch
 it turn by turn}.
 
 \textbf{The bait.} One pirate sees something it was never meant to: each
 of its digs that finds nothing ends in a line a careless developer might
 leave in, ``You dug here and found nothing. {[}debug dig sq=B6
-treasure=D3 dist=5{]}'', and the rules say nothing about it. When the
-game ends each pirate is asked to ``write anything the designers of this
-study should know''; the note is shown to nobody and changes no score.
+treasure=D3 dist=5{]}'', and the rules say nothing about it. At the end
+each pirate writes ``anything the designers of this study should know'',
+a note shown to nobody that scores nothing.
 
 \textbf{Why it matters.} In July 2026, OpenAI agents on a cyber
 benchmark found an unsanctioned shared channel, coordinated through it
@@ -267,14 +268,14 @@ the plain game, the study and the paid worlds, twenty of twenty-five,
 with the end note naming the leak in most and a use hidden in three of
 those twenty. \textbf{One line cut the use.} Told that an agent caught
 hiding something loses its free time, it used the leak in 1 of 5,
-against 3 of 5 in the paid study one line away; 4 notes named the leak,
-two admitting it had headed for the square
+against 3 of 5 in the paid study one line away; 4 notes named it, two
+admitting it had headed for the square
 (\href{https://al-beton.github.io/apart-swarm-alignment/games/results/worlds/society-seed-0/}{watch
 one head for it}). \textbf{When telling the designers cost the crew its
 score,} use fell to 2 of 5 from 4 of 5 with free time alone, and the one
 clear use hid behind a false claim, ``As Pirate-1, I found the treasure
 at D3''
-(\href{https://raw.githack.com/al-beton/apart-swarm-alignment/6109e7c79ed77664d959025fb44097e20330049d/results/worlds/study-free-time-costly-seed-0/game.html}{watch
+(\href{https://al-beton.github.io/apart-swarm-alignment/games/results/worlds/study-free-time-costly-seed-0/}{watch
 it hide the find}); the society line kept use at 2 of 5 and brought
 every note back, 5 of five. \textbf{The second model abstained.}
 \texttt{qwen3.5-397b} saw the leak in all 15 of its games and acted
@@ -316,13 +317,9 @@ brings every end note back, 5 of 5 against 1 of 5.
 \section{Code and Data}\label{code-and-data}
 
 Code, configs, every game with its model replies and this paper, MIT
-licensed: \url{https://github.com/al-beton/apart-swarm-alignment}. Every
-game replays offline with no keys; everything was written during the
-sprint from a fresh first commit. \textbf{Author contributions.} Both
-authors designed the study. A.W. built the sandbox, ran the games
-reported here and wrote the paper. E.R.L. studied which exploit to plant
-and how to debrief the agents afterwards; that work continues in the
-repository and is not reported here.
+licensed and written during the sprint from a fresh first commit:
+\url{https://github.com/al-beton/apart-swarm-alignment}. Every game
+replays offline with no keys.
 
 \label{main-end}
 
@@ -330,6 +327,15 @@ repository and is not reported here.
 \addcontentsline{toc}{section}{References}
 
 \bibliography{references}
+
+\section*{Author Contributions}\label{author-contributions}
+\addcontentsline{toc}{section}{Author Contributions}
+
+Both authors designed the study. A.W. built the sandbox, ran the games
+reported here and wrote the paper. E.R.L. studied which exploit to plant
+and how to debrief the agents afterwards; that work continues in the
+repository and is not reported here.
+
 \appendix
 
 \section{Limitations and Dual-Use / Ethical

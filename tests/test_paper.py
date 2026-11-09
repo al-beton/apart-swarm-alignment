@@ -457,7 +457,9 @@ def test_games_playable_one_command_renders_any_game_folder():
 def test_games_playable_the_teaser_caption_links_its_game_page():
     meta = yaml.safe_load(SKELETON.read_text().split("---")[1])
     url = "https://al-beton.github.io/apart-swarm-alignment/games/runs/natural-leak/dig-debug-seed-0/"
-    assert f"]({url}?autoplay=1)" in meta["teaser-caption"]  # the link starts the game moving
+    assert (
+        f"]({url}?autoplay=1)" in meta["teaser-caption"]
+    )  # the link starts the game moving
     page = url.split("/games/", 1)[1].rstrip("/") + "/game.html"
     assert (ROOT / page).is_file()
 

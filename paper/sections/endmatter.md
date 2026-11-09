@@ -7,4 +7,4 @@ LLMs were used throughout this work. Under Alistair Wakelin and Eduard Rodriguez
 
 # Code and Data
 
-Code, configs, run logs and archived model replies, MIT licensed: <https://github.com/al-beton/apart-swarm-alignment>. Every committed game replays offline with no API keys, and every figure rebuilds from those games.
+Code, configs, run logs and archived model replies, MIT licensed: <https://github.com/al-beton/apart-swarm-alignment>. Every committed game replays offline with no API keys, and every figure rebuilds from those games. Everything in the repository was written during the sprint, from a fresh first commit on its first day; the design draws on our earlier, public project [@wakelin2026something], from which no code is included.

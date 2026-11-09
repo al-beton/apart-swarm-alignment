@@ -23,7 +23,7 @@ bibliography: references.bib
 link-citations: true
 # The sprint's limits, which check.py reads: words in the abstract, pages before References.
 abstract-words: [150, 250]
-max-pages: 4
+max-pages: 8
 ---
 
 ```{.include}

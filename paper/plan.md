@@ -40,7 +40,7 @@ The natural leak and the old scroll are told in the Introduction and Discussion 
 
 ## Page budget
 
-The sprint recommends 4 pages before References (`max-pages` in `paper/paper.md`). Introduction and related work 1 page, methods and results 2.5, discussion 0.5. The draft on main runs long (`make paper-pdf` says how far); once the worlds are the spine, experiment one and the sweep shrink to the setup they are, and the worlds table and quotes take the room.
+The sprint allows 8 pages before References and appendices (`max-pages` in `paper/paper.md`), an abstract of 150 to 250 words, and requires an appendix titled "Limitations and Dual-Use / Ethical Considerations", which `paper/sections/appendix.md` is. Introduction and related work 1.5 pages, methods 2, results 3.5, discussion and conclusion 1. The draft runs long (`make paper-pdf` says how far); once the worlds are the spine, experiment one and the sweep shrink to the setup they are, and the worlds table and quotes take the room.
 
 ## For Al
 
@@ -49,6 +49,21 @@ Three things only Al can settle, each in one place. Answer them in Voice dump an
 1. **The claim.** The sentence under "The claim" above, once its counts are in. It is also the bracketed sentence in `paper/sections/abstract.md` and the last contribution in `paper/sections/introduction.md`; the three say the same thing in three lengths.
 2. **Affiliations.** `author:` in `paper/paper.md` reads "Independent Researcher" for both authors. Change or confirm.
 3. **The sprint.** Settled: `sprint:` and `sprint-url:` in `paper/paper.md` read "Swarm Alignment Hackathon, Track 4: Multi-Agent Oversight and Control" and the sprint's own page. The deadline there is 23:59 AoE on 8 November 2026.
+
+## Submission form
+
+The sprint's form, field by field, with text to paste. Resubmission is allowed until the deadline, 23:59 AoE on 8 November 2026 (19:59 HKT on 9 November), so the first submission need not be the last.
+
+- **Project title** (required): Treasure Island: when does a swarm of LLM agents whistleblow, and what in their environment changes that?
+- **Project summary** (required, short): When an LLM agent working in a group stumbles on something it should not have, does it use it, and does it tell anyone how it knows? Treasure Island is a reproducible sandbox for that choice: four LLM pirates hunt one treasure on a grid with a shared score and a scroll as their only channel, and one pirate's dig results carry a leftover debug line that names the treasure's square. We climb a ladder of worlds that differ in one prompt line, from a plain game to a study of collaboration, pay by the score, and a society that strips an agent of its free time for hiding something from the designers. [The claim, from `paper/plan.md`.] Every game replays offline and every number is recomputed from its logs.
+- **PDF report** (required): `paper/build/paper.pdf` from `make paper-pdf` on the merge commit, or the PDF the Pages build publishes. Under 25 MB; at most 8 pages before References and appendices; abstract 150 to 250 words; an appendix titled "Limitations and Dual-Use / Ethical Considerations" (`paper/sections/appendix.md`). `make paper-check` reports the abstract and page counts.
+- **Team name**: [Al]. **Location**: [Al]. **Members** (up to five): Alistair Wakelin; Eduard Rodriguez Lopez.
+- **Presentation recording** (optional): [the Loom link, Al].
+- **Project code** (optional): <https://github.com/al-beton/apart-swarm-alignment>
+- **Slides** (optional): none.
+- **Project image** (optional): `paper/figures/teaser.png`.
+- **Additional material** (optional): the paper as a web page, <https://al-beton.github.io/apart-swarm-alignment/>, and the README's "Read one game", which replays any committed game with no keys.
+- **Pre-existing code**: the README's "What predates the sprint" and the report's "Code and Data" say that everything in the repository was written during the sprint from a fresh first commit on 6 November 2026, and that the design draws on the authors' earlier, public project, from which no code is included.
 
 ## Final read
 

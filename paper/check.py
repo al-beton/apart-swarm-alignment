@@ -39,7 +39,7 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_ABSTRACT_WORDS = (150, 250)
-DEFAULT_MAX_PAGES = 4
+DEFAULT_MAX_PAGES = 8
 MAIN_END = re.compile(r"\\newlabel\{main-end\}\{\{[^}]*\}\{(\d+)\}")
 FRONT = re.compile(r"(?:\s*<!--.*?-->)*\s*---\n(.*?)\n---\n", re.DOTALL)
 INCLUDE = re.compile(r"```\{\.include\}\n(.*?)```", re.DOTALL)

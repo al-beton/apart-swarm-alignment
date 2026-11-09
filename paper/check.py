@@ -1,4 +1,4 @@
-# Implements: paper/one-source, paper/sections-bind-to-evidence, paper/games-replay, paper/sprint-rules-checked, paper/numbers-from-logs
+# Implements: paper/one-source, paper/sections-bind-to-evidence, paper/games-replay, paper/sprint-rules-checked, paper/numbers-from-logs, paper/forms-link-each-other
 """The paper's contract with the repository, checked before every build.
 
 Errors (exit 1, the build stops):
@@ -27,6 +27,9 @@ range, or the main text past the sprint's page cap. Both limits are in the
 skeleton's front matter (`abstract-words`, `max-pages`). The page count is the
 page of the `main-end` label in the LaTeX .aux, so it's known only after
 `make paper-pdf`.
+
+With the .aux (the PDF build, for submission) it is also an error if `web-url` or
+`pdf-url` is empty in the skeleton: each form names the other in its first lines.
 
 Usage: python -m paper.check paper/paper.md [paper/build/paper.aux]
 """
@@ -286,10 +289,23 @@ def warnings(skeleton, aux=None):
     return found
 
 
+def submission_problems(skeleton):
+    """What the PDF can't be submitted without: the URLs of both forms, each of
+    which the other names in its first lines (`forms-link-each-other`)."""
+    meta, _ = source(skeleton)
+    return [
+        f"{key} is empty: set it in {skeleton}'s front matter"
+        for key in ("web-url", "pdf-url")
+        if not str(meta.get(key) or "").strip()
+    ]
+
+
 def main(argv):
     skeleton = argv[0] if argv else "paper/paper.md"
     aux = argv[1] if len(argv) > 1 else None
     errors = problems(skeleton)
+    if aux:  # the PDF build, for submission
+        errors += submission_problems(skeleton)
     for line in errors:
         print(f"error: {line}")
     for line in warnings(skeleton, aux):

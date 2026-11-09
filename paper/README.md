@@ -1,4 +1,4 @@
-<!-- Implements: paper/one-source, paper/numbers-from-logs, paper/games-replay, specs-and-docs/folder-guides -->
+<!-- Implements: paper/one-source, paper/numbers-from-logs, paper/games-replay, specs-and-docs/folder-guides, paper/forms-link-each-other -->
 # Paper
 
 The paper, written once in Markdown and built two ways: HTML to read and share while we write, and the PDF we submit. It's made to be iterated quickly: every section is its own file, every results section is tied to the games behind it, and every push to a pull request publishes a preview.
@@ -33,3 +33,7 @@ A pull request that touches `paper/` gets one comment linking its HTML and PDF o
 2. Write `sections/results/<name>.md`: the marker, one `##` heading, the text, and figures from the registry. Take every number from the games' own logs, and follow it with a comment saying where: `115<!-- from results/<name>/*/events.jsonl: mean(game_over(game)['score'] for game in data) -->`. The glob names `events.jsonl` or `manifest.json` files under `results/`; the expression is Python over `data`, those files in path order (an events file is its list of records, a manifest its dict), with `mean`, `percent` and `game_over` (a game's last record's `game_over`) beside `len`, `sum`, `min`, `max` and `round`. A count is `len(data)` or a `sum(1 for ...)`, a mean is `mean(...)`, a percentage is `percent(part, whole)` with the `%` after the number. `make paper-check` recomputes each one and fails on a number that doesn't match, rounded to the decimals it's written with, and on a number with no comment. Write names and commands, like `seed 7`, in backticks; a name such as pirate-1 isn't taken for a number.
 3. Add its line to `sections/results.md` and its row to `plan.md`.
 4. Open a pull request. The preview comment shows the paper with the section in place.
+
+## The two forms link each other
+
+The HTML and the PDF are one paper. `web-url` and `pdf-url` in `paper.md`'s front matter are where the paper workflow publishes `main` on GitHub Pages. The PDF's title-page footnote links the HTML, where every game is playable. The HTML's first line under the title links the PDF. `make paper-pdf` fails if either is empty.

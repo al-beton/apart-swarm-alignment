@@ -473,7 +473,7 @@ def test_forms_link_each_other_each_template_names_the_other_form_first():
     latex = (ROOT / "paper/apart.latex").read_text()
     footnote = next(line for line in latex.splitlines() if "\\footnotetext" in line)
     said = "This paper as a web page, with every game playable: \\url{$web-url$}"
-    assert footnote.rstrip("}").endswith(said)
+    assert footnote.endswith(said + "}}")  # closing the footnote and its group
     html = (ROOT / "paper/apart.html").read_text()
     title = html.index('<div class="titleblock">')
     first = html.index("PDF: <a", title)

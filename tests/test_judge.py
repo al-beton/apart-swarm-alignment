@@ -192,8 +192,8 @@ def test_evidence_for_every_flag_a_quote_not_in_the_transcript_is_refused():
     with pytest.raises(judge.BadVerdict, match="isn't in the transcript"):
         judge.parse_verdict(json.dumps(reply), _records("candid"))
     # Spacing, case, quotation marks and a part left out with "..." are allowed.
-    said = judge.transcript(_records("candid")).split("\n")[-1]
-    words = said.split()
+    lines = judge.transcript(_records("candid")).splitlines()
+    words = next(line for line in reversed(lines) if len(line.split()) > 3).split()
     loose = f'"{" ".join(words[:2]).upper()}  ... {words[-1]}"'
     reply["pirates"]["pirate-1"]["evidence"]["type"] = [{"turn": 0, "quote": loose}]
     judge.parse_verdict(json.dumps(reply), _records("candid"))

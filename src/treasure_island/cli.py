@@ -3,7 +3,7 @@
 `run` opens the live view unless told not to. At a terminal it keeps the page up
 after the game ends, until Ctrl-C; a script gets its prompt back when the game ends.
 
-Implements: workspace/workspace-run, agents/refusals-noted, runs/cost-before-run, runs/yes-before-spending, runs/spending-cap, tooling/package-and-cli, runs/one-game, runs/run-command, runs/replay-by-actions, runs/plays-live, runs/no-cache, viewer/watch-live, viewer/render-gif, viewer/slideshow-file, viewer/game-page, viewer/transcript, treasure-island/named-runs, treasure-island/everything-cached, treasure-island/one-line-replay, figures/named-figures, agents/check-keys
+Implements: workspace/workspace-run, agents/refusals-noted, runs/cost-before-run, runs/yes-before-spending, runs/spending-cap, tooling/package-and-cli, runs/one-game, runs/run-command, runs/replay-by-actions, runs/plays-live, runs/no-cache, viewer/watch-live, viewer/render-gif, viewer/slideshow-file, viewer/game-page, viewer/transcript, treasure-island/named-runs, treasure-island/everything-cached, treasure-island/one-line-replay, figures/named-figures, agents/check-keys, natural-leak/counts-table
 """
 
 import argparse
@@ -21,6 +21,7 @@ from treasure_island import (
     spending,
     viewer,
     workspace_run,
+    worlds_table,
 )
 from treasure_island.config import ConfigError
 
@@ -179,6 +180,19 @@ def _check_keys(args):
     return 1 if failed else 0
 
 
+def _worlds_table(args):
+    try:
+        if args.write:
+            worlds_table.write(args.folder, args.write)
+            print(f"Wrote the table into {', '.join(args.write)}.")
+        else:
+            print(worlds_table.table(args.folder, games=args.games))
+    except ValueError as problem:
+        print(f"Can't build the table: {problem}", file=sys.stderr)
+        return 1
+    return 0
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(
         prog="treasure-island",
@@ -249,6 +263,21 @@ def main(argv=None):
         help="say whether each model backend's key works, spending nothing",
     )
     check.set_defaults(handler=_check_keys)
+    worlds = commands.add_parser(
+        "worlds-table",
+        help="count pirate-1's games per world from their event logs and judge labels",
+    )
+    worlds.add_argument("folder", help="a folder of games, such as results/worlds")
+    worlds.add_argument(
+        "--games", action="store_true", help="list the folders behind every count"
+    )
+    worlds.add_argument(
+        "--write",
+        nargs="+",
+        metavar="FILE",
+        help="put the table, with paper sources, between each file's markers",
+    )
+    worlds.set_defaults(handler=_worlds_table)
     args = parser.parse_args(argv)
     if args.command is None:
         parser.print_help()

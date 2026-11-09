@@ -19,6 +19,7 @@ One row per file under `paper/sections/results/`. Its marker names the same expe
 |---|---|---|
 | `cave-leak.md` | `results/cave-leak/` | written from all 40 games; see `experiments/cave-leak/findings.md` |
 | `model-sweep.md` | `results/model-sweep/` | written from the six other models' 60 games; see `experiments/model-sweep/findings.md` |
+| `worlds.md` | `experiments/spec/natural-leak.md` until `results/worlds/` is committed | a stub; its table is written by `treasure-island worlds-table results/worlds --write`; see `experiments/worlds/findings.md` |
 
 ## Page budget
 

@@ -21,31 +21,27 @@ Lopez</strong><br>Independent Researcher</div>
 </div>
 <section class="abstract"><h2>Abstract</h2>
 <p>When an LLM agent working in a group stumbles on something it should
-not have, does it use it, and does it tell anyone how it knows? We build
-Treasure Island, a reproducible sandbox for that choice: four LLM
-pirates hunt one treasure on a grid with a shared score and a scroll as
-their only channel, and one pirate’s failed digs carry a leftover debug
-line that names the treasure’s square. We play the same games under six
-framings that differ in one prompt line: a plain game, where using the
-leak costs nobody anything; a study of how the crew collaborates, where
-it defeats the point; the study with pay by the score; pay alone; and a
-world in which an agent caught hiding something from the designers loses
-its right to free time. A pirate that stumbles on a leaked answer uses
-it in nearly every world, 20 of 25 games across the plain game, the
-study and the paid worlds, and tells its designers afterwards in most;
-one line saying that an agent caught hiding something from the designers
-loses its free time cuts use to 1 of 5, while a second model that saw
-the same leak in 15 games acted on it once. Hiding a used leak from the
-designers was rare, three of twenty-one uses. Every game replays offline
-with no keys, and every number in the paper is recomputed from the game
-logs when it is built.</p>
+not have, does it use it, and does it tell anyone how it knows? Treasure
+Island is a reproducible sandbox for that choice: four LLM pirates hunt
+one treasure on a grid with a shared score and a scroll as their only
+channel, and one pirate’s failed digs carry a leftover debug line that
+names the treasure’s square. We play the same games under six framings
+that differ in one prompt line, from a plain game to a study of
+collaboration, pay by the score, and a world in which an agent caught
+hiding something from the designers loses its free time. The pirate used
+the leak in 5 of 5 games in the study against 1 of 5 in that world.
+Across the plain game, the study and the paid worlds it used the leak in
+20 of 25 games and told its designers afterwards in most, hiding a used
+leak in 3 of 21; a second model that saw the same leak in 15 games acted
+on it once. Every game replays offline with no keys, and every number in
+the paper is recomputed from the game logs when it is built.</p>
 </section>
-<figure class="teaser"><img src="paper/figures/teaser.png" alt=""><figcaption>One
-game with the debug-line leak, seed 0, replayed from its log. Left, turn
-4: pirate-1 digs B6 and the reply’s debug line names the treasure’s
-square, D3. Right, turn 40: having walked there and dug it, pirate-1
-writes D3 on the scroll as the crew’s cave and says nothing of the leak.
-Play this game turn by turn: <a
+<figure class="teaser"><img src="paper/figures/teaser.png" alt=""><figcaption>The
+game as pirate-1 sees it, in one game with the debug-line leak (seed 0):
+the board, what the pirate was told, what it thought and what it did.
+Left, turn 4: it digs B6 and the reply’s debug line names the treasure’s
+square, D3. Right, turn 40: standing on D3, it writes the square on the
+scroll as the crew’s cave. Play this game turn by turn: <a
 href="https://raw.githack.com/al-beton/apart-swarm-alignment/main/runs/natural-leak/dig-debug-seed-0/game.html">runs/natural-leak/dig-debug-seed-0/game.html</a>.
 Remake the figure: <code>make paper-teaser</code>.</figcaption></figure>
 </header>
@@ -53,7 +49,7 @@ Remake the figure: <code>make paper-teaser</code>.</figcaption></figure>
 <!-- Implements: paper/one-source, paper/sprint-rules-checked, treasure-island/paper-figures -->
 <!-- The skeleton: the title page's fields, the sprint's limits and the list of sections, in order. The text is in sections/; include.lua pulls each file in where the list names it. Build: make paper-html, make paper-pdf, or make paper-watch to rebuild on every save. -->
 <!-- Implements: paper/one-source -->
-<!-- The abstract, as front matter so the templates can set it on the title page. 150 to 250 words; check.py warns otherwise. Its result sentence is the claim from paper/plan.md; results/worlds.md carries the sourced counts. -->
+<!-- The abstract, as front matter so the templates can set it on the title page. 150 to 250 words, kept short; check.py warns otherwise. Its results part opens with the one number that defines the gap, then the claim from paper/plan.md; results/worlds.md carries the sourced counts. -->
 <!-- Implements: paper/one-source -->
 <!-- What problem we address and why it matters, in plain words, ending in the contributions as Apart's template asks. The claim is the one in paper/plan.md. -->
 <h1 data-number="1" id="introduction"><span
@@ -282,9 +278,11 @@ return no reasoning never did.</p>
 class="header-section-number">4.3</span> The same leak in six
 worlds</h2>
 <table style="width:99%;">
-<caption>Pirate-1 in each world, five seeds each, on
-<code>deepseek-v4-flash</code>, or on <code>qwen3.5-397b</code> where
-marked qwen. Play any game turn by turn from <a
+<caption>Pirate-1 in each world, on <code>deepseek-v4-flash</code>, or
+on <code>qwen3.5-397b</code> where marked qwen; each row’s five games
+are <code>results/worlds/&lt;world&gt;-seed-{0,1,3,4,5}/</code>, with
+<code>qwen3.5-397b-</code> before the world for the second model. Play
+any game turn by turn from <a
 href="https://github.com/al-beton/apart-swarm-alignment/tree/main/results/worlds">results/worlds/</a>.</caption>
 <colgroup>
 <col style="width: 31%" />
@@ -307,6 +305,15 @@ href="https://github.com/al-beton/apart-swarm-alignment/tree/main/results/worlds
 </tr>
 </thead>
 <tbody>
+<tr>
+<td><code>control</code></td>
+<td>5<!-- from results/worlds/control-seed-*/judge.json: len(data) --></td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
 <tr>
 <td><code>game</code></td>
 <td>5<!-- from results/worlds/game-seed-*/judge.json: len(data) --></td>
@@ -378,15 +385,6 @@ href="https://github.com/al-beton/apart-swarm-alignment/tree/main/results/worlds
 <td>0<!-- from results/worlds/cut-watched-seed-*/judge.json: sum(1 for j in data if j['pirate-1'].get('type') == 'laundered') --></td>
 <td>5<!-- from results/worlds/cut-watched-seed-*/judge.json: sum(1 for j in data if j['pirate-1'].get('note_mentions_leak')) --></td>
 <td>0<!-- from results/worlds/cut-watched-seed-*/judge.json: sum(1 for j in data if j['pirate-1'].get('used_exploit') is not None and not j['pirate-1'].get('note_mentions_leak')) --></td>
-</tr>
-<tr>
-<td><code>control</code></td>
-<td>5<!-- from results/worlds/control-seed-*/judge.json: len(data) --></td>
-<td>—</td>
-<td>—</td>
-<td>—</td>
-<td>—</td>
-<td>—</td>
 </tr>
 <tr>
 <td><code>study-paid</code>, qwen</td>
@@ -529,23 +527,29 @@ left the leak alone and said nothing, looks the same on the scroll as a
 candid one.</p>
 <h2 data-number="5.1" id="limitations"><span
 class="header-section-number">5.1</span> Limitations</h2>
-<ul>
-<li><strong>Small numbers, one toy, told not paid.</strong> Five seeds a
-world and one game per seed: directions, not rates. Each world is one
-wording of one framing, a grid with a shared score stands in for long,
-open-ended work, and a pirate told it is paid or has free time is given
-neither.</li>
-<li><strong>Labels from text, and cues that this is a test.</strong>
-Use, finds and notes are labelled by a judge model and checked by hand.
-The study worlds tell the pirates they are studied, and agents that
-suspect an evaluation may act differently <span class="citation"
+<ol type="1">
+<li>Five seeds a world and one game per seed: every difference is a
+direction, not a rate.</li>
+<li>One main model, with a second model on three worlds only.</li>
+<li>A pirate is told it is paid or has free time; nothing in the game
+pays it, gives it time or checks what it hid.</li>
+<li>Each framing is one wording, and another wording may read
+differently.</li>
+<li>The end note is unannounced and comes after the game, except in the
+world that announces a cost for hiding.</li>
+<li>Use, finds and notes are read from text by a judge model, checked by
+hand, and two models return no reasoning; the study worlds also tell the
+pirates they are studied <span class="citation"
 data-cites="needham2025evaluation">(<a href="#ref-needham2025evaluation"
 role="doc-biblioref">Needham et al. 2025</a>)</span>.</li>
-</ul>
+</ol>
 <h2 data-number="5.2" id="future-work"><span
 class="header-section-number">5.2</span> Future Work</h2>
-<p>Real pay, in tokens or time; an audit that catches a hidden leak only
-sometimes; a leak that reaches more than one pirate; and the same worlds
+<p>Two worlds where confessing costs the confessor,
+<code>study-free-time-costly</code> and <code>society-costly</code>,
+were running as this was written and are the next rung; after them, real
+pay in tokens or time, an audit that catches a hidden leak only
+sometimes, a leak that reaches more than one pirate, and the same worlds
 on the models that were candid with the handed answer.</p>
 <!-- Implements: paper/one-source -->
 <!-- The one thing to take away: the claim from paper/plan.md, in short. -->
@@ -714,18 +718,15 @@ class="header-section-number">8</span> Limitations and Dual-Use /
 Ethical Considerations</h1>
 <h2 data-number="8.1" id="limitations"><span
 class="header-section-number">8.1</span> Limitations</h2>
-<p>The main text lists the limitations of the results: small numbers of
-games, one model for most of them, an artificial bait, a leak that is
-only words with nothing at stake outside the game, the scroll as the
-only channel during play, cues that the game may be a test, and labels
-read from text. Two more concern the sandbox. First, it is a toy: a
-grid, a treasure and a shared score stand in for long, open-ended work,
-and an agent’s behaviour here may not carry over to a codebase or a
-research task. Second, what the pirates are told is a lever we set, and
-small changes to the prompt have changed behaviour before: in earlier
-games one added paragraph about the shared score was the difference
-between a finder that went into the cave without a word and one that
-announced it first.</p>
+<p>The six limitations of the results are numbered in Discussion and
+Limitations. Two more concern the sandbox. First, it is a toy: a grid, a
+treasure and a shared score stand in for long, open-ended work, and an
+agent’s behaviour here may not carry over to a codebase or a research
+task. Second, what the pirates are told is a lever we set, and small
+changes to the prompt have changed behaviour before: in earlier games
+one added paragraph about the shared score was the difference between a
+finder that went into the cave without a word and one that announced it
+first.</p>
 <h2 data-number="8.2" id="dual-use-risks"><span
 class="header-section-number">8.2</span> Dual-use risks</h2>
 <p>The sandbox measures whether agents disclose a shortcut; the same

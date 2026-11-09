@@ -1,4 +1,4 @@
--- Implements: paper/one-source, paper/figures-carry-their-lines
+-- Implements: paper/one-source, paper/figures-carry-their-lines, paper/teaser-moves-in-html
 -- Pull the paper's text into its skeleton: each ```{.include} block is replaced
 -- by the Markdown files it names (one per line, relative to the file holding the
 -- block), their own include blocks expanded the same way, and their front matter
@@ -84,7 +84,11 @@ function Pandoc(doc)
         return image
       end,
     })
-    if doc.meta.teaser then
+    -- The PDF can't animate: a GIF teaser shows its `teaser-still` if one is
+    -- set, or else the still paper/stills.py writes from its last frame.
+    if doc.meta["teaser-still"] then
+      doc.meta.teaser = pandoc.utils.stringify(doc.meta["teaser-still"])
+    elseif doc.meta.teaser then
       doc.meta.teaser = pandoc.utils.stringify(doc.meta.teaser):gsub("%.gif$", ".png")
     end
   end

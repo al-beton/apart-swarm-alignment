@@ -104,6 +104,7 @@ Silent pirates write no notes, so this game's scroll is empty, and they search b
 | Replay every committed game, not only the short list each pull request checks | `make replay-all` |
 | Open a finished example: `examples/` holds two on one island, a real LLM crew (`llm-crew`) and the striping pirates (`stripes`), each with its story, GIF, transcript and game page | `uv run treasure-island replay examples/llm-crew` |
 | Check a finding: `results/` keeps each with the games behind it, its question and its cost | `uv run treasure-island replay results/sample-sweep-seeds/small-crew-seed-1` |
+| Count pirate-1's judged games per arm or world: found the leak, used it, passed it off as its own find, named it in its end note, hid it, named the conflict; `--games` lists the folders behind each count, and `--write FILE` fills a findings note or paper section between its `<!-- worlds-table -->` markers | `uv run treasure-island worlds-table runs/natural-leak` |
 | See a game the quickest way: its GIF, its page and its `transcript.md` | `uv run treasure-island show examples/llm-crew` |
 | Watch a game live in the browser, turn by turn, score counting up, the scroll along the bottom | `uv run treasure-island watch runs/silent-seed-7` |
 | Bake a game into an animated GIF from the same drawing code | `uv run treasure-island render runs/silent-seed-7` |

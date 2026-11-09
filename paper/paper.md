@@ -24,7 +24,7 @@ toc: true
 repo: https://github.com/al-beton/apart-swarm-alignment
 web-url: https://al-beton.github.io/apart-swarm-alignment/main/paper.html  # the HTML, every game playable; the PDF's title page links it
 pdf-url: https://al-beton.github.io/apart-swarm-alignment/main/paper.pdf  # the PDF; the HTML's first line links it
-sprint: "Swarm Alignment Hackathon, Track 4"
+sprint: "Swarm Alignment Hackathon, Tracks 1 and 4: Sandboxes and Testbeds, and Multi-Agent Oversight and Control"
 sprint-url: https://apartresearch.com/sprints/swarm-alignment-2026
 bibliography: references.bib
 link-citations: true

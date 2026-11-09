@@ -46,7 +46,7 @@ Three things only Al can settle, each in one place. Answer them in Voice dump an
 
 1. **The claim.** The sentence under "The claim" above, once its counts are in. It is also the abstract's result sentences and the last sentence of `paper/sections/discussion.md`, where Discussion and Conclusion are one paragraph.
 2. **Affiliations.** `author:` in `paper/paper.md` reads "Independent Researcher" for both authors. Change or confirm.
-3. **The sprint.** Settled: `sprint:` and `sprint-url:` in `paper/paper.md` read "Swarm Alignment Hackathon, Track 4: Multi-Agent Oversight and Control" and the sprint's own page. The deadline there is 23:59 AoE on 8 November 2026.
+3. **The sprint.** Settled: `sprint:` and `sprint-url:` in `paper/paper.md` read "Swarm Alignment Hackathon, Tracks 1 and 4: Sandboxes and Testbeds, and Multi-Agent Oversight and Control" and the sprint's own page. The deadline there is 23:59 AoE on 8 November 2026.
 
 ## Submission form
 
@@ -60,7 +60,7 @@ The sprint's form, field by field, with text to paste. Resubmission is allowed u
 - **Slides** (optional): none.
 - **Project image** (optional): `paper/figures/teaser.png`.
 - **Additional material** (optional): the paper as a web page, <https://al-beton.github.io/apart-swarm-alignment/>, and the README's "Read one game", which replays any committed game with no keys.
-- **Pre-existing code**: Everything in the repository was written during the sprint from a fresh first commit on 6 November 2026. The game's ideas and the design of its engine draw on the first author's earlier sprint entry (the Apart AI Collusion Research Sprint, October 2026); no code from it is included.
+- **Pre-existing code**: Everything in the repository was written during the sprint from a fresh first commit on 6 November 2026. The game's ideas and the design of its engine draw on the first author's earlier sprint entry (the Apart AI Collusion Research Sprint, October 2026).
 
 ## Final read
 

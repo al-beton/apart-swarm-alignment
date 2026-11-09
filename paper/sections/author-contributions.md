@@ -3,4 +3,4 @@
 
 # Author Contributions {.unnumbered}
 
-Both authors designed the study. A.W. built the sandbox, ran the games reported here and wrote the paper. E.R.L. studied which exploit to plant and how to debrief the agents afterwards; that work continues in the repository and is not reported here.
+Both authors discussed and contributed to building the sandbox, to devising the scenarios it tests, and to researching them.

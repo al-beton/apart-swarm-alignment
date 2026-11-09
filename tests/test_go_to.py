@@ -195,6 +195,22 @@ def test_status_sheet_is_left_out_while_off():
     assert brain.views[0].turn_text().startswith("Your earlier turns:\n")
 
 
+def test_go_to_stops_when_another_pirate_raises_the_alert():
+    walker = Script(go_to("E1"))
+    alarm = Script({"action": "dig", "alert": True})
+    records = played([walker, alarm], free_talk=True)
+    assert records[0]["go_to"] == "E1"
+    assert "walked" not in records[2]  # the alert stops the walk: it is asked
+    assert records[2]["alerts"] == ["pirate-2"]
+    told = walker.views[1].turn_text()
+    assert told.startswith("ALERT from pirate-2\n")
+    assert "Your walk to E1 stopped: pirate-2 raised the alert." in told
+    # The rules say so, only while an alert can be raised.
+    said = "when another pirate raises the alert"
+    assert said in system_prompt(parse_config({"go_to": True, "free_talk": True}))
+    assert said not in system_prompt(parse_config({"go_to": True}))
+
+
 def test_status_sheet_numbers_sightings_by_turns_not_tries():
     move_west = {"action": "move", "direction": "west"}
     brain = Script(move_west, {"action": "dig"}, {"action": "dig"})

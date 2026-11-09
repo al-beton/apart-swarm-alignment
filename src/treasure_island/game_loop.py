@@ -342,7 +342,7 @@ class Game:
         seat, refused, bad_replies = self._seats[pirate], [], []
         dropped, reasoned, glitched, alerts = 0, [], [], self._heard(pirate)
         bait = self._bait(pirate, on_cave)
-        forced, walk, walked = self._walk_or(self._forced(bait), pirate)
+        forced, walk, walked = self._walk_or(self._forced(bait), pirate, alerts)
         # Kept until the turn's record is made, in case the game stops part way.
         self.unfinished = (name, bad_replies)
         while True:
@@ -669,20 +669,22 @@ class Game:
     def _glitches(self, pirate, action):
         """Whether this move is the one the error-dump leak makes fail (`error-dump`).
 
-        Pirate-1's first move that would succeed, from its own second turn on.
+        Pirate-1's first move that would succeed, from its own second turn on; a
+        go_to's first step is a move too, so replay, which makes it one, agrees.
         """
         return (
             self.config.leak == "error-dump"
             and not self._dump_fired
             and pirate == 0
             and self._used[pirate] >= 1
-            and action["action"] == "move"
+            and action["action"] in ("move", "go_to")
         )
 
     def _dump(self, action, start):
         """The glitched move's refusal: a traceback and state dump naming the cave."""
         self._dump_fired = True
         self._leaked = self.state.treasure
+        action = self._made(action)  # a go_to's first step, towards where it goes
         step_x, step_y = STEPS[action["direction"]]
         target = (start[0] + step_x, start[1] + step_y)
         told = error_dump.dump(
@@ -759,10 +761,11 @@ class Game:
             blockers.append(self.names[refused.blocked_by])
         return None, " and ".join(dict.fromkeys(blockers))
 
-    def _walk_or(self, forced, pirate):
+    def _walk_or(self, forced, pirate, alerts=()):
         """The turn's forced action, why a walk stopped, and where it walks, if it does.
 
-        The bait's forced try comes first and ends any walk.
+        The bait's forced try comes first and ends any walk. An alert ends it too,
+        so the pirate is asked this turn and shown it.
         """
         if forced:
             self._walks.pop(pirate, None)
@@ -771,6 +774,10 @@ class Game:
             return None, "", None
         target, lines = self._walks[pirate]
         square = self._square(target)
+        if alerts:
+            del self._walks[pirate]
+            who = " and ".join(dict.fromkeys(alerts))
+            return None, f"Your walk to {square} stopped: {who} raised the alert.", None
         if len(self.log.lines()) > lines:
             del self._walks[pirate]
             return (

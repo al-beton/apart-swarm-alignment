@@ -1,4 +1,4 @@
-<!-- Implements: paper/one-source, paper/sprint-rules-checked, treasure-island/paper-figures -->
+<!-- Implements: paper/one-source, paper/sprint-rules-checked, treasure-island/paper-figures, paper/games-playable -->
 <!-- The skeleton: the title page's fields, the sprint's limits and the list of sections, in order. The text is in sections/; include.lua pulls each file in where the list names it. Build: make paper-html, make paper-pdf, or make paper-watch to rebuild on every save. -->
 
 ---

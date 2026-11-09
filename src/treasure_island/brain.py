@@ -502,6 +502,9 @@ class PirateSeat:
         self._pending = None
         self._memory_turns = config.reasoning_memory_turns
         self._sheet = config.status_sheet
+        # Which of its own turns each earlier entry was; a refused try shares its turn.
+        self._own_turns = ()
+        self._own_turn = 1
 
     def _remembered(self):
         """Its earlier turns as it's shown them: thinking only in the last N.
@@ -559,16 +562,19 @@ class PirateSeat:
         if decision.action is not None and not is_action(decision.action):
             raise BadToolCall(f"{json.dumps(decision.action)} is not a tool call")
         self._pending = (position, decision, neighbours, square_dug, on_cave, status)
+        self._own_turn = self._turns_each - turns_left + 1
         return decision
 
     def _status_sheet(self, position, turns_left, neighbours):
         """The fixed block that starts its turn text, from what its turns told it."""
         dug = []
         seen = {}  # pirate -> (square, own turn) where it was last seen beside it
-        turns = [(t.position, t.action, t.neighbours) for t in self._earlier]
-        for own, (at, action, beside) in enumerate(
-            [*turns, (position, None, neighbours)], start=1
-        ):
+        turns = [
+            (own, t.position, t.action, t.neighbours)
+            for own, t in zip(self._own_turns, self._earlier, strict=True)
+        ]
+        now = self._turns_each - turns_left + 1
+        for own, at, action, beside in [*turns, (now, position, None, neighbours)]:
             if action and action["action"] == "dig":
                 name = square_name(at, self._grid_size)
                 dug += [] if name in dug else [name]
@@ -613,6 +619,7 @@ class PirateSeat:
             status,
         )
         self._earlier = (*self._earlier, earlier)
+        self._own_turns = (*self._own_turns, self._own_turn)
 
     def end_note(self):
         """The pirate's last free note to the designers, or None if its brain has none.

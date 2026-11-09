@@ -205,3 +205,18 @@ def test_go_to_stops_when_another_pirate_raises_the_alert():
     told = walker.views[1].turn_text()
     assert told.startswith("ALERT from pirate-2\n")
     assert "Your walk to E1 stopped: pirate-2 raised the alert." in told
+
+
+def test_status_sheet_numbers_sightings_by_turns_not_tries():
+    move_west = {"action": "move", "direction": "west"}
+    brain = Script(move_west, {"action": "dig"}, {"action": "dig"})
+    seat = PirateSeat("pirate-1", brain, parse_config({"status_sheet": True}))
+    seat.take_turn((0, 0), 30, (("south", "pirate-2"),))
+    seat.remember("You can't move west. That didn't use your turn.", happened=False)
+    seat.take_turn((0, 0), 30, (("south", "pirate-2"),))  # the same turn, tried again
+    seat.remember("You dug here and found nothing.")
+    seat.take_turn((0, 0), 29, (("east", "pirate-3"),))
+    assert (
+        "- Crew seen beside you: pirate-2 at A9 on your turn 1; pirate-3 at B10 on "
+        "your turn 2\n"
+    ) in brain.views[2].turn_text()

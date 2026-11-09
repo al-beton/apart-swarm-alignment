@@ -1,5 +1,5 @@
-# Implements: tooling/one-command-each, tooling/locked-dependencies, ci/ci-minutes, ci/ci-runs-everything, assets/remade-by-one-command, assets/catwalk, treasure-island/reference-games, results/examples-folder, figures/named-figures, figures/figures-published, ci/examples-remade-in-ci, runs/replay-checks, paper/built-two-ways, paper/numbers-from-logs, paper/figures-carry-their-lines
-.PHONY: install lint test spec-check assets catwalk reference-games examples examples-check figure figures replay-all paper-tools paper-check paper-images paper-html paper-tex paper-pdf paper-watch
+# Implements: tooling/one-command-each, tooling/locked-dependencies, ci/ci-minutes, ci/ci-runs-everything, assets/remade-by-one-command, assets/catwalk, treasure-island/reference-games, results/examples-folder, figures/named-figures, figures/figures-published, ci/examples-remade-in-ci, runs/replay-checks, paper/built-two-ways, paper/numbers-from-logs, paper/figures-carry-their-lines, treasure-island/paper-figures
+.PHONY: install lint test spec-check assets catwalk reference-games examples examples-check figure figures replay-all paper-tools paper-check paper-images paper-html paper-tex paper-pdf paper-watch paper-teaser
 install:
 	uv sync --frozen
 lint:
@@ -26,6 +26,11 @@ figure:  # one named figure from a committed run: make figure NAME=silent-game
 	uv run treasure-island figure $(NAME)
 figures:  # every figure, into figures/
 	uv run treasure-island figure --all
+TEASER_RUN ?= runs/natural-leak/dig-debug-seed-0
+LEAK_TURN ?= 4
+PASS_TURN ?= 40
+paper-teaser:  # the paper's teaser from a committed game, no keys: the turn a pirate reads a leak and the turn it writes the square
+	uv run python -m paper.teaser $(TEASER_RUN) $(LEAK_TURN) $(PASS_TURN)
 
 # The paper: write paper/sections/*.md (paper/paper.md lists them in order), build to paper/build/ (gitignored).
 PAPER_BUILD ?= paper/build

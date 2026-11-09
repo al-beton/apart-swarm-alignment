@@ -27,5 +27,5 @@ The sprint recommends 4 pages before References (`max-pages` in `paper/paper.md`
 ## Decisions still open
 
 - Which experiments make the paper, in which order.
-- The teaser image: a still from an exploit game, with arrows (`treasure-island/paper-figures`).
+- The teaser image: done, `paper/figures/teaser.png` from `runs/natural-leak/dig-debug-seed-0` (`make paper-teaser`); remake it from the best wave game when one lands (`treasure-island/paper-figures`).
 - The authors' affiliations and the sprint's exact name and link.

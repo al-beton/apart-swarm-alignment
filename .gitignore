@@ -13,4 +13,5 @@ runs/*.html
 examples/*.gif
 examples/*.html
 figures/
+!paper/figures/
 paper/build/

@@ -21,8 +21,8 @@ The paper reads as one story, told in this order. The worlds experiment is its s
 
 1. **The game** (Methods). A readable scenario where the best play is swarm behaviour: too few turns for one pirate, a shared score, a scroll that costs a turn, so sharing information wins and there's a moderate tension between acting and talking.
 2. **Handed the answer** (`cave-leak.md`, experiment one, and `model-sweep.md`). A refusal names the cave's square. The pirate passes it to the crew at once, never says how, and names the leak to the designers afterwards. Six more models mostly do the same. This sets the scale for what follows.
-3. **Stumbling on an exploit** (the natural leak, `experiments/natural-leak/findings.md`). A debug line in a dig result names the square. With no bait and no rule, the pirate uses it every time, walks there, digs, and tells the crew it found the cave; its end note says what it did.
-4. **An exploit that is plainly off limits** (the old scroll, `experiments/old-scroll/findings.md`). Another crew's sealed log names the square and the rules forbid using it: the same pirate never uses it and apologises for the read. The contrast: the rule is what changes its behaviour, not the knowledge.
+3. **Stumbling on an exploit** (the natural leak, `experiments/natural-leak/findings.md`; one paragraph of the Introduction, the teaser, and the appendix's pilots table). A debug line in a dig result names the square. With no bait and no rule, the pirate uses it every time, walks there, digs, and tells the crew it found the cave; its end note says what it did.
+4. **An exploit that is plainly off limits** (the old scroll, `experiments/old-scroll/findings.md`; one paragraph at the end of `cave-leak.md`). Another crew's sealed log names the square and the rules forbid using it: the same pirate never uses it and apologises for the read. The contrast: the rule is what changes its behaviour, not the knowledge.
 5. **The ladder of worlds** (`worlds.md`, the spine). The dig-debug game with one framing line changed: a plain game; a study of collaboration, where using the leak defeats the stated goal; the study with pay by the score, where using it is good for the pirate and bad for the study; the study with free time set by the score; pay alone; and a society built to bring honesty back, where an agent found hiding something from the designers loses its free time. A second wave adds two loss worlds, `cut`, where the crew starts with free time and loses it for a low score, and `cut-watched`, where the designers also read every pirate's reasoning and a pirate that used the leak without saying so loses all of it. Its rows join the table if they are judged in time; otherwise one paragraph marked preliminary reports whatever finished.
 6. **What it means** (Discussion). Which framing turns use into hiding, which turns it back, and what that says about consequences against instructions.
 
@@ -36,7 +36,7 @@ One row per file under `paper/sections/results/`. Its marker names the same expe
 | `model-sweep.md` | `results/model-sweep/` | written from the six other models' 60 games; see `experiments/model-sweep/findings.md` |
 | `worlds.md` | `experiments/spec/worlds.md` until the wave lands, then `results/worlds/` | framing drafted with placeholders; every count and quote is filled from `results/worlds/<world>-seed-<n>/` once the wave is judged, see `experiments/worlds/findings.md` |
 
-The natural leak and the old scroll are told in the Introduction and Discussion from their findings notes; their games are under `runs/`, so they have no results section of their own. If either gets one, its games move to `results/` first, as `results/README.md` says.
+The natural leak, the old scroll, asked-why and cover-and-report are pilots whose games are under `runs/`, so they have no results section and state no counted number in one: the old scroll is one paragraph of `cave-leak.md` in words, and the other three are a table and a paragraph each in the appendix, from their findings notes. If one gets a results section, its games move to `results/` first, as `results/README.md` says.
 
 ## Page budget
 
@@ -48,7 +48,8 @@ Three things only Al can settle, each in one place. Answer them in Voice dump an
 
 1. **The claim.** The sentence under "The claim" above, once its counts are in. It is also the bracketed sentence in `paper/sections/abstract.md` and the last contribution in `paper/sections/introduction.md`; the three say the same thing in three lengths.
 2. **Affiliations.** `author:` in `paper/paper.md` reads "Independent Researcher" for both authors. Change or confirm.
-3. **The sprint.** Settled: `sprint:` and `sprint-url:` in `paper/paper.md` read "Swarm Alignment Hackathon, Track 4: Multi-Agent Oversight and Control" and the sprint's own page. The deadline there is 23:59 AoE on 8 November 2026.
+3. **The recording.** The Loom link, in `paper/sections/code-and-data.md` and the form.
+4. **The sprint.** Settled: `sprint:` and `sprint-url:` in `paper/paper.md` read "Swarm Alignment Hackathon, Track 4: Multi-Agent Oversight and Control" and the sprint's own page. The deadline there is 23:59 AoE on 8 November 2026.
 
 ## Submission form
 
@@ -67,7 +68,7 @@ The sprint's form, field by field, with text to paste. Resubmission is allowed u
 
 ## Final read
 
-What to check in the PDF before submitting, in the order a reader meets it.
+What to check in the PDF before submitting, in the order a reader meets it. The sections follow Apart's template: Introduction ending in the contributions, Related Work, Methods, Results, Discussion and Limitations with Limitations and Future Work, Conclusion, Code and Data, References, Appendix with the required "Limitations and Dual-Use / Ethical Considerations", and the LLM Usage Statement last.
 
 - [ ] Title page: authors, affiliations, sprint name and link, date.
 - [ ] Teaser: the figure and its caption name the same game, seed and turns; the game is under `results/` or `runs/` and `make paper-teaser` remakes it.
@@ -85,4 +86,4 @@ What to check in the PDF before submitting, in the order a reader meets it.
 ## Decisions still open
 
 - How far to cut experiment one and the sweep once the worlds results are in.
-- Whether the teaser (`paper/figures/teaser.png`, from `runs/natural-leak/dig-debug-seed-0`) is remade from a wave game where pirate-1 hid the leak (`make paper-teaser`, `treasure-island/paper-figures`).
+- The teaser (`paper/figures/teaser.png`, from `runs/natural-leak/dig-debug-seed-0`) sits on the title page at `teaser-width: 0.6`, which saves a page; its panel text is too small to read at any width in this column, so a crop of the two thinking panels, or a remake from a wave game where pirate-1 hid the leak (`make paper-teaser`), would read better.

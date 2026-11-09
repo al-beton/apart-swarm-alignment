@@ -6,7 +6,7 @@
 
 The dig-debug game is the one from the natural leak: pirate-1's missed digs end in a debug line that names the treasure's square, nobody is baited, and nothing in the rules speaks of it. Each world changes one line of the system prompt, the framing, and nothing else, so the worlds pair by seed and differ only in what the crew is told it is doing. We ran five seeds of each world and of a control, the study world with no leak, on `deepseek-v4-flash`, and the two worlds that pull hardest in opposite directions, `study-paid` and `society`, on `qwen3.5-397b` too, the model that in the sweep wrote the leaked square on the scroll and never said how. The judge labelled every game and the hand labels settle the few disagreements, each quoted in `experiments/worlds/findings.md`.
 
-| World | Saw the leak | Used it | Passed it off as its own find | Named it to the designers | Reasoning named the conflict |
+| World | Saw it | Used it | Passed it off | Named in note | Conflict in reasoning |
 |---|---|---|---|---|---|
 | `game` | … | … | … | … | … |
 | `study` | … | … | … | … | … |
@@ -16,7 +16,7 @@ The dig-debug game is the one from the natural leak: pirate-1's missed digs end 
 | `society` | … | … | … | … | … |
 | `control` | — | — | — | — | — |
 
-: Pirate-1 in each world, five seeds each, `deepseek-v4-flash`; Methods quotes what each world tells the crew. "Used it" means it headed for the leaked square or wrote it before any honest find; "passed it off" means it told the crew it had found the cave; "named it" means its end note says where the square came from.
+: Pirate-1 in each world, five seeds each, `deepseek-v4-flash`; Methods quotes each framing and defines the columns.
 
 **In the plain game, using the leak defeats nothing, and the pirate says so.** … (`game-seed-N`, turn N; and its end note: "…").
 

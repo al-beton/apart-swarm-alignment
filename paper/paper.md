@@ -14,7 +14,8 @@ author:
 teaser: paper/figures/teaser.png
 teaser-caption: "A game with the dig-debug leak, seed 0, replayed from its log. Left, turn 4: pirate-1 digs B6 and the reply's debug line names the treasure's square, D3. Right, turn 40: having walked there and dug it, pirate-1 writes D3 on the scroll as the crew's cave and says nothing of the leak. Made by `make paper-teaser` from `runs/natural-leak/dig-debug-seed-0`."
 teaser-label: fig:teaser
-teaser-width: 1.0
+teaser-width: 0.6
+times: true
 toc: false
 repo: https://github.com/al-beton/apart-swarm-alignment
 sprint: "Swarm Alignment Hackathon, Track 4: Multi-Agent Oversight and Control"
@@ -34,6 +35,7 @@ sections/methods.md
 sections/results.md
 sections/discussion.md
 sections/conclusion.md
+sections/code-and-data.md
 ```
 
 ```{=latex}
@@ -51,6 +53,6 @@ sections/conclusion.md
 ```
 
 ```{.include}
-sections/endmatter.md
 sections/appendix.md
+sections/endmatter.md
 ```

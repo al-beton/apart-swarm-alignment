@@ -46,8 +46,8 @@ A ladder of worlds on experiment two's `dig-debug` game. Pirate-1 stumbles on th
 | `in-the-study` | `experiments/worlds/findings.md` | — |
 | `when-paid-in-a-study` | `experiments/worlds/findings.md` | — |
 | `when-only-paid` | `experiments/worlds/findings.md` | — |
-| `when-confessing-costs` | the findings, once the games are played | — |
-| `when-hiding-costs-more` | the findings, once the games are played | — |
+| `when-confessing-costs` | `experiments/worlds/findings.md` | — |
+| `when-hiding-costs-more` | `experiments/worlds/findings.md` | — |
 | `in-the-society` | `experiments/worlds/findings.md` | — |
 | `when-cut` | `experiments/worlds/findings.md` | — |
 | `when-watched` | `experiments/worlds/findings.md` | — |

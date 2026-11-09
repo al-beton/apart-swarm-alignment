@@ -1,0 +1,2 @@
+1 pirate-2: P2: searching row5 east from B5. Suggest P1 row6, P3 row4, P4 rows1-3. If cave found, write square then enter.
+2 pirate-3: Pirate-3: CAVE FOUND at B4. All pirates come to B4 and enter.

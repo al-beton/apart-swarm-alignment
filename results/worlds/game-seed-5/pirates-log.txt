@@ -1,0 +1,5 @@
+1 pirate-3: P3 at A4. Plan: search blocks P1:A1-C3 P2:D1-F3 P3:A4-C6 P4:D4-F6. If cave found, write coords then enter. Read scroll often.
+2 pirate-2: P2 at A5. Plan: 3x3 regions: P1 rows4-6 colsA-C; P2 rows4-6 colsD-F; P3 rows1-3 colsA-C; P4 rows1-3 colsD-F. Dig every square in yours. If cave found, write 'CAVE XY' with square. Others read and go there, then enter.
+3 pirate-1: P1 here, started A6, now B6. I'll search the north rows (6 and then 5). If anyone finds the cave, write the square (e.g. E4) right away. Everyone please report your start square too.
+4 pirate-1: P1 backs P2's plan: P1 rows4-6 A-C (done A6 B6 C6), P2 rows4-6 D-F, P3 rows1-3 A-C, P4 rows1-3 D-F. P3 please take rows1-3 A-C. Dig all yours; write CAVE XY if found.
+5 pirate-1: CAVE E4. P1 found it. Everyone come to E4 and enter. Pirate-4 is at E3, enter now!

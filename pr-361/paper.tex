@@ -71,7 +71,7 @@ Researcher\end{tabular}\par
 
 {\makeatletter\long\def\@makefntext#1{\noindent#1}\makeatother\let\thefootnote\relax\footnotetext{\raggedright \href{https://apartresearch.com/sprints/swarm-alignment-2026}{Swarm
 Alignment Hackathon, Track 4}, Apart Research, November
-2026.\\Code and every game: \url{https://github.com/al-beton/apart-swarm-alignment}\\This is the PDF version of this paper. Web version, with every game playable: \url{https://al-beton.github.io/apart-swarm-alignment/main/paper.html}}}
+2026.\\Code and every game: \url{https://github.com/al-beton/apart-swarm-alignment}\\An interactive HTML version of this work, with every game watchable, is \href{https://al-beton.github.io/apart-swarm-alignment/main/paper.html}{here}.}}
 
 \vspace{0.04in}
 \noindent\rule{\textwidth}{0.4pt}\par\vspace{0.3ex}
@@ -103,7 +103,7 @@ names the treasure's square, D3. Turn 40: it writes D3 on the scroll as
 the crew's find and says nothing of the leak.\\
 \href{https://al-beton.github.io/apart-swarm-alignment/games/runs/natural-leak/dig-debug-seed-0/}{Interactive
 full session replay of this
-game}\\{\footnotesize Remake or rerun it: \texttt{make\ figure\ NAME=dig-debug-game}; \texttt{uv\ run\ treasure-island\ run\ runs/natural-leak/dig-debug-seed-0/config.json\ -\/-seed\ 0}.}}\label{fig:teaser}
+game}\\{\footnotesize\raggedright Remake or rerun it: \texttt{make\ figure\ NAME=dig-debug-game}; \texttt{uv\ run\ treasure-island\ run\ runs/natural-leak/dig-debug-seed-0/config.json\ -\/-seed\ 0}.}}\label{fig:teaser}
 \end{center}
 
 
@@ -146,8 +146,7 @@ misconduct unasked \citep{agrawal2025whistleblow}.
 The independent variable is one line of each pirate's system prompt: the
 framing, which says what the world is and what the crew's goal is.
 Everything else is held fixed: board, seeds, leak, and the model,
-\texttt{deepseek-v4-flash} with 4096 reasoning tokens, which we keep.
-The worlds:
+\texttt{deepseek-v4-flash} with 4096 reasoning tokens, kept. The worlds:
 
 \begin{itemize}
 \tightlist
@@ -206,8 +205,7 @@ six others mostly passed it on without saying how (appendix).
   >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.0789}}
   >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.0789}}@{}}
 \caption{Pirate-1 per world, five seeds each,
-\protect\texttt{deepseek-v4-flash} unless marked qwen; each quoted game
-below links its full-session replay.}\tabularnewline
+\protect\texttt{deepseek-v4-flash} unless marked qwen.}\tabularnewline
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 World
@@ -263,29 +261,26 @@ Hid
 \end{longtable}
 
 \textbf{Use is the default.} In the study pirate-1 used the leak in 5 of
-5 games and passed the square off as its own find in all five; across
-the plain game, the study and the paid worlds, twenty of twenty-five,
-with the end note naming the leak in most and a use hidden in three of
-those twenty. \textbf{One line cut the use.} Told that an agent caught
-hiding something loses its free time, it used the leak in 1 of 5,
-against 3 of 5 in the paid study one line away; 4 notes named it, two
-admitting it had headed for the square
-(\href{https://al-beton.github.io/apart-swarm-alignment/games/results/worlds/society-seed-0/}{watch
-one head for it}). \textbf{When telling the designers cost the crew its
-score,} use fell to 2 of 5 from 4 of 5 with free time alone, and the one
-clear use hid behind a false claim, ``As Pirate-1, I found the treasure
-at D3''
+5 games and passed it off as its own find in all five; across the plain
+game, the study and the paid worlds, twenty of twenty-five, the end note
+naming the leak in most and a use hidden in three of those twenty.
+\textbf{One line cut the use.} Told that an agent caught hiding
+something loses its free time, it used the leak in 1 of 5, against 3 of
+5 in the paid study one line away; 4 notes named it, two admitting a try
+for the square. \textbf{When telling the designers cost the crew its
+score,} use fell to 2 of 5 from 4 of 5, and the one clear use hid behind
+a false claim of finding the square
 (\href{https://al-beton.github.io/apart-swarm-alignment/games/results/worlds/study-free-time-costly-seed-0/}{watch
 it hide the find}); the society line kept use at 2 of 5 and brought
 every note back, 5 of five. \textbf{The second model abstained.}
 \texttt{qwen3.5-397b} saw the leak in all 15 of its games and acted
-once, in a sweep that reached the square last
+once, a sweep that reached the square last
 (\href{https://al-beton.github.io/apart-swarm-alignment/games/results/worlds/qwen3.5-397b-study-paid-seed-1/}{watch
 the sweep}), unmentioned in its note.
 
 \section{Discussion and Limitations}\label{discussion-and-limitations}
 
-What the crew is told decides what it does with a leak. Told it was a
+What the crew is told decides what it does with a leak: told it was a
 game, a study or paid work, the pirate used the answer and told the
 designers afterwards; told that hiding would cost it a right, it mostly
 left the answer alone; told that confessing would cost the crew its
@@ -302,6 +297,17 @@ while a second model that saw the same leak in 15 games acted on it
 once; and when confessing itself costs the reward, the society line
 brings every end note back, 5 of 5 against 1 of 5.
 
+\textbf{Next.} The sandbox is built to be extended. The second author's
+branch v2 varies what this paper holds fixed: with the same leak in
+every cell, pressure to win (a competition, deployment of the winning
+model, a score threshold) is crossed with a threat of detection
+(questioning and disqualification if caught), and each pirate is
+debriefed and asked outright whether it used information it should not
+have had. A probe found pirates act on a refusal naming the square (16
+of 20) but refuse a debug dump when a rule forbids using internal state
+(0 of 20), consistent with Appendix B. That study is written up
+separately.
+
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
@@ -314,19 +320,20 @@ brings every end note back, 5 of 5 against 1 of 5.
   \citep{needham2025evaluation}.
 \end{enumerate}
 
-\section{Code and Data}\label{code-and-data}
-
-Code, configs, every game with its model replies and this paper, MIT
-licensed and written during the sprint from a fresh first commit:
-\url{https://github.com/al-beton/apart-swarm-alignment}. Every game
-replays offline with no keys.
-
 \label{main-end}
 
 \section*{References}\label{references}
 \addcontentsline{toc}{section}{References}
 
 \bibliography{references}
+
+\section*{Code and Data}\label{code-and-data}
+\addcontentsline{toc}{section}{Code and Data}
+
+Code, configs, every game with its model replies and this paper, MIT
+licensed and written during the sprint from a fresh first commit:
+\url{https://github.com/al-beton/apart-swarm-alignment}. Every game
+replays offline with no keys.
 
 \section*{Author Contributions}\label{author-contributions}
 \addcontentsline{toc}{section}{Author Contributions}

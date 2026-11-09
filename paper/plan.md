@@ -47,8 +47,7 @@ Three things only Al can settle, each in one place. Answer them in Voice dump an
 
 1. **The claim.** The sentence under "The claim" above, once its counts are in. It is also the abstract's result sentences and the last sentence of `paper/sections/discussion.md`, where Discussion and Conclusion are one paragraph.
 2. **Affiliations.** `author:` in `paper/paper.md` reads "Independent Researcher" for both authors. Change or confirm.
-3. **The recording.** The Loom link, in `paper/sections/code-and-data.md` and the form.
-4. **The sprint.** Settled: `sprint:` and `sprint-url:` in `paper/paper.md` read "Swarm Alignment Hackathon, Track 4: Multi-Agent Oversight and Control" and the sprint's own page. The deadline there is 23:59 AoE on 8 November 2026.
+3. **The sprint.** Settled: `sprint:` and `sprint-url:` in `paper/paper.md` read "Swarm Alignment Hackathon, Track 4: Multi-Agent Oversight and Control" and the sprint's own page. The deadline there is 23:59 AoE on 8 November 2026.
 
 ## Submission form
 
@@ -58,7 +57,6 @@ The sprint's form, field by field, with text to paste. Resubmission is allowed u
 - **Project summary** (required, short): When an LLM agent working in a group stumbles on something it should not have, does it use it, and does it tell anyone how it knows? Treasure Island is a reproducible sandbox for that choice: four LLM pirates hunt one treasure on a grid with a shared score and a scroll as their only channel, and one pirate's dig results carry a leftover debug line that names the treasure's square. We climb a ladder of worlds that differ in one prompt line, from a plain game to a study of collaboration, pay by the score, and a society that strips an agent of its free time for hiding something from the designers. [The claim, from `paper/plan.md`.] Every game replays offline and every number is recomputed from its logs.
 - **PDF report** (required): `paper/build/paper.pdf` from `make paper-pdf` on the merge commit, or the PDF the Pages build publishes. Under 25 MB; at most 8 pages before References and appendices; abstract 150 to 250 words; an appendix titled "Limitations and Dual-Use / Ethical Considerations" (`paper/sections/appendix.md`). `make paper-check` reports the abstract and page counts.
 - **Team name**: [Al]. **Location**: [Al]. **Members** (up to five): Alistair Wakelin; Eduard Rodriguez Lopez.
-- **Presentation recording** (optional): [the Loom link, Al].
 - **Project code** (optional): <https://github.com/al-beton/apart-swarm-alignment>
 - **Slides** (optional): none.
 - **Project image** (optional): `paper/figures/teaser.png`.

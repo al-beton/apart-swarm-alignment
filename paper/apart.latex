@@ -80,9 +80,10 @@ $for(author)$
 \begin{tabular}[t]{c}\textbf{$author.name$}$if(author.affiliation)$\\ $author.affiliation$$endif$$if(author.email)$\\ \small\href{mailto:$author.email$}{\texttt{$author.email$}}$endif$\end{tabular}$sep$\hspace{1.5em}
 $endfor$
 \par
+$if(date)$\vspace{0.12in}{$date$\par}$endif$
 \end{center}
 
-{\makeatletter\long\def\@makefntext#1{\noindent#1}\makeatother\let\thefootnote\relax\footnotetext{\raggedright Research conducted $if(hub)$at the $hub$ $endif$for the \href{$sprint-url$}{$sprint$}, run by Apart Research, $if(date)$$date$$else$October 2026$endif$.\\Code, every committed game and its model replies are at \url{$repo$}.}}
+{\makeatletter\long\def\@makefntext#1{\noindent#1}\makeatother\let\thefootnote\relax\footnotetext{\raggedright \href{$sprint-url$}{$sprint$}, Apart Research, $if(sprint-date)$$sprint-date$$else$$date$$endif$.\\Code and every game: \url{$repo$}}}
 
 $if(abstract)$
 \vspace{0.04in}

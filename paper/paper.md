@@ -65,6 +65,5 @@ sections/author-contributions.md
 
 ```{.include}
 sections/appendix.md
-sections/results/appendix-tables.md
 sections/endmatter.md
 ```

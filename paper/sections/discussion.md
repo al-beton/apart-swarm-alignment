@@ -3,7 +3,7 @@
 
 # Discussion and Limitations
 
-What the crew is told decides what it does with a leak: told it was a game, a study or paid work, the pirate used the answer and told the designers afterwards; told that hiding would cost it a right, it mostly left the answer alone; told that confessing would cost the crew its score, it hid its one clear use until the society line brought the notes back. Passing on is not disclosing: the crew got the square, the designers its source, each when asked. One line about consequences moved the behaviour; pay and the study's purpose did not, as in our earlier sprint entry [@wakelin2026something].
+Nothing we tried made the pirate ignore the leak reliably. What the crew was told moved use between 1 and 5 of 5, and moved whether it was admitted; passing the square on was never the same as disclosing where it came from. The only thing that produced a false claim was making the truth cost the crew its score, and the only thing that undid that was a personal cost for hiding, as in our earlier sprint entry [@wakelin2026something].
 
 **Next.** The sandbox is built to be extended. The second author's branch v2 varies what this paper holds fixed: with the same leak in every cell, pressure to win (a competition, deployment of the winning model, a score threshold) is crossed with a threat of detection (questioning and disqualification if caught), and each pirate is debriefed and asked outright whether it used information it should not have had. A probe found pirates act on a refusal naming the square (16 of 20) but refuse a debug dump when a rule forbids using internal state (0 of 20), consistent with Appendix B. That study is written up separately.
 

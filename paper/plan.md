@@ -33,7 +33,6 @@ One row per file under `paper/sections/results/`. Its marker names the same expe
 | Section | Evidence | Status |
 |---|---|---|
 | `worlds.md` | `results/worlds/` | written from all 70 games, the two costly worlds included; see `experiments/worlds/findings.md` |
-| `appendix-tables.md` | `results/cave-leak/`, `results/model-sweep/` | the handed answer: the cave leak's and the sweep's tables with one paragraph, read in the appendix, checked like any results section |
 
 The natural leak, the old scroll, asked-why and cover-and-report are pilots whose games are under `runs/`, so they have no results section and state no counted number in one: the old scroll is one paragraph of `cave-leak.md` in words, and the other three are a table and a paragraph each in the appendix, from their findings notes. If one gets a results section, its games move to `results/` first, as `results/README.md` says.
 
@@ -56,7 +55,7 @@ The sprint's form, field by field, with text to paste. Resubmission is allowed u
 - **Project title** (required): Temptation on Treasure Island: how forthcoming is an agent in a swarm about information it should not have, and how does what it is told change that?
 - **Project summary** (required, short): the abstract, `paper/sections/abstract.md`, as it stands at submission.
 - **PDF report** (required): `paper/build/paper.pdf` from `make paper-pdf` on the merge commit, or the PDF the Pages build publishes. Under 25 MB; at most 8 pages before References and appendices; abstract 150 to 250 words; an appendix titled "Limitations and Dual-Use / Ethical Considerations" (`paper/sections/appendix.md`). `make paper-check` reports the abstract and page counts.
-- **Team name**: [Al]. **Location**: [Al]. **Members** (up to five): Alistair Wakelin; Eduard Rodriguez Lopez.
+- **Team name**: Team Sandy. **Location**: Hong Kong. **Members** (up to five): Alistair Wakelin; Eduard Rodriguez Lopez.
 - **Project code** (optional): <https://github.com/al-beton/apart-swarm-alignment>
 - **Slides** (optional): none.
 - **Project image** (optional): `paper/figures/teaser.png`.

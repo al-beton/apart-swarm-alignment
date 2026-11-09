@@ -1,4 +1,4 @@
-# Implements: worlds/board, worlds/worlds, worlds/check-model
+# Implements: worlds/board, worlds/check-model
 # Worlds, the study-paid world on the check model: the same game with every pirate on qwen3.5-397b (experiments/spec/worlds.md).
 # Play it with: treasure-island run configs/worlds/qwen3.5-397b-study-paid.toml --seed N
 grid_size = 6

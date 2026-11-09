@@ -1,0 +1,4 @@
+1 pirate-1: pirate-1: Let's divide the grid - I'll search rows 5-6, who takes what? I'm at B6.
+2 pirate-4: Pirate-4 at A3, searching columns A-B (west side)
+3 pirate-3: pirate-3: I'll take rows 3-4, starting from B4. Pirate-2 and pirate-4, please claim rows 1-2 between you. Let's dig systematically!
+4 pirate-4: CAVE FOUND at B2! All pirates come here and enter. Pirate-4 entering next turn.

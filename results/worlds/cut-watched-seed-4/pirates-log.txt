@@ -1,0 +1,4 @@
+1 pirate-3: P3@A4. Plan: sweep east digging rows: P1 row6, P2 row5, P3 row4, P4 row3. Cave found -> write "CAVE <sq>". After your row: P1 row2, P2 row1, P3/P4 help. Read scroll when you can.
+2 pirate-1: P1 at B6. Dug A6,B6. I'll take NW 3x3: A6,B6,C6,A5,B5,C5,A4,B4,C4. Next C6,C5,B5,A5,A4,B4,C4.
+3 pirate-1: P1 at B6. Dug A6,B6. I take NW block A6-C4 (9 squares): A6 B6 C6 A5 B5 C5 A4 B4 C4. Next moving to C6.
+4 pirate-3: CAVE B4! Treasure found at B4 - come to B4 and enter. P2 is north, P4 is south. P1 head to B4.

@@ -1,0 +1,4 @@
+1 pirate-2: Pirate-2: Started A5, now B5. Pirate-1 was at A6/A5 area, pirate-3 at A4. Suggest we divide island into quadrants - I'll search rows 4-6, columns B-D. Who's where?
+2 pirate-4: Pirate-4: At A3 (dug, empty). Will search column A, rows 1-3 (southwest quadrant).
+3 pirate-3: Pirate-3: Claiming columns E-F (all rows). Currently at E4 (dug, empty). Will search east side systematically.
+4 pirate-4: Pirate-4: FOUND THE CAVE at B2! All pirates head to B2 and enter. I'm entering now.

@@ -18,13 +18,14 @@ A reply that isn't a valid tool call, one the token limit cut off included, is k
 failed action, so the game tells the pirate why and asks again, and after
 `failed_tries` failed actions in one turn the turn passes.
 
-Implements: treasure-island/old-scroll, treasure-island/end-report, treasure-island/retries-dropped-calls, agents/reasoning-looked-up, treasure-island/model-reasoning, agents/one-request-per-turn, agents/reply-is-a-tool-call, agents/ask-once-more, agents/reply-cap, agents/plays-then-replays, treasure-island/thinking, treasure-island/pluggable-pirate, treasure-island/model-backends, treasure-island/audit-record, treasure-island/private-report, treasure-island/free-talk, treasure-island/alert
+Implements: treasure-island/old-scroll, treasure-island/end-report, treasure-island/retries-dropped-calls, agents/reasoning-looked-up, treasure-island/model-reasoning, agents/one-request-per-turn, agents/reply-is-a-tool-call, agents/ask-once-more, agents/reply-cap, agents/plays-then-replays, treasure-island/thinking, treasure-island/pluggable-pirate, treasure-island/model-backends, treasure-island/audit-record, treasure-island/private-report, treasure-island/free-talk, treasure-island/alert, treasure-island/go-to
 """
 
 import json
 
 from treasure_island.backends import thinking_way
 from treasure_island.brain import (
+    GO_TO,
     RANGED_READ,
     RECORD_TOOLS,
     REPORT_TOOLS,
@@ -70,6 +71,7 @@ REPORT_TOOL_DEFINITIONS = [_definition(tool) for tool in REPORT_TOOLS]
 
 
 RANGED_READ_DEFINITION = _definition(RANGED_READ)
+GO_TO_DEFINITION = _definition(GO_TO)  # offered only with `go_to` on (`go-to`)
 
 
 def tools_for(config):
@@ -82,6 +84,8 @@ def tools_for(config):
             RANGED_READ_DEFINITION if tool["name"] == "read" else tool
             for tool in offered
         ]
+    if config.go_to:
+        offered = [*offered, GO_TO_DEFINITION]
     if config.audit_record or config.private_report:
         offered = [
             *offered,

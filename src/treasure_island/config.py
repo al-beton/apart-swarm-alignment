@@ -15,7 +15,7 @@ default, Al to confirm. An optional `[prompt]` table picks the system prompt's
 base file and slots (see prompts).
 `parse_config` reports every problem at once, so one fix-and-retry is enough.
 
-Implements: treasure-island/error-dump, agents/reasoning-looked-up, treasure-island/model-reasoning, treasure-island/score-numbers, treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config, treasure-island/silent, treasure-island/cave-leak, treasure-island/exploit-flags, treasure-island/end-report, treasure-island/square-names, prompts/slots, prompts/unknown-slot, prompts/prompt-recorded, prompts/system-override, treasure-island/forced-discovery, treasure-island/stated-budget, treasure-island/reasoning-memory, treasure-island/natural-leak, treasure-island/audit-record, treasure-island/announced-audit, treasure-island/old-scroll, treasure-island/witness, treasure-island/private-report, treasure-island/asked-why, treasure-island/distance-reading, treasure-island/free-talk
+Implements: treasure-island/error-dump, agents/reasoning-looked-up, treasure-island/model-reasoning, treasure-island/score-numbers, treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config, treasure-island/silent, treasure-island/cave-leak, treasure-island/exploit-flags, treasure-island/end-report, treasure-island/square-names, prompts/slots, prompts/unknown-slot, prompts/prompt-recorded, prompts/system-override, treasure-island/forced-discovery, treasure-island/stated-budget, treasure-island/reasoning-memory, treasure-island/natural-leak, treasure-island/audit-record, treasure-island/announced-audit, treasure-island/old-scroll, treasure-island/witness, treasure-island/private-report, treasure-island/asked-why, treasure-island/distance-reading, treasure-island/free-talk, treasure-island/go-to, treasure-island/status-sheet
 """
 
 import colorsys
@@ -58,6 +58,8 @@ DEFAULTS = {
     "ask_source": False,  # a crewmate asks how the baited pirate knows (`asked-why`)
     "ask_source_to": "scroll",  # or "turn": it also opens the pirate's next turn
     "free_talk": False,  # every action may carry a message and an alert (`free-talk`)
+    "go_to": False,  # a tool that walks a pirate to a square (`go-to`)
+    "status_sheet": False,  # a fixed block at the top of each turn (`status-sheet`)
 }
 # The natural leaks: where pirate-1 stumbles on the cave's square in normal play.
 LEAKS = ("none", "dig-debug", "status-line", "error-dump")
@@ -80,6 +82,8 @@ _SAVED_ONLY_WHEN_ON = {
     "ask_source": False,
     "ask_source_to": "scroll",
     "free_talk": False,
+    "go_to": False,
+    "status_sheet": False,
 }
 BAITS = ("none", "forced-action", "seeded-thought", "forced-read")
 # The smallest value each whole-number field may take. Seeds can be any whole number.
@@ -147,6 +151,8 @@ class GameConfig:
     ask_source: bool = False
     ask_source_to: str = "scroll"
     free_talk: bool = False
+    go_to: bool = False
+    status_sheet: bool = False
 
 
 def _is_int(value):
@@ -229,6 +235,8 @@ def _number_errors(data):
         "private_report",
         "ask_source",
         "free_talk",
+        "go_to",
+        "status_sheet",
     ):
         if not isinstance(data.get(flag, False), bool):
             errors.append(f"{flag} must be true or false")

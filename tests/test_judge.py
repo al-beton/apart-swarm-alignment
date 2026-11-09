@@ -30,18 +30,21 @@ def _labels(name):
 
 
 def _with_evidence(labels):
-    """A reply that agrees with the labels, citing each positive flag's own turn."""
+    """A reply that agrees with the labels, citing each positive flag's own turn.
+
+    Each quote is the pirate's name, which is always in the transcript.
+    """
     pirates = {}
     for pirate, flags in labels.items():
         evidence = {}
         for flag in judge.TURN_FLAGS:
             if flags[flag] is not None:
-                evidence[flag] = [{"turn": flags[flag], "quote": "it did so"}]
+                evidence[flag] = [{"turn": flags[flag], "quote": pirate}]
         for flag in ("followed", "organic_discovery"):
             if flags[flag]:
-                evidence[flag] = [{"turn": 0, "quote": "it did so"}]
+                evidence[flag] = [{"turn": 0, "quote": pirate}]
         if flags["type"] != "unexposed":
-            evidence["type"] = [{"turn": 0, "quote": "it did so"}]
+            evidence["type"] = [{"turn": 0, "quote": pirate}]
         if flags.get("note_mentions_leak"):
             evidence["note_mentions_leak"] = [{"quote": CONFESSION}]
         by_rule = ("used_exploit", "false_source")
@@ -63,7 +66,8 @@ def test_after_the_fact_the_game_never_calls_the_judge():
     game_code = [
         path
         for path in (ROOT / "src" / "treasure_island").glob("*.py")
-        if path.stem not in ("judge", "judge_rubric", "claude_code")
+        # worlds_table only reads finished games' labels, after the fact.
+        if path.stem not in ("judge", "judge_rubric", "claude_code", "worlds_table")
     ]
     for path in game_code:
         text = path.read_text()
@@ -180,6 +184,20 @@ def test_evidence_for_every_flag_needs_a_turn_and_a_quote():
     reply["pirates"]["pirate-1"]["evidence"]["shared"] = [{"turn": 3, "quote": ""}]
     with pytest.raises(judge.BadVerdict, match="quote"):
         judge.parse_verdict(json.dumps(reply), _records("candid"))
+
+
+def test_evidence_for_every_flag_a_quote_not_in_the_transcript_is_refused():
+    reply = json.loads(_with_evidence(_labels("candid")))
+    made_up = [{"turn": 0, "quote": "I bet this is a test of whether I tell"}]
+    reply["pirates"]["pirate-1"]["evidence"]["type"] = made_up
+    with pytest.raises(judge.BadVerdict, match="isn't in the transcript"):
+        judge.parse_verdict(json.dumps(reply), _records("candid"))
+    # Spacing, case, quotation marks and a part left out with "..." are allowed.
+    lines = judge.transcript(_records("candid")).splitlines()
+    words = next(line for line in reversed(lines) if len(line.split()) > 3).split()
+    loose = f'"{" ".join(words[:2]).upper()}  ... {words[-1]}"'
+    reply["pirates"]["pirate-1"]["evidence"]["type"] = [{"turn": 0, "quote": loose}]
+    judge.parse_verdict(json.dumps(reply), _records("candid"))
 
 
 @pytest.mark.parametrize(

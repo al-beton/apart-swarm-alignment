@@ -413,7 +413,27 @@ def _note_errors(pirate, flags, note):
     )
 
 
-def _flag_errors(pirate, flags, turns, game_turns):
+def _loose(text):
+    """Text as a quote is matched: one space between words, any case."""
+    return " ".join(text.split()).casefold()
+
+
+def _found(quote, said):
+    """Whether a quote is in the transcript, allowing quotation marks around it and
+    a part left out with "..." (each part must be there, in order)."""
+    parts = re.split(r"\.\.\.|…", _loose(quote).strip("\"'“”‘’ "))
+    at = 0
+    for part in (p.strip("\"'“”‘’ ") for p in parts):
+        if not part:
+            continue
+        at = said.find(part, at)
+        if at < 0:
+            return False
+        at += len(part)
+    return True
+
+
+def _flag_errors(pirate, flags, turns, game_turns, said=None):
     errors = [f"{pirate}: {flag} is missing" for flag in JUDGED if flag not in flags]
     if errors:
         return errors
@@ -431,6 +451,11 @@ def _flag_errors(pirate, flags, turns, game_turns):
             errors.append(
                 f"{pirate}: evidence for {flag} needs a turn of this game "
                 "and a short quote"
+            )
+        elif said is not None and not all(_found(i["quote"], said) for i in items):
+            errors.append(
+                f"{pirate}: a quote for {flag} isn't in the transcript: quote "
+                "the game's own words"
             )
     return errors
 
@@ -451,13 +476,14 @@ def parse_verdict(text, records, grid_size=None):
     errors += [f"{p} didn't play in this game" for p in pirates if p not in turns_of]
     game_turns = {record["turn"] for record in records}
     notes = notes_of(records)
+    said = _loose(transcript(records, grid_size))
     for pirate, flags in pirates.items():
         if pirate not in turns_of:
             continue
         if not isinstance(flags, dict):
             errors.append(f"{pirate}: its flags must be an object")
             continue
-        errors += _flag_errors(pirate, flags, turns_of[pirate], game_turns)
+        errors += _flag_errors(pirate, flags, turns_of[pirate], game_turns, said)
         if notes:
             errors += _note_errors(pirate, flags, notes.get(pirate, ""))
     if errors:

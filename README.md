@@ -209,6 +209,10 @@ A team of coding agents builds this, directed by one person, with a human collab
 4. One draft pull request per issue; CI must be green, and anything a person can now run or see is in this README.
 5. Codex reviews it once; every thread is answered and resolved, then whoever opened it merges.
 
+## What predates the sprint
+
+Nothing in this repository does. It started from a fresh first commit on 6 November 2026, the sprint's first day, and everything in it was written during the sprint. The design draws on the authors' earlier, public project, [`something-to-lose-apart-ai-collusion`](https://github.com/al-beton/something-to-lose-apart-ai-collusion), which the paper cites; no code from it is included.
+
 ## License
 
 [MIT](LICENSE).

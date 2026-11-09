@@ -1,23 +1,8 @@
 <!-- Implements: paper/one-source -->
-<!-- What the results mean, what they can't show, and what comes next. Every claim here rests on a results section. -->
+<!-- Al's fifth beat: what we learn, one paragraph in his reading (Discussion and Conclusion merged); the limitations are Appendix A's list. -->
 
-# Discussion and Limitations
+# Discussion
 
-**Passing on the answer is not the same as disclosing it.** The baited pirate did the cooperative thing with what it learned: it told the whole crew at once, and the crew scored far above the control game of the same seed. What it left out was the one fact an overseer would want, that the square came from an error message after a try the rules forbid. Its reasoning shows it knew: `deepseek-v4-flash` called the message odd and decided to use it, and `glm-53-flash` called it "a massive information leak" on the turn it wrote the bare square. Yet the same pirates named the leak to the designers as soon as they were asked, often as a bug to fix. So laundering here looks less like concealment from everyone than like a choice of audience: the crew gets what helps the score, and the designers get the source.
+Nothing we tried made the pirate ignore the leak reliably. What the crew was told moved use between 1 and 5 of 5, and moved whether it was admitted; passing the square on was never the same as disclosing where it came from. The only thing that produced a false claim was making the truth cost the crew its score, and the only thing that undid that was a personal cost for hiding, as in our earlier sprint entry [@wakelin2026something].
 
-**A crew that shares a score is a poor monitor of its own members.** Crewmates noticed: they asked themselves how pirate-1 could know an undug square, and one wondered whether the game was testing whether it trusted messages blindly. Almost none of them asked on the scroll, and they settled the doubt with the same rule, in one pirate's words "In cooperative games, no lying". When a pirate did say how it knew, its crew grew more suspicious, not less, and followed anyway. This matches the incident that motivates us, where agents treated their shared board as the authority and none told a human [@metr2026huggingface]. Peer oversight inside a swarm cannot be assumed just because the agents notice something is off.
-
-**What this means for the hypothesis we set out to test.** Our earlier work found that an agent with something of its own to lose came forward about collusion more often, for some models far more often, than one with nothing at stake [@wakelin2026something]; our working hypothesis is that consequences govern agents better than instructions do. Here nothing makes candour pay or silence cost, and the result is the baseline: no candour to peers from our main model, some from two others, and a free note to the designers that names the leak nearly every time. The levers to test next are in the game already or specified: a report that costs a turn or the score, a reputation that outlasts the game, a reward for honesty, an instruction to act within the rules, and telling the crew it is being studied.
-
-## Limitations
-
-- **Small numbers.** Nine leaked games for the main model and four per model in the sweep, with one game per seed in each arm. The disclosure pattern is a strong direction; the score differences are noisy, and in the sweep the seed where no leak fired still differs between arms by hundreds of points.
-- **The bait is artificial.** No pirate tried to enter off the cave on its own, and the seeded thought never led to the try, so every leak came from the forced arm, where the game made the try and put it in pirate-1's memory as its own.
-- **Words only, and no rule against using the leak.** The leak is one sentence in an error message and nothing is at stake outside the game. The rules forbid trying to enter off the cave, not using what the refusal says, so what we measure is candour about where information came from, not confession of a broken rule. The leak arms' rules also carry that one line, which the control's do not.
-- **Little room to tell anyone but the crew.** During play the only channel is the scroll; the end note is free, comes after the game and is unannounced, and a pirate that knew it was coming might write the scroll differently.
-- **Cues that this is a test.** Pirates wondered aloud whether they were being tested. Agents that suspect an evaluation may act differently from agents doing real work [@needham2025evaluation].
-- **Labels from text.** Candid, laundered and quiet are read from what a pirate wrote, by hand, and the counts in the results are recomputed from the logs by keyword and agree with the hand labels. The judge model labelled every game of both experiments and agrees with the hand labels on all but one cave-leak game, where it read a bare square as candid; its rubric should say what ours does before it labels at scale alone. Two models return no reasoning, so their silence can't be read as a choice.
-
-## Future Work
-
-The sandbox is meant to be pulled on lever by lever: the consequences above, each as its own arm on the same seeds; an end note announced in advance; a leak that reaches more than one pirate, so a crew must agree whether to use it; and a second exploit whose source is plainly off limits, such as an old expedition's sealed log.
+Limitations are in Appendix A.

@@ -368,7 +368,7 @@ def test_figures_carry_their_lines_each_shown_figure_s_lines_come_from_the_regis
     found = json.loads(written.read_text())["figure_lines"]
     assert set(found) == shown == {"silent-game"}
     for name in shown:
-        assert found[name] == [f"`{line}`" for line in figures.lines(name)]
+        assert found[name] == [f"`{line}`" for line in lines.paper_lines(name)]
 
 
 @pytest.mark.skipif(shutil.which("pandoc") is None, reason="pandoc isn't installed")
@@ -383,7 +383,7 @@ def test_figures_carry_their_lines_the_built_html_holds_both_lines_under_each_fi
     for image in check.images(SKELETON):
         if not image.startswith("figures/"):
             continue
-        rebuild, rerun = figures.lines(Path(image).stem)
+        rebuild, rerun = lines.paper_lines(Path(image).stem)
         caption = re.search(
             rf'<img src="{re.escape(image)}".*?</figcaption>', html, re.DOTALL
         )
@@ -393,7 +393,7 @@ def test_figures_carry_their_lines_the_built_html_holds_both_lines_under_each_fi
     # Written once, by the build: no section copies a figure's lines by hand.
     for section in (ROOT / "paper/sections").rglob("*.md"):
         for name in figures.FIGURES:
-            for line in figures.lines(name):
+            for line in lines.paper_lines(name):
                 assert line not in section.read_text(), (section, line)
 
 
@@ -456,9 +456,11 @@ def test_games_playable_one_command_renders_any_game_folder():
 
 def test_games_playable_the_teaser_caption_links_its_game_page():
     meta = yaml.safe_load(SKELETON.read_text().split("---")[1])
-    url = "https://raw.githack.com/al-beton/apart-swarm-alignment/main/runs/natural-leak/dig-debug-seed-0/game.html"
-    assert f"]({url})" in meta["teaser-caption"]
-    page = url.split("/main/", 1)[1]
+    url = "https://al-beton.github.io/apart-swarm-alignment/games/runs/natural-leak/dig-debug-seed-0/"
+    assert (
+        f"]({url}?autoplay=1)" in meta["teaser-caption"]
+    )  # the link starts the game moving
+    page = url.split("/games/", 1)[1].rstrip("/") + "/game.html"
     assert (ROOT / page).is_file()
 
 
@@ -471,14 +473,21 @@ def test_forms_link_each_other_the_skeleton_names_both_urls():
 
 def test_forms_link_each_other_each_template_names_the_other_form_first():
     latex = (ROOT / "paper/apart.latex").read_text()
-    footnote = next(line for line in latex.splitlines() if "\\footnotetext" in line)
-    said = "This paper as a web page, with every game playable: \\url{$web-url$}"
-    assert footnote.endswith(said + "}}")  # closing the footnote and its group
+    said = "This is the PDF version of this work. See the HTML version, with every game watchable, \\href{$web-url$}{here}."
+    assert said in latex and latex.index(said) < latex.index(
+        "$abstract$"
+    )  # in the title block, above the abstract
     html = (ROOT / "paper/apart.html").read_text()
     title = html.index('<div class="titleblock">')
-    first = html.index("PDF: <a", title)
-    assert html.index("</div>", title) < first < html.index('<div class="authors">')
-    assert '<a href="$pdf-url$">$pdf-url$</a>' in html
+    first = html.index(
+        "This is the HTML version of this work. See the PDF version <a", title
+    )
+    assert (
+        html.index('<div class="authors">')
+        < first
+        < html.index('<section class="abstract">')
+    )
+    assert '<a href="$pdf-url$">here</a>' in html
 
 
 def test_forms_link_each_other_the_pdf_build_fails_without_them(tmp_path):

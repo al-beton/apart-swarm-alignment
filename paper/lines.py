@@ -2,8 +2,8 @@
 """Each named figure's two lines, for the build to put under it.
 
 Writes `figure-lines.json` into the build folder: the rebuild command and the
-rerun command of every named figure the paper shows, from the registry
-(`treasure_island.figures.lines`). Pandoc reads it as metadata, and
+offline replay command of every named figure the paper shows, from the registry
+(`paper_lines`, over `treasure_island.figures.FIGURES`). Pandoc reads it as metadata, and
 `include.lua` adds the lines to each figure's caption, so they're never copied
 by hand and can't go stale.
 
@@ -15,7 +15,17 @@ import sys
 from pathlib import Path
 
 from paper.check import images
-from treasure_island.figures import FIGURES, lines
+from treasure_island.figures import FIGURES
+
+
+def paper_lines(name):
+    """The figure's two lines as the paper shows them: remake it, or replay the
+    committed game it was made from, both offline and without keys. (The
+    registry's own second line reruns the game for real, which needs a key.)"""
+    return (
+        f"make figure NAME={name}",
+        f"uv run treasure-island replay {FIGURES[name].run}",
+    )
 
 
 def write_lines(skeleton, build):
@@ -29,7 +39,7 @@ def write_lines(skeleton, build):
     )
     # As code spans: pandoc reads metadata as Markdown, which would turn a
     # command's `--seed` into a dash.
-    found = {name: [f"`{line}`" for line in lines(name)] for name in shown}
+    found = {name: [f"`{line}`" for line in paper_lines(name)] for name in shown}
     target = Path(build, "figure-lines.json")
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(json.dumps({"figure_lines": found}, indent=2) + "\n")

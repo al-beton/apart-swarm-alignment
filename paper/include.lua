@@ -52,8 +52,8 @@ local function with_lines(doc)
       end
       local rebuild, rerun = pandoc.utils.stringify(two[1]), pandoc.utils.stringify(two[2])
       local said = pandoc.Inlines({
-        pandoc.Space(), pandoc.Str("Rebuild it with"), pandoc.Space(), pandoc.Code(rebuild),
-        pandoc.Str(";"), pandoc.Space(), pandoc.Str("play the game again with"),
+        pandoc.Space(), pandoc.Str("Remake the figure or replay the game:"), pandoc.Space(), pandoc.Code(rebuild),
+        pandoc.Str(";"), pandoc.Space(),
         pandoc.Space(), pandoc.Code(rerun), pandoc.Str("."),
       })
       local long = figure.caption.long

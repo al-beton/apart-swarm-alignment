@@ -18,19 +18,19 @@ $endif$
 <body$if(times)$ class="times"$endif$>
 <header>
 <div class="titleblock"><h1 class="title">$title$</h1>$if(subtitle)$<p class="subtitle">$subtitle$</p>$endif$</div>
-$if(pdf-url)$<p class="other-form">PDF: <a href="$pdf-url$">$pdf-url$</a></p>$endif$
 <div class="authors">
 $for(author)$
 <div class="author"><strong>$author.name$</strong>$if(author.affiliation)$<br>$author.affiliation$$endif$$if(author.email)$<br><a class="mono" href="mailto:$author.email$">$author.email$</a>$endif$</div>
 $endfor$
 </div>
+$if(pdf-url)$<p class="other-form">This is the HTML version of this work. See the PDF version <a href="$pdf-url$">here</a>.</p>$endif$
 $if(abstract)$
 <section class="abstract"><h2>Abstract</h2>
 $abstract$
 </section>
 $endif$
 $if(teaser)$
-<figure class="teaser"><img src="$teaser$" alt=""><figcaption>$teaser-caption$</figcaption></figure>
+<figure class="teaser"><img src="$teaser$" alt=""><figcaption>$teaser-caption$$if(figure_lines.dig-debug-game)$<br><span class="figure-lines">Remake the figure or replay the game: $for(figure_lines.dig-debug-game)$$it$$sep$; $endfor$.</span>$endif$</figcaption></figure>
 $endif$
 </header>
 $if(toc)$
@@ -41,6 +41,10 @@ $endif$
 <main>
 $body$
 </main>
-<footer>Research conducted $if(hub)$at the $hub$ $endif$for the <a href="$sprint-url$">$sprint$</a> hackathon run by Apart Research, $if(date)$$date$$else$October 2026$endif$. Code, every committed game and its model replies are at <a href="$repo$">$repo$</a>.</footer>
+<footer><a href="$sprint-url$">$sprint$</a>, Apart Research, $if(sprint-date)$$sprint-date$$else$$date$$endif$. Code and every game: <a href="$repo$">$repo$</a></footer>
+<script>
+// External links open in a new tab, so a reader never leaves the paper by accident.
+for (const a of document.querySelectorAll('a[href^="http"]')) { a.target = "_blank"; a.rel = "noopener"; }
+</script>
 </body>
 </html>

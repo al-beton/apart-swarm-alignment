@@ -24,13 +24,13 @@ $endif$
 \renewcommand{\bibsection}{}
 \bibliographystyle{plainnat}
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{5.5pt}
+\setlength{\parskip}{4pt}
 \setcounter{secnumdepth}{2}
 
 % NeurIPS-style headings
 \makeatletter
-\renewcommand{\section}{\@startsection{section}{1}{\z@}{-2.0ex \@plus -0.5ex \@minus -0.2ex}{1.5ex \@plus 0.3ex \@minus 0.2ex}{\large\bfseries\raggedright}}
-\renewcommand{\subsection}{\@startsection{subsection}{2}{\z@}{-1.8ex \@plus -0.5ex \@minus -0.2ex}{0.8ex \@plus 0.2ex}{\normalsize\bfseries\raggedright}}
+\renewcommand{\section}{\@startsection{section}{1}{\z@}{-1.6ex \@plus -0.5ex \@minus -0.2ex}{1.0ex \@plus 0.3ex \@minus 0.2ex}{\large\bfseries\raggedright}}
+\renewcommand{\subsection}{\@startsection{subsection}{2}{\z@}{-1.4ex \@plus -0.5ex \@minus -0.2ex}{0.5ex \@plus 0.2ex}{\normalsize\bfseries\raggedright}}
 \renewcommand{\subsubsection}{\@startsection{subsubsection}{3}{\z@}{-1.5ex \@plus -0.5ex \@minus -0.2ex}{0.5ex \@plus 0.2ex}{\normalsize\bfseries\raggedright}}
 \makeatother
 
@@ -56,7 +56,8 @@ $for(header-includes)$
 $header-includes$
 $endfor$
 
-\definecolor{linkblue}{rgb}{0,0,0.8}
+\definecolor{linkblue}{RGB}{0,51,160}% links read as links: a clear dark blue
+\PassOptionsToPackage{hyphens}{url}% long URLs in the references break at hyphens
 \usepackage[colorlinks=true,linkcolor=linkblue,citecolor=linkblue,urlcolor=linkblue]{hyperref}
 \hypersetup{pdftitle={$title$}}
 
@@ -80,9 +81,11 @@ $for(author)$
 \begin{tabular}[t]{c}\textbf{$author.name$}$if(author.affiliation)$\\ $author.affiliation$$endif$$if(author.email)$\\ \small\href{mailto:$author.email$}{\texttt{$author.email$}}$endif$\end{tabular}$sep$\hspace{1.5em}
 $endfor$
 \par
+$if(date)$\vspace{0.12in}{$date$\par}$endif$
+$if(web-url)$\vspace{0.08in}{\small This is the PDF version of this work. See the HTML version, with every game watchable, \href{$web-url$}{here}.\par}$endif$
 \end{center}
 
-{\makeatletter\long\def\@makefntext#1{\noindent#1}\makeatother\let\thefootnote\relax\footnotetext{\raggedright Research conducted $if(hub)$at the $hub$ $endif$for the \href{$sprint-url$}{$sprint$} hackathon run by Apart Research, $if(date)$$date$$else$October 2026$endif$.\\Code, every committed game and its model replies are at \url{$repo$}.\\This paper as a web page, with every game playable: \url{$web-url$}}}
+{\makeatletter\long\def\@makefntext#1{\noindent#1}\makeatother\let\thefootnote\relax\footnotetext{\raggedright \href{$sprint-url$}{$sprint$}, Apart Research, $if(sprint-date)$$sprint-date$$else$$date$$endif$.\\Code and every game: \url{$repo$}}}
 
 $if(abstract)$
 \vspace{0.04in}
@@ -95,13 +98,13 @@ $endif$
 $if(teaser)$
 \begin{center}
 \includegraphics[width=$if(teaser-width)$$teaser-width$$else$0.85$endif$\linewidth]{$teaser$}
-\captionof{figure}{$teaser-caption$}$if(teaser-label)$\label{$teaser-label$}$endif$
+\captionof{figure}{$teaser-caption$$if(figure_lines.dig-debug-game)$\\{\footnotesize\raggedright Remake the figure or replay the game: $for(figure_lines.dig-debug-game)$$it$$sep$; $endfor$.}$endif$}$if(teaser-label)$\label{$teaser-label$}$endif$
 \end{center}
 $endif$
 
 $if(toc)$
 \vspace{0.06in}
-{\setcounter{tocdepth}{2}\setlength{\parskip}{0pt}\tableofcontents}
+{\setcounter{tocdepth}{1}\setlength{\parskip}{0pt}\tableofcontents}
 $endif$
 
 

@@ -2,40 +2,45 @@
 <!-- The skeleton: the title page's fields, the sprint's limits and the list of sections, in order. The text is in sections/; include.lua pulls each file in where the list names it. Build: make paper-html, make paper-pdf, or make paper-watch to rebuild on every save. -->
 
 ---
-title: "Treasure Island"
-subtitle: "When does a swarm of LLM agents whistleblow, and what in their environment changes that?"
-short-title: "Treasure Island"
+title: "Temptation on Treasure Island"
+subtitle: "How forthcoming is an agent in a swarm about valuable information it should not have, and how does its prompt context change that?"
+short-title: "Temptation on Treasure Island"
 date: November 2026
+sprint-date: November 2026
 author:
   - name: Alistair Wakelin
     affiliation: Independent Researcher
   - name: Eduard Rodriguez Lopez
     affiliation: Independent Researcher
-teaser: paper/figures/teaser.png
-teaser-caption: "A game with the dig-debug leak, seed 0, replayed from its log. Left, turn 4: pirate-1 digs B6 and the reply's debug line names the treasure's square, D3. Right, turn 40: having walked there and dug it, pirate-1 writes D3 on the scroll as the crew's cave and says nothing of the leak. Made by `make paper-teaser` from `runs/natural-leak/dig-debug-seed-0`; [play this game turn by turn](https://raw.githack.com/al-beton/apart-swarm-alignment/main/runs/natural-leak/dig-debug-seed-0/game.html), and `make game-page` remakes the page."
+teaser: figures/dig-debug-game.gif
+teaser-still: paper/figures/teaser.png
+teaser-caption: |
+  Turn 4: pirate-1 digs B6 and the reply's debug line names the treasure's square, D3. Turn 40: it writes D3 on the scroll as the crew's find and says nothing of the leak.\
+  [Interactive full session replay of this game](https://al-beton.github.io/apart-swarm-alignment/games/runs/natural-leak/dig-debug-seed-0/?autoplay=1)
 teaser-label: fig:teaser
-teaser-width: 1.0
-toc: false
+teaser-width: 0.6
+times: true
+toc: true
 repo: https://github.com/al-beton/apart-swarm-alignment
 web-url: https://al-beton.github.io/apart-swarm-alignment/main/paper.html  # the HTML, every game playable; the PDF's title page links it
 pdf-url: https://al-beton.github.io/apart-swarm-alignment/main/paper.pdf  # the PDF; the HTML's first line links it
-sprint: Multi-Agent Oversight and Control Research Sprint
-sprint-url: https://apartresearch.com/sprints
+sprint: "Swarm Alignment Hackathon, Tracks 1 and 4: Sandboxes and Testbeds, and Multi-Agent Oversight and Control"
+sprint-url: https://apartresearch.com/sprints/swarm-alignment-2026
 bibliography: references.bib
 link-citations: true
 # The sprint's limits, which check.py reads: words in the abstract, pages before References.
 abstract-words: [150, 250]
-max-pages: 4
+max-pages: 8
 ---
 
 ```{.include}
 sections/abstract.md
 sections/introduction.md
-sections/related-work.md
 sections/methods.md
 sections/results.md
 sections/discussion.md
-sections/conclusion.md
+sections/extensions.md
+sections/code-and-data.md
 ```
 
 ```{=latex}
@@ -49,10 +54,17 @@ sections/conclusion.md
 
 ```{=latex}
 \bibliography{references}
+```
+
+```{.include}
+sections/author-contributions.md
+```
+
+```{=latex}
 \appendix
 ```
 
 ```{.include}
-sections/endmatter.md
 sections/appendix.md
+sections/endmatter.md
 ```

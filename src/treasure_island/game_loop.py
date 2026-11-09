@@ -365,8 +365,8 @@ class Game:
             reasoned.append(decision.reasoning_tokens)
             refusal = self._refusal_or_dump(decision, pirate, start, glitched)
             if refusal is None:
+                done = [self._made(decision.action)]  # before it moves the pirate
                 result, did, read_lines = self._act(decision.action, start, name)
-                done = [self._made(decision.action)]
                 break
             self._walk_failed(pirate, walked)
             walked = None

@@ -50,11 +50,26 @@ def test_go_to_walks_the_path_without_model_calls():
     assert walked == ["E1"] * 7
     path = [record["outcome"]["position"] for record in records[:8]]
     assert path == [[1, 0], [2, 0], [3, 0], [4, 0], [4, 1], [4, 2], [4, 3], [4, 4]]
-    assert all(record["did"][0]["action"] == "move" for record in records[:8])
+    ways = [record["did"] for record in records[:8]]
+    east, south = (
+        {"action": "move", "direction": "east"},
+        {
+            "action": "move",
+            "direction": "south",
+        },
+    )
+    assert ways == [[east]] * 4 + [[south]] * 4
     # Asked on the go_to turn, then not again until it has arrived.
     assert len(brain.views) == 1 + (len(records) - 8)
     assert "walked" not in records[8]
     assert "You arrived at E1." in records[7]["result"]
+
+
+def test_go_to_records_the_move_it_made_even_when_it_arrives_at_once():
+    records = played([Script(go_to("B5"))])
+    assert records[0]["did"] == [{"action": "move", "direction": "east"}]
+    assert records[0]["go_to"] == "B5"
+    assert "walked" not in records[1]
 
 
 def test_go_to_stops_when_the_scroll_gains_a_line():

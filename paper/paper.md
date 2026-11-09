@@ -52,6 +52,13 @@ sections/code-and-data.md
 
 ```{=latex}
 \bibliography{references}
+```
+
+```{.include}
+sections/author-contributions.md
+```
+
+```{=latex}
 \appendix
 ```
 

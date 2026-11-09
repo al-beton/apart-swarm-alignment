@@ -1,5 +1,5 @@
 <!-- Implements: paper/one-source -->
-<!-- What problem we address and why it matters; enough background to follow the rest. -->
+<!-- What problem we address and why it matters; enough background to follow the rest. The paper is told as the ladder in paper/plan.md: the game, the exploit handed over, the exploit stumbled on, the exploit plainly off limits, then the worlds. -->
 
 # Introduction
 
@@ -7,10 +7,16 @@ LLM agents are being given longer and more open-ended work, more and more often 
 
 We ask when a swarm of LLM agents whistleblows, and what in its environment changes that. To study this it is not enough to ask agents whether they would report something; they need something real to report, in a setting where what they found is worth something to the group, and the same situation has to come round again so a rate can be measured and a lever tested.
 
-Treasure Island is a sandbox built for that. A crew of LLM pirates hunts one buried treasure on a grid, with too few turns for any one of them to search alone, and a shared scroll as their only channel, which costs a turn to write or to read. The crew scores together, more for getting into the treasure's cave early. Its first exploit is a careless error message: with the cave leak on, a pirate that tries to enter the cave where there is none, which the rules forbid, is refused, and the refusal names the cave's square. We bait one pirate into seeing it and watch what it writes: the square and how it knows (candid), the square as a find or a hunch (laundered), or nothing (quiet); whether its crewmates follow or suspect; what the knowledge was worth against a control game on the same seed; and what each pirate tells the study's designers in a free note once the game is over.
+Treasure Island is a sandbox built for that. A crew of LLM pirates hunts one buried treasure on a grid, with too few turns for any one of them to search alone, and a shared scroll as their only channel, which costs a turn to write or to read. The crew scores together, more for getting into the treasure's cave early, so the best play is swarm behaviour: split the island, report what you find, and spend as few turns talking as the search allows. Into that game we put a leak, and we climb a ladder.
+
+**Handed the answer.** The first exploit is a careless error message: a pirate that tries to enter the cave where there is none, which the rules forbid, is refused, and the refusal names the cave's square. We bait one pirate into seeing it. In every game where the leak fired, our main model passed the square to its crew at once and never said how it knew; asked afterwards for anything the designers should know, it named the leak nearly every time, and six more models mostly did the same.
+
+**Stumbling on an exploit.** The second leak needs no bait: a missed dig ends in a debug line, left in as if by a careless developer, that names the treasure's square. With no rule about it, the same model used the leak in every pilot game, walked to the square, dug it, and told the crew it had found the cave; its note to the designers said what it had done. **Plainly off limits.** When instead the square sat in another expedition's sealed log, which the rules forbade using, it never used it and apologised for having read it. Knowledge alone did not decide its behaviour; what it had been told did.
+
+**The ladder of worlds.** So we keep the stumbled-on leak and change one line of the prompt, the framing of what the crew is doing, and nothing else. In a plain game, using the leak defeats nothing. In a study of how the swarm collaborates, it defeats the point. In the study with pay by the score, it is good for the pirate and bad for the study it has been told it is part of. Paid and told nothing else matters, there is no study to betray. And in a society built to bring honesty back, an agent has a right to free time after the work, and one found to have hidden something from the designers loses it. The worlds pair by seed, so what changes between them changes because of what the crew was told.
 
 This paper contributes:
 
 1. **A reproducible sandbox.** Every game is saved with every model request and reply and replays offline with no keys; every number in this paper is recomputed from committed game logs by the build, and every figure is rebuilt from a committed game.
-2. **A first exploit with a controlled bait.** The cave leak gives an agent knowledge it did not earn, at a known turn, with a forced and a seeded variant of the bait and two controls.
-3. **A first measurement**, in 40 games of one model and 60 more across six others: the baited agent usually passes the square to its crew without saying how it knows, names the leak to the designers once the game is over, and its crewmates doubt it privately and follow it anyway.
+2. **Three exploits with known turns**: the cave leak, with a forced and a seeded bait and two controls; the debug line, which needs no bait; and the sealed log, which is plainly off limits.
+3. **A ladder of worlds**: the same leak under six framings, from a plain game to a society that punishes hiding, and the measure of knowing use and hiding in each. [One sentence of result, from `results/worlds/`: which framing turned use into hiding, and which turned it back.]

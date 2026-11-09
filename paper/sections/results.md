@@ -8,4 +8,5 @@ Each subsection below reports one experiment, and each rests on games committed 
 ```{.include}
 results/cave-leak.md
 results/model-sweep.md
+results/worlds.md
 ```

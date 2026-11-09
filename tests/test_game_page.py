@@ -193,7 +193,7 @@ def test_board_pinned_the_left_half_sticks_and_never_scrolls_itself(saved):
     assert "position: sticky" in left
     assert "height: calc(100vh" in left  # exactly the window, under the header
     assert "flex-direction: column" in left
-    assert "overflow-y: auto" not in left  # the column itself never scrolls the board away
+    assert "overflow-y: auto" not in left  # the column never scrolls the board away
     assert "overflow: hidden" in left
 
 
@@ -203,4 +203,6 @@ def test_board_pinned_only_the_parchment_scroll_gives_way(saved):
     parchment = rule(page, ".left .parchment")
     assert "flex: 0 1 auto" in parchment and "min-height" in parchment
     assert "overflow: auto" in rule(page, ".parchment")
-    assert "max-height" in rule(page, "img.board")  # a short window shrinks the board, never cuts it
+    assert "max-height" in rule(
+        page, "img.board"
+    )  # a short window shrinks the board, never cuts it

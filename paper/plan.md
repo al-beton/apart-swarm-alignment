@@ -60,7 +60,7 @@ The sprint's form, field by field, with text to paste. Resubmission is allowed u
 - **Slides** (optional): none.
 - **Project image** (optional): `paper/figures/teaser.png`.
 - **Additional material** (optional): the paper as a web page, <https://al-beton.github.io/apart-swarm-alignment/>, and the README's "Read one game", which replays any committed game with no keys.
-- **Pre-existing code**: the README's "What predates the sprint" and the report's "Code and Data" say that everything in the repository was written during the sprint from a fresh first commit on 6 November 2026, and that the design draws on the authors' earlier, public project, from which no code is included.
+- **Pre-existing code**: Everything in the repository was written during the sprint from a fresh first commit on 6 November 2026. The game's ideas and the design of its engine draw on the first author's earlier sprint entry (the Apart AI Collusion Research Sprint, October 2026); no code from it is included.
 
 ## Final read
 

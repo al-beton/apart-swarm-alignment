@@ -1,5 +1,5 @@
-# Implements: tooling/one-command-each, tooling/locked-dependencies, ci/ci-minutes, ci/ci-runs-everything, assets/remade-by-one-command, assets/catwalk, treasure-island/reference-games, results/examples-folder, figures/named-figures, figures/figures-published, ci/examples-remade-in-ci, runs/replay-checks, paper/built-two-ways, paper/numbers-from-logs, paper/figures-carry-their-lines, treasure-island/paper-figures
-.PHONY: install lint test spec-check assets catwalk reference-games examples examples-check figure figures replay-all paper-tools paper-check paper-images paper-html paper-tex paper-pdf paper-watch paper-teaser
+# Implements: tooling/one-command-each, tooling/locked-dependencies, ci/ci-minutes, ci/ci-runs-everything, assets/remade-by-one-command, assets/catwalk, treasure-island/reference-games, results/examples-folder, figures/named-figures, figures/figures-published, ci/examples-remade-in-ci, runs/replay-checks, paper/built-two-ways, paper/numbers-from-logs, paper/figures-carry-their-lines, treasure-island/paper-figures, paper/games-playable
+.PHONY: install lint test spec-check assets catwalk reference-games examples examples-check game-page figure figures replay-all paper-tools paper-check paper-images paper-html paper-tex paper-pdf paper-watch paper-teaser
 install:
 	uv sync --frozen
 lint:
@@ -22,6 +22,10 @@ examples:  # play the example games again, GIFs included, into examples/
 examples-check:  # remake the examples; fail if anything but the manifests' times changed
 	$(MAKE) examples
 	python3 .github/scripts/examples_unchanged.py
+GAME ?= runs/natural-leak/dig-debug-seed-0
+game-page:  # a game's playable page, game.html, beside its committed log; no keys: make game-page GAME=results/cave-leak/forced-seed-5
+	uv run treasure-island slideshow $(GAME) --out $(GAME)/game.html
+
 figure:  # one named figure from a committed run: make figure NAME=silent-game
 	uv run treasure-island figure $(NAME)
 figures:  # every figure, into figures/

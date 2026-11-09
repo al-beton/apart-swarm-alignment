@@ -112,6 +112,7 @@ def test_retries_dropped_calls_a_rate_limit_is_tried_again(toml, waits):
     _, story = play(toml, backend)
     assert backend.errors == []
     assert story[-1].startswith("Game over:")
+    assert waits == [retries.RATE_LIMIT_WAIT]  # the minute it asks for, not 4 s
 
     class RateLimitError(Exception):  # an SDK's own, known by its status code
         status_code = 429

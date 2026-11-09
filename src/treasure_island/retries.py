@@ -2,7 +2,8 @@
 
 A dropped connection, a DNS failure, a timeout, a reply cut off part way
 (`http.client.IncompleteRead` and the like), a 5xx answer or a rate limit (a 429,
-which a wave of parallel games hits) is the network's fault, not the model's, so `Retrying` tries the call again after `WAITS` seconds,
+which a wave of parallel games hits, and which waits the minute the service asks
+for) is the network's fault, not the model's, so `Retrying` tries the call again after `WAITS` seconds,
 5 tries over about a minute (default, Al to confirm). Anything else, a 4xx answer
 say, is raised at once. After the last try the game stops, saying how to resume:
 the same command again plays the run back from the replies it already got.
@@ -21,23 +22,29 @@ from treasure_island.game_loop import GameStopped
 
 WAITS = (4, 8, 16, 32)  # seconds before each try after the first
 RATE_LIMITED = 429  # too many calls at once: the same call works again after a wait
+RATE_LIMIT_WAIT = 60  # the minute Adaption's 429 asks for before trying again
 _sleep = time.sleep  # tests stand in for it, so they never wait
 # The SDKs' own names for a network failure, so no SDK is imported here.
 _DROPPED = {"APIConnectionError", "APITimeoutError", "InternalServerError"}
 
 
+def rate_limited(error):
+    """Whether this error is a 429: the service wants a minute before the next try."""
+    code = getattr(error, "code", None) or getattr(error, "status_code", None)
+    return code == RATE_LIMITED
+
+
 def dropped(error):
     """Whether this error is the network's fault, so the same call may work again."""
     if isinstance(error, urllib.error.HTTPError):
-        return error.code >= 500 or error.code == RATE_LIMITED
+        return error.code >= 500 or rate_limited(error)
     # HTTPException: the connection broke while the reply was being read.
     network = (urllib.error.URLError, TimeoutError, ConnectionError)
     if isinstance(error, (*network, http.client.HTTPException)):
         return True
     if type(error).__name__ in _DROPPED:
         return True
-    status = getattr(error, "status_code", 0)
-    return status >= 500 or status == RATE_LIMITED
+    return getattr(error, "status_code", 0) >= 500 or rate_limited(error)
 
 
 class Retrying:
@@ -62,5 +69,5 @@ class Retrying:
                         "to resume: the replies it already got are reused"
                     ) from error
                 self.last_retries += 1
-                _sleep(wait)
+                _sleep(max(wait, RATE_LIMIT_WAIT) if rate_limited(error) else wait)
         raise AssertionError("unreachable")

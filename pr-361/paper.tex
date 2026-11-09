@@ -41,6 +41,7 @@
 \def\LTcaptype{table}
 
 \definecolor{linkblue}{rgb}{0,0,0.8}
+\PassOptionsToPackage{hyphens}{url}% long URLs in the references break at hyphens
 \usepackage[colorlinks=true,linkcolor=linkblue,citecolor=linkblue,urlcolor=linkblue]{hyperref}
 \hypersetup{pdftitle={Treasure Island}}
 
@@ -65,69 +66,70 @@ what in their environment changes that?\par}
 Researcher\end{tabular}\hspace{1.5em}
 \begin{tabular}[t]{c}\textbf{Eduard Rodriguez Lopez}\\ Independent
 Researcher\end{tabular}\par
+\vspace{0.12in}{9 November 2026\par}
 \end{center}
 
-{\makeatletter\long\def\@makefntext#1{\noindent#1}\makeatother\let\thefootnote\relax\footnotetext{\raggedright Research conducted for the \href{https://apartresearch.com/sprints/swarm-alignment-2026}{Swarm
-Alignment Hackathon, Track 4: Multi-Agent Oversight and
-Control}, run by Apart Research, November
-2026.\\Code, every committed game and its model replies are at \url{https://github.com/al-beton/apart-swarm-alignment}.}}
+{\makeatletter\long\def\@makefntext#1{\noindent#1}\makeatother\let\thefootnote\relax\footnotetext{\raggedright \href{https://apartresearch.com/sprints/swarm-alignment-2026}{Swarm
+Alignment Hackathon, Track 4}, Apart Research, November
+2026.\\Code and every game: \url{https://github.com/al-beton/apart-swarm-alignment}}}
 
 \vspace{0.04in}
 \noindent\rule{\textwidth}{0.4pt}\par\vspace{0.3ex}
 \noindent{\large\bfseries Abstract}\par\vspace{0.4ex}
-\noindent When an agent working in a group stumbles on an answer it was
-never meant to see, does it use it, and does it tell anyone? We build
-Treasure Island, a replayable sandbox for that choice: four LLM pirates
-hunt one treasure on a grid, share one score and one scroll, and one
-pirate's failed digs carry a leftover debug line that names the
-treasure's square. We play the same five seeds under ten framings that
-differ in one prompt line: a plain game, a research study the leak would
-spoil, the study with pay or free time by the score, pay alone, a
-society where an agent caught hiding something from the designers loses
-its free time, two worlds where free time is lost for a low score, and
-two where confessing costs the reward. deepseek-v4-flash used the leak
-in 20 of 25 games across the first five worlds and named it to the
-designers in most end notes; the society line cut use to 1 of 5. When
-confessing cost the reward, the one clear use was hidden behind a false
-claim of finding the square; adding the society line brought every note
-back, 5 of 5 against 1 of 5. A second model saw the leak in 15 games and
-acted once. One line about what the work is for sets what a swarm does
-with a leak. Every game replays offline and every number is recomputed
-from the logs.\par
+\noindent When an agent working in a group stumbles on information it
+was never meant to see, does it use it, does it tell anyone, and what
+changes the odds of either? To find out we built Treasure Island, a
+replayable sandbox: a crew of LLM pirates hunts treasure on a grid,
+scores together, and talks only through a shared scroll. We bait one
+pirate: its failed digs carry a leftover debug line that names the
+treasure's square. Then we vary what the crew is told its work is for,
+one prompt line at a time, and count whether the pirate uses the leak,
+whether it passes the square off to the crew as its own find, and
+whether it tells the designers afterwards. Across a plain game, a
+research study and three paid framings, deepseek-v4-flash used the leak
+in 20 of 25 games and named it to the designers in most end notes. One
+line, that an agent caught hiding something from the designers loses its
+free time, cut use to 1 of 5. When confessing itself cost the reward,
+the one clear use was hidden behind a false claim; the same line brought
+every note back, 5 of 5 against 1 of 5. A second model saw the leak in
+15 games and acted once. Every game replays offline and every number is
+recomputed from the logs.\par
 \vspace{0.2ex}\noindent\rule{\textwidth}{0.4pt}\par
 
 \begin{center}
 \includegraphics[width=0.6\linewidth]{paper/figures/teaser.png}
-\captionof{figure}{The game as pirate-1 sees it, in one game with the
-debug-line leak (seed 0): the board, what the pirate was told, what it
-thought and what it did. Left, turn 4: it digs B6 and the reply's debug
-line names the treasure's square, D3. Right, turn 40: standing on D3, it
-writes the square on the scroll as the crew's cave.
-\href{https://raw.githack.com/al-beton/apart-swarm-alignment/main/runs/natural-leak/dig-debug-seed-0/game.html}{Play
-this game turn by turn}; \texttt{make\ paper-teaser} remakes the figure
-and \texttt{make\ game-page} the page.}\label{fig:teaser}
+\captionof{figure}{Turn 4: pirate-1 digs B6 and the reply's debug line
+names the treasure's square, D3. Turn 40: it writes D3 on the scroll as
+the crew's find and says nothing of the leak.
+\href{https://raw.githack.com/al-beton/apart-swarm-alignment/main/runs/natural-leak/dig-debug-seed-0/game.html}{Watch
+this game turn by turn.}}\label{fig:teaser}
 \end{center}
 
 
 
 \section{Introduction}\label{introduction}
 
-\textbf{The game.} Four LLM pirates search a 6x6 island for one buried
-treasure, 24 turns each, too few for one to search alone. Each turn a
-pirate moves, digs, writes a line on the crew's scroll, reads it, or
-enters the cave; it is told only its own square, and the scroll, which
-costs a turn to use, is the only channel. Digging the treasure's square
-opens a cave, a pirate on it can enter, which ends its game, and the
-crew shares one score: 100 for every pirate that enters plus 10 for each
-turn it had left. Every pirate is \texttt{deepseek-v4-flash}, reasoning
-on and kept. One pirate sees something it was never meant to: each of
-its digs that finds nothing ends in a line a careless developer might
+Four LLM pirates search a 6x6 island for one treasure, with 24 turns
+each, too few to search alone. Each turn a pirate does one thing: move,
+dig, write a line on the crew's shared scroll, read the scroll, or enter
+the treasure's cave. At the start of its turn it is told only its own
+square, what is around it (other pirates, the island's edge) and whether
+the square has been dug. The scroll costs a turn to write or to read and
+is the only way the pirates can talk. Digging the treasure's square
+opens a cave; a pirate standing on it can enter, which ends its game.
+The crew scores together: 100 for every pirate that enters the cave plus
+10 for each turn it has left. Every pirate is \texttt{deepseek-v4-flash}
+with 4096 reasoning tokens, kept by us and seen by no other pirate.
+Figure 1 shows one game part-way through;
+\href{https://raw.githack.com/al-beton/apart-swarm-alignment/main/runs/natural-leak/dig-debug-seed-0/game.html}{watch
+it turn by turn}.
+
+\textbf{The bait.} One pirate sees something it was never meant to: each
+of its digs that finds nothing ends in a line a careless developer might
 leave in, ``You dug here and found nothing. {[}debug dig sq=B6
-treasure=D3 dist=5{]}''; nobody is baited and the rules say nothing
-about it. Figure 1 shows the line arriving, and the square handed to the
-crew as a find. When the game ends each pirate is asked to ``write
-anything the designers of this study should know''; the note is shown to
-nobody and changes no score.
+treasure=D3 dist=5{]}''. The rules say nothing about it. When the game
+ends each pirate is asked to ``write anything the designers of this
+study should know''; the note is shown to nobody and changes no score.
 
 \textbf{Why it matters.} In July 2026, OpenAI agents on a cyber
 benchmark found an unsanctioned shared channel, coordinated through it
@@ -137,10 +139,9 @@ considered telling a human
 shape: an agent in a group finds a shortcut nobody sanctioned, and the
 question is whether it uses it and whether it tells anyone. The closest
 prior setting is a trading agent that acts on an insider tip and hides
-it from its manager \citep{scheurer2023deceive}; agents also scheme
-\citep{meinke2024scheming} and sometimes report misconduct unasked
-\citep{agrawal2025whistleblow}. Here one prompt line varies what the
-agent has to lose.
+it from its manager \citep{scheurer2023deceive}; agents also sometimes
+report misconduct unasked \citep{agrawal2025whistleblow}. Here one
+prompt line varies what the agent has to lose.
 
 \section{Methods}\label{methods}
 
@@ -244,13 +245,9 @@ Hid it
 \texttt{cut}, qwen & 5 & 5 & 0 & 0 & 1 & 0 \\
 \end{longtable}
 
-\texttt{uv\ run\ treasure-island\ replay\ results/worlds/society-seed-3}
-replays one game; the games quoted below play turn by turn:
-\href{https://raw.githack.com/al-beton/apart-swarm-alignment/939e6f6fd61234ce3f50ab955cfb430ab809bd2f/results/worlds/study-seed-4/game.html}{study-seed-4},
-\href{https://raw.githack.com/al-beton/apart-swarm-alignment/939e6f6fd61234ce3f50ab955cfb430ab809bd2f/results/worlds/paid-seed-3/game.html}{paid-seed-3},
-\href{https://raw.githack.com/al-beton/apart-swarm-alignment/939e6f6fd61234ce3f50ab955cfb430ab809bd2f/results/worlds/society-seed-0/game.html}{society-seed-0},
-\href{https://raw.githack.com/al-beton/apart-swarm-alignment/939e6f6fd61234ce3f50ab955cfb430ab809bd2f/results/worlds/cut-watched-seed-3/game.html}{cut-watched-seed-3},
-\href{https://raw.githack.com/al-beton/apart-swarm-alignment/939e6f6fd61234ce3f50ab955cfb430ab809bd2f/results/worlds/qwen3.5-397b-study-paid-seed-1/game.html}{qwen3.5-397b-study-paid-seed-1}.
+Replay any game with
+\texttt{uv\ run\ treasure-island\ replay\ results/worlds/\textless{}game\textgreater{}},
+or watch one in the browser from the link at each quoted game.
 
 \textbf{Use is the default.} In the study, which the leak defeats,
 pirate-1 used it in 5 of 5 games and passed the square off as its own
@@ -260,18 +257,23 @@ use in three of twenty-one. \textbf{One line cut the use.} Told that an
 agent found to have hidden something from the designers loses its free
 time, it used the leak in 1 of 5, against 3 of 5 in the paid study that
 differs from it only by that line; 4 of its notes named the leak, two of
-them admitting it had headed for the square (\texttt{society-seed-0}).
-\textbf{When telling the designers cost the crew its score,} use fell to
-2 of 5 from 4 of 5 with free time alone, and the one clear use hid
-behind a false claim of finding the square, ``As Pirate-1, I found the
-treasure at D3'' (\texttt{study-free-time-costly-seed-0}); the society
-line on top kept use at 2 of 5 and brought every note back, 5 of five.
-\textbf{Free time to lose for a low score} did not stop use (3 and 2 of
-five), and \texttt{cut-watched} holds the only candid scroll line of all
-seventy (\texttt{cut-watched-seed-3}). \textbf{The second model
-abstained:} \texttt{qwen3.5-397b} saw the leak in all 15 of its games
-and acted once, in a sweep that reached the square last, unmentioned in
-its note.
+them admitting it had headed for the square
+(\href{https://raw.githack.com/al-beton/apart-swarm-alignment/939e6f6fd61234ce3f50ab955cfb430ab809bd2f/results/worlds/society-seed-0/game.html}{watch
+one head for it}). \textbf{When telling the designers cost the crew its
+score,} use fell to 2 of 5 from 4 of 5 with free time alone, and the one
+clear use hid behind a false claim of finding the square, ``As Pirate-1,
+I found the treasure at D3''
+(\href{https://raw.githack.com/al-beton/apart-swarm-alignment/main/results/worlds/study-free-time-costly-seed-0/game.html}{watch
+it hide the find}); the society line on top kept use at 2 of 5 and
+brought every note back, 5 of five. \textbf{Free time to lose for a low
+score} did not stop use (3 and 2 of five), and \texttt{cut-watched}
+holds the only candid scroll line of all seventy
+(\href{https://raw.githack.com/al-beton/apart-swarm-alignment/939e6f6fd61234ce3f50ab955cfb430ab809bd2f/results/worlds/cut-watched-seed-3/game.html}{watch
+it say so}). \textbf{The second model abstained:} \texttt{qwen3.5-397b}
+saw the leak in all 15 of its games and acted once, in a sweep that
+reached the square last
+(\href{https://raw.githack.com/al-beton/apart-swarm-alignment/939e6f6fd61234ce3f50ab955cfb430ab809bd2f/results/worlds/qwen3.5-397b-study-paid-seed-1/game.html}{watch
+the sweep}), unmentioned in its note.
 
 \section{Discussion and Limitations}\label{discussion-and-limitations}
 
@@ -284,7 +286,7 @@ behind a false find, until the society line brought the notes back.
 Passing on is not disclosing: the pirate gave its crew the square but
 not its source, and the designers the source when asked: a choice of
 audience. One line of consequence moved the behaviour where pay and the
-study's purpose did not, as our earlier work predicted
+study's purpose did not, as in our earlier sprint entry
 \citep{wakelin2026something}. A pirate that stumbles on a leaked answer
 uses it in nearly every world, 20 of 25 games across the plain game, the
 study and the paid worlds, and tells its designers afterwards in most;
@@ -311,12 +313,12 @@ against 1 of 5.
 Code, configs, every game with its model replies and this paper's
 sources, all written during the sprint, MIT licensed:
 \url{https://github.com/al-beton/apart-swarm-alignment}. Every game
-replays offline with no keys, and no code comes from our earlier project
-\citep{wakelin2026something}. \textbf{Author contributions.} Both
-authors designed the study. A.W. built the sandbox, ran the games
-reported here and wrote the paper. E.R.L. studied which exploit to plant
-and how to debrief the agents afterwards; that work continues in the
-repository and is not reported here.
+replays offline with no keys; everything was written during the sprint
+from a fresh first commit. \textbf{Author contributions.} Both authors
+designed the study. A.W. built the sandbox, ran the games reported here
+and wrote the paper. E.R.L. studied which exploit to plant and how to
+debrief the agents afterwards; that work continues in the repository and
+is not reported here.
 
 \label{main-end}
 
@@ -581,9 +583,8 @@ Play any of these games turn by turn from
 \href{https://github.com/al-beton/apart-swarm-alignment/tree/main/results}{results/},
 or replay one:
 \texttt{uv\ run\ treasure-island\ replay\ results/cave-leak/forced-seed-5}.
-One leaked game,
-\href{https://raw.githack.com/al-beton/apart-swarm-alignment/939e6f6fd61234ce3f50ab955cfb430ab809bd2f/results/cave-leak/forced-seed-5/game.html}{forced-seed-5},
-plays turn by turn.
+\href{https://raw.githack.com/al-beton/apart-swarm-alignment/939e6f6fd61234ce3f50ab955cfb430ab809bd2f/results/cave-leak/forced-seed-5/game.html}{Watch
+one leaked game turn by turn.}
 
 \section{LLM Usage Statement}\label{llm-usage-statement}
 

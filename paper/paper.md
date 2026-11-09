@@ -16,7 +16,7 @@ teaser: figures/dig-debug-game.gif
 teaser-still: paper/figures/teaser.png
 teaser-caption: |
   Turn 4: pirate-1 digs B6 and the reply's debug line names the treasure's square, D3. Turn 40: it writes D3 on the scroll as the crew's find and says nothing of the leak.\
-  [Interactive full session replay of this game](https://al-beton.github.io/apart-swarm-alignment/games/runs/natural-leak/dig-debug-seed-0/)
+  [Interactive full session replay of this game](https://al-beton.github.io/apart-swarm-alignment/games/runs/natural-leak/dig-debug-seed-0/?autoplay=1)
 teaser-label: fig:teaser
 teaser-width: 0.6
 times: true

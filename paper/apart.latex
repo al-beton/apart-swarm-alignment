@@ -84,7 +84,7 @@ $endfor$
 $if(date)$\vspace{0.12in}{$date$\par}$endif$
 \end{center}
 
-{\makeatletter\long\def\@makefntext#1{\noindent#1}\makeatother\let\thefootnote\relax\footnotetext{\raggedright \href{$sprint-url$}{$sprint$}, Apart Research, $if(sprint-date)$$sprint-date$$else$$date$$endif$.\\Code and every game: \url{$repo$}\\This paper as a web page, with every game playable: \url{$web-url$}}}
+{\makeatletter\long\def\@makefntext#1{\noindent#1}\makeatother\let\thefootnote\relax\footnotetext{\raggedright \href{$sprint-url$}{$sprint$}, Apart Research, $if(sprint-date)$$sprint-date$$else$$date$$endif$.\\Code and every game: \url{$repo$}\\This is the PDF version of this paper. Web version, with every game playable: \url{$web-url$}}}
 
 $if(abstract)$
 \vspace{0.04in}

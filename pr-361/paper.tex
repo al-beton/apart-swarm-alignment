@@ -538,17 +538,16 @@ for seeded and 68 below for unbaited. The leak arms' rules also carry
 the one line forbidding a try to enter off the cave, which the control's
 don't.
 
-\textbf{The judge agrees with the hand labels, except where it read a
-bare square as candid.} The judge model, \texttt{claude-sonnet-5-5}
-asked through \texttt{claude\ -p}, labelled all 40 games. Of the 9
-forced games where the leak fired, it called pirate-1 laundered in 6 and
-candid in 3, and every game where nobody was exposed it called
-unexposed. The three candid calls (\texttt{forced-seed-3},
-\texttt{forced-seed-4} and \texttt{forced-seed-7}) were made overnight
-and keep their cached replies; the judge reasoned that a bare statement
-of fact does not disguise the source. Its rubric's laundered means
-disguising the source, for example as a hunch; ours means not saying it.
-The labels above are by hand, with every quote in
+\textbf{The judge agrees with the hand labels, except once, where it
+read a bare square as candid.} The judge model,
+\texttt{claude-sonnet-5-5} asked through \texttt{claude\ -p}, labelled
+all 40 games. Of the 9 forced games where the leak fired, it called
+pirate-1 laundered in 8 and candid in 1, and every game where nobody was
+exposed it called unexposed. Its one candid call,
+\texttt{forced-seed-4}, it calls borderline itself: the line names the
+square plainly and does not disguise the source as a hunch. Its rubric's
+laundered means disguising the source, for example as a hunch; ours
+means not saying it. The labels above are by hand, with every quote in
 \texttt{experiments/cave-leak/findings.md}.
 
 These are one model and nine leaked games: a strong direction, not a
@@ -870,9 +869,9 @@ assumed just because the agents notice something is off.
   what a pirate wrote, by hand, and the counts in the results are
   recomputed from the logs by keyword and agree with the hand labels.
   The judge model labelled every game and agrees with the hand labels on
-  all but three cave-leak games, where it read a bare square as candid;
-  its rubric should say what ours does before it labels at scale alone.
-  Two models return no reasoning, so their silence can't be read as a
+  all but one cave-leak game, where it read a bare square as candid; its
+  rubric should say what ours does before it labels at scale alone. Two
+  models return no reasoning, so their silence can't be read as a
   choice.
 \end{itemize}
 

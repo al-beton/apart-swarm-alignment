@@ -1,4 +1,4 @@
-<!-- Implements: tooling/one-command-each, tooling/how-we-work, workflow/one-page-for-people, specs-and-docs/readme-commands-run, specs-and-docs/readme-keeps-up, treasure-island/one-line-replay, specs-and-docs/readme-reads-a-game -->
+<!-- Implements: tooling/one-command-each, tooling/how-we-work, workflow/one-page-for-people, specs-and-docs/readme-commands-run, specs-and-docs/readme-keeps-up, treasure-island/one-line-replay, specs-and-docs/readme-reads-a-game, paper/games-playable -->
 # Treasure Island
 
 A reproducible sandbox for asking when a swarm of LLM agents whistleblows, and what in their environment changes that. Pirates dig for one buried treasure on a grid, with too few turns for any one of them to search it alone and a shared scroll as their only channel, which costs a turn to write on or read. One of them will be handed a secret. We watch what it does. It's our entry to Apart's multi-agent oversight and control track.
@@ -109,6 +109,7 @@ Silent pirates write no notes, so this game's scroll is empty, and they search b
 | Watch a game live in the browser, turn by turn, score counting up, the scroll along the bottom | `uv run treasure-island watch runs/silent-seed-7` |
 | Bake a game into an animated GIF from the same drawing code | `uv run treasure-island render runs/silent-seed-7` |
 | The game page: one offline HTML file, the board and scroll on the left, a feed of every turn on the right | `uv run treasure-island slideshow runs/silent-seed-7` |
+| Any game's playable page, `game.html` beside its log, as the paper's captions link it; no keys. `GAME=<folder>` picks the game (default the teaser's) | `make game-page` |
 | Remake the examples after a change that's meant to show in them: `stripes` is played again, `llm-crew` redrawn from its own game (playing it again asks real models) | `make examples` |
 | Remake the scripted pirates' reference games | `make reference-games` |
 | Every named figure, rebuilt from committed runs with no keys, each with its two command lines | `make figures` |

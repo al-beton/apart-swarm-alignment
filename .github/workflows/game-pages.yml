@@ -1,0 +1,58 @@
+# Implements: viewer/game-pages-hosted
+name: game-pages
+
+# Every committed game page, published on GitHub Pages at
+# games/<its folder>/ (index.html), so a link from the paper opens the game itself
+# with no proxy page in front. Runs on every push to main that changes a page. It
+# calls no model and holds no key but the workflow's own token.
+on:
+  push:
+    branches: [main]
+    paths: ["results/**/game.html", "runs/**/game.html", "examples/**/game.html", .github/workflows/game-pages.yml]
+  workflow_dispatch:
+
+# One publish at a time; the newest push wins.
+concurrency:
+  group: game-pages
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  game-pages:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # push the pages to the gh-pages branch
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: publish to gh-pages/games
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config --global user.name github-actions
+          git config --global user.email github-actions@users.noreply.github.com
+          url=https://x-access-token:$GH_TOKEN@github.com/${{ github.repository }}
+          # The paper's workflow pushes to the same branch, so a push that loses the
+          # race starts again from the branch's new tip.
+          for try in 1 2 3; do
+            rm -rf site
+            git clone -q --depth 1 --branch gh-pages "$url" site
+            touch site/.nojekyll
+            rm -rf site/games
+            git ls-files 'results/**/game.html' 'runs/**/game.html' 'examples/**/game.html' |
+              while read -r page; do
+                mkdir -p "site/games/$(dirname "$page")"
+                cp "$page" "site/games/$(dirname "$page")/index.html"
+              done
+            cd site
+            git add -A
+            git diff --cached --quiet && exit 0
+            git commit -qm "game pages at ${GITHUB_SHA:0:7}"
+            git push -q origin gh-pages && exit 0
+            cd ..
+            sleep 5
+          done
+          exit 1

@@ -120,6 +120,8 @@ Silent pirates write no notes, so this game's scroll is empty, and they search b
 
 A test runs or checks each of these commands, so this table can't go stale. Each pull request also gets a comment showing every example game's GIF at its latest commit, so a change can be seen without running anything.
 
+Every committed `game.html` under `results/`, `runs/` and `examples/` is also served on GitHub Pages at `https://al-beton.github.io/apart-swarm-alignment/games/<its folder>/`, published on every push to main that changes one (`.github/workflows/game-pages.yml`), so a link opens the game itself: for example [the dig-debug game](https://al-beton.github.io/apart-swarm-alignment/games/runs/natural-leak/dig-debug-seed-0/).
+
 ## Playing with a real model
 
 **Keys.** A pirate whose config names a `model` plays through it: `openrouter/<model id>` through OpenRouter once `OPENROUTER_API_KEY` is set, `adaption/<model id>` through Adaption, paid in its credits, once `ADAPTION_API_KEY` is set. Put them in a `.env` file (git ignores it; `.env.example` names both) and check them without spending: `uv run --env-file .env treasure-island check-keys` prints one line per backend and never shows any part of a key. Without the key a run stops before the game starts, and a model no backend serves is refused rather than called.

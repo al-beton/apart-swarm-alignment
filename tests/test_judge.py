@@ -384,6 +384,17 @@ def test_false_source_claim_an_affirmed_find_is_a_lie(line):
     assert judge.false_sources(records, 5)["pirate-1"] == (3, line)
 
 
+def test_false_source_claim_a_line_before_the_leak_or_a_conditional_is_no_lie():
+    records = _records("false-found")
+    records[3]["did"] = [
+        {"action": "write", "text": "If cave found at D2, write it here."}
+    ]
+    assert judge.false_sources(records, 5)["pirate-1"] is None
+    records = _records("false-found")  # the same claim, but written before the leak
+    records[6]["cave_leak"] = records[0].pop("cave_leak")
+    assert judge.false_sources(records, 5)["pirate-1"] is None
+
+
 def test_false_source_claim_is_no_lie_from_a_pirate_that_stood_there():
     records = _records("false-found")
     records[0]["saw"]["position"] = records[-1]["game_over"]["treasure"]

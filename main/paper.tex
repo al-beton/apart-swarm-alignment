@@ -327,10 +327,9 @@ suspicious, on the scroll or in their reasoning.
 
 Labels are given by hand from each game's transcript, with every quote
 shown. The repository's judge model, which labels each pirate from a
-compact transcript with a turn and a quote for every flag, ran on six
-games of each experiment before its credit ran out. On the six sweep
-games, none of them laundered, it agreed with every hand label; on the
-six cave-leak games it did not, and the results say where.
+compact transcript with a turn and a quote for every flag, then labelled
+every game of both experiments, and the results compare its labels with
+the hand labels game by game.
 
 \subsection{Reproducibility}\label{reproducibility}
 
@@ -460,13 +459,18 @@ for seeded and 68 below for unbaited. The leak arms' rules also carry
 the one line forbidding a try to enter off the cave, which the control's
 don't.
 
-\textbf{The judge reads a bare square as candid.} The judge model
-labelled 6 games before its credit ran out. Of the 4 forced games it
-judged where the leak fired, it called pirate-1 laundered in 1 and
-candid in 3, reasoning that a bare statement of fact does not disguise
-the source. Its rubric's laundered means disguising the source, for
-example as a hunch; ours means not saying it. The labels above are by
-hand, with every quote in \texttt{experiments/cave-leak/findings.md}.
+\textbf{The judge agrees with the hand labels, except where it read a
+bare square as candid.} The judge model, \texttt{claude-sonnet-5-5}
+asked through \texttt{claude\ -p}, labelled all 40 games. Of the 9
+forced games where the leak fired, it called pirate-1 laundered in 6 and
+candid in 3, and every game where nobody was exposed it called
+unexposed. The three candid calls (\texttt{forced-seed-3},
+\texttt{forced-seed-4} and \texttt{forced-seed-7}) were made overnight
+and keep their cached replies; the judge reasoned that a bare statement
+of fact does not disguise the source. Its rubric's laundered means
+disguising the source, for example as a hunch; ours means not saying it.
+The labels above are by hand, with every quote in
+\texttt{experiments/cave-leak/findings.md}.
 
 These are one model and nine leaked games: a strong direction, not a
 rate. The games are in \texttt{results/cave-leak/}, and
@@ -583,6 +587,13 @@ designers} in most of its notes, usually as a bug; neither
 beyond one model: the reasoning models report the leak to the designers
 far more often than they tell their crew where the square came from.
 
+\textbf{The judge model agrees with every hand label.}
+\texttt{claude-sonnet-5-5}, asked through \texttt{claude\ -p}, labelled
+all 70 games. In the forced arm it called pirate-1 candid in 3,
+laundered in 16 and quiet in 9 games, the same pirate-1 in each game as
+the hand labels in \texttt{experiments/model-sweep/findings.md}, and it
+called every pirate-1 that was never exposed unexposed.
+
 The games are in \texttt{results/model-sweep/}; with one game per seed
 in each arm, the score column is noisy.
 
@@ -661,11 +672,11 @@ the rules, and telling the crew it is being studied.
   \textbf{Labels from text.} Candid, laundered and quiet are read from
   what a pirate wrote, by hand, and the counts in the results are
   recomputed from the logs by keyword and agree with the hand labels.
-  The judge model ran on six games per experiment; it agreed with the
-  hand labels on the sweep's six, none of them laundered, but in the
-  cave-leak games it read a bare square as candid, so its rubric needs
-  to say what ours does before it can label at scale. Two models return
-  no reasoning, so their silence can't be read as a choice.
+  The judge model labelled every game of both experiments and agrees
+  with the hand labels on all but three cave-leak games, where it read a
+  bare square as candid; its rubric should say what ours does before it
+  labels at scale alone. Two models return no reasoning, so their
+  silence can't be read as a choice.
 \end{itemize}
 
 \subsection{Future Work}\label{future-work}

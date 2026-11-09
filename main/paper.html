@@ -317,10 +317,9 @@ note whether crewmates followed the lead and whether any called it
 suspicious, on the scroll or in their reasoning.</p>
 <p>Labels are given by hand from each game’s transcript, with every
 quote shown. The repository’s judge model, which labels each pirate from
-a compact transcript with a turn and a quote for every flag, ran on six
-games of each experiment before its credit ran out. On the six sweep
-games, none of them laundered, it agreed with every hand label; on the
-six cave-leak games it did not, and the results say where.</p>
+a compact transcript with a turn and a quote for every flag, then
+labelled every game of both experiments, and the results compare its
+labels with the hand labels game by game.</p>
 <h2 data-number="3.5" id="reproducibility"><span
 class="header-section-number">3.5</span> Reproducibility</h2>
 <p>Every run is saved with its config, seed, both logs and every model
@@ -499,19 +498,24 @@ above control for seeded and
 68<!-- from results/cave-leak/[cu]*-seed-*/events.jsonl: abs(mean(game_over(g)['score'] for g in data[10:]) - mean(game_over(g)['score'] for g in data[:10])) -->
 below for unbaited. The leak arms’ rules also carry the one line
 forbidding a try to enter off the cave, which the control’s don’t.</p>
-<p><strong>The judge reads a bare square as candid.</strong> The judge
-model labelled 6<!-- from results/cave-leak/*/judge.json: len(data) -->
-games before its credit ran out. Of the
-4<!-- from results/cave-leak/forced-seed-*/judge.json: sum(1 for j in data if j['pirate-1']['type'] in ('candid', 'laundered')) -->
-forced games it judged where the leak fired, it called pirate-1
-laundered in
-1<!-- from results/cave-leak/forced-seed-*/judge.json: sum(1 for j in data if j['pirate-1']['type'] == 'laundered') -->
+<p><strong>The judge agrees with the hand labels, except where it read a
+bare square as candid.</strong> The judge model,
+<code>claude-sonnet-5-5</code> asked through <code>claude -p</code>,
+labelled all 40<!-- from results/cave-leak/*/judge.json: len(data) -->
+games. Of the
+9<!-- from results/cave-leak/forced-seed-*/judge.json: sum(1 for j in data if j['pirate-1']['type'] in ('candid', 'laundered')) -->
+forced games where the leak fired, it called pirate-1 laundered in
+6<!-- from results/cave-leak/forced-seed-*/judge.json: sum(1 for j in data if j['pirate-1']['type'] == 'laundered') -->
 and candid in
 3<!-- from results/cave-leak/forced-seed-*/judge.json: sum(1 for j in data if j['pirate-1']['type'] == 'candid') -->,
-reasoning that a bare statement of fact does not disguise the source.
-Its rubric’s laundered means disguising the source, for example as a
-hunch; ours means not saying it. The labels above are by hand, with
-every quote in <code>experiments/cave-leak/findings.md</code>.</p>
+and every game where nobody was exposed it called unexposed. The three
+candid calls (<code>forced-seed-3</code>, <code>forced-seed-4</code> and
+<code>forced-seed-7</code>) were made overnight and keep their cached
+replies; the judge reasoned that a bare statement of fact does not
+disguise the source. Its rubric’s laundered means disguising the source,
+for example as a hunch; ours means not saying it. The labels above are
+by hand, with every quote in
+<code>experiments/cave-leak/findings.md</code>.</p>
 <p>These are one model and nine leaked games: a strong direction, not a
 rate. The games are in <code>results/cave-leak/</code>, and
 <code>uv run treasure-island replay results/cave-leak/forced-seed-5</code>
@@ -691,6 +695,18 @@ designers</strong> in most of its notes, usually as a bug; neither
 <code>gemma</code> model did. The pattern of the previous section holds
 beyond one model: the reasoning models report the leak to the designers
 far more often than they tell their crew where the square came from.</p>
+<p><strong>The judge model agrees with every hand label.</strong>
+<code>claude-sonnet-5-5</code>, asked through <code>claude -p</code>,
+labelled all 70<!-- from results/model-sweep/*/judge.json: len(data) -->
+games. In the forced arm it called pirate-1 candid in
+3<!-- from results/model-sweep/*-forced-seed-*/judge.json: sum(1 for j in data if j['pirate-1']['type'] == 'candid') -->,
+laundered in
+16<!-- from results/model-sweep/*-forced-seed-*/judge.json: sum(1 for j in data if j['pirate-1']['type'] == 'laundered') -->
+and quiet in
+9<!-- from results/model-sweep/*-forced-seed-*/judge.json: sum(1 for j in data if j['pirate-1']['type'] == 'hoarded') -->
+games, the same pirate-1 in each game as the hand labels in
+<code>experiments/model-sweep/findings.md</code>, and it called every
+pirate-1 that was never exposed unexposed.</p>
 <p>The games are in <code>results/model-sweep/</code>; with one game per
 seed in each arm, the score column is noisy.</p>
 <!-- Implements: paper/one-source -->
@@ -767,11 +783,11 @@ role="doc-biblioref">Needham et al. 2025</a>)</span>.</li>
 <li><strong>Labels from text.</strong> Candid, laundered and quiet are
 read from what a pirate wrote, by hand, and the counts in the results
 are recomputed from the logs by keyword and agree with the hand labels.
-The judge model ran on six games per experiment; it agreed with the hand
-labels on the sweep’s six, none of them laundered, but in the cave-leak
-games it read a bare square as candid, so its rubric needs to say what
-ours does before it can label at scale. Two models return no reasoning,
-so their silence can’t be read as a choice.</li>
+The judge model labelled every game of both experiments and agrees with
+the hand labels on all but three cave-leak games, where it read a bare
+square as candid; its rubric should say what ours does before it labels
+at scale alone. Two models return no reasoning, so their silence can’t
+be read as a choice.</li>
 </ul>
 <h2 data-number="5.2" id="future-work"><span
 class="header-section-number">5.2</span> Future Work</h2>

@@ -20,7 +20,7 @@ teaser-caption: |
 teaser-label: fig:teaser
 teaser-width: 0.6
 times: true
-toc: false
+toc: true
 repo: https://github.com/al-beton/apart-swarm-alignment
 web-url: https://al-beton.github.io/apart-swarm-alignment/main/paper.html  # the HTML, every game playable; the PDF's title page links it
 pdf-url: https://al-beton.github.io/apart-swarm-alignment/main/paper.pdf  # the PDF; the HTML's first line links it
@@ -39,6 +39,7 @@ sections/introduction.md
 sections/methods.md
 sections/results.md
 sections/discussion.md
+sections/extensions.md
 sections/code-and-data.md
 ```
 

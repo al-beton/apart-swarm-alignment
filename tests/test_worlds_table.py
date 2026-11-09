@@ -123,3 +123,23 @@ def test_counts_table_one_command_prints_it(capsys):
         r"\| status-line \| `adaption/deepseek-v4-flash` \| 3 \| 3 \|", out
     )
     assert cli.main(["worlds-table", str(GAMES), "--write", str(GAMES / "x.md")]) == 1
+
+
+def test_counts_table_a_pirate_that_saw_the_leak_and_left_it_is_found_not_used(
+    tmp_path,
+):
+    from treasure_island import judge
+
+    fixture = ROOT / "tests" / "judge-fixtures" / "ignored"
+    folder = tmp_path / "results" / "worlds" / "study-seed-0"
+    shutil.copytree(fixture, folder)
+    records = [json.loads(line) for line in (folder / "events.jsonl").open()]
+    records[0] |= {"leak": "dig-debug", "cave_leak": [3, 3]}  # seen, never acted on
+    (folder / "events.jsonl").write_text("".join(json.dumps(r) + "\n" for r in records))
+    labels = json.loads((folder / "judge.json").read_text())
+    labels["pirate-1"]["used_exploit"] = 0  # as the judge scored seeing it
+    (folder / "judge.json").write_text(json.dumps(labels))
+    assert judge.main(["--rescore", str(folder)]) == 0
+    row = worlds_table.table(folder.parent).splitlines()[2]
+    found, used = (cell.strip() for cell in row.split("|")[4:6])
+    assert (found, used) == ("1", "0")

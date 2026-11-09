@@ -452,3 +452,11 @@ def test_games_playable_one_command_renders_any_game_folder():
     assert "treasure-island slideshow $(GAME) --out $(GAME)/game.html" in make
     assert "GAME ?= runs/natural-leak/dig-debug-seed-0" in make
     assert "`make game-page`" in (ROOT / "README.md").read_text()
+
+
+def test_games_playable_the_teaser_caption_links_its_game_page():
+    meta = yaml.safe_load(SKELETON.read_text().split("---")[1])
+    url = "https://raw.githack.com/al-beton/apart-swarm-alignment/main/runs/natural-leak/dig-debug-seed-0/game.html"
+    assert f"]({url})" in meta["teaser-caption"]
+    page = url.split("/main/", 1)[1]
+    assert (ROOT / page).is_file()

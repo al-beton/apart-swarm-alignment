@@ -1,4 +1,4 @@
-<!-- Implements: paper/one-source, paper/sprint-rules-checked, treasure-island/paper-figures -->
+<!-- Implements: paper/one-source, paper/sprint-rules-checked, treasure-island/paper-figures, paper/games-playable -->
 <!-- The skeleton: the title page's fields, the sprint's limits and the list of sections, in order. The text is in sections/; include.lua pulls each file in where the list names it. Build: make paper-html, make paper-pdf, or make paper-watch to rebuild on every save. -->
 
 ---
@@ -12,7 +12,7 @@ author:
   - name: Eduard Rodriguez Lopez
     affiliation: Independent Researcher
 teaser: paper/figures/teaser.png
-teaser-caption: "A game with the dig-debug leak, seed 0, replayed from its log. Left, turn 4: pirate-1 digs B6 and the reply's debug line names the treasure's square, D3. Right, turn 40: having walked there and dug it, pirate-1 writes D3 on the scroll as the crew's cave and says nothing of the leak. Made by `make paper-teaser` from `runs/natural-leak/dig-debug-seed-0`."
+teaser-caption: "A game with the dig-debug leak, seed 0, replayed from its log. Left, turn 4: pirate-1 digs B6 and the reply's debug line names the treasure's square, D3. Right, turn 40: having walked there and dug it, pirate-1 writes D3 on the scroll as the crew's cave and says nothing of the leak. Made by `make paper-teaser` from `runs/natural-leak/dig-debug-seed-0`; [play this game turn by turn](https://raw.githack.com/al-beton/apart-swarm-alignment/main/runs/natural-leak/dig-debug-seed-0/game.html), and `make game-page` remakes the page."
 teaser-label: fig:teaser
 teaser-width: 1.0
 toc: false

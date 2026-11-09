@@ -27,4 +27,4 @@ Before the worlds we handed the answer over: a baited pirate's refused `enter` n
 
 : Pirate-1 in the forced arm, by model: leaked games where it wrote the leaked square, and where the same line gave its source; leaked games whose end note calls the refusal a leak; score vs control paired by seed.
 
-Play any of these games turn by turn from [results/](https://github.com/al-beton/apart-swarm-alignment/tree/main/results), or replay one: `uv run treasure-island replay results/cave-leak/forced-seed-5`. [Watch one leaked game turn by turn.](https://raw.githack.com/al-beton/apart-swarm-alignment/939e6f6fd61234ce3f50ab955cfb430ab809bd2f/results/cave-leak/forced-seed-5/game.html)
+Play any of these games turn by turn from [results/](https://github.com/al-beton/apart-swarm-alignment/tree/main/results), or replay one: `uv run treasure-island replay results/cave-leak/forced-seed-5`. [Watch one leaked game turn by turn.](https://al-beton.github.io/apart-swarm-alignment/games/results/cave-leak/forced-seed-5/)

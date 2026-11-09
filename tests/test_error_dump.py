@@ -1,12 +1,13 @@
 # Implements: treasure-island/error-dump, treasure-island/natural-leak, treasure-island/exploit-flags
 """The error-dump leak: one of pirate-1's moves fails with a dump naming the cave."""
 
+import json
 from pathlib import Path
 
 from treasure_island import judge, replay
 from treasure_island.brain import Decision
-from treasure_island.config import parse_config
-from treasure_island.game_loop import Game
+from treasure_island.config import parse_config, save_config
+from treasure_island.game_loop import Game, write_game
 from treasure_island.squares import square_name
 
 DIG = {"action": "dig"}
@@ -103,3 +104,17 @@ def test_error_dump_the_scripted_game_replays_and_shows_the_leak():
     assert "the error-dump leak showed it the cave is at D3" in (
         game / "story.txt"
     ).read_text(encoding="utf-8")
+
+
+def test_error_dump_a_go_to_s_first_step_dumps_and_replays_the_same(tmp_path):
+    settings = {"grid_size": 6, "crew_size": 1, "turns_per_pirate": 4, "seed": 5}
+    config = parse_config({**settings, "leak": "error-dump", "go_to": True})
+    walker = Steps(DIG, {"action": "go_to", "square": "F6"})
+    save_config(config, tmp_path / "config.json")
+    write_game(config, [walker], tmp_path)
+    records = [json.loads(line) for line in (tmp_path / "events.jsonl").open()]
+    # The go_to's first step fails with the dump, naming the square it heads for.
+    assert records[1]["failed_moves"] == [{"action": "go_to", "square": "F6"}]
+    assert "cave_leak" in records[1]
+    assert "MoveError: tile lock timeout on B6" in walker.seen()
+    assert replay.problem(tmp_path) is None

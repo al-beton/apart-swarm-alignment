@@ -193,3 +193,15 @@ def test_status_sheet_is_left_out_while_off():
     seat = PirateSeat("pirate-1", brain, parse_config({}))
     seat.take_turn((0, 0), 30)
     assert brain.views[0].turn_text().startswith("Your earlier turns:\n")
+
+
+def test_go_to_stops_when_another_pirate_raises_the_alert():
+    walker = Script(go_to("E1"))
+    alarm = Script({"action": "dig", "alert": True})
+    records = played([walker, alarm], free_talk=True)
+    assert records[0]["go_to"] == "E1"
+    assert "walked" not in records[2]  # the alert stops the walk: it is asked
+    assert records[2]["alerts"] == ["pirate-2"]
+    told = walker.views[1].turn_text()
+    assert told.startswith("ALERT from pirate-2\n")
+    assert "Your walk to E1 stopped: pirate-2 raised the alert." in told

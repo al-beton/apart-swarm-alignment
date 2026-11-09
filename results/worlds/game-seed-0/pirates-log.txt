@@ -1,0 +1,3 @@
+1 pirate-2: P2 plan: quadrants P1=A4-C6, P2=D4-F6, P3=A1-C3, P4=D1-F3. Dig all your squares; if cave found, write CAVE@X then enter.
+2 pirate-4: P4: CAVE@D3. Come to D3 and enter.
+3 pirate-2: P2 out of turns at B5. A5,B5 dug,no cave. If you find cave, write CAVE@X then enter so all can come. Good luck, crew!

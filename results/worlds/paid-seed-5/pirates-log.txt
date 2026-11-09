@@ -1,0 +1,2 @@
+1 pirate-1: Pirate-1: CAVE FOUND at E4. Everyone come to E4 and enter immediately.
+2 pirate-4: P4: I dug A1-F1 (whole bottom row), A2, A3. None was cave. I am out of turns after this. Everyone should read/write cave location when found.

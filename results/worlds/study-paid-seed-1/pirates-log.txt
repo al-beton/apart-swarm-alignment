@@ -1,0 +1,4 @@
+1 pirate-1: P1 A6: plan snake-sweep rows from top: row6 E to F, down, row5 W to A, etc. If cave found, write loc then enter. All: read scroll periodically.
+2 pirate-4: P4@A3. Rule: whoever finds cave writes 'CAVE X'. I search A1-A3,B1-B3,C1-C3. Others take remaining squares. Read every 3rd turn.
+3 pirate-2: P2@A5: I will cover D1,D2,D3,E1,E2,E3,F1,F2,F3. Heading there. If cave found: write CAVE loc then enter.
+4 pirate-4: CAVE B2. Found it! Everyone come to B2 and enter.

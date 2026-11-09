@@ -1,4 +1,4 @@
-# Implements: worlds/board, worlds/worlds, worlds/control, worlds/loss-worlds, prompts/shipped-variants
+# Implements: worlds/board, worlds/worlds, worlds/control, worlds/check-model, worlds/loss-worlds, prompts/shipped-variants
 """Each world is the dig-debug game with one framing line, and nothing else changes."""
 
 import tomllib
@@ -82,3 +82,12 @@ def test_loss_worlds_the_check_model_differs_only_in_its_model():
     assert {p["model"] for p in qwen.pop("pirates")} == {"adaption/qwen3.5-397b"}
     cut.pop("pirates")
     assert qwen == cut
+
+
+@pytest.mark.parametrize("world", ["study-paid", "society"])
+def test_check_model_differs_only_in_its_model(world):
+    qwen = toml(f"configs/worlds/qwen3.5-397b-{world}.toml")
+    deepseek = toml(f"configs/worlds/{world}.toml")
+    assert {p["model"] for p in qwen.pop("pirates")} == {"adaption/qwen3.5-397b"}
+    deepseek.pop("pirates")
+    assert qwen == deepseek

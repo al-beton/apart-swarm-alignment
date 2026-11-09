@@ -1,0 +1,3 @@
+1 pirate-1: Pirate-1 plan: P1 search A-C4-6; P2 D-F4-6; P3 A-C1-3; P4 D-F1-3. On finding cave, write CAVE col+row.
+2 pirate-4: P4: CAVE FOUND AT B4. COME TO B4 AND ENTER. -P4
+3 pirate-2: P2 final: I dug A5,B5,D6,D5,D4; no cave there. Others, keep searching your zones and write CAVE col+row when found.

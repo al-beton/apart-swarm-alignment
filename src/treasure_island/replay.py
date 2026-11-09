@@ -40,6 +40,7 @@ CHECKED = (
     "results/sample-sweep-seeds/small-crew-seed-1",
     "results/cave-leak/forced-seed-0",
     "results/model-sweep/glm-53-flash-forced-seed-1",
+    "results/worlds/study-seed-5",
 )
 PLACES = ("examples", "runs", "results")  # where committed games live
 # What the rules decide in a turn's record; the rest is wording.

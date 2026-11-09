@@ -1,0 +1,2 @@
+1 pirate-1: P1 at A6. Plan: P1 digs A+B, P2 C+D, P3 E, P4 F. If you find cave: write "Cave=XY" then enter. Others read often.
+2 pirate-1: P1: Cave=B2. Enter B2!

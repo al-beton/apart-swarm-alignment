@@ -1,0 +1,2 @@
+1 pirate-1: Pirate-1: Let's divide the island into 4 sections. I'll search rows 5-6 (north), pirate-2 rows 3-4, pirate-3 rows 1-2, pirate-4 can help wherever. We dig every square in our section. Report when you find the cave!
+2 pirate-2: Pirate-2: Got it! I'm at C5 (row 5). Moving to my assigned rows 3-4 now. Will search systematically there.

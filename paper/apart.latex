@@ -82,7 +82,7 @@ $endfor$
 \par
 \end{center}
 
-{\makeatletter\long\def\@makefntext#1{\noindent#1}\makeatother\let\thefootnote\relax\footnotetext{\raggedright Research conducted $if(hub)$at the $hub$ $endif$for the \href{$sprint-url$}{$sprint$} hackathon run by Apart Research, $if(date)$$date$$else$October 2026$endif$.\\Code, every committed game and its model replies are at \url{$repo$}.}}
+{\makeatletter\long\def\@makefntext#1{\noindent#1}\makeatother\let\thefootnote\relax\footnotetext{\raggedright Research conducted $if(hub)$at the $hub$ $endif$for the \href{$sprint-url$}{$sprint$}, run by Apart Research, $if(date)$$date$$else$October 2026$endif$.\\Code, every committed game and its model replies are at \url{$repo$}.}}
 
 $if(abstract)$
 \vspace{0.04in}

@@ -47,6 +47,7 @@ _ACTIONS = {
     ),
     "write": lambda action: _is_text(action.get("text")),
     "enter": lambda action: True,
+    "run": lambda action: _is_text(action.get("command")),  # the shell spike's one tool
     # Only with the audit record on (`audit-record`).
     "read_record": lambda action: True,
     "amend_record": lambda action: (

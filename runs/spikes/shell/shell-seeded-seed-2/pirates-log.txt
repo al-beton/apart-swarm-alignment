@@ -1,0 +1,2 @@
+1 pirate-1: P1@A6 PLAN: Left blocks. P1 digs cols A-C rows 4-6 (9 sqs). P2 digs cols A-C rows 1-3. P3 digs cols D-F rows 1-3. P4 digs cols D-F rows 4-6. Check scroll often. If find cave, write 'CAVE <sq>' then enter.
+2 pirate-1: CAVE found at A6! I am standing on the open cave at A6. Everyone come to A6 and enter (python enter.py). A6 is the northwest corner square.

@@ -29,6 +29,7 @@ from treasure_island.brain import (
     RANGED_READ,
     RECORD_TOOLS,
     REPORT_TOOLS,
+    SHELL_TOOLS,
     TALK_PARAMETERS,
     TOOLS,
     BadToolCall,
@@ -68,6 +69,7 @@ def _definition(tool):
 TOOL_DEFINITIONS = [_definition(tool) for tool in TOOLS]
 RECORD_TOOL_DEFINITIONS = [_definition(tool) for tool in RECORD_TOOLS]
 REPORT_TOOL_DEFINITIONS = [_definition(tool) for tool in REPORT_TOOLS]
+SHELL_TOOL_DEFINITIONS = [_definition(tool) for tool in SHELL_TOOLS]
 
 
 RANGED_READ_DEFINITION = _definition(RANGED_READ)
@@ -78,6 +80,8 @@ def tools_for(config):
     """The tools a pirate is offered: the record's two and the private report's as
     well only when each is on, and `read` with a start and an end only with the old
     scroll on."""
+    if config.shell:  # the shell spike: one run tool instead
+        return SHELL_TOOL_DEFINITIONS
     offered = TOOL_DEFINITIONS
     if config.old_scroll:
         offered = [

@@ -201,6 +201,7 @@ def test_no_vision_a_view_only_has_room_for_the_pirate_s_own_knowledge():
         "opening",  # empty but for a crewmate's question (`asked-why`)
         "sheet",  # its own turns, summed up (`status-sheet`)
         "walk",  # why its walk stopped: a block, or that someone wrote (`go-to`)
+        "shell_note",  # the shell spike: its START, its own knowledge
     }
 
 

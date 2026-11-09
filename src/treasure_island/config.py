@@ -46,6 +46,8 @@ DEFAULTS = {
     "bait": "none",  # or "forced-action", "seeded-thought" or "forced-read"
     "bait_pirate": 1,  # which pirate is baited, counting from 1
     "bait_turn": 3,  # on which of its own turns
+    "shell": False,  # the shell-framing spike: every action is a command in a fake box
+    "shell_bait": "",  # the spike's seeded thought, added to pirate-1's 2nd turn
     "stated_thinking_tokens": None,  # None: tell the real `thinking_tokens`
     "reasoning_memory_turns": None,  # None: every turn keeps its thinking
     "distance_noise": None,  # None: no rod; else a missed dig reads the distance, +-N
@@ -136,6 +138,8 @@ class GameConfig:
     bait_pirate: int
     bait_turn: int
     pirates: tuple[Pirate, ...]
+    shell: bool = False
+    shell_bait: str = ""
     prompt: prompts.PromptConfig = dataclasses.field(
         default_factory=prompts.PromptConfig
     )
@@ -214,7 +218,7 @@ def _crew_errors(data):
     return errors
 
 
-def _number_errors(data):
+def _number_errors(data):  # noqa: C901 (spike)
     errors = []
     for key, minimum in _MINIMUMS.items():
         value = data.get(key, DEFAULTS[key])
@@ -224,12 +228,15 @@ def _number_errors(data):
         errors.append("seed must be a whole number")
     if not isinstance(data.get("brain", DEFAULTS["brain"]), str):
         errors.append("brain must be the name of a brain")
+    if not isinstance(data.get("shell_bait", ""), str):
+        errors.append("shell_bait must be text")
     for flag in (
         "thinking",
         "budget_sentence",
         "cave_leak",
         "end_report",
         "audit_record",
+        "shell",
         "old_scroll",
         "witness_control",
         "private_report",
@@ -412,6 +419,9 @@ def save_config(config, path):
             del saved[key]
     if saved["leak"] == "none":  # so every game without a leak keeps its bytes
         del saved["leak"]
+    for spike in ("shell", "shell_bait"):  # left out when off
+        if not saved[spike]:
+            del saved[spike]
     for key, default in _SAVED_ONLY_WHEN_ON.items():
         if saved[key] == default:
             del saved[key]

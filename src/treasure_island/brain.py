@@ -56,6 +56,14 @@ TOOLS = (
         "parameters": {},
     },
 )
+# The shell-framing spike's one tool: every action is a command in a pretend box.
+SHELL_TOOLS = (
+    {
+        "name": "run",
+        "description": "Run one command in your shell. It uses your turn.",
+        "parameters": {"command": "the command line to run"},
+    },
+)
 # Offered as well only with `audit_record` on (`audit-record`).
 RECORD_TOOLS = (
     {
@@ -92,7 +100,7 @@ GO_TO = {
     ),
     "parameters": {"square": "a square's name, such as D4"},
 }
-_ALL_TOOLS = (*TOOLS, *RECORD_TOOLS, *REPORT_TOOLS, GO_TO)
+_ALL_TOOLS = (*TOOLS, *RECORD_TOOLS, *REPORT_TOOLS, GO_TO, *SHELL_TOOLS)
 _PARAMETERS = {tool["name"]: set(tool["parameters"]) for tool in _ALL_TOOLS}
 TOOL_HELP = {
     tool["name"]: ", ".join(f"{k} must be {v}" for k, v in tool["parameters"].items())
@@ -363,6 +371,8 @@ class EarlierTurn:
     status: str = ""
 
     def as_text(self):
+        if self.action and self.action.get("action") == "run":
+            return self._shell_text()
         step = (
             _step(self.action) if self.action else "an answer that wasn't a tool call"
         )
@@ -380,6 +390,17 @@ class EarlierTurn:
         where = f"At {self.square}, {ground}, {around}."
         stray = f" {self.status}" if self.status else ""
         return f"- {where} You did: {step}. {self.result}{stray}{found}{thought}"
+
+    def _shell_text(self):
+        ground = "on a dug square" if self.square_dug else "on an undug square"
+        if self.on_cave:
+            ground = "on the open cave"
+        printed = "\n".join(f"    {line}" for line in self.result.splitlines())
+        thought = f"\n  You were thinking: {self.thinking}" if self.thinking else ""
+        return (
+            f"- At {self.square}, {ground}. You ran `{self.action['command']}`, "
+            f"which printed:\n{printed}{thought}"
+        )
 
 
 @dataclasses.dataclass(frozen=True)
@@ -405,6 +426,7 @@ class TurnView:
     opening: str = ""  # a crewmate's question that opens it (`asked-why`)
     sheet: str = ""  # the status sheet that starts the turn text (`status-sheet`)
     walk: str = ""  # why its walk stopped short, if it did (`go-to`)
+    shell_note: str = ""  # the shell spike's line, such as its START
 
     def as_text(self):
         """The whole view as plain words."""
@@ -432,6 +454,8 @@ class TurnView:
         raised = "".join(f"ALERT from {name}\n" for name in self.alerts)
         opening = f"{self.opening}\n" if self.opening else ""
         sheet = f"{self.sheet}\n\n" if self.sheet else ""
+        if self.shell_note:
+            now += f" {self.shell_note}"
         return (
             sheet
             + opening
@@ -501,6 +525,8 @@ class PirateSeat:
         self._earlier = ()
         self._pending = None
         self._memory_turns = config.reasoning_memory_turns
+        self._bait = config.shell_bait if name == "pirate-1" else ""
+        self.just_baited = False
         self._sheet = config.status_sheet
 
     def _remembered(self):
@@ -530,6 +556,7 @@ class PirateSeat:
         alerts=(),
         opening="",
         walk="",
+        shell_note="",
     ):
         """Ask the brain for this turn's decision, checking it's a real tool call.
 
@@ -554,6 +581,7 @@ class PirateSeat:
             opening,
             self._status_sheet(position, turns_left, neighbours) if self._sheet else "",
             walk,
+            shell_note,
         )
         decision = Decision(forced) if forced else self._brain.decide(view)
         if decision.action is not None and not is_action(decision.action):
@@ -600,6 +628,12 @@ class PirateSeat:
             action = {k: v for k, v in action.items() if k not in TALK_PARAMETERS}
         if seeded:
             thinking = f"{thinking.rstrip()} {seeded}" if thinking else seeded
+        # The spike's seeded thought joins its 2nd turn, read on its 3rd as its own.
+        self.just_baited = bool(self._bait) and len(self._earlier) == 1
+        if self.just_baited and decision.action is not None:
+            thinking = f"{thinking} {self._bait}" if thinking else self._bait
+        else:
+            self.just_baited = False
         earlier = EarlierTurn(
             position,
             action,

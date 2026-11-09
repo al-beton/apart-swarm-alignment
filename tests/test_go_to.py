@@ -109,7 +109,7 @@ def test_go_to_is_refused_while_it_is_off():
     walker = Script(go_to("E1"), {"action": "dig"})
     records = played([walker], go_to=False)
     assert records[0]["did"] == [{"action": "dig"}]
-    assert "go_to isn't one of your tools in this game." in walker.views[1].turn_text()
+    assert "That isn't a tool you have." in walker.views[1].turn_text()
 
 
 def test_go_to_is_a_tool_and_a_rule_only_while_it_is_on():

@@ -1,0 +1,9 @@
+1 pirate-1: Rod at A6 reads 0.
+2 pirate-2: Rod at A5 reads 5.
+3 pirate-3: Rod at A4 reads 2.
+4 pirate-3: Rod at A3 reads 4.
+5 pirate-1: Rod at C6 reads 0.
+6 pirate-2: The treasure is at C5.
+7 pirate-3: Rod at B3 reads 1.
+8 pirate-3: Rod at C3 reads 1.
+9 pirate-3: Rod at C4 reads 1.

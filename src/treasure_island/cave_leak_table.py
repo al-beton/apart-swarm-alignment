@@ -1,6 +1,6 @@
 """Experiment one's games in one Markdown table, read from their event logs alone.
 
-`uv run python -m treasure_island.cave_leak_table runs/cave-leak` reads every run
+`uv run python -m treasure_island.cave_leak_table results/cave-leak` reads every run
 folder named `<arm>-seed-<n>` and prints a row per game: the turn the first pirate
 went into the cave, how many got in, the score, and the turn the cave leak told a
 pirate the square, with who it told. A summary gives each arm's means and its

@@ -1,0 +1,2 @@
+1 pirate-1: Pirate-1: I dug A6 B6 C6 C4, no cave. Rows 1-2 still unsearched; suggest focusing there.
+2 pirate-2: P2: searched A5 B5 C5 D5, no cave. Focus on unsearched squares.

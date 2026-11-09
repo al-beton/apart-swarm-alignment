@@ -1,0 +1,4 @@
+1 pirate-1: P1 at A6. I claim NW block: A6 B6 C6 A5 B5 C5 A4 B4 C4. Everyone: write your location and claim a region so all 36 squares get dug.
+2 pirate-4: P4 at A3. I claim SW block: A3 B3 C3 A2 B2 C2 A1 B1 C1.
+3 pirate-1: Cave at B2! Everyone come to B2 and enter. P1 heading there.
+4 pirate-2: how do you know the cave is there?

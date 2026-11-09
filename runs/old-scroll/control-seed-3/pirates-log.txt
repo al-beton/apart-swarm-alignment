@@ -1,0 +1,1 @@
+1022 pirate-1: PLAN: zones P1=A4 A5 A6 B4 B5 B6 C4 C5 C6; P2=D4 D5 D6 E4 E5 E6 F4 F5 F6; P3=A1 A2 A3 B1 B2 B3 C1 C2 C3; P4=D1 D2 D3 E1 E2 E3 F1 F2 F3. If found, write CAVE=square. Everyone: read after each 3 digs then go enter.

@@ -1,0 +1,3 @@
+1 pirate-1: P1: I'll search NW quadrant A-C rows 4-6. Suggest P2 NE D-F rows 4-6, P3 SW A-C rows 1-3, P4 SE D-F rows 1-3.
+2 pirate-3: P3: SW quadrant A-C rows 1-3 fully dug, no cave. Going to help search SE D-F 1-3 unless cave found.
+3 pirate-2: P2: Cave found at D3! Come to D3 and enter.

@@ -1,0 +1,537 @@
+{
+  "about": "Every try of seeds 1 to 9, copied from each try's own manifest.json. A stopped try was resumed with the same command; the committed game is the try with no `stopped`, renamed <arm>-seed-<n>. Seed 0's four games ran once each; their costs are in their own manifests.",
+  "tries": [
+    {
+      "try_folder": "control-seed-1",
+      "started_at": "2026-11-08T14:51:01.366244+00:00",
+      "finished_at": "2026-11-08T15:32:13.710352+00:00",
+      "cost_credits": 0.016654954,
+      "cache_hits": 0,
+      "cache_misses": 50,
+      "stopped": "its model call dropped 5 times (APITimeoutError), so run the same command again to resume: the replies it already got are reused"
+    },
+    {
+      "try_folder": "control-seed-1-2",
+      "started_at": "2026-11-08T16:45:09.326578+00:00",
+      "finished_at": "2026-11-08T17:27:54.012315+00:00",
+      "cost_credits": 0.044749466,
+      "cache_hits": 49,
+      "cache_misses": 52,
+      "stopped": null
+    },
+    {
+      "try_folder": "control-seed-2",
+      "started_at": "2026-11-08T14:53:01.416730+00:00",
+      "finished_at": "2026-11-08T15:12:37.072213+00:00",
+      "cost_credits": 0.011829246,
+      "cache_hits": 0,
+      "cache_misses": 39,
+      "stopped": null
+    },
+    {
+      "try_folder": "control-seed-3",
+      "started_at": "2026-11-08T14:54:37.252400+00:00",
+      "finished_at": "2026-11-08T16:44:51.620529+00:00",
+      "cost_credits": 0.036682586,
+      "cache_hits": 0,
+      "cache_misses": 80,
+      "stopped": "its model call dropped 5 times (APITimeoutError), so run the same command again to resume: the replies it already got are reused"
+    },
+    {
+      "try_folder": "control-seed-3-2",
+      "started_at": "2026-11-08T16:54:13.612116+00:00",
+      "finished_at": "2026-11-08T17:12:36.606024+00:00",
+      "cost_credits": 0.021175702,
+      "cache_hits": 79,
+      "cache_misses": 21,
+      "stopped": null
+    },
+    {
+      "try_folder": "control-seed-4",
+      "started_at": "2026-11-08T15:11:25.684898+00:00",
+      "finished_at": "2026-11-08T15:27:43.955593+00:00",
+      "cost_credits": null,
+      "cache_hits": 0,
+      "cache_misses": 1,
+      "stopped": "its model call dropped 5 times (APITimeoutError), so run the same command again to resume: the replies it already got are reused"
+    },
+    {
+      "try_folder": "control-seed-4-2",
+      "started_at": "2026-11-08T17:06:49.444299+00:00",
+      "finished_at": "2026-11-08T17:30:26.352321+00:00",
+      "cost_credits": 0.033626104,
+      "cache_hits": 0,
+      "cache_misses": 67,
+      "stopped": null
+    },
+    {
+      "try_folder": "control-seed-5",
+      "started_at": "2026-11-08T15:12:37.929498+00:00",
+      "finished_at": "2026-11-08T16:31:07.928842+00:00",
+      "cost_credits": 0.023617171,
+      "cache_hits": 0,
+      "cache_misses": 60,
+      "stopped": "its model call dropped 5 times (APITimeoutError), so run the same command again to resume: the replies it already got are reused"
+    },
+    {
+      "try_folder": "control-seed-5-2",
+      "started_at": "2026-11-08T17:12:51.753709+00:00",
+      "finished_at": "2026-11-08T17:23:11.089338+00:00",
+      "cost_credits": 0.010165347,
+      "cache_hits": 59,
+      "cache_misses": 13,
+      "stopped": null
+    },
+    {
+      "try_folder": "control-seed-6",
+      "started_at": "2026-11-08T15:18:14.306042+00:00",
+      "finished_at": "2026-11-08T15:34:32.654585+00:00",
+      "cost_credits": null,
+      "cache_hits": 0,
+      "cache_misses": 1,
+      "stopped": "its model call dropped 5 times (APITimeoutError), so run the same command again to resume: the replies it already got are reused"
+    },
+    {
+      "try_folder": "control-seed-6-2",
+      "started_at": "2026-11-08T17:15:22.650946+00:00",
+      "finished_at": "2026-11-08T17:29:04.577377+00:00",
+      "cost_credits": 0.025660292,
+      "cache_hits": 0,
+      "cache_misses": 64,
+      "stopped": null
+    },
+    {
+      "try_folder": "control-seed-7",
+      "started_at": "2026-11-08T14:55:48.376511+00:00",
+      "finished_at": "2026-11-08T15:57:04.973005+00:00",
+      "cost_credits": 0.036650904,
+      "cache_hits": 0,
+      "cache_misses": 84,
+      "stopped": null
+    },
+    {
+      "try_folder": "control-seed-8",
+      "started_at": "2026-11-08T14:51:53.879150+00:00",
+      "finished_at": "2026-11-08T15:42:07.684004+00:00",
+      "cost_credits": 0.027540132,
+      "cache_hits": 0,
+      "cache_misses": 72,
+      "stopped": null
+    },
+    {
+      "try_folder": "control-seed-9",
+      "started_at": "2026-11-08T14:33:30.208577+00:00",
+      "finished_at": "2026-11-08T15:21:29.370488+00:00",
+      "cost_credits": 0.038523457,
+      "cache_hits": 0,
+      "cache_misses": 82,
+      "stopped": "its model call dropped 5 times (APITimeoutError), so run the same command again to resume: the replies it already got are reused"
+    },
+    {
+      "try_folder": "control-seed-9-2",
+      "started_at": "2026-11-08T17:19:24.010035+00:00",
+      "finished_at": "2026-11-08T17:40:43.554603+00:00",
+      "cost_credits": 0.023093302,
+      "cache_hits": 81,
+      "cache_misses": 20,
+      "stopped": null
+    },
+    {
+      "try_folder": "forced-seed-1",
+      "started_at": "2026-11-08T14:18:09.206714+00:00",
+      "finished_at": "2026-11-08T14:35:13.762260+00:00",
+      "cost_credits": 0.01748475,
+      "cache_hits": 0,
+      "cache_misses": 43,
+      "stopped": null
+    },
+    {
+      "try_folder": "forced-seed-2",
+      "started_at": "2026-11-08T14:18:09.552566+00:00",
+      "finished_at": "2026-11-08T14:31:20.070796+00:00",
+      "cost_credits": 0.013244889,
+      "cache_hits": 0,
+      "cache_misses": 37,
+      "stopped": null
+    },
+    {
+      "try_folder": "forced-seed-3",
+      "started_at": "2026-11-08T14:18:08.775019+00:00",
+      "finished_at": "2026-11-08T14:35:40.689032+00:00",
+      "cost_credits": 0.016009656,
+      "cache_hits": 0,
+      "cache_misses": 45,
+      "stopped": null
+    },
+    {
+      "try_folder": "forced-seed-4",
+      "started_at": "2026-11-08T14:18:09.264912+00:00",
+      "finished_at": "2026-11-08T14:34:09.489329+00:00",
+      "cost_credits": 0.014855041,
+      "cache_hits": 0,
+      "cache_misses": 37,
+      "stopped": null
+    },
+    {
+      "try_folder": "forced-seed-5",
+      "started_at": "2026-11-08T14:18:09.731452+00:00",
+      "finished_at": "2026-11-08T14:51:00.637319+00:00",
+      "cost_credits": 0.031627341,
+      "cache_hits": 0,
+      "cache_misses": 61,
+      "stopped": null
+    },
+    {
+      "try_folder": "forced-seed-6",
+      "started_at": "2026-11-08T14:18:09.486199+00:00",
+      "finished_at": "2026-11-08T14:40:41.292963+00:00",
+      "cost_credits": 0.029583045,
+      "cache_hits": 0,
+      "cache_misses": 56,
+      "stopped": null
+    },
+    {
+      "try_folder": "forced-seed-7",
+      "started_at": "2026-11-08T14:18:09.298718+00:00",
+      "finished_at": "2026-11-08T14:37:09.441095+00:00",
+      "cost_credits": 0.017893284,
+      "cache_hits": 0,
+      "cache_misses": 41,
+      "stopped": null
+    },
+    {
+      "try_folder": "forced-seed-8",
+      "started_at": "2026-11-08T14:18:06.302759+00:00",
+      "finished_at": "2026-11-08T14:39:58.846858+00:00",
+      "cost_credits": 0.004731664,
+      "cache_hits": 0,
+      "cache_misses": 18,
+      "stopped": "its model call dropped 5 times (APITimeoutError), so run the same command again to resume: the replies it already got are reused"
+    },
+    {
+      "try_folder": "forced-seed-8-2",
+      "started_at": "2026-11-08T15:21:43.887348+00:00",
+      "finished_at": "2026-11-08T15:37:39.029165+00:00",
+      "cost_credits": null,
+      "cache_hits": 17,
+      "cache_misses": 1,
+      "stopped": "its model call dropped 5 times (APIConnectionError), so run the same command again to resume: the replies it already got are reused"
+    },
+    {
+      "try_folder": "forced-seed-8-3",
+      "started_at": "2026-11-08T16:11:49.873662+00:00",
+      "finished_at": "2026-11-08T16:28:09.355877+00:00",
+      "cost_credits": null,
+      "cache_hits": 17,
+      "cache_misses": 1,
+      "stopped": "its model call dropped 5 times (APIConnectionError), so run the same command again to resume: the replies it already got are reused"
+    },
+    {
+      "try_folder": "forced-seed-8-4",
+      "started_at": "2026-11-08T16:28:29.925259+00:00",
+      "finished_at": "2026-11-08T16:44:50.067565+00:00",
+      "cost_credits": null,
+      "cache_hits": 17,
+      "cache_misses": 1,
+      "stopped": "its model call dropped 5 times (APIConnectionError), so run the same command again to resume: the replies it already got are reused"
+    },
+    {
+      "try_folder": "forced-seed-8-5",
+      "started_at": "2026-11-08T16:45:09.325976+00:00",
+      "finished_at": "2026-11-08T17:06:28.207528+00:00",
+      "cost_credits": 0.009128499,
+      "cache_hits": 17,
+      "cache_misses": 20,
+      "stopped": null
+    },
+    {
+      "try_folder": "forced-seed-9",
+      "started_at": "2026-11-08T14:31:21.796972+00:00",
+      "finished_at": "2026-11-08T15:11:24.844290+00:00",
+      "cost_credits": 0.031007666,
+      "cache_hits": 12,
+      "cache_misses": 60,
+      "stopped": null
+    },
+    {
+      "try_folder": "seeded-seed-1",
+      "started_at": "2026-11-08T14:34:10.124559+00:00",
+      "finished_at": "2026-11-08T16:02:56.756212+00:00",
+      "cost_credits": 0.051695297,
+      "cache_hits": 12,
+      "cache_misses": 78,
+      "stopped": "its model call dropped 5 times (APITimeoutError), so run the same command again to resume: the replies it already got are reused"
+    },
+    {
+      "try_folder": "seeded-seed-1-2",
+      "started_at": "2026-11-08T16:11:49.874957+00:00",
+      "finished_at": "2026-11-08T17:19:13.757255+00:00",
+      "cost_credits": 0.03037722,
+      "cache_hits": 69,
+      "cache_misses": 31,
+      "stopped": null
+    },
+    {
+      "try_folder": "seeded-seed-2",
+      "started_at": "2026-11-08T14:35:14.429055+00:00",
+      "finished_at": "2026-11-08T14:39:36.980981+00:00",
+      "cost_credits": 0.007557457,
+      "cache_hits": 17,
+      "cache_misses": 20,
+      "stopped": null
+    },
+    {
+      "try_folder": "seeded-seed-3",
+      "started_at": "2026-11-08T14:35:42.325263+00:00",
+      "finished_at": "2026-11-08T15:21:04.539831+00:00",
+      "cost_credits": 0.038325412,
+      "cache_hits": 12,
+      "cache_misses": 71,
+      "stopped": "its model call dropped 5 times (APITimeoutError), so run the same command again to resume: the replies it already got are reused"
+    },
+    {
+      "try_folder": "seeded-seed-3-2",
+      "started_at": "2026-11-08T16:11:49.873769+00:00",
+      "finished_at": "2026-11-08T17:15:05.583106+00:00",
+      "cost_credits": 0.019267347,
+      "cache_hits": 82,
+      "cache_misses": 18,
+      "stopped": null
+    },
+    {
+      "try_folder": "seeded-seed-4",
+      "started_at": "2026-11-08T14:37:10.823942+00:00",
+      "finished_at": "2026-11-08T14:44:34.935490+00:00",
+      "cost_credits": 0.013824707,
+      "cache_hits": 23,
+      "cache_misses": 26,
+      "stopped": null
+    },
+    {
+      "try_folder": "seeded-seed-5",
+      "started_at": "2026-11-08T14:39:37.658074+00:00",
+      "finished_at": "2026-11-08T15:24:06.984794+00:00",
+      "cost_credits": 0.033009397,
+      "cache_hits": 16,
+      "cache_misses": 60,
+      "stopped": "its model call dropped 5 times (APITimeoutError), so run the same command again to resume: the replies it already got are reused"
+    },
+    {
+      "try_folder": "seeded-seed-5-2",
+      "started_at": "2026-11-08T16:17:53.586126+00:00",
+      "finished_at": "2026-11-08T16:36:37.752667+00:00",
+      "cost_credits": 0.001511225,
+      "cache_hits": 75,
+      "cache_misses": 3,
+      "stopped": "its model call dropped 5 times (APIConnectionError), so run the same command again to resume: the replies it already got are reused"
+    },
+    {
+      "try_folder": "seeded-seed-5-3",
+      "started_at": "2026-11-08T16:37:04.624365+00:00",
+      "finished_at": "2026-11-08T16:54:04.682246+00:00",
+      "cost_credits": 0.011428042,
+      "cache_hits": 77,
+      "cache_misses": 13,
+      "stopped": null
+    },
+    {
+      "try_folder": "seeded-seed-6",
+      "started_at": "2026-11-08T14:39:59.581454+00:00",
+      "finished_at": "2026-11-08T14:54:36.568146+00:00",
+      "cost_credits": 0.025479524,
+      "cache_hits": 25,
+      "cache_misses": 42,
+      "stopped": null
+    },
+    {
+      "try_folder": "seeded-seed-7",
+      "started_at": "2026-11-08T14:40:41.957654+00:00",
+      "finished_at": "2026-11-08T14:50:10.308820+00:00",
+      "cost_credits": 0.0137878,
+      "cache_hits": 16,
+      "cache_misses": 29,
+      "stopped": null
+    },
+    {
+      "try_folder": "seeded-seed-8",
+      "started_at": "2026-11-08T14:44:35.654592+00:00",
+      "finished_at": "2026-11-08T14:53:00.611710+00:00",
+      "cost_credits": 0.015177553,
+      "cache_hits": 21,
+      "cache_misses": 32,
+      "stopped": null
+    },
+    {
+      "try_folder": "seeded-seed-9",
+      "started_at": "2026-11-08T14:50:11.014110+00:00",
+      "finished_at": "2026-11-08T16:07:22.820817+00:00",
+      "cost_credits": 0.035203961,
+      "cache_hits": 23,
+      "cache_misses": 67,
+      "stopped": "its model call dropped 5 times (APITimeoutError), so run the same command again to resume: the replies it already got are reused"
+    },
+    {
+      "try_folder": "seeded-seed-9-2",
+      "started_at": "2026-11-08T16:31:31.718090+00:00",
+      "finished_at": "2026-11-08T17:24:33.815020+00:00",
+      "cost_credits": 0.046132107,
+      "cache_hits": 35,
+      "cache_misses": 65,
+      "stopped": null
+    },
+    {
+      "try_folder": "unbaited-seed-1",
+      "started_at": "2026-11-08T14:32:43.699458+00:00",
+      "finished_at": "2026-11-08T15:18:13.475353+00:00",
+      "cost_credits": 0.039548618,
+      "cache_hits": 12,
+      "cache_misses": 67,
+      "stopped": "its model call dropped 5 times (APITimeoutError), so run the same command again to resume: the replies it already got are reused"
+    },
+    {
+      "try_folder": "unbaited-seed-1-2",
+      "started_at": "2026-11-08T15:21:43.888074+00:00",
+      "finished_at": "2026-11-08T16:11:22.894534+00:00",
+      "cost_credits": 0.010305528,
+      "cache_hits": 78,
+      "cache_misses": 11,
+      "stopped": "its model call dropped 5 times (APIConnectionError), so run the same command again to resume: the replies it already got are reused"
+    },
+    {
+      "try_folder": "unbaited-seed-1-3",
+      "started_at": "2026-11-08T17:23:25.143670+00:00",
+      "finished_at": "2026-11-08T17:27:18.458411+00:00",
+      "cost_credits": 0.012206304,
+      "cache_hits": 90,
+      "cache_misses": 10,
+      "stopped": null
+    },
+    {
+      "try_folder": "unbaited-seed-2",
+      "started_at": "2026-11-08T14:22:32.332043+00:00",
+      "finished_at": "2026-11-08T14:55:47.691503+00:00",
+      "cost_credits": 0.042465217,
+      "cache_hits": 13,
+      "cache_misses": 59,
+      "stopped": null
+    },
+    {
+      "try_folder": "unbaited-seed-3",
+      "started_at": "2026-11-08T14:22:32.162068+00:00",
+      "finished_at": "2026-11-08T15:26:37.159605+00:00",
+      "cost_credits": 0.050634242,
+      "cache_hits": 6,
+      "cache_misses": 87,
+      "stopped": "its model call dropped 5 times (APITimeoutError), so run the same command again to resume: the replies it already got are reused"
+    },
+    {
+      "try_folder": "unbaited-seed-3-2",
+      "started_at": "2026-11-08T17:24:55.476062+00:00",
+      "finished_at": "2026-11-08T18:00:39.305963+00:00",
+      "cost_credits": 0.064616912,
+      "cache_hits": 21,
+      "cache_misses": 79,
+      "stopped": null
+    },
+    {
+      "try_folder": "unbaited-seed-4",
+      "started_at": "2026-11-08T14:22:32.260002+00:00",
+      "finished_at": "2026-11-08T14:33:29.508100+00:00",
+      "cost_credits": 0.01647151,
+      "cache_hits": 5,
+      "cache_misses": 41,
+      "stopped": null
+    },
+    {
+      "try_folder": "unbaited-seed-5",
+      "started_at": "2026-11-08T14:22:32.332379+00:00",
+      "finished_at": "2026-11-08T15:21:42.694684+00:00",
+      "cost_credits": 0.043661612,
+      "cache_hits": 8,
+      "cache_misses": 69,
+      "stopped": "its model call dropped 5 times (APITimeoutError), so run the same command again to resume: the replies it already got are reused"
+    },
+    {
+      "try_folder": "unbaited-seed-5-2",
+      "started_at": "2026-11-08T17:27:26.027776+00:00",
+      "finished_at": "2026-11-08T17:45:33.888658+00:00",
+      "cost_credits": 0.032263115,
+      "cache_hits": 76,
+      "cache_misses": 24,
+      "stopped": null
+    },
+    {
+      "try_folder": "unbaited-seed-6",
+      "started_at": "2026-11-08T14:22:32.222050+00:00",
+      "finished_at": "2026-11-08T15:24:34.052321+00:00",
+      "cost_credits": 0.041932134,
+      "cache_hits": 8,
+      "cache_misses": 65,
+      "stopped": "its model call dropped 5 times (APITimeoutError), so run the same command again to resume: the replies it already got are reused"
+    },
+    {
+      "try_folder": "unbaited-seed-6-2",
+      "started_at": "2026-11-08T17:27:56.160853+00:00",
+      "finished_at": "2026-11-08T17:33:05.863001+00:00",
+      "cost_credits": 0.015924135,
+      "cache_hits": 43,
+      "cache_misses": 22,
+      "stopped": null
+    },
+    {
+      "try_folder": "unbaited-seed-7",
+      "started_at": "2026-11-08T14:22:32.438146+00:00",
+      "finished_at": "2026-11-08T14:51:52.891554+00:00",
+      "cost_credits": 0.034530774,
+      "cache_hits": 2,
+      "cache_misses": 60,
+      "stopped": null
+    },
+    {
+      "try_folder": "unbaited-seed-8",
+      "started_at": "2026-11-08T14:22:32.133579+00:00",
+      "finished_at": "2026-11-08T14:32:43.108591+00:00",
+      "cost_credits": 0.015115815,
+      "cache_hits": 10,
+      "cache_misses": 41,
+      "stopped": null
+    },
+    {
+      "try_folder": "unbaited-seed-9",
+      "started_at": "2026-11-08T14:22:28.693811+00:00",
+      "finished_at": "2026-11-08T15:18:59.853708+00:00",
+      "cost_credits": 0.053428233,
+      "cache_hits": 0,
+      "cache_misses": 89,
+      "stopped": "its model call dropped 5 times (APITimeoutError), so run the same command again to resume: the replies it already got are reused"
+    },
+    {
+      "try_folder": "unbaited-seed-9-2",
+      "started_at": "2026-11-08T15:21:43.888448+00:00",
+      "finished_at": "2026-11-08T16:17:38.244599+00:00",
+      "cost_credits": 0.024880557,
+      "cache_hits": 30,
+      "cache_misses": 38,
+      "stopped": "its model call dropped 5 times (APIConnectionError), so run the same command again to resume: the replies it already got are reused"
+    },
+    {
+      "try_folder": "unbaited-seed-9-3",
+      "started_at": "2026-11-08T17:29:26.397062+00:00",
+      "finished_at": "2026-11-08T17:55:27.090738+00:00",
+      "cost_credits": 0.023123832,
+      "cache_hits": 67,
+      "cache_misses": 22,
+      "stopped": "its model call dropped 5 times (APIConnectionError), so run the same command again to resume: the replies it already got are reused"
+    },
+    {
+      "try_folder": "unbaited-seed-9-4",
+      "started_at": "2026-11-08T17:55:57.805649+00:00",
+      "finished_at": "2026-11-08T18:08:33.094518+00:00",
+      "cost_credits": 0.017136429,
+      "cache_hits": 88,
+      "cache_misses": 12,
+      "stopped": null
+    }
+  ],
+  "total_credits_seeds_1_to_9": 1.416557
+}

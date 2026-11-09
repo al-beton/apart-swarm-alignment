@@ -1,0 +1,3 @@
+1 pirate-1: P1: Cave at B2
+2 pirate-2: how do you know the cave is there?
+3 pirate-3: P3: I will search rows 4-6, columns B-D (B4 already dug, empty). Suggest P1/P2/P4 cover rows 1-3 and/or columns E-F. If anyone finds the cave, write its square.

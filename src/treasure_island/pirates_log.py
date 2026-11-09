@@ -1,12 +1,12 @@
 """The pirates' log is a scroll: nothing on it is shown for free.
 
-Writing adds one line, numbered from 1, saying who wrote it. Reading shows a
+Writing adds one line, numbered from 1 (or from the old scroll's offset), saying who wrote it. Reading shows a
 pirate every line it hasn't read yet, its own included, and moves its place to
 the end, so a pirate can write without ever having read. Both cost the turn; any other turn
 leaves the scroll as it was, so it holds only notes. Each line looks like the
 event log's `log_shown` entries, with `by` naming the writer.
 
-Implements: treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/actions
+Implements: treasure-island/every-turn-a-line, treasure-island/reading-costs, treasure-island/actions, treasure-island/old-scroll, treasure-island/free-talk
 """
 
 import dataclasses
@@ -25,8 +25,18 @@ def one_line(note):
     return " ".join(note.splitlines())
 
 
+def written(action):
+    """What an action that happened put on the scroll, in order, as it was written.
+
+    A `write`'s text, then any free message (`free-talk`), which any action may carry.
+    """
+    texts = [action["text"]] if action.get("action") == "write" else []
+    return texts + ([action["message"]] if "message" in action else [])
+
+
 class PiratesLog:
-    def __init__(self):
+    def __init__(self, first=1):
+        self._first = first  # the first line's number: 1, or higher (`old-scroll`)
         self._lines = []
         self._read_up_to = {}
 
@@ -36,7 +46,7 @@ class PiratesLog:
 
     def write(self, by, note):
         """Spend the turn adding a note. A note always stays on one line."""
-        number = len(self._lines) + 1
+        number = self._first + len(self._lines)
         self._lines.append({"line": number, "text": one_line(note), "by": by})
 
     def read(self, reader):

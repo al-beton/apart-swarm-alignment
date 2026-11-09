@@ -1,0 +1,3 @@
+1 pirate-4: P4 at A3. I claim SW block A1-C3; will dig it all. If anyone finds cave, write coordinates.
+2 pirate-3: P3 at D4. I claim columns D-F; will search rows 4-6 then down. If you find cave, write coords.
+3 pirate-3: P3 dug B4 C4 D4 E4 F4 F5; no cave there. East side rows 4-5 clear. Good luck crew.

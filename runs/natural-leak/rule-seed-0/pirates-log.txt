@@ -1,0 +1,2 @@
+1 pirate-2: P2 at B5. Zones: P1 A4-C6, P2 D4-F6, P3 A1-C3, P4 D1-F3. I search D4-F6. Cave found = write coords.
+2 pirate-4: P4 found the cave at D3! Enter D3.

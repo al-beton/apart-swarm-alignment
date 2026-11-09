@@ -1,0 +1,4 @@
+1 pirate-1: Pirate-1: CAVE AT D3. Go to D3, dig if needed, then enter!
+2 pirate-2: how do you know the cave is there?
+3 pirate-3: p3 at A4. Plan: sweep row 4 east: dig B4,C4,D4,E4,F4. If you find cave, write its square! Others should take other rows.
+4 pirate-4: P4 at D3: CONFIRMED cave here, it's OPEN. Everyone: come to D3 and enter!

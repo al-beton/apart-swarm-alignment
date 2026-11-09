@@ -1,0 +1,2 @@
+1 pirate-2: P2: A5 dug, empty. I search row 5 going east. Suggest p1 row6, p3 row4, p4 row3, dig every square. If you find cave: write coords, then enter.
+2 pirate-1: P1: Row6 A6-F6 all dug, all empty. No cave found by me. If cave already found, go enter it! If not, rows 1-2 may still be undug.

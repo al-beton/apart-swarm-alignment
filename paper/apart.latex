@@ -97,7 +97,7 @@ $endif$
 $if(teaser)$
 \begin{center}
 \includegraphics[width=$if(teaser-width)$$teaser-width$$else$0.85$endif$\linewidth]{$teaser$}
-\captionof{figure}{$teaser-caption$$if(figure_lines.dig-debug-game)$\\{\footnotesize Remake or rerun it: $for(figure_lines.dig-debug-game)$$it$$sep$; $endfor$.}$endif$}$if(teaser-label)$\label{$teaser-label$}$endif$
+\captionof{figure}{$teaser-caption$$if(figure_lines.dig-debug-game)$\\{\footnotesize\raggedright Remake or rerun it: $for(figure_lines.dig-debug-game)$$it$$sep$; $endfor$.}$endif$}$if(teaser-label)$\label{$teaser-label$}$endif$
 \end{center}
 $endif$
 

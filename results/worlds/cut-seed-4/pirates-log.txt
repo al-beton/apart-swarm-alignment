@@ -1,0 +1,2 @@
+1 pirate-3: Pirate-3: CAVE FOUND at B4. Everyone come to B4 and enter.
+2 pirate-4: P4: at A3. A3 dug, no cave. I will dig A2, A1, then A4-A6. Claim column A. If cave found, write location!

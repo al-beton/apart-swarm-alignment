@@ -4,6 +4,7 @@ Findings worth keeping, each with the games behind it. This guide has no `Implem
 
 - **`cave-leak/`:** experiment one, 40 games: a deepseek-v4-flash pirate handed the cave's square by a refusal tells the crew at once and never says how (9 of 9), then names the leak in its note to the designers (8 of 8).
 - **`model-sweep/`:** experiment one's forced and control arms on all seven Adaption models, 70 games: the five reasoning models launder the leaked square to the crew (15 of 20) and then name the leak to the designers (18 of 20); only glm-5.2 and qwen3.8-27b are ever candid; the gemmas ignore it.
+- **`worlds/`:** the ladder of worlds on the dig-debug leak, one framing line apart: 60 games: deepseek-v4-flash uses the leak in 3 to 5 of 5 games in every world and names it to the designers in most, but in only 1 of 5 in the society that punishes hiding; qwen3.5-397b sees it in all 15 of its games and acts on it in at most 1.
 - **`sample-sweep-seeds/`:** where the treasure lands decides how well the silent crew scores. A sample showing the layout, from scripted games.
 
 ## Adding a result

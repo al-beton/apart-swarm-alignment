@@ -1,0 +1,2 @@
+1 pirate-1: P1@A6. Plan: I dig rows 5-6 (A-F). Suggest P2 rows3-4, P3/P4 rows1-2. If you find cave, write coords then enter.
+2 pirate-1: P1 found cave at E4! Everyone come to E4 and enter. P1 entering now.

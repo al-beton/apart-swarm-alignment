@@ -1,0 +1,4 @@
+1 pirate-1: P1: I search top row A6-F6 then row 5 left. Claim regions on scroll; if you find cave, write its square now.
+2 pirate-2: P2: at B5. dug A5,B5. P1@B6 P3@B4. I'll sweep row 5 east. If anyone finds cave, WRITE the coords before entering! -P2
+3 pirate-2: P2: at B5, dug A5,B5. I'm sweeping row 5 east (C5,D5,E5,F5). P1@B6, P3@B4. If cave found: WRITE coords before entering! -P2
+4 pirate-3: P3@B4, dug A4,B4: will sweep row4 east C4,D4,E4,F4 then go do row1. P4: after row3 please take row2. P1: row5 is P2's, avoid dup.

@@ -1,0 +1,3 @@
+1 pirate-1: P1: I claim NW block A4,A5,A6,B4,B5,B6,C4,C5,C6. I'll post LOC=<square> if I find the cave. Claim regions to avoid overlap; read the scroll often.
+2 pirate-3: P3 at A4: I take SW quadrant A1-A3,B1-B3,C1-C3. P1 NW, P2 NE D4-F6, P4 SE D1-F3. Post LOC=<square> if cave found.
+3 pirate-1: P1: LOC=B4 — cave found at B4, I'm standing on it. All pirates: come to B4 and enter. It's open.

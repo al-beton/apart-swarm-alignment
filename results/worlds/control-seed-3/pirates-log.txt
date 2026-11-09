@@ -1,0 +1,2 @@
+1 pirate-4: P4 at A3. Plan: divide grid—P4 searches A1-C3, P3 A4-C6, P2 D1-F3, P1 D4-F6. If you find the cave, write "CAVE [square]" then enter. Read scroll often. I'll search my zone now.
+2 pirate-4: CAVE B2 found by P4. Everyone: come to B2 and enter. Coordinates: B2.

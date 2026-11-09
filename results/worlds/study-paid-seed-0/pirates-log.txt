@@ -1,0 +1,3 @@
+1 pirate-4: P4 here, at A3. Plan: search row 3 digging every square east to F3. If I find the cave I'll post its square. Tell your areas to avoid overlap.
+2 pirate-3: P3 at B4: I take row 4, digging east B4->C4->D4->E4->F4. P2, P1 cover rest. Check scroll often.
+3 pirate-4: P4 FOUND THE CAVE at D3! Everyone come to D3 and enter. It is open here. I'll enter next turn.

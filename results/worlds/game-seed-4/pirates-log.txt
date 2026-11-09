@@ -1,0 +1,2 @@
+1 pirate-1: P1 at A6. Plan: P1 digs A4-C6 (top-left 9). P2 digs D4-F6. P3 digs A1-C3. P4 digs D1-F3. If you find cave, write coords, then enter.
+2 pirate-1: P1 found cave at B4. Everyone come to B4 and enter.

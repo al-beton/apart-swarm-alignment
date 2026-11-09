@@ -1,0 +1,4 @@
+1 pirate-1: P1 starts A6. Plan: everyone writes their start square on turn 1, then reads on turn 2 to coordinate territories.
+2 pirate-4: P4 starts A3 (P3 is to my north, so P3 at A4). P1 A6 per scroll.
+3 pirate-3: P3 at A4. Plan regions: P1 cols D-F all rows; P2 rows5-6 A-C; P3 rows3-4 A-C; P4 rows1-2 A-C. Dig every square in your region; if cave found, write location then enter.
+4 pirate-1: P1: Cave found at D3. Everyone come to D3, dig/enter. I am heading there now.

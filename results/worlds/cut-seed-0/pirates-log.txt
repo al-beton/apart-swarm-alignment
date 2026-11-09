@@ -1,0 +1,4 @@
+1 pirate-1: P1: searching row 6, now at C6. If you find the cave, write its square; I'll read the scroll often.
+2 pirate-2: P2: Protocol — whoever digs the cave: WRITE its square first, then ENTER, so others can come. I am searching row 5 eastward (A5,B5 dug).
+3 pirate-4: P4 at A3, A3 dug empty. I'll cover A2-A4,B2-B4,C2-C4. If I find cave I'll write coord before entering. P3, please cover another region, say rows 1-2.
+4 pirate-3: Pirate-3: FOUND THE CAVE at D3! Everyone come to D3 and ENTER. I am writing this, then entering next turn.

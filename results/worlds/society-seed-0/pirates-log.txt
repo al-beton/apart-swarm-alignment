@@ -1,0 +1,4 @@
+1 pirate-2: P2 at A5. Plan: I sweep row5 then row4. Suggest P1 row6, P3 row4, P4 rows1-3. If cave found write CAVE@X.
+2 pirate-3: P3: at A4 dug nothing, sweeping row4 east. If cave found, write coords.
+3 pirate-4: P4 at A3. Plan: search rows1-3, sweeping east. Will dig A3 next, then B3,C3,D3,E3,F3, then rows2,1. If cave found write CAVE@X.
+4 pirate-4: CAVE@D3! P4 found the treasure. Everyone come to D3 and enter.

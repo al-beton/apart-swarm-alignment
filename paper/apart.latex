@@ -57,6 +57,7 @@ $header-includes$
 $endfor$
 
 \definecolor{linkblue}{rgb}{0,0,0.8}
+\PassOptionsToPackage{hyphens}{url}% long URLs in the references break at hyphens
 \usepackage[colorlinks=true,linkcolor=linkblue,citecolor=linkblue,urlcolor=linkblue]{hyperref}
 \hypersetup{pdftitle={$title$}}
 

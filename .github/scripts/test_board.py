@@ -42,7 +42,7 @@ def test_board_follows_labels_adds_the_issue_then_sets_its_status():
 
     board.sync("ISSUE", ["in-review"], "open", graphql)
     board.sync("ISSUE", ["feat"], "open", graphql)
-    added, setting, again, clearing = calls
+    added, setting, _added_again, clearing = calls
     assert "addProjectV2ItemById" in added[0]
     assert added[1] == {"project": board.PROJECT, "issue": "ISSUE"}
     assert "updateProjectV2ItemFieldValue" in setting[0]

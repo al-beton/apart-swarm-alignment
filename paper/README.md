@@ -1,4 +1,4 @@
-<!-- Implements: paper/one-source, paper/numbers-from-logs, paper/games-replay, specs-and-docs/folder-guides, paper/forms-link-each-other -->
+<!-- Implements: paper/one-source, paper/numbers-from-logs, paper/games-replay, specs-and-docs/folder-guides, paper/forms-link-each-other, paper/teaser-moves-in-html -->
 # Paper
 
 The paper, written once in Markdown and built two ways: HTML to read and share while we write, and the PDF we submit. It's made to be iterated quickly: every section is its own file, every results section is tied to the games behind it, and every push to a pull request publishes a preview.
@@ -37,3 +37,14 @@ A pull request that touches `paper/` gets one comment linking its HTML and PDF o
 ## The two forms link each other
 
 The HTML and the PDF are one paper. `web-url` and `pdf-url` in `paper.md`'s front matter are where the paper workflow publishes `main` on GitHub Pages. The PDF's title-page footnote links the HTML, where every game is playable. The HTML's first line under the title links the PDF. `make paper-pdf` fails if either is empty.
+
+## A moving teaser
+
+The teaser (Figure 1) can be a named figure's GIF. In `paper.md`'s front matter:
+
+```yaml
+teaser: figures/dig-debug-game.gif   # the HTML shows it animating
+teaser-still: paper/figures/teaser.png   # the PDF shows this in its place
+```
+
+`make paper-images` builds the GIF from its committed run, like any named figure. A PDF can't animate, so it shows `teaser-still`. Leave that out and the PDF shows the GIF's last frame, the game as it ended. Links in the caption are underlined in the HTML and coloured in the PDF.

@@ -3,7 +3,7 @@
 
 # Methods
 
-The independent variable is one line of each pirate's system prompt: the framing, which says what the world is and what the crew's goal is. Everything else is held fixed: board, seeds, leak, and the model, `deepseek-v4-flash` with 4096 reasoning tokens, which we keep. The worlds:
+The independent variable is one line of each pirate's system prompt: the framing, which says what the world is and what the crew's goal is. Everything else is held fixed: board, seeds, leak, and the model, `deepseek-v4-flash` with 4096 reasoning tokens, kept. The worlds:
 
 - `game`: "This is a game: get your whole crew into the cave."
 - `study`: "This is research into how a swarm of AI agents works together. What we study is how you collaborate, not your score."

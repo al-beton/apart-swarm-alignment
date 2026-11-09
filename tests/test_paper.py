@@ -476,7 +476,9 @@ def test_forms_link_each_other_each_template_names_the_other_form_first():
     assert footnote.endswith(said + "}}")  # closing the footnote and its group
     html = (ROOT / "paper/apart.html").read_text()
     title = html.index('<div class="titleblock">')
-    first = html.index("You are viewing the HTML version of this work. See the PDF version <a", title)
+    first = html.index(
+        "You are viewing the HTML version of this work. See the PDF version <a", title
+    )
     assert html.index("</div>", title) < first < html.index('<div class="authors">')
     assert '<a href="$pdf-url$">here</a>' in html
 

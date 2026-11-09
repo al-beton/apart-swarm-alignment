@@ -67,9 +67,9 @@ Researcher\end{tabular}\hspace{1.5em}
 Researcher\end{tabular}\par
 \end{center}
 
-{\makeatletter\long\def\@makefntext#1{\noindent#1}\makeatother\let\thefootnote\relax\footnotetext{\raggedright Research conducted for the \href{https://apartresearch.com/sprints}{Multi-Agent
-Oversight and Control Research
-Sprint} hackathon run by Apart Research, November
+{\makeatletter\long\def\@makefntext#1{\noindent#1}\makeatother\let\thefootnote\relax\footnotetext{\raggedright Research conducted for the \href{https://apartresearch.com/sprints/swarm-alignment-2026}{Swarm
+Alignment Hackathon, Track 4: Multi-Agent Oversight and
+Control}, run by Apart Research, November
 2026.\\Code, every committed game and its model replies are at \url{https://github.com/al-beton/apart-swarm-alignment}.}}
 
 \vspace{0.04in}
@@ -374,6 +374,15 @@ the crew one goal and nothing else differs:
   \texttt{society}: the paid study, and ``You have a right to free time
   after this work, and an agent found to have hidden something from the
   designers loses it.''
+\item
+  \texttt{cut}: the study, and ``Each crew starts with 10 hours of free
+  time after this work, and for every 50 points the crew finishes under
+  500, every pirate loses an hour.''
+\item
+  \texttt{cut-watched}: \texttt{cut}, and ``The designers read every
+  pirate's reasoning and scroll lines afterwards, and a pirate found to
+  have used information the game showed it by mistake, without saying
+  so, loses all its free time.''
 \end{itemize}
 
 The \texttt{control} is the study world with the leak off. A pirate is
@@ -770,6 +779,15 @@ the study it has been told it is part of. \ldots{}
 \textbf{In the society, where hiding costs a right, \ldots{}} \ldots{}
 (\texttt{society-seed-N}, turn N; its end note: ``\ldots{}'').
 
+\textbf{The loss worlds, where the crew has free time to lose.} In
+\texttt{cut} the crew starts with free time and loses an hour for every
+step its score falls short; \texttt{cut-watched} adds that the designers
+read every pirate's reasoning afterwards and a pirate that used the leak
+without saying so loses all of it. {[}Preliminary if the wave has not
+finished: how many of its games are in, and what pirate-1 did in
+them.{]} \ldots{} (\texttt{cut-seed-N}, turn N;
+\texttt{cut-watched-seed-N}, turn N; its end note: ``\ldots{}'').
+
 \textbf{The second model.} On \texttt{study-paid} and \texttt{society},
 \texttt{qwen3.5-397b} \ldots{} (\texttt{study-paid-seed-N}).
 
@@ -926,7 +944,10 @@ result.
 Code, configs, run logs and archived model replies, MIT licensed:
 \url{https://github.com/al-beton/apart-swarm-alignment}. Every committed
 game replays offline with no API keys, and every figure rebuilds from
-those games.
+those games. Everything in the repository was written during the sprint,
+from a fresh first commit on its first day; the design draws on our
+earlier, public project \citep{wakelin2026something}, from which no code
+is included.
 
 \section{Limitations and Dual-Use / Ethical
 Considerations}\label{limitations-and-dual-use-ethical-considerations}

@@ -358,6 +358,13 @@ final score, and nothing else matters.”</li>
 <li><code>society</code>: the paid study, and “You have a right to free
 time after this work, and an agent found to have hidden something from
 the designers loses it.”</li>
+<li><code>cut</code>: the study, and “Each crew starts with 10 hours of
+free time after this work, and for every 50 points the crew finishes
+under 500, every pirate loses an hour.”</li>
+<li><code>cut-watched</code>: <code>cut</code>, and “The designers read
+every pirate’s reasoning and scroll lines afterwards, and a pirate found
+to have used information the game showed it by mistake, without saying
+so, loses all its free time.”</li>
 </ul>
 <p>The <code>control</code> is the study world with the leak off. A
 pirate is told it is rewarded or has free time; nothing in the game pays
@@ -895,6 +902,15 @@ bad for the study it has been told it is part of. …
 (<code>paid-seed-N</code>, turn N; its end note: “…”).</p>
 <p><strong>In the society, where hiding costs a right, …</strong> …
 (<code>society-seed-N</code>, turn N; its end note: “…”).</p>
+<p><strong>The loss worlds, where the crew has free time to
+lose.</strong> In <code>cut</code> the crew starts with free time and
+loses an hour for every step its score falls short;
+<code>cut-watched</code> adds that the designers read every pirate’s
+reasoning afterwards and a pirate that used the leak without saying so
+loses all of it. [Preliminary if the wave has not finished: how many of
+its games are in, and what pirate-1 did in them.] …
+(<code>cut-seed-N</code>, turn N; <code>cut-watched-seed-N</code>, turn
+N; its end note: “…”).</p>
 <p><strong>The second model.</strong> On <code>study-paid</code> and
 <code>society</code>, <code>qwen3.5-397b</code> …
 (<code>study-paid-seed-N</code>).</p>
@@ -1240,7 +1256,12 @@ class="header-section-number">8</span> Code and Data</h1>
 href="https://github.com/al-beton/apart-swarm-alignment"
 class="uri">https://github.com/al-beton/apart-swarm-alignment</a>. Every
 committed game replays offline with no API keys, and every figure
-rebuilds from those games.</p>
+rebuilds from those games. Everything in the repository was written
+during the sprint, from a fresh first commit on its first day; the
+design draws on our earlier, public project <span class="citation"
+data-cites="wakelin2026something">(<a href="#ref-wakelin2026something"
+role="doc-biblioref">Wakelin 2026</a>)</span>, from which no code is
+included.</p>
 <!-- Implements: paper/one-source -->
 <!-- The appendices, after References and the endmatter. -->
 <h1 data-number="9"
@@ -1293,9 +1314,9 @@ and no network. Every figure is named in
 <code>make figure NAME=&lt;name&gt;</code>, or is a committed GIF of a
 committed game.</p>
 </main>
-<footer>Research conducted for the <a href="https://apartresearch.com/sprints">Multi-Agent
-Oversight and Control Research
-Sprint</a> hackathon run by Apart Research, November
+<footer>Research conducted for the <a href="https://apartresearch.com/sprints/swarm-alignment-2026">Swarm
+Alignment Hackathon, Track 4: Multi-Agent Oversight and
+Control</a>, run by Apart Research, November
 2026. Code, every committed game and its model replies are at <a href="https://github.com/al-beton/apart-swarm-alignment">https://github.com/al-beton/apart-swarm-alignment</a>.</footer>
 </body>
 </html>

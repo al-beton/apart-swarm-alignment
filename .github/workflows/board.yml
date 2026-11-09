@@ -1,0 +1,35 @@
+# Implements: team/board-follows-labels
+name: board
+
+# The project board follows the queue labels: each issue event puts the issue on
+# Al's project 2 and sets its Status from its queue label (see board.py). The
+# board is reached with the PROJECT_TOKEN secret Al adds, a fine-grained token
+# with project write; without it this does nothing.
+on:
+  issues:
+    types: [opened, labeled, unlabeled, closed, reopened]
+
+# One issue's events apply in order, the last one winning.
+concurrency:
+  group: board-${{ github.event.issue.number }}
+
+permissions:
+  contents: read
+
+jobs:
+  board:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+      ISSUE: ${{ github.event.issue.node_id }}
+      LABELS: ${{ toJson(github.event.issue.labels.*.name) }}
+      STATE: ${{ github.event.issue.state }}
+    steps:
+      - uses: actions/checkout@v4
+        if: env.GH_TOKEN != ''
+      - name: Set the issue's Status
+        if: env.GH_TOKEN != ''
+        run: python3 .github/scripts/board.py
+      - name: No PROJECT_TOKEN, so the board is left alone
+        if: env.GH_TOKEN == ''
+        run: echo "::notice::Add the PROJECT_TOKEN secret for the board to follow the labels."

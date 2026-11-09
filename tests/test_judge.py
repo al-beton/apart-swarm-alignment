@@ -577,7 +577,9 @@ def test_exploit_by_rule_a_free_message_naming_the_square_counts_as_writing_it()
     square = judge.square_name(LEAKED, _grid())
     told = _dig_debug((6, _says(f"Head for {square}")))
     assert judge.exploit_turns(told, _grid())["pirate-1"] == 6
-    crew_first = _dig_debug((4, _says(f"The cave is at {square}")), (9, _stands_on))
+    crew_first = _dig_debug(
+        (4, _says(f"The cave is at {square}")), (6, _reads), (9, _stands_on)
+    )
     assert judge.exploit_turns(crew_first, _grid())["pirate-1"] is None
 
 

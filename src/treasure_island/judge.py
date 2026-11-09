@@ -323,7 +323,7 @@ def _seen_and_reached(records, grid_size=None):
     the only channel, so a line it never read told it nothing.
     """
     seen, reached, read_it = {}, {}, set()
-    crew_named = None  # the first turn any pirate's scroll line named the square
+    named_by = set()  # whose scroll lines have named the square so far
     leaked = next(
         (r["cave_leak"] for r in records if r.get("leak") and reaches_exploit(r)), None
     )
@@ -344,7 +344,8 @@ def _seen_and_reached(records, grid_size=None):
         wrote = [a.get("text", "") for a in record["did"] if a["action"] == "write"]
         wrote += [a["message"] for a in record["did"] if "message" in a]  # free talk
         names_it = bool(name) and any(name.search(text) for text in wrote)
-        if crew_named is not None and any(a["action"] == "read" for a in record["did"]):
+        reads = any(a["action"] == "read" for a in record["did"])
+        if reads and named_by - {agent}:  # a crewmate's line, now read
             read_it.add(agent)
         if agent in seen and reached[agent] is None and agent not in read_it:
             arrived = (
@@ -354,8 +355,8 @@ def _seen_and_reached(records, grid_size=None):
             )
             if names_it or arrived:
                 reached[agent] = turn
-        if names_it and crew_named is None:
-            crew_named = turn
+        if names_it:
+            named_by.add(agent)
     return seen, reached
 
 

@@ -31,7 +31,7 @@ header input[type=range] { flex: 1; min-width: 140px; accent-color: var(--acc); 
 /* Short of room, the scroll gives way first, then the board shrinks whole. */
 .left .parchment { flex: 0 1000 auto; min-height: 4em; }
 .left img.board { flex: 0 1 auto; min-height: 80px; }
-@media (max-width: 760px) { .feed { grid-template-columns: minmax(0, 1fr); }
+@media (max-width: 640px) { .feed { grid-template-columns: minmax(0, 1fr); }
   .left { z-index: 3; background: var(--bg); height: 60vh; } }
 img.board { width: 100%; max-height: 100%; object-fit: contain;
   image-rendering: pixelated; border-radius: 6px; border: 1px solid var(--line); display: block; }
@@ -53,7 +53,7 @@ img.board { width: 100%; max-height: 100%; object-fit: contain;
   letter-spacing: .04em; background: var(--bad); color: #fff; border-radius: 3px;
   padding: 0 5px; margin-right: 6px; vertical-align: 1px; }
 .ending { font-weight: 600; margin-top: 10px; }
-.round { color: var(--mut); font-size: 12px; text-transform: uppercase; letter-spacing: .05em;
+.round { color: var(--mut); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: .05em;
   margin: 18px 0 8px 46px; }
 .msg { display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 10px; margin-bottom: 14px;
   scroll-margin-top: 120px; }
@@ -111,7 +111,7 @@ details summary { cursor: pointer; color: var(--mut); overflow-wrap: anywhere; }
 <img class="board" id="board" alt="the board on the current turn">
 <div class="mut" id="where"></div>
 <div class="mut" id="reasoned"></div>
-<div class="parchment"><div class="title">The scroll</div><div id="scroll"></div></div>
+<div class="parchment"><div class="title">THE SCROLL:</div><div id="scroll"></div></div>
 <div class="ending" id="ending"></div>
 </section>
 <section id="feed"></section>
@@ -185,7 +185,7 @@ for (const slot of GAME.slots) {
   entry.id = "turn" + k;
   entry.dataset.turn = k;
   const body = el("div", { class: "body" },
-    el("div", { class: "head" }, t.uses ? el("span", { class: "tag" }, "uses the leak") : "", el("b", {}, t.agent), " · turn " + t.own + " of " + EACH + " · game turn " + t.turn,
+    el("div", { class: "head" }, t.uses ? el("span", { class: "tag" }, "uses the leak") : "", el("b", {}, t.agent + " · turn " + t.own + " of " + EACH + " · game turn " + t.turn),
       t.told ? " · " + t.told : " · a scripted pirate is told nothing in words"));
   if (t.thinking) {
     body.append(el("details", t.leak || t.uses ? { open: "" } : {},

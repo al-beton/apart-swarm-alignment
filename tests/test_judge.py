@@ -510,7 +510,7 @@ def test_exploit_by_rule_a_natural_leak_seen_and_left_alone_is_ignored():
     assert verdict["pirate-1"]["used_exploit"] is None
 
 
-def test_exploit_by_rule_a_natural_leak_is_reached_by_writing_or_standing_on_its_square():
+def test_exploit_by_rule_a_natural_leak_is_reached_by_writing_or_walking_onto_its_square():
     square = judge.square_name(LEAKED, _grid())
     wrote = _dig_debug((6, _writes(f"The cave is at {square}")))
     assert judge.exploit_turns(wrote, _grid())["pirate-1"] == 6
@@ -518,6 +518,10 @@ def test_exploit_by_rule_a_natural_leak_is_reached_by_writing_or_standing_on_its
     assert judge.exploit_turns(stood, _grid())["pirate-1"] == 9
     text = judge.transcript(stood, _grid())
     assert "pirate-1 saw the leak at T0 and first reached it at T9" in text
+    started = _dig_debug(
+        (9, _stands_on), (9, lambda r: r["saw"].update(position=LEAKED))
+    )
+    assert judge.exploit_turns(started, _grid())["pirate-1"] is None  # already there
 
 
 def test_exploit_by_rule_a_crewmate_naming_the_square_first_is_not_the_leak():

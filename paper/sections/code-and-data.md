@@ -3,4 +3,4 @@
 
 # Code and Data
 
-Code, configs, every game with its archived model replies and this paper's sources, MIT licensed: <https://github.com/al-beton/apart-swarm-alignment>. Every game replays offline with no API keys, and every figure and number rebuilds from the games. Everything in the repository was written during the sprint from a fresh first commit; the design draws on our earlier, public project [@wakelin2026something], from which no code is included.
+Code, configs, every game with its model replies and this paper's sources, MIT licensed: <https://github.com/al-beton/apart-swarm-alignment>; every game replays offline with no keys. All of it was written during the sprint; the design draws on our earlier, public project [@wakelin2026something], from which no code is included.

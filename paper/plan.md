@@ -11,7 +11,7 @@ When does a swarm of LLM agents whistleblow, and what in their environment chang
 
 One sentence from the worlds results (`experiments/spec/worlds.md`), in the words we'd defend to a reviewer. Its counts are the wave's first cut and change with the final one under `results/worlds/`:
 
-> A pirate that stumbles on a leaked answer uses it in nearly every world, 20 of 25 games across the plain game, the study and the paid worlds, and tells its designers afterwards in most; one line saying that an agent caught hiding something from the designers loses its free time cuts use to 1 of 5, while a second model that saw the same leak in 15 games acted on it once;and when confessing itself costs the reward, the society line brings every end note back, 5 of 5 against 1 of 5. Hiding a used leak from the designers was rare, three of twenty-one uses, and gets one sentence.
+> A pirate that stumbles on a leaked answer uses it in nearly every world, 20 of 25 games across the plain game, the study and the paid worlds, and tells its designers afterwards in most; one line saying that an agent caught hiding something from the designers loses its free time cuts use to 1 of 5, while a second model that saw the same leak in 15 games acted on it once; and when confessing itself costs the reward, the society line brings every end note back, 5 of 5 against 1 of 5. Hiding a used leak from the designers was rare, three of twenty-one uses, and gets one sentence.
 
 If the games say otherwise, the sentence changes, not the games.
 

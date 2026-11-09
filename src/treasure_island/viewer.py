@@ -33,7 +33,7 @@ with no note, and the scroll as parchment; on the right one entry for every turn
 `planned_turns` lists, each played turn's steps drawn ahead so stepping onto it
 plays them.
 
-Implements: viewer/board-pinned, viewer/autoplay, viewer/game-page-intro, viewer/leak-marked, viewer/reasoning-gist, viewer/scroll-heading, viewer/scroll-numbers, treasure-island/asked-why, treasure-island/old-scroll, treasure-island/end-report, viewer/planned-turns, viewer/game-page-steps, viewer/scroll-written-live, viewer/cave-drawn, treasure-island/cave, viewer/turn-marked, viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/walks-between-squares, treasure-island/pokemon-style, viewer/slideshow-file, viewer/game-page, viewer/scroll-steps, viewer/score-counter, viewer/transcript, viewer/board-framed, viewer/dig-steps, viewer/enter-steps, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process, treasure-island/square-names, treasure-island/forced-discovery, treasure-island/free-talk
+Implements: viewer/board-pinned, viewer/autoplay, viewer/game-page-intro, viewer/leak-marked, viewer/reasoning-gist, viewer/scroll-heading, viewer/frame-headings, viewer/scroll-numbers, treasure-island/asked-why, treasure-island/old-scroll, treasure-island/end-report, viewer/planned-turns, viewer/game-page-steps, viewer/scroll-written-live, viewer/cave-drawn, treasure-island/cave, viewer/turn-marked, viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/walks-between-squares, treasure-island/pokemon-style, viewer/slideshow-file, viewer/game-page, viewer/scroll-steps, viewer/score-counter, viewer/transcript, viewer/board-framed, viewer/dig-steps, viewer/enter-steps, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process, treasure-island/square-names, treasure-island/forced-discovery, treasure-island/free-talk
 """
 
 import base64
@@ -84,7 +84,8 @@ THOUGHT_ROWS = 6  # the panel's rows for thinking, at the font's normal size
 ACTION_INK = DARK  # what a pirate did is the strongest text in the panel
 THOUGHT_INK = "#78727a"  # its thinking, softer (the art's muted grey; Al to confirm)
 _NOTE_CHARACTERS = 90
-STRIP_TITLE = "The scroll"
+STRIP_TITLE = "THE SCROLL:"  # bold caps, so it reads as a heading (`frame-headings`)
+STRIP_EMPTY = " nothing written yet."
 STRIP_ROWS = 5
 STRIP = 24 + (STRIP_ROWS + 1) * LINE + 4  # the parchment's edges, a heading and rows
 _STRIP_LEFT = 14
@@ -671,7 +672,7 @@ def thought_lines(thoughts, rows=THOUGHT_ROWS):
 
 def _panel_image(shown, height, look):
     image = panel(PANEL, height)
-    draw_text(image, (_PANEL_LEFT, 14), f"Turn {shown['turn']}")
+    draw_bold(image, (_PANEL_LEFT, 14), f"Turn {shown['turn']}")
     head = portrait(*look)
     image.paste(head, PORTRAIT, head)
     draw_text(image, (_TEXT_LEFT, PORTRAIT[1] + 8), shown["acting"])
@@ -704,10 +705,19 @@ def log_rows(lines, width):
     return rows[-STRIP_ROWS:]
 
 
+def draw_bold(image, position, text, colour=DARK):
+    """Text drawn twice, a pixel apart: the pixel font's bold (`frame-headings`)."""
+    for dx in (0, 1):
+        draw_text(image, (position[0] + dx, position[1]), text, colour)
+
+
 def _strip_image(shown, width):
     image = panel(width, STRIP)
-    draw_text(image, (_STRIP_LEFT, 12), STRIP_TITLE)
+    draw_bold(image, (_STRIP_LEFT, 12), STRIP_TITLE)
     rows = log_rows(shown["log_so_far"], width - 2 * _STRIP_LEFT)
+    if not rows:
+        after = _STRIP_LEFT + text_width(STRIP_TITLE) + 1
+        draw_text(image, (after, 12), STRIP_EMPTY)
     for row, text in enumerate(rows, start=1):
         draw_text(image, (_STRIP_LEFT, 14 + row * LINE), text)
     return image

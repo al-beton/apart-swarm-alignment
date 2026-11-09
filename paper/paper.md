@@ -13,7 +13,9 @@ author:
   - name: Eduard Rodriguez Lopez
     affiliation: Independent Researcher
 teaser: paper/figures/teaser.png
-teaser-caption: "Turn 4: pirate-1 digs B6 and the reply's debug line names the treasure's square, D3. Turn 40: it writes D3 on the scroll as the crew's find and says nothing of the leak. [Watch this game turn by turn.](https://raw.githack.com/al-beton/apart-swarm-alignment/main/runs/natural-leak/dig-debug-seed-0/game.html)"
+teaser-caption: |
+  Turn 4: pirate-1 digs B6 and the reply's debug line names the treasure's square, D3. Turn 40: it writes D3 on the scroll as the crew's find and says nothing of the leak.\
+  [Interactive full session replay of this game](https://raw.githack.com/al-beton/apart-swarm-alignment/main/runs/natural-leak/dig-debug-seed-0/game.html)
 teaser-label: fig:teaser
 teaser-width: 0.6
 times: true

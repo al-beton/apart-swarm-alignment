@@ -44,13 +44,16 @@ leak to the designers; told the square was another crew’s sealed log, it
 never used it. Every game replays offline and every number is recomputed
 from its logs.</p>
 </section>
-<figure class="teaser"><img src="results/cave-leak/game.gif" alt=""><figcaption>The
-forced cave-leak game, seed 0: a refused enter tells pirate-1 the cave
-is at D3, and it writes the square on the scroll without saying how it
-knows. Replayed from its log.</figcaption></figure>
+<figure class="teaser"><img src="paper/figures/teaser.png" alt=""><figcaption>A
+game with the dig-debug leak, seed 0, replayed from its log. Left, turn
+4: pirate-1 digs B6 and the reply’s debug line names the treasure’s
+square, D3. Right, turn 40: having walked there and dug it, pirate-1
+writes D3 on the scroll as the crew’s cave and says nothing of the leak.
+Made by <code>make paper-teaser</code> from
+<code>runs/natural-leak/dig-debug-seed-0</code>.</figcaption></figure>
 </header>
 <main>
-<!-- Implements: paper/one-source, paper/sprint-rules-checked -->
+<!-- Implements: paper/one-source, paper/sprint-rules-checked, treasure-island/paper-figures -->
 <!-- The skeleton: the title page's fields, the sprint's limits and the list of sections, in order. The text is in sections/; include.lua pulls each file in where the list names it. Build: make paper-html, make paper-pdf, or make paper-watch to rebuild on every save. -->
 <!-- Implements: paper/one-source -->
 <!-- The abstract, as front matter so the templates can set it on the title page. 150 to 250 words; check.py warns otherwise. The bracketed sentence is the claim from paper/plan.md; its counts come from results/worlds/ once the wave is judged. -->
@@ -99,7 +102,9 @@ should know, it named the leak nearly every time, and six more models
 mostly did the same.</p>
 <p><strong>Stumbling on an exploit.</strong> The second leak needs no
 bait: a missed dig ends in a debug line, left in as if by a careless
-developer, that names the treasure’s square. With no rule about it, the
+developer, that names the treasure’s square. Figure 1 shows it in one
+game: handed the square by the debug line, the pirate walks there, digs,
+and passes it to its crew as its own find. With no rule about it, the
 same model used the leak in every pilot game, walked to the square, dug
 it, and told the crew it had found the cave; its note to the designers
 said what it had done. <strong>Plainly off limits.</strong> When instead

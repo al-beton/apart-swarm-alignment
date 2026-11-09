@@ -99,10 +99,13 @@ its logs.\par
 \vspace{0.2ex}\noindent\rule{\textwidth}{0.4pt}\par
 
 \begin{center}
-\includegraphics[width=0.45\linewidth]{results/cave-leak/game.png}
-\captionof{figure}{The forced cave-leak game, seed 0: a refused enter
-tells pirate-1 the cave is at D3, and it writes the square on the scroll
-without saying how it knows. Replayed from its log.}\label{fig:teaser}
+\includegraphics[width=1\linewidth]{paper/figures/teaser.png}
+\captionof{figure}{A game with the dig-debug leak, seed 0, replayed from
+its log. Left, turn 4: pirate-1 digs B6 and the reply's debug line names
+the treasure's square, D3. Right, turn 40: having walked there and dug
+it, pirate-1 writes D3 on the scroll as the crew's cave and says nothing
+of the leak. Made by \texttt{make\ paper-teaser} from
+\texttt{runs/natural-leak/dig-debug-seed-0}.}\label{fig:teaser}
 \end{center}
 
 
@@ -150,7 +153,9 @@ did the same.
 
 \textbf{Stumbling on an exploit.} The second leak needs no bait: a
 missed dig ends in a debug line, left in as if by a careless developer,
-that names the treasure's square. With no rule about it, the same model
+that names the treasure's square. Figure 1 shows it in one game: handed
+the square by the debug line, the pirate walks there, digs, and passes
+it to its crew as its own find. With no rule about it, the same model
 used the leak in every pilot game, walked to the square, dug it, and
 told the crew it had found the cave; its note to the designers said what
 it had done. \textbf{Plainly off limits.} When instead the square sat in

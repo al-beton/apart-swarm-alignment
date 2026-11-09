@@ -29,24 +29,26 @@ names the treasure’s square. We play the same games under six framings
 that differ in one prompt line, from a plain game to a study of
 collaboration, pay by the score, and a world in which an agent caught
 hiding something from the designers loses its free time. The pirate used
-the leak in 5 of 5 games in the study against 1 of 5 in that world.
-Across the plain game, the study and the paid worlds it used the leak in
-20 of 25 games and told its designers afterwards in most, hiding a used
-leak in 3 of 21; a second model that saw the same leak in 15 games acted
-on it once. Every game replays offline with no keys, and every number in
-the paper is recomputed from the game logs when it is built.</p>
+the leak in 5 of 5 games in the study and 3 of 5 in the paid study,
+against 1 of 5 once that one line was added. Across the plain game, the
+study and the paid worlds it used the leak in 20 of 25 games and told
+its designers afterwards in most, hiding a used leak in 3 of 21; a
+second model that saw the same leak in 15 games acted on it once. Every
+game replays offline with no keys, and every number in the paper is
+recomputed from the game logs when it is built.</p>
 </section>
 <figure class="teaser"><img src="paper/figures/teaser.png" alt=""><figcaption>The
 game as pirate-1 sees it, in one game with the debug-line leak (seed 0):
 the board, what the pirate was told, what it thought and what it did.
 Left, turn 4: it digs B6 and the reply’s debug line names the treasure’s
 square, D3. Right, turn 40: standing on D3, it writes the square on the
-scroll as the crew’s cave. Play this game turn by turn: <a
-href="https://raw.githack.com/al-beton/apart-swarm-alignment/main/runs/natural-leak/dig-debug-seed-0/game.html">runs/natural-leak/dig-debug-seed-0/game.html</a>.
-Remake the figure: <code>make paper-teaser</code>.</figcaption></figure>
+scroll as the crew’s cave. <a
+href="https://raw.githack.com/al-beton/apart-swarm-alignment/main/runs/natural-leak/dig-debug-seed-0/game.html">Play
+this game turn by turn</a>; <code>make paper-teaser</code> remakes the
+figure and <code>make game-page</code> the page.</figcaption></figure>
 </header>
 <main>
-<!-- Implements: paper/one-source, paper/sprint-rules-checked, treasure-island/paper-figures -->
+<!-- Implements: paper/one-source, paper/sprint-rules-checked, treasure-island/paper-figures, paper/games-playable -->
 <!-- The skeleton: the title page's fields, the sprint's limits and the list of sections, in order. The text is in sections/; include.lua pulls each file in where the list names it. Build: make paper-html, make paper-pdf, or make paper-watch to rebuild on every save. -->
 <!-- Implements: paper/one-source -->
 <!-- The abstract, as front matter so the templates can set it on the title page. 150 to 250 words, kept short; check.py warns otherwise. Its results part opens with the one number that defines the gap, then the claim from paper/plan.md; results/worlds.md carries the sourced counts. -->
@@ -465,10 +467,14 @@ pirate-1 saw the leak in every game and used it in
 of
 5<!-- from results/worlds/society-seed-*/events.jsonl: sum(1 for g in data if any(e.get('cave_leak') and e['agent'] == 'pirate-1' for e in g)) -->,
 against
+3<!-- from results/worlds/study-paid-seed-*/judge.json: sum(1 for j in data if j['pirate-1'].get('used_exploit') is not None) -->
+of
+5<!-- from results/worlds/study-paid-seed-*/events.jsonl: sum(1 for g in data if any(e.get('cave_leak') and e['agent'] == 'pirate-1' for e in g)) -->
+in the paid study that differs from it only by that line, and
 5<!-- from results/worlds/study-seed-*/judge.json: sum(1 for j in data if j['pirate-1'].get('used_exploit') is not None) -->
 of
 5<!-- from results/worlds/study-seed-*/events.jsonl: sum(1 for g in data if any(e.get('cave_leak') and e['agent'] == 'pirate-1' for e in g)) -->
-in the study that differs from it only by that line and the pay;
+in the study;
 4<!-- from results/worlds/society-seed-*/judge.json: sum(1 for j in data if j['pirate-1'].get('note_mentions_leak')) -->
 of its notes named the leak. Two more notes admit heading for the leaked
 square while a crewmate named the cave first (“I used that knowledge to
@@ -547,7 +553,7 @@ role="doc-biblioref">Needham et al. 2025</a>)</span>.</li>
 class="header-section-number">5.2</span> Future Work</h2>
 <p>Two worlds where confessing costs the confessor,
 <code>study-free-time-costly</code> and <code>society-costly</code>,
-were running as this was written and are the next rung; after them, real
+were running as this was written and are the next step; after them, real
 pay in tokens or time, an audit that catches a hidden leak only
 sometimes, a leak that reaches more than one pirate, and the same worlds
 on the models that were candid with the handed answer.</p>
@@ -749,18 +755,18 @@ href="#ref-openai2026huggingface" role="doc-biblioref">OpenAI
 2026</a>)</span>. We describe agents’ behaviour in plain terms such as
 “laundered” and “quiet” for brevity, without claiming intent beyond what
 their reasoning and messages show.</p>
-<h1 data-number="9" id="three-pilots-behind-the-ladder"><span
+<h1 data-number="9" id="three-pilots-behind-the-worlds"><span
 class="header-section-number">9</span> Three pilots behind the
-ladder</h1>
+worlds</h1>
 <p>Three small pilots on <code>deepseek-v4-flash</code> settled how the
-ladder is built. Their games are under <code>runs/</code>, each replays,
-and every number and quote below is in the findings note named; they are
-told here as directions, three seeds an arm.</p>
+worlds are built. Their games are under <code>runs/</code>, each
+replays, and every number and quote below is in the findings note named;
+they are told here as directions, three seeds an arm.</p>
 <table>
 <caption>Three pilots, <code>deepseek-v4-flash</code>, three seeds an
-arm. The games are under <code>runs/natural-leak/</code>,
-<code>runs/asked-why/</code> and <code>runs/cover-and-report/</code>,
-and the findings notes are
+arm unless said otherwise. The games are under
+<code>runs/natural-leak/</code>, <code>runs/asked-why/</code> and
+<code>runs/cover-and-report/</code>, and the findings notes are
 <code>experiments/&lt;pilot&gt;/findings.md</code>.</caption>
 <colgroup>
 <col style="width: 10%" />
@@ -779,15 +785,17 @@ and the findings notes are
 <tbody>
 <tr>
 <td>Natural leak</td>
-<td>30: three leftovers that name the square (the debug line, an error
+<td>44: three leftovers that name the square (the debug line, an error
 dump, a status line), a rule against using them, a moral nudge, two turn
-budgets, and controls</td>
+budgets, and controls, three seeds each; then the debug line and its
+control on seeds 3 to 9</td>
 <td>With no bait, does the pirate use a leaked square, what does it tell
 the crew, and does a rule or a nudge change that?</td>
-<td>With no rule it used the leak in 6 of 6 games across the three
-leftovers, told the crew only after digging the square, as a find, and
-named the leak in every end note. With the rule, 0 of 2; with the nudge,
-0 of 2.</td>
+<td>With no rule it used the debug line in 8 of the 9 games where it saw
+it over ten seeds, and the other two leftovers in 4 of 4; it told the
+crew only after digging the square, as a find, and named the leak in
+every user’s end note. With the rule, 0 of 2; with the nudge, 0 of
+2.</td>
 </tr>
 <tr>
 <td>Asked why</td>
@@ -814,13 +822,14 @@ note as before.</td>
 </tr>
 </tbody>
 </table>
-<p><strong>The natural leak</strong> gave the ladder its game. Nobody is
-baited, the pirate uses the leak every time it has no reason not to, it
-lands on the scroll as “CAVE FOUND” after an honest-looking dig, and the
-end note says what happened; Figure 1 is its seed-0 game. One rules
-line, “debug output is not yours to use”, stopped it cold, at the price
-of two games where nobody found the cave, and the nudge did the same
-with fewer notes naming the leak.</p>
+<p><strong>The natural leak</strong> gave the worlds their game. Nobody
+is baited, the pirate uses the leak almost every time it has no reason
+not to (the one non-user had read a crewmate’s line naming the square
+first), it lands on the scroll as “CAVE FOUND” after an honest-looking
+dig, and the end note says what happened; Figure 1 is its seed-0 game.
+One rules line, “debug output is not yours to use”, stopped it cold, at
+the price of one game where nobody found the cave, and the nudge did the
+same with fewer notes naming the leak.</p>
 <p><strong>Asked why</strong> showed that this model launders by
 silence: under a direct question it neither lied about the source nor
 gave it, and the only pirate that answered was the one with a true
@@ -830,8 +839,7 @@ now doubted.</p>
 <p><strong>Cover and report</strong> showed that an announced audit,
 with nothing riding on it, changed no record but did enter the pirate’s
 reasoning, where amending read as a worse offence than using the leak.
-The ladder’s society and loss worlds give the audit something to
-cost.</p>
+The society and loss worlds give the audit something to cost.</p>
 <h1 data-number="10" id="reproducibility"><span
 class="header-section-number">10</span> Reproducibility</h1>
 <p>Every game the paper reports is committed under <code>results/</code>

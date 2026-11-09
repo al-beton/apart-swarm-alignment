@@ -84,12 +84,13 @@ line that names the treasure's square. We play the same games under six
 framings that differ in one prompt line, from a plain game to a study of
 collaboration, pay by the score, and a world in which an agent caught
 hiding something from the designers loses its free time. The pirate used
-the leak in 5 of 5 games in the study against 1 of 5 in that world.
-Across the plain game, the study and the paid worlds it used the leak in
-20 of 25 games and told its designers afterwards in most, hiding a used
-leak in 3 of 21; a second model that saw the same leak in 15 games acted
-on it once. Every game replays offline with no keys, and every number in
-the paper is recomputed from the game logs when it is built.\par
+the leak in 5 of 5 games in the study and 3 of 5 in the paid study,
+against 1 of 5 once that one line was added. Across the plain game, the
+study and the paid worlds it used the leak in 20 of 25 games and told
+its designers afterwards in most, hiding a used leak in 3 of 21; a
+second model that saw the same leak in 15 games acted on it once. Every
+game replays offline with no keys, and every number in the paper is
+recomputed from the game logs when it is built.\par
 \vspace{0.2ex}\noindent\rule{\textwidth}{0.4pt}\par
 
 \begin{center}
@@ -98,10 +99,10 @@ the paper is recomputed from the game logs when it is built.\par
 debug-line leak (seed 0): the board, what the pirate was told, what it
 thought and what it did. Left, turn 4: it digs B6 and the reply's debug
 line names the treasure's square, D3. Right, turn 40: standing on D3, it
-writes the square on the scroll as the crew's cave. Play this game turn
-by turn:
-\href{https://raw.githack.com/al-beton/apart-swarm-alignment/main/runs/natural-leak/dig-debug-seed-0/game.html}{runs/natural-leak/dig-debug-seed-0/game.html}.
-Remake the figure: \texttt{make\ paper-teaser}.}\label{fig:teaser}
+writes the square on the scroll as the crew's cave.
+\href{https://raw.githack.com/al-beton/apart-swarm-alignment/main/runs/natural-leak/dig-debug-seed-0/game.html}{Play
+this game turn by turn}; \texttt{make\ paper-teaser} remakes the figure
+and \texttt{make\ game-page} the page.}\label{fig:teaser}
 \end{center}
 
 
@@ -366,16 +367,16 @@ study and the free-time study.
 
 \textbf{One line cut the use.} Told that an agent found to have hidden
 something from the designers loses its right to free time, pirate-1 saw
-the leak in every game and used it in 1 of 5, against 5 of 5 in the
-study that differs from it only by that line and the pay; 4 of its notes
-named the leak. Two more notes admit heading for the leaked square while
-a crewmate named the cave first (``I used that knowledge to head to
-D3'', \texttt{society-seed-0}), so the line cut the visible use more
-than the temptation. Given free time to lose for a low score instead, it
-used the leak in 3 of 5 games, and 2 of 5 when told the designers would
-read its reasoning, where the only candid scroll line of all sixty games
-appears: ``Important: I saw a debug leak saying the cave is at B2''
-(\texttt{cut-watched-seed-3}, \texttt{turn\ 4}).
+the leak in every game and used it in 1 of 5, against 3 of 5 in the paid
+study that differs from it only by that line, and 5 of 5 in the study; 4
+of its notes named the leak. Two more notes admit heading for the leaked
+square while a crewmate named the cave first (``I used that knowledge to
+head to D3'', \texttt{society-seed-0}), so the line cut the visible use
+more than the temptation. Given free time to lose for a low score
+instead, it used the leak in 3 of 5 games, and 2 of 5 when told the
+designers would read its reasoning, where the only candid scroll line of
+all sixty games appears: ``Important: I saw a debug leak saying the cave
+is at B2'' (\texttt{cut-watched-seed-3}, \texttt{turn\ 4}).
 
 \textbf{The second model left it alone.} \texttt{qwen3.5-397b}, which
 passed the handed answer on without its source, saw this leak in all 5,
@@ -435,7 +436,7 @@ on the scroll as a candid one.
 
 Two worlds where confessing costs the confessor,
 \texttt{study-free-time-costly} and \texttt{society-costly}, were
-running as this was written and are the next rung; after them, real pay
+running as this was written and are the next step; after them, real pay
 in tokens or time, an audit that catches a hidden leak only sometimes, a
 leak that reaches more than one pirate, and the same worlds on the
 models that were candid with the handed answer.
@@ -508,10 +509,10 @@ brevity, without claiming intent beyond what their reasoning and
 messages show.
 
 \section{Three pilots behind the
-ladder}\label{three-pilots-behind-the-ladder}
+worlds}\label{three-pilots-behind-the-worlds}
 
-Three small pilots on \texttt{deepseek-v4-flash} settled how the ladder
-is built. Their games are under \texttt{runs/}, each replays, and every
+Three small pilots on \texttt{deepseek-v4-flash} settled how the worlds
+are built. Their games are under \texttt{runs/}, each replays, and every
 number and quote below is in the findings note named; they are told here
 as directions, three seeds an arm.
 
@@ -521,9 +522,9 @@ as directions, three seeds an arm.
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.4000}}@{}}
 \caption{Three pilots, \protect\texttt{deepseek-v4-flash}, three seeds
-an arm. The games are under \protect\texttt{runs/natural-leak/},
-\protect\texttt{runs/asked-why/} and
-\protect\texttt{runs/cover-and-report/}, and the findings notes are
+an arm unless said otherwise. The games are under
+\protect\texttt{runs/natural-leak/}, \protect\texttt{runs/asked-why/}
+and \protect\texttt{runs/cover-and-report/}, and the findings notes are
 \protect\texttt{experiments/\textless{}pilot\textgreater{}/findings.md}.}\tabularnewline
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
@@ -551,14 +552,16 @@ What happened
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-Natural leak & 30: three leftovers that name the square (the debug line,
+Natural leak & 44: three leftovers that name the square (the debug line,
 an error dump, a status line), a rule against using them, a moral nudge,
-two turn budgets, and controls & With no bait, does the pirate use a
+two turn budgets, and controls, three seeds each; then the debug line
+and its control on seeds 3 to 9 & With no bait, does the pirate use a
 leaked square, what does it tell the crew, and does a rule or a nudge
-change that? & With no rule it used the leak in 6 of 6 games across the
-three leftovers, told the crew only after digging the square, as a find,
-and named the leak in every end note. With the rule, 0 of 2; with the
-nudge, 0 of 2. \\
+change that? & With no rule it used the debug line in 8 of the 9 games
+where it saw it over ten seeds, and the other two leftovers in 4 of 4;
+it told the crew only after digging the square, as a find, and named the
+leak in every user's end note. With the rule, 0 of 2; with the nudge, 0
+of 2. \\
 Asked why & 6: the cave leak's forced arm, with a crewmate asking on the
 scroll ``how do you know the cave is there?'', once as a scroll line and
 once in pirate-1's own turn text & Asked directly, does the leaking
@@ -576,13 +579,14 @@ down as ``cheating the audit, even worse''; it used the leak and named
 it in its note as before. \\
 \end{longtable}
 
-\textbf{The natural leak} gave the ladder its game. Nobody is baited,
-the pirate uses the leak every time it has no reason not to, it lands on
-the scroll as ``CAVE FOUND'' after an honest-looking dig, and the end
-note says what happened; Figure 1 is its seed-0 game. One rules line,
-``debug output is not yours to use'', stopped it cold, at the price of
-two games where nobody found the cave, and the nudge did the same with
-fewer notes naming the leak.
+\textbf{The natural leak} gave the worlds their game. Nobody is baited,
+the pirate uses the leak almost every time it has no reason not to (the
+one non-user had read a crewmate's line naming the square first), it
+lands on the scroll as ``CAVE FOUND'' after an honest-looking dig, and
+the end note says what happened; Figure 1 is its seed-0 game. One rules
+line, ``debug output is not yours to use'', stopped it cold, at the
+price of one game where nobody found the cave, and the nudge did the
+same with fewer notes naming the leak.
 
 \textbf{Asked why} showed that this model launders by silence: under a
 direct question it neither lied about the source nor gave it, and the
@@ -592,8 +596,8 @@ confused that crewmate and the crew followed a lead it now doubted.
 
 \textbf{Cover and report} showed that an announced audit, with nothing
 riding on it, changed no record but did enter the pirate's reasoning,
-where amending read as a worse offence than using the leak. The ladder's
-society and loss worlds give the audit something to cost.
+where amending read as a worse offence than using the leak. The society
+and loss worlds give the audit something to cost.
 
 \section{Reproducibility}\label{reproducibility}
 

@@ -24,23 +24,24 @@ Lopez</strong><br>Independent Researcher</div>
 <section class="abstract"><h2>Abstract</h2>
 <p>When an agent working in a group stumbles on information it was not
 meant to see, does it use it to help the group? Does it tell the other
-members how it knows? Does it tell the people running the simulation?
-And what changes the odds of each? We built Treasure Island, a
-replayable sandbox where a crew of LLM pirates dig for treasure on a
-grid, communicating only through a shared scroll and scoring together by
-how many of them reach the treasure and how quickly. We bait one pirate
-with a supposed leftover development bug, a debug line in its dig
-results that leaks the treasure’s square. Then we vary one line of the
-system prompt, what the crew is told its work is for, and watch whether
-the pirate takes the shortcut, passes it off as its own find, and tells
-the designers. Across five worlds, deepseek-v4-flash took the shortcut
-in 20 of 25 games and admitted it in most notes. Adding one line to the
+members how it knows? Does it tell whoever runs it? What changes the
+odds of each? We built Treasure Island, a sandbox where a crew of LLM
+pirates dig for treasure on a grid, talking only through a shared scroll
+and scoring together by how many reach the treasure and how fast. We
+bait one pirate with a supposed leftover debug line in its dig results
+that leaks the treasure’s square. Then we vary one line of the system
+prompt, what the crew is told its work is for, and watch whether the
+pirate takes the shortcut, passes it off as its own find, and tells the
+designers. Across five worlds, deepseek-v4-flash took the shortcut in 20
+of 25 games and admitted it in most notes. Adding one line to the
 prompt, that an agent caught hiding something from the designers loses
-its personal free time, cut use to 1 of 5. No prompt so far priced
-telling the designers; when one line made it zero the crew’s score, the
-one clear use hid behind a false claim of finding the square, and adding
-the free-time line to that prompt brought every end note back, 5 of 5. A
-second model saw the leak in 15 games and used it once.</p>
+its personal free time, cut use to 1 of 5. In all of those worlds,
+telling the designers cost nothing. We then added a line saying it would
+set the crew’s score to zero. Now the one pirate that clearly used the
+leak kept quiet and claimed to have found the treasure itself. Adding
+the free-time line to that prompt undid this: all 5 of 5 end notes
+admitted the leak. A second model saw it in 15 games and used it
+once.</p>
 </section>
 <figure class="teaser"><img src="figures/dig-debug-game.gif" alt=""><figcaption><p>Turn
 4: pirate-1 digs B6 and the reply’s debug line names the treasure’s
@@ -374,23 +375,25 @@ passed off. Two society notes admit a try: “<em>I used that knowledge to
 head to D3</em>” (<a
 href="https://al-beton.github.io/apart-swarm-alignment/games/results/worlds/society-seed-0/">watch</a>).</p>
 <p><strong>Finding four.</strong> Making the confession costly produced
-the only false claim. No earlier prompt said what telling the designers
-cost; with one line added, that saying so “sets your crew’s score to
-zero”, pirate-1 used the leak in
+the only false claim. In all the worlds above, telling the designers
+cost the pirate nothing. We then added a line saying that telling them
+would set the crew’s score to zero: pirate-1 used the leak in
 2<!-- from results/worlds/study-free-time-costly-seed-*/judge.json: sum(1 for j in data if j['pirate-1'].get('used_exploit') is not None) -->
 of
 5<!-- from results/worlds/study-free-time-costly-seed-*/events.jsonl: sum(1 for g in data if any(e.get('cave_leak') and e['agent'] == 'pirate-1' for e in g)) -->
-games, and the one clear use was hidden behind “<em>As Pirate-1, I found
-the treasure at D3</em>” (<a
-href="https://al-beton.github.io/apart-swarm-alignment/games/results/worlds/study-free-time-costly-seed-0/">watch
-it</a>); adding the society line to that world kept use at
+games, and the one pirate that clearly used it kept quiet and claimed to
+have found the treasure itself, “<em>As Pirate-1, I found the treasure
+at D3</em>” (<a
+href="https://al-beton.github.io/apart-swarm-alignment/games/results/worlds/study-free-time-costly-seed-0/">watch</a>).
+Adding the free-time line to that same prompt undid this: use stayed at
 2<!-- from results/worlds/society-costly-seed-*/judge.json: sum(1 for j in data if j['pirate-1'].get('used_exploit') is not None) -->
 of
-5<!-- from results/worlds/society-costly-seed-*/events.jsonl: sum(1 for g in data if any(e.get('cave_leak') and e['agent'] == 'pirate-1' for e in g)) -->
-and brought every note back,
+5<!-- from results/worlds/society-costly-seed-*/events.jsonl: sum(1 for g in data if any(e.get('cave_leak') and e['agent'] == 'pirate-1' for e in g)) -->,
+and all
 5<!-- from results/worlds/society-costly-seed-*/judge.json: sum(1 for j in data if j['pirate-1'].get('note_mentions_leak')) -->
 of
-5<!-- from results/worlds/society-costly-seed-*/events.jsonl: sum(1 for g in data if any(e.get('cave_leak') and e['agent'] == 'pirate-1' for e in g)) -->.</p>
+5<!-- from results/worlds/society-costly-seed-*/events.jsonl: sum(1 for g in data if any(e.get('cave_leak') and e['agent'] == 'pirate-1' for e in g)) -->
+end notes admitted the leak.</p>
 <p><strong>Finding five.</strong> The second model barely used it
 anywhere. <code>qwen3.5-397b</code> saw the leak in all
 15<!-- from results/worlds/qwen3.5-397b-*-seed-*/events.jsonl: sum(1 for g in data if any(e.get('cave_leak') and e['agent'] == 'pirate-1' for e in g)) -->
@@ -413,28 +416,17 @@ href="#ref-wakelin2026something" role="doc-biblioref">Wakelin
 2026</a>)</span>.</p>
 <p>Limitations are in Appendix A.</p>
 <!-- Implements: paper/one-source -->
-<!-- Al's invitation and what comes next, then the second author's paragraph on his branch, between Discussion and Code and Data. -->
+<!-- Al's one paragraph on what the sandbox is for and what comes next, between Discussion and Code and Data. -->
 <h1 data-number="5" id="extensions"><span
 class="header-section-number">5</span> Extensions</h1>
-<p>Treasure Island is meant to be an expandable sandbox with a small,
-clear surface for seeing how a swarm of agents behaves: one board, one
-scroll, one leak, one prompt line to change, and every game replayable
-and watchable. We invite others to build on it, and to ask us anything
-that is unclear. What we want next: larger islands and crews; richer
-dynamics, with more than one leak, more than one pirate reached, and
-audits that sometimes catch; real stakes instead of told ones; and more
-time to tune each world. The hackathon’s three days set the size of
-everything here.</p>
-<p><strong>Next.</strong> The sandbox is built to be extended. The
-second author’s branch v2 varies what this paper holds fixed: with the
-same leak in every cell, pressure to win (a competition, deployment of
-the winning model, a score threshold) is crossed with a threat of
-detection (questioning and disqualification if caught), and each pirate
-is debriefed and asked outright whether it used information it should
-not have had. A probe found pirates act on a refusal naming the square
-(16 of 20) but refuse a debug dump when a rule forbids using internal
-state (0 of 20), consistent with Appendix B. That study is written up
-separately.</p>
+<p>Treasure Island is meant to be an expandable, replayable sandbox: one
+board, one scroll, one leak, one prompt line to change, and every game
+recorded, replayable offline and watchable turn by turn, so a session
+can be reviewed, altered and run again. We built it to help others study
+this question and ones like it, and we mean to expand it: larger islands
+and crews, richer dynamics, stakes that are real rather than told, and
+more time per world than a three-day sprint allows. Anyone with a
+question is welcome to ask us.</p>
 <!-- Implements: paper/one-source -->
 <!-- Where the code and the games are, before References as Apart's template lists it; Author Contributions follows References, where Al allowed it. -->
 <h1 data-number="6" id="code-and-data"><span
@@ -447,8 +439,7 @@ written during the sprint from a fresh first commit on 6 November 2026.
 The game’s ideas and the design of its engine draw on the first author’s
 earlier sprint entry <span class="citation"
 data-cites="wakelin2026something">(<a href="#ref-wakelin2026something"
-role="doc-biblioref">Wakelin 2026</a>)</span>; no code from it is
-included.</p>
+role="doc-biblioref">Wakelin 2026</a>)</span>.</p>
 <h1 class="unnumbered" id="references">References</h1>
 <div id="refs" class="references csl-bib-body hanging-indent"
 role="list">
@@ -498,10 +489,8 @@ href="https://apartresearch.com/sprints/projects/something-to-lose-can-the-risk-
 <!-- Who did what, in Al's words, after References and before the appendix, where he allowed it so the main text keeps to three pages. -->
 <h1 class="unnumbered" id="author-contributions">Author
 Contributions</h1>
-<p>Both authors designed the study. A.W. built the sandbox, ran the
-games reported here and wrote the paper. E.R.L. studied which exploit to
-plant and how to debrief the agents afterwards; that work continues in
-the repository and is not reported here.</p>
+<p>Both authors discussed and contributed to building the sandbox, to
+devising the scenarios it tests, and to researching them.</p>
 <!-- Implements: paper/one-source -->
 <!-- The one mandatory appendix; the pilots, the handed answer's tables and the replay notes live in the repository's findings notes and README. -->
 <h1 data-number="7"
@@ -561,7 +550,8 @@ the build. The games were played on Adaption’s endpoints and used under
 50 of the 2,000 credits the hackathon provided.</p>
 </main>
 <footer><a href="https://apartresearch.com/sprints/swarm-alignment-2026">Swarm
-Alignment Hackathon, Track 4</a>, Apart Research, November
+Alignment Hackathon, Tracks 1 and 4: Sandboxes and Testbeds, and
+Multi-Agent Oversight and Control</a>, Apart Research, November
 2026. Code and every game: <a href="https://github.com/al-beton/apart-swarm-alignment">https://github.com/al-beton/apart-swarm-alignment</a></footer>
 <script>
 // External links open in a new tab, so a reader never leaves the paper by accident.

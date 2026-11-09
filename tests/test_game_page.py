@@ -1,4 +1,4 @@
-# Implements: viewer/game-page, viewer/score-counter, viewer/board-pinned, viewer/game-page-intro, viewer/leak-marked, viewer/reasoning-gist, viewer/scroll-heading, viewer/game-pages-hosted
+# Implements: viewer/game-page, viewer/score-counter, viewer/board-pinned, viewer/autoplay, viewer/game-page-intro, viewer/leak-marked, viewer/reasoning-gist, viewer/scroll-heading, viewer/game-pages-hosted
 """The slideshow as a full game page: the board beside every turn's whole record."""
 
 import json
@@ -201,11 +201,20 @@ def test_board_pinned_only_the_parchment_scroll_gives_way(saved):
     page = viewer.slideshow_page(saved)
     assert "flex: none" in rule(page, ".left > *")  # board and lines keep their size
     parchment = rule(page, ".left .parchment")
-    assert "flex: 0 1 auto" in parchment and "min-height" in parchment
+    assert "flex: 0 1000 auto" in parchment and "min-height" in parchment  # first
+    assert "flex: 0 1 auto" in rule(page, ".left img.board")  # then the board
     assert "overflow: auto" in rule(page, ".parchment")
-    assert "max-height" in rule(
-        page, "img.board"
-    )  # a short window shrinks the board, never cuts it
+    board = rule(page, "img.board")
+    assert "max-height: 100%" in board and "object-fit: contain" in board  # never cut
+    # Pinned under the header at its real height, which wraps on a narrow window.
+    assert "var(--head" in rule(page, ".left")
+    assert 'setProperty("--head", document.querySelector("header").offsetHeight' in page
+
+
+def test_autoplay_a_link_with_autoplay_starts_playing(saved):
+    page = viewer.slideshow_page(saved)
+    started = '.get("autoplay") === "1") play();'
+    assert "new URLSearchParams(location.search)" in page and started in page
 
 
 LEAKY = (

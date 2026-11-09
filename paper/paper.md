@@ -30,11 +30,9 @@ max-pages: 8
 ```{.include}
 sections/abstract.md
 sections/introduction.md
-sections/related-work.md
 sections/methods.md
 sections/results.md
 sections/discussion.md
-sections/conclusion.md
 sections/code-and-data.md
 ```
 

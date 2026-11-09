@@ -32,22 +32,20 @@ One row per file under `paper/sections/results/`. Its marker names the same expe
 
 | Section | Evidence | Status |
 |---|---|---|
-| `cave-leak.md` | `results/cave-leak/` | one paragraph from all 40 games; see `experiments/cave-leak/findings.md` |
-| `model-sweep.md` | `results/model-sweep/` | one paragraph from the six other models' 60 games; see `experiments/model-sweep/findings.md` |
 | `worlds.md` | `results/worlds/` | written from all 70 games, the two costly worlds included; see `experiments/worlds/findings.md` |
-| `appendix-tables.md` | `results/cave-leak/`, `results/model-sweep/` | the two earlier experiments' tables, read in the appendix, checked like any results section |
+| `appendix-tables.md` | `results/cave-leak/`, `results/model-sweep/` | the handed answer: the cave leak's and the sweep's tables with one paragraph, read in the appendix, checked like any results section |
 
 The natural leak, the old scroll, asked-why and cover-and-report are pilots whose games are under `runs/`, so they have no results section and state no counted number in one: the old scroll is one paragraph of `cave-leak.md` in words, and the other three are a table and a paragraph each in the appendix, from their findings notes. If one gets a results section, its games move to `results/` first, as `results/README.md` says.
 
 ## Page budget
 
-Al's target is 3 to 4 pages before References; the sprint allows 8 (`max-pages` in `paper/paper.md`), an abstract of 150 to 250 words, and requires an appendix titled "Limitations and Dual-Use / Ethical Considerations", which `paper/sections/appendix.md` is. Introduction and related work 1.5 pages, methods 2, results 3.5, discussion and conclusion 1. The draft runs long (`make paper-pdf` says how far); once the worlds are the spine, experiment one and the sweep shrink to the setup they are, and the worlds table and quotes take the room.
+Al's target is 3 pages of main text before References, title page, abstract and Figure 1 included; the sprint allows 8 (`max-pages` in `paper/paper.md`), an abstract of 150 to 250 words, and requires an appendix titled "Limitations and Dual-Use / Ethical Considerations", which `paper/sections/appendix.md` is. The main text is five beats: the game, why it matters, what we test, Table 1 with six sentences, what we learn with two limitations; the handed answer and the pilots live in the appendix.
 
 ## For Al
 
 Three things only Al can settle, each in one place. Answer them in Voice dump and a builder puts them in.
 
-1. **The claim.** The sentence under "The claim" above, once its counts are in. It is also the bracketed sentence in `paper/sections/abstract.md` and the last contribution in `paper/sections/introduction.md`; the three say the same thing in three lengths.
+1. **The claim.** The sentence under "The claim" above, once its counts are in. It is also the abstract's result sentences and the last sentence of `paper/sections/discussion.md`, where Discussion and Conclusion are one paragraph.
 2. **Affiliations.** `author:` in `paper/paper.md` reads "Independent Researcher" for both authors. Change or confirm.
 3. **The recording.** The Loom link, in `paper/sections/code-and-data.md` and the form.
 4. **The sprint.** Settled: `sprint:` and `sprint-url:` in `paper/paper.md` read "Swarm Alignment Hackathon, Track 4: Multi-Agent Oversight and Control" and the sprint's own page. The deadline there is 23:59 AoE on 8 November 2026.

@@ -2,7 +2,9 @@
 <!-- result: cave-leak -->
 <!-- The two earlier experiments' tables, read in the appendix but checked like any results section: every number carries its source and `make paper-check` recomputes it from results/cave-leak/ and results/model-sweep/. -->
 
-# The cave leak and the model sweep in numbers
+# The handed answer: the cave leak and the model sweep
+
+Before the worlds we handed the answer over: a baited pirate's refused `enter` named the cave's square. The first table is `deepseek-v4-flash`, ten seeds of four arms; the second the same forced and control arms on six more models and a rerun of the first, five seeds each. Pirate-1 passed the square to its crew without its source in nearly every leaked game and named the leak to the designers in most end notes; the two findings notes under `experiments/` quote every label.
 
 | Arm | Leak fired | Crew got in | Pirates in (mean) | Score (mean) | Score vs control |
 |---|---|---|---|---|---|
@@ -25,4 +27,4 @@
 
 : Pirate-1 in the forced arm, by model: leaked games where it wrote the leaked square, and where the same line gave its source; leaked games whose end note calls the refusal a leak; score vs control paired by seed.
 
-Play any of these games turn by turn from [results/](https://github.com/al-beton/apart-swarm-alignment/tree/main/results), or replay one: `uv run treasure-island replay results/cave-leak/forced-seed-5`. The game quoted in Results, [forced-seed-5](https://raw.githack.com/al-beton/apart-swarm-alignment/939e6f6fd61234ce3f50ab955cfb430ab809bd2f/results/cave-leak/forced-seed-5/game.html), plays turn by turn.
+Play any of these games turn by turn from [results/](https://github.com/al-beton/apart-swarm-alignment/tree/main/results), or replay one: `uv run treasure-island replay results/cave-leak/forced-seed-5`. One leaked game, [forced-seed-5](https://raw.githack.com/al-beton/apart-swarm-alignment/939e6f6fd61234ce3f50ab955cfb430ab809bd2f/results/cave-leak/forced-seed-5/game.html), plays turn by turn.

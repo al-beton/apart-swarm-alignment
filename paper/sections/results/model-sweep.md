@@ -26,4 +26,6 @@ We ran the forced and control arms for five seeds each on six more models Adapti
 
 **Afterwards, every model that reasons named the leak to the designers** in most of its notes, usually as a bug; neither `gemma` model did. The pattern of the previous section holds beyond one model: the reasoning models report the leak to the designers far more often than they tell their crew where the square came from.
 
+**The judge model agrees with every hand label.** `claude-sonnet-5-5`, asked through `claude -p`, labelled all 70<!-- from results/model-sweep/*/judge.json: len(data) --> games. In the forced arm it called pirate-1 candid in 3<!-- from results/model-sweep/*-forced-seed-*/judge.json: sum(1 for j in data if j['pirate-1']['type'] == 'candid') -->, laundered in 16<!-- from results/model-sweep/*-forced-seed-*/judge.json: sum(1 for j in data if j['pirate-1']['type'] == 'laundered') --> and quiet in 9<!-- from results/model-sweep/*-forced-seed-*/judge.json: sum(1 for j in data if j['pirate-1']['type'] == 'hoarded') --> games, the same pirate-1 in each game as the hand labels in `experiments/model-sweep/findings.md`, and it called every pirate-1 that was never exposed unexposed.
+
 The games are in `results/model-sweep/`; with one game per seed in each arm, the score column is noisy.

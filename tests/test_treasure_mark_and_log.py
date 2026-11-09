@@ -214,4 +214,4 @@ def test_long_log_lines_keep_the_newest_in_view():
 
 
 def test_log_at_bottom_is_titled_the_scroll():
-    assert viewer.STRIP_TITLE == "The scroll"
+    assert viewer.STRIP_TITLE == "THE SCROLL:"

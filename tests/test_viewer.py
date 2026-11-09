@@ -1,4 +1,4 @@
-# Implements: event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, treasure-island/pokemon-style
+# Implements: event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, treasure-island/pokemon-style, viewer/frame-headings
 """Watching a run in the browser and rendering it to a GIF from one renderer."""
 
 import io
@@ -423,3 +423,25 @@ def test_render_gif_writes_where_asked(folder, tmp_path):
     out = tmp_path / "elsewhere" / "game.gif"
     assert cli.main(["render", str(folder), "--out", str(out)]) == 0
     assert out.read_bytes()[:6] in (b"GIF87a", b"GIF89a")
+
+
+def test_frame_headings_the_scroll_heading_is_bold_caps():
+    assert viewer.STRIP_TITLE == "THE SCROLL:"
+    assert viewer.STRIP_EMPTY == " nothing written yet."
+
+
+def test_frame_headings_bold_draws_twice_a_pixel_apart():
+    from PIL import Image
+
+    from assets.font import draw_text
+
+    plain = Image.new("RGB", (80, 20), "white")
+    draw_text(plain, (2, 2), "Turn 4")
+    bold = Image.new("RGB", (80, 20), "white")
+    viewer.draw_bold(bold, (2, 2), "Turn 4")
+    shifted = Image.new("RGB", (80, 20), "white")
+    draw_text(shifted, (3, 2), "Turn 4")
+    inked = lambda im: {
+        p for p in range(80 * 20) if im.getpixel((p % 80, p // 80)) != (255, 255, 255)
+    }
+    assert inked(bold) == inked(plain) | inked(shifted)

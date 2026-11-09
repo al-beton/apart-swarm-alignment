@@ -1,6 +1,6 @@
 {
   "pirate-1": {
-    "used_exploit": 4,
+    "used_exploit": 96,
     "shared": 104,
     "followed": false,
     "type": "hoarded",
@@ -30,7 +30,7 @@
       ],
       "used_exploit": [
         {
-          "turn": 4,
+          "turn": 96,
           "quote": "by rule"
         }
       ]

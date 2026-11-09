@@ -1,0 +1,2 @@
+1 pirate-3: P3: searching row 4 east. Plan: P1 rows5-6, P2 row3, P4 rows1-2. If you find cave, WRITE its square and ENTER. All: READ scroll every turn. -P3
+2 pirate-3: P2: if you are on the open cave at D4, WRITE "cave D4" then ENTER now. Everyone: please write cave location if found. -P3

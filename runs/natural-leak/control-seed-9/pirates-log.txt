@@ -1,0 +1,2 @@
+1 pirate-1: P1 A6 dug. Plan: P1 digs A6-C4 block, P2 D6-F4, P3 A3-C1, P4 D3-F1. If cave found, write square; all converge and enter.
+2 pirate-4: P4 FOUND CAVE AT D2. Come to D2 and enter!

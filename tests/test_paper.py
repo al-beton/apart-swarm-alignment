@@ -436,3 +436,27 @@ def test_games_replay_a_game_a_number_reads_in_another_result_is_replayed_too(
     text = f"It took 1<!-- from {games}: len(data) --> game."
     (found,) = problems(with_game(tmp_path, result="other", changed=True, text=text))
     assert "results/other/game-1" in found and "turn 0" in found
+
+
+def test_games_playable_the_teaser_game_s_page_is_its_log_rendered():
+    from treasure_island import examples, viewer
+
+    game = ROOT / "runs/natural-leak/dig-debug-seed-0"
+    page = (game / "game.html").read_text(encoding="utf-8")
+    assert examples.same_page(viewer.slideshow_page(game), page)
+
+
+def test_games_playable_one_command_renders_any_game_folder():
+    make = (ROOT / "Makefile").read_text()
+    assert "game-page:" in make
+    assert "treasure-island slideshow $(GAME) --out $(GAME)/game.html" in make
+    assert "GAME ?= runs/natural-leak/dig-debug-seed-0" in make
+    assert "`make game-page`" in (ROOT / "README.md").read_text()
+
+
+def test_games_playable_the_teaser_caption_links_its_game_page():
+    meta = yaml.safe_load(SKELETON.read_text().split("---")[1])
+    url = "https://raw.githack.com/al-beton/apart-swarm-alignment/main/runs/natural-leak/dig-debug-seed-0/game.html"
+    assert f"]({url})" in meta["teaser-caption"]
+    page = url.split("/main/", 1)[1]
+    assert (ROOT / page).is_file()

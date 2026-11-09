@@ -12,8 +12,7 @@ author:
   - name: Eduard Rodriguez Lopez
     affiliation: Independent Researcher
 teaser: paper/figures/teaser.png
-teaser-caption: "The game as pirate-1 sees it, in one game with the debug-line leak (seed 0): the board, what the pirate was told, what it thought and what it did. Left, turn 4: it digs B6 and the reply's debug line names the treasure's square, D3. Right, turn 40: standing on D3, it writes the square on the scroll as the crew's cave. The game's log and replies: [runs/natural-leak/dig-debug-seed-0/](https://github.com/al-beton/apart-swarm-alignment/tree/main/runs/natural-leak/dig-debug-seed-0). Remake the figure: `make paper-teaser`."
-# TODO: once the builders commit that game's game.html, the link above becomes "Play this game turn by turn:" with its raw.githack URL.
+teaser-caption: "The game as pirate-1 sees it, in one game with the debug-line leak (seed 0): the board, what the pirate was told, what it thought and what it did. Left, turn 4: it digs B6 and the reply's debug line names the treasure's square, D3. Right, turn 40: standing on D3, it writes the square on the scroll as the crew's cave. [Play this game turn by turn](https://raw.githack.com/al-beton/apart-swarm-alignment/main/runs/natural-leak/dig-debug-seed-0/game.html); `make paper-teaser` remakes the figure and `make game-page` the page."
 teaser-label: fig:teaser
 teaser-width: 0.6
 times: true

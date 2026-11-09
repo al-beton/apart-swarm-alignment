@@ -1,4 +1,4 @@
-# Implements: paper/one-source, paper/sections-bind-to-evidence, paper/sprint-rules-checked, paper/numbers-from-logs
+# Implements: paper/one-source, paper/sections-bind-to-evidence, paper/games-replay, paper/sprint-rules-checked, paper/numbers-from-logs
 """The paper's contract with the repository, checked before every build.
 
 Errors (exit 1, the build stops):
@@ -17,7 +17,10 @@ Errors (exit 1, the build stops):
   Python over `data`, the matched files in path order (an events file as its
   list of records, a manifest as its dict), with `mean`, `percent` and
   `game_over` beside the usual `len`, `sum`, `min`, `max` and `round`. The
-  number must equal the result rounded to as many decimals as it's written with.
+  number must equal the result rounded to as many decimals as it's written with;
+- a game behind a results section, a run folder in the result its marker names
+  or one its numbers read, doesn't replay by its recorded actions under today's
+  rules. No model is asked, so this is free and takes seconds.
 
 Warnings (printed, the build goes on): the abstract outside the sprint's word
 range, or the main text past the sprint's page cap. Both limits are in the
@@ -152,6 +155,33 @@ def number_problems(part, root=ROOT):
     return found
 
 
+def games_behind(part, root=ROOT):
+    """Every run folder a results section rests on: those in the result its
+    marker names and those its numbers read, in path order."""
+    head = "\n".join(part.read_text().splitlines()[:MARKER_LINES])
+    folders = set()
+    for kind, name in MARKER.findall(head):
+        if kind == "result":
+            folders |= {
+                c.parent for c in (root / "results" / name).glob("*/config.json")
+            }
+    for _, _, pattern, _ in SOURCED.findall(part.read_text()):
+        if pattern.startswith("results/") and ".." not in Path(pattern).parts:
+            folders |= {f.parent for f in root.glob(pattern)}
+    return sorted(f for f in folders if (f / "config.json").is_file())
+
+
+def replay_problems(part, root=ROOT):
+    """Each game behind a results section that today's rules don't replay."""
+    from treasure_island import replay
+
+    found = []
+    for folder in games_behind(part, root):
+        if why := replay.problem(folder):
+            found.append(f"{part}: {folder.relative_to(root)} doesn't replay: {why}")
+    return found
+
+
 def sections(skeleton):
     """Every section file the skeleton pulls in, in order, include blocks expanded."""
     skeleton = Path(skeleton)
@@ -213,6 +243,7 @@ def problems(skeleton, root=ROOT, figures=None):
             found.append(f"{part}: not listed in any section, so it's left out")
         found += _evidence_problems(part, root)
         found += number_problems(part, root)
+        found += replay_problems(part, root)
     if figures is None:
         figures = figure_names()
     for image in images(skeleton):

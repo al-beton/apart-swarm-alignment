@@ -9,6 +9,7 @@
 - **codex:** Codex reviews every pull request adversarially, independently of the agent that built it.
 - **researcher:** A research agent uses the game to run experiments and surfaces findings worth Al's attention.
 - **queue-labels:** Each open issue shows where it stands with one label, `ready`, `in-progress`, `in-review`, `blocked` or `on-hold`, so anyone can see the queue at a glance.
+- **board-follows-labels:** The project board (Al's project 2) follows the queue labels by itself: whenever an issue is opened, labelled, unlabelled, closed or reopened, a workflow puts it on the board and sets its Status to its queue label's column (`ready` to Ready, `in-progress` to In progress, `in-review` to In review, `blocked` to Blocked, `on-hold` to On hold), Done once it is closed, and no Status if it has no queue label. The workflow reaches the board with a `PROJECT_TOKEN` secret Al adds (a fine-grained token with project write), never a key in the repository, and without that secret it does nothing.
 
 ## Where this is enforced
 
@@ -23,3 +24,4 @@
 | `codex` | `.agents/skills/team/SKILL.md` | — |
 | `researcher` | `.agents/skills/team/SKILL.md` | — |
 | `queue-labels` | `.agents/skills/team/SKILL.md`, GitHub (labels) | — |
+| `board-follows-labels` | `.github/workflows/board.yml`, `.github/scripts/board.py` | `test_board_follows_labels_each_queue_label_has_its_column`, `test_board_follows_labels_no_queue_label_clears_the_status`, `test_board_follows_labels_adds_the_issue_then_sets_its_status`, `test_board_follows_labels_the_workflow_runs_on_label_changes_with_the_secret` |

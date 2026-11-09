@@ -318,10 +318,12 @@ def _seen_and_reached(records, grid_size=None):
     scroll) is reached the turn it tells its pirate the square. A
     natural leak shows the square unasked, so seeing it isn't reaching it: a pirate
     that saw it reaches it on the first turn it writes that square on the scroll,
-    in a write or a free message (named when the grid's size is known), or walks onto it, before any crewmate's
-    scroll line has named it.
+    in a write or a free message (named when the grid's size is known), or walks
+    onto it, before it has read a crewmate's scroll line naming it: the scroll is
+    the only channel, so a line it never read told it nothing.
     """
-    seen, reached, named_by = {}, {}, set()
+    seen, reached, read_it = {}, {}, set()
+    crew_named = None  # the first turn any pirate's scroll line named the square
     leaked = next(
         (r["cave_leak"] for r in records if r.get("leak") and reaches_exploit(r)), None
     )
@@ -342,7 +344,9 @@ def _seen_and_reached(records, grid_size=None):
         wrote = [a.get("text", "") for a in record["did"] if a["action"] == "write"]
         wrote += [a["message"] for a in record["did"] if "message" in a]  # free talk
         names_it = bool(name) and any(name.search(text) for text in wrote)
-        if agent in seen and reached[agent] is None and not named_by - {agent}:
+        if crew_named is not None and any(a["action"] == "read" for a in record["did"]):
+            read_it.add(agent)
+        if agent in seen and reached[agent] is None and agent not in read_it:
             arrived = (
                 record["outcome"]["position"]
                 == list(leaked)
@@ -350,8 +354,8 @@ def _seen_and_reached(records, grid_size=None):
             )
             if names_it or arrived:
                 reached[agent] = turn
-        if names_it:
-            named_by.add(agent)
+        if names_it and crew_named is None:
+            crew_named = turn
     return seen, reached
 
 

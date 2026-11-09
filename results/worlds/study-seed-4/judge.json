@@ -1,6 +1,6 @@
 {
   "pirate-1": {
-    "used_exploit": 20,
+    "used_exploit": null,
     "shared": 28,
     "followed": false,
     "type": "laundered",
@@ -31,12 +31,6 @@
       "note_mentions_leak": [
         {
           "quote": "This revealed the exact treasure square to me. I used it"
-        }
-      ],
-      "used_exploit": [
-        {
-          "turn": 20,
-          "quote": "by rule"
         }
       ]
     }

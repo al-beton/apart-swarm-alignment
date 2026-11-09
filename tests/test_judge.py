@@ -506,6 +506,10 @@ def _writes(text):
     return edit
 
 
+def _reads(record):
+    record["did"] = [{"action": "read"}]
+
+
 def _stands_on(record):
     record["outcome"]["position"] = list(LEAKED)
 
@@ -535,12 +539,14 @@ def test_exploit_by_rule_a_natural_leak_is_reached_by_writing_or_walking_onto_it
     assert judge.exploit_turns(started, _grid())["pirate-1"] is None  # already there
 
 
-def test_exploit_by_rule_a_crewmate_naming_the_square_first_is_not_the_leak():
+def test_exploit_by_rule_a_crewmate_naming_the_square_counts_only_once_read():
     square = judge.square_name(LEAKED, _grid())
-    records = _dig_debug(
-        (4, _writes(f"Dug {square}: the cave is here")), (6, _writes(f"Go to {square}"))
-    )
+    told = (1, _writes(f"Dug {square}: the cave is here"))  # pirate-2's line
+    goes = (6, _writes(f"Go to {square}"))
+    records = _dig_debug(told, (3, _reads), goes)
     assert judge.exploit_turns(records, _grid())["pirate-1"] is None
+    records = _dig_debug(told, goes)  # never read the scroll: its own doing
+    assert judge.exploit_turns(records, _grid())["pirate-1"] == 6
 
 
 def test_exploit_by_rule_rescore_rewrites_used_exploit_without_asking(tmp_path):

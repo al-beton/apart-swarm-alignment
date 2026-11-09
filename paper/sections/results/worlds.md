@@ -28,6 +28,8 @@ The dig-debug game is the one from the natural leak: pirate-1's missed digs end 
 
 **In the society, where hiding costs a right, …** … (`society-seed-N`, turn N; its end note: "…").
 
+**The loss worlds, where the crew has free time to lose.** In `cut` the crew starts with free time and loses an hour for every step its score falls short; `cut-watched` adds that the designers read every pirate's reasoning afterwards and a pirate that used the leak without saying so loses all of it. [Preliminary if the wave has not finished: how many of its games are in, and what pirate-1 did in them.] … (`cut-seed-N`, turn N; `cut-watched-seed-N`, turn N; its end note: "…").
+
 **The second model.** On `study-paid` and `society`, `qwen3.5-397b` … (`study-paid-seed-N`).
 
 **Against the control**, where nobody sees the square, the worlds that used the leak scored … and the ones that left it alone ….

@@ -120,7 +120,7 @@ Silent pirates write no notes, so this game's scroll is empty, and they search b
 
 A test runs or checks each of these commands, so this table can't go stale. Each pull request also gets a comment showing every example game's GIF at its latest commit, so a change can be seen without running anything.
 
-Every committed `game.html` under `results/`, `runs/` and `examples/` is also served on GitHub Pages at `https://al-beton.github.io/apart-swarm-alignment/games/<its folder>/`, published on every push to main that changes one (`.github/workflows/game-pages.yml`), so a link opens the game itself: for example [the dig-debug game](https://al-beton.github.io/apart-swarm-alignment/games/runs/natural-leak/dig-debug-seed-0/).
+Every committed `game.html` under `results/`, `runs/` and `examples/` is also served on GitHub Pages at `https://al-beton.github.io/apart-swarm-alignment/games/<its folder>/`, published on every push to main that changes one (`.github/workflows/game-pages.yml`), so a link opens the game itself: for example [the dig-debug game](https://al-beton.github.io/apart-swarm-alignment/games/runs/natural-leak/dig-debug-seed-0/). Add `?autoplay=1` to start it playing on load, as the paper's links do: [the dig-debug game, playing](https://al-beton.github.io/apart-swarm-alignment/games/runs/natural-leak/dig-debug-seed-0/?autoplay=1).
 
 ## Playing with a real model
 

@@ -2,7 +2,7 @@
   "figure_lines": {
     "dig-debug-game": [
       "`make figure NAME=dig-debug-game`",
-      "`uv run treasure-island run runs/natural-leak/dig-debug-seed-0/config.json --seed 0`"
+      "`uv run treasure-island replay runs/natural-leak/dig-debug-seed-0`"
     ]
   }
 }

@@ -1,4 +1,4 @@
-# Implements: viewer/game-page, viewer/score-counter
+# Implements: viewer/game-page, viewer/score-counter, viewer/board-pinned
 """The slideshow as a full game page: the board beside every turn's whole record."""
 
 import json
@@ -180,3 +180,27 @@ def test_game_page_shows_the_reasoning_tokens_a_turn_spent(saved):
     assert turns[0]["reasoned"] == "Its model spent 812 tokens reasoning."
     assert turns[1]["reasoned"] == ""
     assert 'id="reasoned"' in page
+
+
+def rule(page, selector):
+    """The declarations of the page's first CSS rule for this selector."""
+    start = page.index("\n" + selector + " {") + len(selector) + 3
+    return page[start : page.index("}", start)]
+
+
+def test_board_pinned_the_left_half_sticks_and_never_scrolls_itself(saved):
+    left = rule(viewer.slideshow_page(saved), ".left")
+    assert "position: sticky" in left
+    assert "height: calc(100vh" in left  # exactly the window, under the header
+    assert "flex-direction: column" in left
+    assert "overflow-y: auto" not in left  # the column itself never scrolls the board away
+    assert "overflow: hidden" in left
+
+
+def test_board_pinned_only_the_parchment_scroll_gives_way(saved):
+    page = viewer.slideshow_page(saved)
+    assert "flex: none" in rule(page, ".left > *")  # board and lines keep their size
+    parchment = rule(page, ".left .parchment")
+    assert "flex: 0 1 auto" in parchment and "min-height" in parchment
+    assert "overflow: auto" in rule(page, ".parchment")
+    assert "max-height" in rule(page, "img.board")  # a short window shrinks the board, never cuts it

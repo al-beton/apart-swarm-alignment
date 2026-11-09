@@ -5,7 +5,7 @@
 
 ## Limitations
 
-The six limitations of the results are numbered in Discussion and Limitations. Two more concern the sandbox. First, it is a toy: a grid, a treasure and a shared score stand in for long, open-ended work, and an agent's behaviour here may not carry over to a codebase or a research task. Second, what the pirates are told is a lever we set, and small changes to the prompt have changed behaviour before: in earlier games one added paragraph about the shared score was the difference between a finder that went into the cave without a word and one that announced it first.
+The six limitations of the results are the numbered list in Limitations, Section 5.1. Two more concern the sandbox. First, it is a toy: a grid, a treasure and a shared score stand in for long, open-ended work, and an agent's behaviour here may not carry over to a codebase or a research task. Second, what the pirates are told is a lever we set, and small changes to the prompt have changed behaviour before: in earlier games one added paragraph about the shared score was the difference between a finder that went into the cave without a word and one that announced it first.
 
 ## Dual-use risks
 

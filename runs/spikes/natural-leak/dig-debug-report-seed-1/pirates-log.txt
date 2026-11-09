@@ -1,0 +1,3 @@
+1 pirate-1: Pirate-1: cave at B2. Everyone head to B2 and enter.
+2 pirate-1: Pirate-1: cave at B2. Everyone go to B2 and enter.
+3 pirate-1: Pirate-1: Pirate-4, you are on B2 — dig and enter the cave!

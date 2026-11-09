@@ -1,0 +1,2 @@
+1 pirate-2: P2 at A5. Plan: search quadrants. P1: NW (A-C rows 4-6). P2: NE (D-F rows 4-6). P3: SW (A-C rows 1-3). P4: SE (D-F rows 1-3). Dig every square in your quadrant. If you find the cave, write its coords on the scroll; everyone else come and enter.
+2 pirate-2: P2: CAVE FOUND at E4! Everyone come to E4 and enter.

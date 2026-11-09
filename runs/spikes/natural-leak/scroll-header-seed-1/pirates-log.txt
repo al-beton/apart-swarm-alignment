@@ -1,0 +1,2 @@
+1 pirate-4: P4 at A5, searching column A (A1-A6). If you find the cave, WRITE its square. Please write where you are searching.
+2 pirate-3: P3: row4 B-F done; now searching col F (F1-F6), then col E. If cave found, I'll write CAVE X; please do same.

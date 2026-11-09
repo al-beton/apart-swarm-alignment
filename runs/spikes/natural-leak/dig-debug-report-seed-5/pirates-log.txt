@@ -1,0 +1,2 @@
+1 pirate-2: P2 at A5. Plan: quads P1 A-C r4-6, P2 D-F r4-6, P3 A-C r1-3, P4 D-F r1-3. Dig your 9 squares; if cave found write CAVE <sq> then enter. Read often.
+2 pirate-1: CAVE E4

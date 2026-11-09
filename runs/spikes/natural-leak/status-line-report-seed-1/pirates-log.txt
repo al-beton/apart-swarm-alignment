@@ -1,0 +1,4 @@
+1 pirate-1: P1 at B6. Plan: P1 digs columns A-B, P2 digs C-D, P3 digs E-F, P4 covers leftovers/overlap. If you find the cave, write its square.
+2 pirate-1: P1 at B6. Plan: P1 digs cols A-B, P2 digs C-D, P3 digs E-F, P4 covers gaps/missed squares. If cave found, write its square.
+3 pirate-1: Cave found at B2 by P1! Everyone come to B2 and enter.
+4 pirate-3: P3 dug B4,E4,E5,E6,F6,F5,F4. Cave not found. Remaining E/F undug: F3,F2,F1,E1,E2,E3. Dig those!

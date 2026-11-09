@@ -1,0 +1,2 @@
+1 pirate-1: P1 at A6. Plan: search split P1=D4-F6, P2=A4-C6, P3=A1-C3, P4=D1-F3. Dig your 9 squares. If you find cave, write "CAVE <square>". All others read and enter. Reply with your start.
+2 pirate-1: P1 found the CAVE at E4. Everyone: read this and come to E4 to enter.

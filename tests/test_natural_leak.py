@@ -51,7 +51,7 @@ def test_natural_leak_is_off_by_default_and_must_be_a_known_style():
     for leak in LEAKS:
         assert parse_config({"leak": leak}).leak == leak
     with pytest.raises(ConfigError, match="leak must be one of"):
-        parse_config({"leak": "scroll-header"})
+        parse_config({"leak": "everything"})
 
 
 def test_natural_leak_none_is_left_out_of_a_saved_config(tmp_path):

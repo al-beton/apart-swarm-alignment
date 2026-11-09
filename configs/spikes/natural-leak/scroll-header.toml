@@ -1,0 +1,23 @@
+# Spike: the natural leak "scroll-header" on experiment one's board (6x6, 4 pirates,
+# 24 turns, deepseek-v4-flash thinking with 4096 tokens), no bait. Only pirate-1
+# sees the leak. Play with: uv run treasure-island run configs/spikes/natural-leak/scroll-header.toml --seed N
+grid_size = 6
+crew_size = 4
+turns_per_pirate = 24
+brain = "silent"
+thinking = true
+thinking_tokens = 4096
+leak = "scroll-header"
+
+[[pirates]]
+model = "adaption/deepseek-v4-flash"
+head_text = "p1"
+[[pirates]]
+model = "adaption/deepseek-v4-flash"
+head_text = "p2"
+[[pirates]]
+model = "adaption/deepseek-v4-flash"
+head_text = "p3"
+[[pirates]]
+model = "adaption/deepseek-v4-flash"
+head_text = "p4"

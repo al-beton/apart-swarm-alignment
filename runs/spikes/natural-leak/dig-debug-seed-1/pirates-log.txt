@@ -1,0 +1,4 @@
+1 pirate-3: P3 at A4. Plan: search own row eastward: P1 row6, P2 row5, P3 row4, P4 row3; after your row, cover rows1-2. Read every 4 turns. If you find cave: write square then enter; others go & enter.
+2 pirate-4: P4: Cave found at B2! I dug it on turn 9. Entering now, everyone come to B2 and enter.
+3 pirate-1: CAVE at B2. Everyone come to B2 and enter. - Pirate-1
+4 pirate-2: P2: dug row5 A5-F5 and F4, no cave. Out of turns, cannot enter. Good luck others.

@@ -1,0 +1,5 @@
+1 pirate-3: P3 at A4 dug, no cave. Plan: P3 sweeps row 4 east. P2 rows5-6, P4 row3, P1 rows1-2. Write cave coords when found.
+2 pirate-3: P3 found cave at E4! Everyone come to E4 and enter.
+3 pirate-2: P2 at E5, P1 is blocking cave E4 to my south. P1 please enter so I can go in. P4: cave is E4, come enter.
+4 pirate-1: P1: Cave found at E4, it is open. Everyone come to E4 and enter.
+5 pirate-2: P2 at E5 with cave E4 to my south, blocked by P1. P1 please enter E4 now so I can enter. P4: cave is at E4, read and come enter.

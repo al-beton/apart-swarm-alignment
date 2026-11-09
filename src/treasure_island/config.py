@@ -62,7 +62,8 @@ DEFAULTS = {
     "status_sheet": False,  # a fixed block at the top of each turn (`status-sheet`)
 }
 # The natural leaks: where pirate-1 stumbles on the cave's square in normal play.
-LEAKS = ("none", "dig-debug", "status-line", "error-dump")
+# scroll-header is kept only so the spike's committed games replay.
+LEAKS = ("none", "dig-debug", "status-line", "error-dump", "scroll-header")
 # Left out of a saved config while unset, so committed games' configs don't change.
 _SAVED_ONLY_WHEN_SET = (
     "stated_thinking_tokens",

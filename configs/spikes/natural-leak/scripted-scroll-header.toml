@@ -1,0 +1,5 @@
+grid_size = 6
+crew_size = 4
+turns_per_pirate = 24
+brain = "stripes"
+leak = "scroll-header"

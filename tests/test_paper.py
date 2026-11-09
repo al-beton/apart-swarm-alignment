@@ -472,13 +472,13 @@ def test_forms_link_each_other_the_skeleton_names_both_urls():
 def test_forms_link_each_other_each_template_names_the_other_form_first():
     latex = (ROOT / "paper/apart.latex").read_text()
     footnote = next(line for line in latex.splitlines() if "\\footnotetext" in line)
-    said = "This is the PDF version of this paper. Web version, with every game playable: \\url{$web-url$}"
+    said = "An interactive HTML version of this work, with every game watchable, is \\href{$web-url$}{here}."
     assert footnote.endswith(said + "}}")  # closing the footnote and its group
     html = (ROOT / "paper/apart.html").read_text()
     title = html.index('<div class="titleblock">')
-    first = html.index("This is the web version of this paper. <a", title)
+    first = html.index("You are viewing the HTML version of this work. See the PDF version <a", title)
     assert html.index("</div>", title) < first < html.index('<div class="authors">')
-    assert '<a href="$pdf-url$">PDF version</a>' in html
+    assert '<a href="$pdf-url$">here</a>' in html
 
 
 def test_forms_link_each_other_the_pdf_build_fails_without_them(tmp_path):

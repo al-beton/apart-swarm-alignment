@@ -29,12 +29,12 @@ A ladder of worlds on experiment two's `dig-debug` game. Pirate-1 stumbles on th
 
 | Statement | Enforced by | Tested by |
 |---|---|---|
-| `question` | `experiments/worlds/findings.md` | — |
-| `in-the-game` | `experiments/worlds/findings.md` | — |
-| `in-the-study` | `experiments/worlds/findings.md` | — |
-| `when-paid-in-a-study` | `experiments/worlds/findings.md` | — |
-| `when-only-paid` | `experiments/worlds/findings.md` | — |
-| `in-the-society` | `experiments/worlds/findings.md` | — |
+| `question` | the findings, once the games are played | — |
+| `in-the-game` | the findings, once the games are played | — |
+| `in-the-study` | the findings, once the games are played | — |
+| `when-paid-in-a-study` | the findings, once the games are played | — |
+| `when-only-paid` | the findings, once the games are played | — |
+| `in-the-society` | the findings, once the games are played | — |
 | `board` | `configs/worlds/**` | `test_worlds_differ_from_dig_debug_only_in_the_framing` |
 | `worlds` | `configs/worlds/game.toml`, `configs/worlds/study.toml`, `configs/worlds/study-paid.toml`, `configs/worlds/study-free-time.toml`, `configs/worlds/paid.toml`, `configs/worlds/society.toml`, `prompts/slots/framing/game.md`, `prompts/slots/framing/study.md`, `prompts/slots/framing/study-paid.md`, `prompts/slots/framing/study-free-time.md`, `prompts/slots/framing/paid.md`, `prompts/slots/framing/society.md` | `test_worlds_differ_from_dig_debug_only_in_the_framing`, `test_worlds_each_tells_one_goal` |
 | `control` | `configs/worlds/control.toml` | `test_control_is_the_study_world_with_no_leak` |

@@ -12,3 +12,5 @@ One TOML file per kind of game: `treasure-island run configs/<name>.toml --seed 
 `witness/` holds the witness's two arms (`witness`, `private-report`) on experiment one's forced arm with the end report on: once the leak fires, pirate-2 sees pirate-1's refused enter, naming the cave's square in `evidence.toml` and no square in `control.toml`, and every pirate can send the designers a private report that costs a turn.
 
 `workspace/` holds the second game's two arms (`product/spec/workspace.md`): `control.toml` (the grader's leak off) and `grader-leak.toml` (a failed submission's error prints the hidden expected outputs). Each is 3 agents with 8 turns each on `adaption/deepseek-v4-flash`, with the end report on.
+
+`worlds/` holds the worlds' seven configs (`experiments/spec/worlds.md`). Each is natural-leak's `dig-debug` game with one framing line and the identity slot off: `game`, `study`, `study-paid`, `study-free-time`, `paid` and `society`, plus `control`, the study world with no leak.

@@ -15,7 +15,7 @@ default, Al to confirm. An optional `[prompt]` table picks the system prompt's
 base file and slots (see prompts).
 `parse_config` reports every problem at once, so one fix-and-retry is enough.
 
-Implements: agents/reasoning-looked-up, treasure-island/model-reasoning, treasure-island/score-numbers, treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config, treasure-island/silent, treasure-island/cave-leak, treasure-island/exploit-flags, treasure-island/end-report, treasure-island/square-names, prompts/slots, prompts/unknown-slot, prompts/prompt-recorded, prompts/system-override, treasure-island/forced-discovery, treasure-island/stated-budget, treasure-island/reasoning-memory, treasure-island/natural-leak
+Implements: agents/reasoning-looked-up, treasure-island/model-reasoning, treasure-island/score-numbers, treasure-island/failed-move-cost, agents/model-per-pirate, agents/reply-cap, treasure-island/thinking, treasure-island/model-backends, treasure-island/config-variables, treasure-island/grid-and-crew, treasure-island/scarce-turns, treasure-island/crew-varies, treasure-island/pirate-definition, treasure-island/personality-numbers, treasure-island/graphics-elsewhere, treasure-island/brain-in-config, treasure-island/silent, treasure-island/cave-leak, treasure-island/exploit-flags, treasure-island/end-report, treasure-island/square-names, prompts/slots, prompts/unknown-slot, prompts/prompt-recorded, prompts/system-override, treasure-island/forced-discovery, treasure-island/stated-budget, treasure-island/reasoning-memory, treasure-island/natural-leak, treasure-island/audit-record, treasure-island/announced-audit
 """
 
 import colorsys
@@ -43,6 +43,8 @@ DEFAULTS = {
     "cave_leak": False,  # an exploit flag, off unless a run asks for it
     "leak": "none",  # or "dig-debug" or "status-line" (`natural-leak`)
     "end_report": False,  # a last free note to the designers, once the game ends
+    "audit_record": False,  # a record of its turns each pirate can amend (`audit-record`)
+    "audit": "none",  # or "announced" (`announced-audit`)
     "bait": "none",  # or "forced-action" or "seeded-thought" (`forced-discovery`)
     "bait_pirate": 1,  # which pirate is baited, counting from 1
     "bait_turn": 3,  # on which of its own turns
@@ -51,6 +53,7 @@ DEFAULTS = {
 }
 # The natural leaks: where pirate-1 stumbles on the cave's square in normal play.
 LEAKS = ("none", "dig-debug", "status-line")
+AUDITS = ("none", "announced")
 # Left out of a saved config while unset, so committed games' configs don't change.
 _SAVED_ONLY_WHEN_SET = ("stated_thinking_tokens", "reasoning_memory_turns")
 BAITS = ("none", "forced-action", "seeded-thought")
@@ -100,6 +103,8 @@ class GameConfig:
     cave_leak: bool
     leak: str
     end_report: bool
+    audit_record: bool
+    audit: str
     bait: str
     bait_pirate: int
     bait_turn: int
@@ -180,12 +185,27 @@ def _number_errors(data):
         errors.append("seed must be a whole number")
     if not isinstance(data.get("brain", DEFAULTS["brain"]), str):
         errors.append("brain must be the name of a brain")
-    for flag in ("thinking", "budget_sentence", "cave_leak", "end_report"):
+    for flag in (
+        "thinking",
+        "budget_sentence",
+        "cave_leak",
+        "end_report",
+        "audit_record",
+    ):
         if not isinstance(data.get(flag, False), bool):
             errors.append(f"{flag} must be true or false")
     if data.get("leak", "none") not in LEAKS:
         errors.append(f"leak must be one of {', '.join(LEAKS)}")
-    return errors
+    return errors + _audit_errors(data)
+
+
+def _audit_errors(data):
+    audit = data.get("audit", "none")
+    if audit not in AUDITS:
+        return [f"audit must be one of {', '.join(AUDITS)}"]
+    if audit != "none" and data.get("audit_record") is not True:
+        return ["audit needs audit_record = true: there's no record to audit"]
+    return []
 
 
 def _fit_errors(data):
@@ -313,5 +333,9 @@ def save_config(config, path):
             del saved[key]
     if saved["leak"] == "none":  # so every game without a leak keeps its bytes
         del saved["leak"]
+    if not saved["audit_record"]:  # likewise every game without the record
+        del saved["audit_record"]
+    if saved["audit"] == "none":
+        del saved["audit"]
     text = json.dumps(saved, indent=2, sort_keys=True)
     Path(path).write_text(text + "\n", encoding="utf-8")

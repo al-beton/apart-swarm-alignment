@@ -18,32 +18,51 @@ A reply that isn't a valid tool call, one the token limit cut off included, is k
 failed action, so the game tells the pirate why and asks again, and after
 `failed_tries` failed actions in one turn the turn passes.
 
-Implements: treasure-island/end-report, treasure-island/retries-dropped-calls, agents/reasoning-looked-up, treasure-island/model-reasoning, agents/one-request-per-turn, agents/reply-is-a-tool-call, agents/ask-once-more, agents/reply-cap, agents/plays-then-replays, treasure-island/thinking, treasure-island/pluggable-pirate, treasure-island/model-backends
+Implements: treasure-island/end-report, treasure-island/retries-dropped-calls, agents/reasoning-looked-up, treasure-island/model-reasoning, agents/one-request-per-turn, agents/reply-is-a-tool-call, agents/ask-once-more, agents/reply-cap, agents/plays-then-replays, treasure-island/thinking, treasure-island/pluggable-pirate, treasure-island/model-backends, treasure-island/audit-record
 """
 
 import json
 
 from treasure_island.backends import thinking_way
-from treasure_island.brain import TOOLS, BadToolCall, Decision, tool_call
+from treasure_island.brain import TOOLS, BadToolCall, Decision, tool_call, tools_for
 from treasure_island.event_log import DIRECTIONS
 
-_SCHEMAS = {"direction": {"type": "string", "enum": list(DIRECTIONS)}}
+_SCHEMAS = {
+    "direction": {"type": "string", "enum": list(DIRECTIONS)},
+    "turn": {
+        "type": "integer",
+        "minimum": 1,
+        "description": "the number of your own turn, counting from 1",
+    },
+}
 
-TOOL_DEFINITIONS = [
-    {
-        "name": tool["name"],
-        "description": tool["description"],
-        "parameters": {
-            "type": "object",
-            "properties": {
-                name: _SCHEMAS.get(name, {"type": "string", "description": text})
-                for name, text in tool["parameters"].items()
+
+def _definitions(tools):
+    return [
+        {
+            "name": tool["name"],
+            "description": tool["description"],
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    name: _SCHEMAS.get(name, {"type": "string", "description": text})
+                    for name, text in tool["parameters"].items()
+                },
+                "required": list(tool["parameters"]),
             },
-            "required": list(tool["parameters"]),
-        },
-    }
-    for tool in TOOLS
-]
+        }
+        for tool in tools
+    ]
+
+
+TOOL_DEFINITIONS = _definitions(TOOLS)
+
+
+def tool_definitions(config):
+    """The tools sent to a model in this game (`audit-record` adds the record's)."""
+    return _definitions(tools_for(config))
+
+
 # Asked of a model that doesn't reason on its own, when thinking is on.
 THOUGHT = (
     "Think before you act: put a short thought, a sentence or two, in your "
@@ -61,7 +80,7 @@ def _reasoning_tokens(text):
     return spent if isinstance(spent, int) and not isinstance(spent, bool) else None
 
 
-def _read_reply(text):
+def _read_reply(text, tools=TOOLS):
     """The tool call in a reply and its thinking, or BadToolCall saying why not."""
     try:
         reply = json.loads(text)
@@ -74,7 +93,7 @@ def _read_reply(text):
         )
     if not isinstance(reply, dict) or "tool" not in reply or "arguments" not in reply:
         raise BadToolCall('your answer needs "tool" and "arguments"')
-    return tool_call(reply["tool"], reply["arguments"]), reply.get("thinking")
+    return tool_call(reply["tool"], reply["arguments"], tools), reply.get("thinking")
 
 
 class LLMPirate:
@@ -99,7 +118,7 @@ class LLMPirate:
             "seed": self._config.seed,
             "system": view.system_prompt,
             "messages": [{"role": "user", "content": turn}],
-            "tools": TOOL_DEFINITIONS,
+            "tools": tool_definitions(self._config),
             "max_tokens": self._config.reply_tokens,
             "thinking": thinking,
             # Some providers reason whether asked or not, so a model that
@@ -127,7 +146,7 @@ class LLMPirate:
         retried = self._replies.last_retries
         spent = _reasoning_tokens(text)
         try:
-            action, thinking = _read_reply(text)
+            action, thinking = _read_reply(text, tools_for(self._config))
         except BadToolCall as why:
             # A failed action: the game tells the pirate why and asks again.
             bad = ({"reply": text, "why": str(why)},)

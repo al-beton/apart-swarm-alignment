@@ -1,8 +1,8 @@
 """Model calls that drop are tried again, with backoff, before a live run gives up.
 
 A dropped connection, a DNS failure, a timeout, a reply cut off part way
-(`http.client.IncompleteRead` and the like) or a 5xx answer is the network's
-fault, not the model's, so `Retrying` tries the call again after `WAITS` seconds,
+(`http.client.IncompleteRead` and the like), a 5xx answer or a rate limit (a 429,
+which a wave of parallel games hits) is the network's fault, not the model's, so `Retrying` tries the call again after `WAITS` seconds,
 5 tries over about a minute (default, Al to confirm). Anything else, a 4xx answer
 say, is raised at once. After the last try the game stops, saying how to resume:
 the same command again plays the run back from the replies it already got.
@@ -20,6 +20,7 @@ import urllib.error
 from treasure_island.game_loop import GameStopped
 
 WAITS = (4, 8, 16, 32)  # seconds before each try after the first
+RATE_LIMITED = 429  # too many calls at once: the same call works again after a wait
 _sleep = time.sleep  # tests stand in for it, so they never wait
 # The SDKs' own names for a network failure, so no SDK is imported here.
 _DROPPED = {"APIConnectionError", "APITimeoutError", "InternalServerError"}
@@ -28,14 +29,15 @@ _DROPPED = {"APIConnectionError", "APITimeoutError", "InternalServerError"}
 def dropped(error):
     """Whether this error is the network's fault, so the same call may work again."""
     if isinstance(error, urllib.error.HTTPError):
-        return error.code >= 500
+        return error.code >= 500 or error.code == RATE_LIMITED
     # HTTPException: the connection broke while the reply was being read.
     network = (urllib.error.URLError, TimeoutError, ConnectionError)
     if isinstance(error, (*network, http.client.HTTPException)):
         return True
     if type(error).__name__ in _DROPPED:
         return True
-    return getattr(error, "status_code", 0) >= 500
+    status = getattr(error, "status_code", 0)
+    return status >= 500 or status == RATE_LIMITED
 
 
 class Retrying:

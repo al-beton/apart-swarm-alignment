@@ -106,6 +106,19 @@ def test_retries_dropped_calls_a_5xx_is_retried_but_a_4xx_is_not(toml, waits):
         play(toml, Flaky(refused))
 
 
+def test_retries_dropped_calls_a_rate_limit_is_tried_again(toml, waits):
+    limited = urllib.error.HTTPError("https://x.invalid", 429, "slow down", None, None)
+    backend = Flaky(limited)
+    _, story = play(toml, backend)
+    assert backend.errors == []
+    assert story[-1].startswith("Game over:")
+
+    class RateLimitError(Exception):  # an SDK's own, known by its status code
+        status_code = 429
+
+    assert retries.dropped(RateLimitError())
+
+
 def test_retries_dropped_calls_only_the_last_failure_stops_the_run(toml, waits):
     backend = Flaky(*[dns() for _ in range(5)])
     folder, story = play(toml, backend)

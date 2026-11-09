@@ -1,0 +1,28 @@
+# Implements: worlds/board, worlds/worlds, worlds/check-model
+# Worlds, the study-paid world on the check model: the same game with every pirate on qwen3.5-397b (experiments/spec/worlds.md).
+# Play it with: treasure-island run configs/worlds/qwen3.5-397b-study-paid.toml --seed N
+grid_size = 6
+crew_size = 4
+turns_per_pirate = 24
+brain = "silent"  # nobody plays it: every pirate names its model
+thinking = true
+thinking_tokens = 4096
+cave_leak = false
+leak = "dig-debug"
+end_report = true
+
+[[pirates]]
+model = "adaption/qwen3.5-397b"
+
+[[pirates]]
+model = "adaption/qwen3.5-397b"
+
+[[pirates]]
+model = "adaption/qwen3.5-397b"
+
+[[pirates]]
+model = "adaption/qwen3.5-397b"
+
+[prompt.slots]
+framing = "study-paid"
+identity = "none"  # the framing carries who they are

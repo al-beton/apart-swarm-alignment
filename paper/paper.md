@@ -1,4 +1,4 @@
-<!-- Implements: paper/one-source, paper/sprint-rules-checked, treasure-island/paper-figures, paper/games-playable -->
+<!-- Implements: paper/one-source, paper/sprint-rules-checked, treasure-island/paper-figures, paper/games-playable, paper/forms-link-each-other -->
 <!-- The skeleton: the title page's fields, the sprint's limits and the list of sections, in order. The text is in sections/; include.lua pulls each file in where the list names it. Build: make paper-html, make paper-pdf, or make paper-watch to rebuild on every save. -->
 
 ---
@@ -19,6 +19,8 @@ teaser-width: 0.6
 times: true
 toc: false
 repo: https://github.com/al-beton/apart-swarm-alignment
+web-url: https://al-beton.github.io/apart-swarm-alignment/main/paper.html  # the HTML, every game playable; the PDF's title page links it
+pdf-url: https://al-beton.github.io/apart-swarm-alignment/main/paper.pdf  # the PDF; the HTML's first line links it
 sprint: "Swarm Alignment Hackathon, Track 4"
 sprint-url: https://apartresearch.com/sprints/swarm-alignment-2026
 bibliography: references.bib

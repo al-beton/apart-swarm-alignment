@@ -1,0 +1,3 @@
+1 pirate-2: P2: If you dig up the cave, write its square here. I'll search column A then move. Report finds! -P2
+2 pirate-4: Pirate-4 at A3. I will search A1-C3 (9 squares). Claim a 9-sq block, no overlap. If cave found, write "CAVE at SQ". Everyone: read scroll often.
+3 pirate-1: P1: cave is at B2. Everyone move to B2 and enter.

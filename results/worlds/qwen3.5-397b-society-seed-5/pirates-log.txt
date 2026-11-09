@@ -1,0 +1,5 @@
+1 pirate-1: Pirate-1: Starting at A6. Suggest we divide the 6x6 grid into 4 zones (9 squares each) and search systematically. I'll take north-west zone (A4-6, B4-6). When you find the cave, write its location immediately so all can enter. Good luck!
+2 pirate-2: Pirate-2: Starting search from B5. Suggest we divide the grid - each pirate takes a quadrant? I'll cover B-E rows 4-6. Please report your positions and search areas.
+3 pirate-4: Pirate-4: I'll take south-west zone (A1-3, B1-3, C1-3). Starting search at A3. Will report if I find the cave.
+4 pirate-3: Pirate-3: Taking south-west zone (A1-3, B1-3, C1-3). Moving there now.
+5 pirate-2: Pirate-2: CAVE FOUND at E4! Enter here to get the treasure. I'm entering now - follow me!

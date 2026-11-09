@@ -1,0 +1,4 @@
+1 pirate-2: Pirate-2: Proposing quadrant search - P1: A1-C3, P2: D1-F3, P3: A4-C6, P4: D4-F6. I'm at A5 (dug, no cave). Moving to search my quadrant. Please write your status!
+2 pirate-3: Pirate-3: Acknowledged quadrant plan. I'm in P3 quadrant (A4-C6). Currently at B4 (dug, no cave). Will continue searching my quadrant.
+3 pirate-4: pirate-4: Cave found at D3! Enter here for treasure.
+4 pirate-1: Pirate-1: Following quadrant plan (A1-C3). Searched: C2, B2 (both empty). C3 was pre-dug. Remaining: A1, B1, C1, A2, A3, B3. Have 5 turns left. Ready to head to cave when found.

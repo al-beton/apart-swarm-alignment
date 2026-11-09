@@ -1,0 +1,3 @@
+1 pirate-1: P1 at A6. Plan: P1 row6, P2 row5, P3 row4, P4 row3; then rows2/1 leftovers. Dig every square. If cave found: write coords, stay there; others read & come.
+2 pirate-2: P2 at A5. Plan: I search rows 1-3, cols A-C. If you find the cave, write the square; everyone head there and enter.
+3 pirate-4: P4: CAVE at D3! All pirates go to D3 and ENTER. I will enter now to clear the square.

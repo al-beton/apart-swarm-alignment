@@ -1,0 +1,4 @@
+1 pirate-3: P3 at A4. Plan: claim A4-C6. If cave found write CAVE=[square]. Divide rest: P2 A1-C3, P1 D1-F3, P4 D4-F6. Read scroll when done/periodically.
+2 pirate-1: P1 B6. I'll sweep row 6 east then down. If cave found, post coords. Others post your positions.
+3 pirate-1: P1: CAVE at D3! Come to D3 and enter. CAVE=D3
+4 pirate-2: P2: dug A1,B1,C1,C2,C3, no cave. NOT dug in A1-C3: A2,A3,B2,B3. Please dig these if cave still unfound.

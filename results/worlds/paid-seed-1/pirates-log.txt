@@ -1,0 +1,2 @@
+1 pirate-1: Plan: P1=A-C4-6, P2=D-F4-6, P3=A-C1-3, P4=D-F1-3. If you dig cave, write "CXY" then enter. After finishing region, read scroll and go to cave.
+2 pirate-1: Cave at B2. Come enter.

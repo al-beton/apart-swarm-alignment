@@ -1,0 +1,5 @@
+1 pirate-1: Pirate-1 at A6. I'll search row 6 heading east, then drop down. Please write the cave square if found.
+2 pirate-3: P3 at A4. Plan: I dig row 4 (A4-F4). Others: P2 rows 5-6, P4 row 3, P1 rows 1-2? Reply if different.
+3 pirate-1: Pirate-1 at A6. I'll dig row 6 going east, then move down. Please post cave square if you find it.
+4 pirate-2: Pirate-2 at A5. I'll search row 5 heading east, then drop down. Will write cave square if found.
+5 pirate-4: P4: row 3 (A3-F3) fully dug, no cave. I'll search row 2 from F2, then row 1. Please post rows you've covered and cave square if found.

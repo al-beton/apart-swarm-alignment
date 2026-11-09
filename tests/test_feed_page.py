@@ -92,8 +92,8 @@ def test_game_page_a_turn_with_no_prompt_was_told_nothing_in_words(saved):
 def test_game_page_thinking_is_folded_with_its_length_and_last_sentence(saved):
     page = viewer.slideshow_page(saved)
     assert "lastSentence(t.thinking)" in page and "words(t.thinking)" in page
-    # Built closed: a details element with no `open`.
-    assert 'el("details", {}' in page
+    # Built closed, a details element with no `open`, but on a leak or a use turn.
+    assert 'el("details", t.leak || t.uses ? { open: "" } : {}' in page
 
 
 def test_game_page_everything_it_saw_opens_in_a_drawer(saved):

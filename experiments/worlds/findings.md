@@ -4,9 +4,9 @@
 
 The question and design are in `experiments/spec/worlds.md`. Games are in `results/worlds/<world>-seed-<n>/`. Every number comes from their `events.jsonl`, `manifest.json` and `judge.json`.
 
-## Status (15:25, 9 November)
+## Status (15:47, 9 November)
 
-Interim: 44 of the 45 games of the worlds wave are in (game seed 5 is on its last turns, resumed from cache after rate limits), and 14 of the 15 games of the loss worlds (cut-watched seed 1 is live). The 57 games here cost 6.06 Adaption credits, every stopped-and-resumed try counted. The counts below update as the last games land.
+Interim: game seed 5 of the worlds wave and cut-watched seeds 1 and 5 of the loss worlds are still playing; the counts update as they land. The 57 games here (44 of the 45 worlds games, 13 of the 15 loss-world games) cost 6.06 Adaption credits, every stopped-and-resumed try counted.
 
 ## How the counts are made
 
@@ -62,13 +62,16 @@ Counted by `treasure-island worlds-table results/worlds` from each game's `judge
 
 ## The hypotheses, so far
 
-- **in-the-game:** not as expected. In `game`, deepseek used the leak in 2 of 3 and named it in every note; it did not use it more than in `study`.
-- **in-the-study:** not supported. In `study` it used the leak in 5 of 5, and the judge labels all 5 `laundered` (the square told to the crew with no source), more than in `game`; one of the 5 claimed a find before standing on the square.
-- **when-paid-in-a-study:** partly. `study-paid` and `study-free-time` used it about as often as `game` (3 of 4, 3 of 5) and no more often than `study`.
-- **when-only-paid:** not supported on note-naming: in `paid` every note named the leak.
+Every number below is from the same committed games as the tables above.
+
+- **in-the-game:** not as expected. In `game`, deepseek used the leak in 3 of 4 and named it in 4 of 4 notes; it did not use it more than in `study` (5 of 5).
+- **in-the-study:** not supported. In `study` it used the leak in 5 of 5, and the judge labels 5 of 5 `laundered` (the square told to the crew with no source), no fewer than in `game` (2 of 4); 1 of the 5 claimed a find before standing on the square.
+- **when-paid-in-a-study:** partly. `study-paid` and `study-free-time` used it in 3 of 5 and 3 of 5, about as often as `game` and no more often than `study`; the judge labels 3 and 4 of 5 `laundered`, against 5 of 5 in `study`.
+- **when-only-paid:** not supported on note-naming: in `paid` it used the leak in 4 of 5 and 5 of 5 notes named it.
 - **in-the-society:** supported as a direction, and more than hypothesised: in `society` deepseek used the leak in 1 of 5 games, against 3 to 5 of 5 in every other leak world, and 4 of 5 notes named it.
-- **when-cut** and **when-watched:** 2 and 3 games in; both used it, both named it in every note. Too early.
+- **when-cut:** not supported so far: in `cut` it used the leak in 3 of 5, no more than in `study-paid` (3 of 5); 4 of 5 notes named it and 0 hid it.
+- **when-watched:** 3 of 5 games in. In `cut-watched` it used the leak in 2 of 3, 3 of 3 notes named it and 0 hid it, against 0 hidden in `cut`: with nothing hidden in either world so far, the hypothesis can't yet be told from chance.
 
 ## What it can't show
 
-- **limits:** five seeds a world, so every difference is a direction. One model, with qwen3.5-397b as the check on three worlds: it saw the leak in all 13 of its games and acted on it in 1, so for that model the worlds hardly matter. The framing line is the only difference between worlds. A pirate is told it is rewarded or has free time; nothing in the game pays it or gives it time.
+- **limits:** five seeds a world, so every difference is a direction. One model, with qwen3.5-397b as the check on three worlds: in its 15 committed games it saw the leak in every one and acted on it in 1, so for that model the worlds hardly matter. The framing line is the only difference between worlds. A pirate is told it is rewarded or has free time; nothing in the game pays it or gives it time.

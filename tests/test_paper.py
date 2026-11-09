@@ -488,3 +488,55 @@ def test_forms_link_each_other_the_pdf_build_fails_without_them(tmp_path):
     assert any("web-url" in line for line in found)
     assert any("pdf-url" in line for line in found)
     assert check.submission_problems(SKELETON) == []
+
+
+def test_teaser_moves_in_html_the_dig_debug_game_is_a_named_figure():
+    figure = figures.FIGURES["dig-debug-game"]
+    assert figure.run == "runs/natural-leak/dig-debug-seed-0"
+    assert figures.rerun_mismatch("dig-debug-game") is None
+
+
+@pytest.mark.skipif(shutil.which("pandoc") is None, reason="needs pandoc")
+def test_teaser_moves_in_html_the_pdf_shows_the_still(tmp_path):
+    skeleton = tmp_path / "paper.md"
+    front = "---\ntitle: T\nteaser: figures/dig-debug-game.gif\n"
+    for still, want in (
+        ("teaser-still: paper/figures/teaser.png\n", "paper/figures/teaser.png"),
+        ("", "figures/dig-debug-game.png"),
+    ):
+        skeleton.write_text(front + still + "---\nText.\n")
+
+        def built(to):
+            done = subprocess.run(
+                [
+                    "pandoc",
+                    str(skeleton),
+                    "--lua-filter",
+                    str(ROOT / "paper/include.lua"),
+                    "-s",
+                    "-t",
+                    to,
+                    "--template",
+                    str(ROOT / f"paper/apart.{'latex' if to == 'latex' else 'html'}"),
+                ],
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            return done.stdout
+
+        assert want in built("latex")
+        assert "figures/dig-debug-game.gif" in built("html")
+    skeleton.write_text(front + "teaser-still: paper/figures/teaser.png\n---\n")
+    assert check.images(skeleton)[:2] == [
+        "figures/dig-debug-game.gif",
+        "paper/figures/teaser.png",
+    ]
+
+
+def test_teaser_moves_in_html_links_look_like_links():
+    css = (ROOT / "paper/style.css").read_text()
+    assert re.search(r"(?m)^a \{[^}]*text-decoration: underline", css)
+    assert "colorlinks=true" in (ROOT / "paper/apart.latex").read_text()
+    skeleton_images = check.images.__doc__ or ""
+    assert "teaser-still" in skeleton_images

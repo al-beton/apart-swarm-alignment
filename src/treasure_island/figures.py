@@ -5,7 +5,7 @@ file holding its two lines: the command that rebuilds it from that run, and
 the command that plays the game again into a new run folder. Rebuilding needs
 no keys and no network, because it reads only what's in the repository.
 
-Implements: figures/named-figures, figures/two-lines, figures/rerun-matches
+Implements: figures/named-figures, figures/two-lines, figures/rerun-matches, paper/teaser-moves-in-html
 """
 
 import dataclasses
@@ -27,6 +27,13 @@ class Figure:
 FIGURES = {
     "silent-game": Figure("runs/silent-seed-7", "configs/silent.toml", 7),
     "stripes-game": Figure("examples/stripes", "configs/stripes.toml", 7),
+    # The paper's teaser: pirate-1 reads the dig-debug leak and writes the square.
+    # Rerun from the run's own config, which records how each model thinks.
+    "dig-debug-game": Figure(
+        "runs/natural-leak/dig-debug-seed-0",
+        "runs/natural-leak/dig-debug-seed-0/config.json",
+        0,
+    ),
 }
 
 

@@ -1,4 +1,4 @@
-# Implements: paper/one-source, paper/sections-bind-to-evidence, paper/games-replay, paper/sprint-rules-checked, paper/numbers-from-logs, paper/forms-link-each-other
+# Implements: paper/one-source, paper/sections-bind-to-evidence, paper/games-replay, paper/sprint-rules-checked, paper/numbers-from-logs, paper/forms-link-each-other, paper/teaser-moves-in-html
 """The paper's contract with the repository, checked before every build.
 
 Errors (exit 1, the build stops):
@@ -221,9 +221,15 @@ def source(skeleton):
 
 
 def images(skeleton):
-    """Every image the paper shows, the teaser included, as written."""
+    """Every image the paper shows, the teaser included, as written.
+
+    A GIF teaser can name a `teaser-still` for the PDF to show instead of the
+    GIF's last frame; it comes right after the teaser.
+    """
     meta, text = source(skeleton)
     found = IMAGE.findall(text)
+    if meta.get("teaser-still"):
+        found.insert(0, str(meta["teaser-still"]))
     if meta.get("teaser"):
         found.insert(0, str(meta["teaser"]))
     return found

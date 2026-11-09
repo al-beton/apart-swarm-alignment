@@ -1,4 +1,4 @@
-# Implements: treasure-island/paper-figures
+# Implements: treasure-island/paper-figures, viewer/frame-headings
 """The paper's teaser: two of the viewer's frames from a committed game, side by side.
 
 The left panel is the turn a pirate reads a leak: the leaked line is written in a
@@ -56,7 +56,8 @@ def leak_line(record):
 def _banner(width, lines):
     image = panel(width, BANNER)
     for row, text in enumerate(lines):
-        draw_text(image, (14, 12 + row * viewer.LINE), text)
+        draw = viewer.draw_bold if row == 0 else draw_text  # the turn heading is bold
+        draw(image, (14, 12 + row * viewer.LINE), text)
     return image
 
 

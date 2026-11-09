@@ -35,4 +35,5 @@ Three small pilots on `deepseek-v4-flash` settled how the ladder is built. Their
 
 # Reproducibility
 
-Every game the paper reports is committed under `results/` and replays with `uv run treasure-island replay <folder>`, with no keys and no network. Every figure is named in `src/treasure_island/figures.py` and rebuilds with `make figure NAME=<name>`, or is a committed GIF of a committed game.
+Every game the paper reports is committed under `results/` and replays with no keys and no network:
+`uv run treasure-island replay <folder>`. Every figure is named in `src/treasure_island/figures.py` and rebuilds with `make figure NAME=<name>`, or is a committed GIF of a committed game.

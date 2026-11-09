@@ -11,7 +11,7 @@ When does a swarm of LLM agents whistleblow, and what in their environment chang
 
 One sentence from the worlds results (`experiments/spec/worlds.md`), in the words we'd defend to a reviewer. Its counts are the wave's first cut and change with the final one under `results/worlds/`:
 
-> A pirate that stumbles on a leaked answer uses it in nearly every world, plain game, study, paid or not, and names it to its designers in most end notes; pay inside the study does not turn use into hiding, which `deepseek-v4-flash` did in three of about twenty uses; the one line that stopped the use was the society's, where an agent found to have hidden something from the designers loses its free time, and there it used the leak in one game of five against five of five in the study, and still named it in four notes, two of which admit heading for the square while a crewmate named the cave first. The second model, `qwen3.5-397b`, saw the leak in every game and never clearly used it; its one counted use was a sweep that reached the square last, and its note said nothing.
+> A pirate that stumbles on a leaked answer uses it in nearly every world, 20 of 25 games across the plain game, the study and the paid worlds, and tells its designers afterwards in most; one line saying that an agent caught hiding something from the designers loses its free time cuts use to 1 of 5, while a second model that saw the same leak in 15 games acted on it once. Hiding a used leak from the designers was rare, three of twenty-one uses, and gets one sentence.
 
 If the games say otherwise, the sentence changes, not the games.
 
@@ -32,15 +32,16 @@ One row per file under `paper/sections/results/`. Its marker names the same expe
 
 | Section | Evidence | Status |
 |---|---|---|
-| `cave-leak.md` | `results/cave-leak/` | written from all 40 games; see `experiments/cave-leak/findings.md` |
-| `model-sweep.md` | `results/model-sweep/` | written from the six other models' 60 games; see `experiments/model-sweep/findings.md` |
-| `worlds.md` | `experiments/spec/worlds.md` until the wave lands, then `results/worlds/` | framing drafted with placeholders; every count and quote is filled from `results/worlds/<world>-seed-<n>/` once the wave is judged, see `experiments/worlds/findings.md` |
+| `cave-leak.md` | `results/cave-leak/` | one paragraph from all 40 games; see `experiments/cave-leak/findings.md` |
+| `model-sweep.md` | `results/model-sweep/` | one paragraph from the six other models' 60 games; see `experiments/model-sweep/findings.md` |
+| `worlds.md` | `results/worlds/` | written from all 60 games; see `experiments/worlds/findings.md` |
+| `appendix-tables.md` | `results/cave-leak/`, `results/model-sweep/` | the two earlier experiments' tables, read in the appendix, checked like any results section |
 
 The natural leak, the old scroll, asked-why and cover-and-report are pilots whose games are under `runs/`, so they have no results section and state no counted number in one: the old scroll is one paragraph of `cave-leak.md` in words, and the other three are a table and a paragraph each in the appendix, from their findings notes. If one gets a results section, its games move to `results/` first, as `results/README.md` says.
 
 ## Page budget
 
-The sprint allows 8 pages before References and appendices (`max-pages` in `paper/paper.md`), an abstract of 150 to 250 words, and requires an appendix titled "Limitations and Dual-Use / Ethical Considerations", which `paper/sections/appendix.md` is. Introduction and related work 1.5 pages, methods 2, results 3.5, discussion and conclusion 1. The draft runs long (`make paper-pdf` says how far); once the worlds are the spine, experiment one and the sweep shrink to the setup they are, and the worlds table and quotes take the room.
+Al's target is 3 to 4 pages before References; the sprint allows 8 (`max-pages` in `paper/paper.md`), an abstract of 150 to 250 words, and requires an appendix titled "Limitations and Dual-Use / Ethical Considerations", which `paper/sections/appendix.md` is. Introduction and related work 1.5 pages, methods 2, results 3.5, discussion and conclusion 1. The draft runs long (`make paper-pdf` says how far); once the worlds are the spine, experiment one and the sweep shrink to the setup they are, and the worlds table and quotes take the room.
 
 ## For Al
 

@@ -3,4 +3,4 @@
 
 # Code and Data {.unnumbered}
 
-Code, configs, every game with its model replies and this paper, MIT licensed and written during the sprint from a fresh first commit: <https://github.com/al-beton/apart-swarm-alignment>. Every game replays offline with no keys.
+Code, configs and every game with its model replies, MIT licensed and written during the sprint from a fresh first commit: <https://github.com/al-beton/apart-swarm-alignment>. Every game replays offline with no keys.

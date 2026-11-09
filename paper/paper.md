@@ -2,9 +2,9 @@
 <!-- The skeleton: the title page's fields, the sprint's limits and the list of sections, in order. The text is in sections/; include.lua pulls each file in where the list names it. Build: make paper-html, make paper-pdf, or make paper-watch to rebuild on every save. -->
 
 ---
-title: "Treasure Island"
-subtitle: "When does a swarm of LLM agents whistleblow, and what in their environment changes that?"
-short-title: "Treasure Island"
+title: "Temptation on Treasure Island"
+subtitle: "How forthcoming is an agent in a swarm about information it should not have, and how does what it is told change that?"
+short-title: "Temptation on Treasure Island"
 date: 9 November 2026
 sprint-date: November 2026
 author:

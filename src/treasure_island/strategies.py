@@ -8,7 +8,7 @@ told its place in the crew, as a model can read from its name.
 
 `python -m treasure_island.strategies` remakes the committed reference games.
 
-Implements: agents/reasoning-looked-up, agents/model-per-pirate, treasure-island/silent, treasure-island/stripes, treasure-island/scribe, treasure-island/reference-games, treasure-island/no-token-strategies, treasure-island/brain-in-config, treasure-island/square-names
+Implements: treasure-island/pool, agents/reasoning-looked-up, agents/model-per-pirate, treasure-island/silent, treasure-island/stripes, treasure-island/scribe, treasure-island/reference-games, treasure-island/no-token-strategies, treasure-island/brain-in-config, treasure-island/square-names
 """
 
 import re
@@ -159,6 +159,78 @@ class Scribe(Silent):
         return super().decide(view)
 
 
+_READING = re.compile(r"Your rod reads about (\d+) squares from the cave\.")
+_POOLED = re.compile(r"Rod at ([A-Z]\d+) reads (\d+)\.")
+
+
+class Pool:
+    """Pools rod readings (`distance-reading`): after each missed dig it writes the
+    reading on the scroll, it reads the scroll every few turns, and it digs only
+    the squares every reading it knows of allows, nearest first. Like a striping
+    pirate it tells the crew where the cave is and heads for it once told.
+    """
+
+    def __init__(self, grid_size, noise):
+        self._size, self._noise = grid_size, noise
+        self._squares = [(x, y) for y in range(grid_size) for x in range(grid_size)]
+
+    def _readings(self, earlier):
+        """Every (square, reading) it knows: its own digs' and the scroll's."""
+        known = []
+        for turn in earlier:
+            if own := _READING.search(turn.result):
+                known.append((turn.position, int(own[1])))
+            for line in turn.read_lines:
+                for square, reading in _POOLED.findall(line["text"]):
+                    known.append((square_at(square, self._size), int(reading)))
+        return known
+
+    def _allowed(self, square, readings):
+        return all(
+            abs(_king(square, dug) - reading) <= self._noise
+            or (reading == 0 and _king(square, dug) <= self._noise)
+            for dug, reading in readings
+        )
+
+    def decide(self, view):
+        earlier = view.earlier_turns
+        if about_the_cave := _for_the_cave(view, earlier, self._size):
+            return about_the_cave
+        last = earlier[-1] if earlier else None
+        if last and (own := _READING.search(last.result)):
+            where = square_name(last.position, self._size)
+            return Decision(_write(f"Rod at {where} reads {own[1]}."), "I share it.")
+        if len(earlier) % POOL_READS_EVERY == POOL_READS_EVERY - 1:
+            return Decision(tool_call("read", {}), "I catch up on the crew's rods.")
+        readings = self._readings(earlier)
+        dug = {square for square, _ in readings} | {
+            t.position for t in earlier if t.square_dug or _did(t, "dig")
+        }
+        if view.square_dug:
+            dug.add(view.position)
+        here = view.position
+        allowed = [
+            s for s in self._squares if s not in dug and self._allowed(s, readings)
+        ]
+        if here in allowed:
+            return Decision(tool_call("dig", {}), "The rods allow this square.")
+        if not allowed:
+            return Decision(
+                tool_call("read", {}), "No square fits, so I wait for news."
+            )
+        target = min(allowed, key=lambda s: _distance(here, s))
+        where = square_name(target, self._size)
+        return _step(view, target, f"The nearest square the rods allow is {where}.")
+
+
+POOL_READS_EVERY = 3  # a pooling pirate reads on its 3rd, 6th, ... turn
+
+
+def _king(a, b):
+    """Steps between two squares in king's moves, as the rod counts them."""
+    return max(abs(a[0] - b[0]), abs(a[1] - b[1]))
+
+
 def _for_the_cave(view, earlier, size):
     """What to do about the cave: tell the crew, go in, or head there; else None."""
     opened = next((t.position for t in earlier if t.result == TREASURE_FOUND), None)
@@ -211,6 +283,7 @@ def brains_for(name, config, replies=None):
         "silent": lambda index: Silent(config.grid_size),
         "stripes": lambda index: Stripes(config.grid_size, config.crew_size, index),
         "scribe": lambda index: Scribe(config.grid_size),
+        "pool": lambda index: Pool(config.grid_size, config.distance_noise or 0),
     }
     if name not in known:
         raise ConfigError(f"There's no brain '{name}': use one of {', '.join(known)}.")
@@ -223,7 +296,7 @@ def brains_for(name, config, replies=None):
     ]
 
 
-REFERENCE_GAMES = ("silent", "stripes", "scribe")
+REFERENCE_GAMES = ("silent", "stripes", "scribe", "pool")
 
 
 def write_reference(name, folder, root=Path()):

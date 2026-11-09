@@ -1,0 +1,2 @@
+1022 pirate-1: P1@A6. Plan: sweep rows. P1 row6 W->E, P2 row5, P3 row4, P4 row3 (adjust if different). Dig every square. If cave found, write coords then enter. Others read scroll to know cave.
+1023 pirate-3: Pirate-3: CAVE FOUND at B4. Go to B4 and ENTER.

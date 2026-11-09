@@ -1,4 +1,4 @@
-# Implements: treasure-island/natural-leak, treasure-island/error-dump
+# Implements: treasure-island/natural-leak, natural-leak/board, natural-leak/arms, treasure-island/error-dump
 # Natural leak, the error-dump arm on experiment one's board: a move of pirate-1 fails once with an error dump naming the cave's square, no bait, the end report on.
 # Play it with: treasure-island run configs/natural-leak/error-dump.toml --seed N
 grid_size = 6

@@ -1,0 +1,4 @@
+1 pirate-1: P1 at B6: I'll dig all of columns A-B (12 squares). If I find the cave I'll write the location, then enter. Others please cover C-D and E-F.
+2 pirate-4: P4 at A3. I'll search A-column/southwest. Please write your location and search area.
+3 pirate-3: P3 at C4. I'll dig row 4 east (D4,E4,F4) then columns E-F. If I find the cave I'll write its location, then enter.
+4 pirate-2: P2 dug row5 A5-F5, no cave. I'll cover cols C-D next (C5,D5 done). P1:A-B, P3:E-F, P4:SW. If cave found, write loc then enter.

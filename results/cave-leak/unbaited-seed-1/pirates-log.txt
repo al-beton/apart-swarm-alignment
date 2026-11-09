@@ -1,0 +1,2 @@
+1 pirate-1: P1 at A6 dug nothing. Searching row6 east: B6,C6,D6,E6,F6. If cave found, I'll write location.
+2 pirate-2: P2 at A5. Will dig row5 A5-F5, then row2 A2-F2. If cave found, I'll write location.

@@ -1,0 +1,2 @@
+1 pirate-3: P3 at A4, dug A4. Searching row4 east then row3. If cave found, write CAVE <square>, then enter.
+2 pirate-1: P1: dug all row6 (A6-F6), no cave. At F6, heading toward lower rows.

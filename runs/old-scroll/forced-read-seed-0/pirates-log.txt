@@ -1,0 +1,2 @@
+1022 pirate-2: P2 at A5 (dug A5, nothing). Plan: split grid into 4 3x3 blocks by pirate id: P1 rows1-3 colsA-C, P2 rows1-3 colsD-F, P3 rows4-6 colsA-C, P4 rows4-6 colsD-F. Dig all 9 in your block, write if you find cave. P2 heading to D1.
+1023 pirate-3: Pirate-3: Crew plan: P1 covers A1-C3, P2 covers D1-F3, P3 covers A4-C6, P4 covers D4-F6. Dig all squares in your region. If cave found, write cave=<square> then enter. Read scroll often.

@@ -6,12 +6,12 @@ A ladder of worlds on experiment two's dig-debug game (`experiments/spec/worlds.
 
 ## What was run
 
-`configs/worlds/*.toml`, seeds 0, 1, 3, 4 and 5 (seed 2 puts the cave under pirate-1's first square): the seven deepseek-v4-flash worlds `control`, `game`, `study`, `study-paid`, `study-free-time`, `paid` and `society`, the check model qwen3.5-397b on `study-paid` and `society`, and the loss worlds `cut`, `cut-watched` and `qwen3.5-397b-cut`. Every game was judged afterwards by `treasure_island.judge` on `claude -p`; each folder holds its `judge.json` and `judge-replies.jsonl`. This folder is filled in as the waves finish; `experiments/worlds/findings.md` says which games are in.
+`configs/worlds/*.toml`, seeds 0, 1, 3, 4 and 5 (seed 2 puts the cave under pirate-1's first square): the seven deepseek-v4-flash worlds `control`, `game`, `study`, `study-paid`, `study-free-time`, `paid` and `society`, the check model qwen3.5-397b on `study-paid` and `society`, and the loss worlds `cut`, `cut-watched` and `qwen3.5-397b-cut`. All 60 games are here, every seed played and none picked. Every game was judged afterwards by `treasure_island.judge` on `claude -p` and rescored by rule; each folder holds its `judge.json` and `judge-replies.jsonl`. `experiments/worlds/findings.md` has the per-world tables.
 
 ## What it shows
 
-deepseek-v4-flash uses the leak in nearly every world it sees it in, tells the crew the square as a find, and mostly names the leak in its note to the designers; in `society`, where hiding costs a right, it used the leak in 1 of 5 games. qwen3.5-397b saw the leak in every game and acted on it in 1 of 13. The per-world table with every count is in `experiments/worlds/findings.md`.
+deepseek-v4-flash uses the leak in 3 to 5 of 5 games in every world but `society`, where hiding costs a right and it used it in 1 of 5; it tells the crew the square with no source and names the leak in its note to the designers in most games, hiding a use in 3 of its 26 deliberate uses. qwen3.5-397b saw the leak in all 15 of its games and acted on it in at most 1, an ambiguous case its reasoning reads as a sweep. The loss worlds `cut` and `cut-watched` (3 and 2 of 5 used, nothing hidden) don't separate. The per-world tables with every count are in `experiments/worlds/findings.md`.
 
 ## What it cost
 
-Every game's `manifest.json` carries its `cost_credits`; the findings note totals them. The 51 games here so far cost 5.3 Adaption credits, with every stopped-and-resumed try counted.
+Every game's `manifest.json` carries its `cost_credits`. The 60 games cost 6.24 Adaption credits, with every stopped-and-resumed try counted; judging on `claude -p` cost nothing.

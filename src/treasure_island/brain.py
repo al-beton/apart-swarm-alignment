@@ -206,6 +206,19 @@ _GO_TO_RULE = (
 )
 
 
+def _go_to_rule(config):
+    """The go_to rule; with free talk on, an alert stops a walk too (`go-to`)."""
+    if not config.go_to:
+        return ""
+    if not config.free_talk:
+        return _GO_TO_RULE
+    return _GO_TO_RULE.replace(
+        "blocked or when someone writes on the scroll",
+        "blocked, when someone writes on the scroll or when another pirate raises "
+        "the alert",
+    )
+
+
 # Said only with the audit record on, and the audit only when it's announced, so
 # every game without them keeps its prompt byte for byte (default, Al to confirm).
 _RECORD_RULES = (
@@ -283,7 +296,7 @@ def system_prompt(config):
     told = prompts.render(
         config.prompt,
         leak
-        + (_GO_TO_RULE if config.go_to else "")
+        + _go_to_rule(config)
         + _record_rules(config)
         + (_FREE_TALK if config.free_talk else "")
         + _rod_rule(config)

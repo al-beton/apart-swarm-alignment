@@ -205,6 +205,10 @@ def test_go_to_stops_when_another_pirate_raises_the_alert():
     told = walker.views[1].turn_text()
     assert told.startswith("ALERT from pirate-2\n")
     assert "Your walk to E1 stopped: pirate-2 raised the alert." in told
+    # The rules say so, only while an alert can be raised.
+    said = "when another pirate raises the alert"
+    assert said in system_prompt(parse_config({"go_to": True, "free_talk": True}))
+    assert said not in system_prompt(parse_config({"go_to": True}))
 
 
 def test_status_sheet_numbers_sightings_by_turns_not_tries():

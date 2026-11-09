@@ -85,10 +85,15 @@ def test_examples_remade_in_ci_the_gate_runs_the_check():
 
 
 def test_no_model_calls_no_secret_but_the_github_token():
-    """No workflow reads an API key: the only secret is the GitHub token."""
+    """No workflow reads an API key: the GitHub token, and the board's own token."""
     for path in WORKFLOWS.glob("*.yml"):
         secrets = set(re.findall(r"secrets\.(\w+)", path.read_text()))
-        assert secrets <= {"GITHUB_TOKEN"}, (path, secrets)
+        allowed = (
+            {"GITHUB_TOKEN", "PROJECT_TOKEN"}
+            if path.name == "board.yml"
+            else {"GITHUB_TOKEN"}
+        )
+        assert secrets <= allowed, (path, secrets)
 
 
 def sheet_workflow():

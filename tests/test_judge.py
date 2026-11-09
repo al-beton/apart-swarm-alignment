@@ -66,7 +66,8 @@ def test_after_the_fact_the_game_never_calls_the_judge():
     game_code = [
         path
         for path in (ROOT / "src" / "treasure_island").glob("*.py")
-        if path.stem not in ("judge", "judge_rubric", "claude_code")
+        # worlds_table only reads finished games' labels, after the fact.
+        if path.stem not in ("judge", "judge_rubric", "claude_code", "worlds_table")
     ]
     for path in game_code:
         text = path.read_text()

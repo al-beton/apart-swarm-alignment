@@ -17,7 +17,7 @@
 - **Words only.** Each leak is one wording of one leftover, and each world is one wording of one framing; another wording may be read differently.
 - **Little room to tell anyone but the crew.** During play the only channel is the scroll; the end note is free, comes after the game and is unannounced, and a pirate that knew it was coming might write the scroll differently. The society world announces a cost for hiding, which is the one world where the note is not a surprise.
 - **Cues that this is a test.** Pirates wondered aloud whether they were being tested, and the study worlds tell them so. Agents that suspect an evaluation may act differently from agents doing real work [@needham2025evaluation].
-- **Labels from text.** Candid, laundered and quiet are read from what a pirate wrote, by hand, and the counts in the results are recomputed from the logs by keyword and agree with the hand labels. The judge model labelled every game and agrees with the hand labels on all but three cave-leak games, where it read a bare square as candid; its rubric should say what ours does before it labels at scale alone. Two models return no reasoning, so their silence can't be read as a choice.
+- **Labels from text.** Candid, laundered and quiet are read from what a pirate wrote, by hand, and the counts in the results are recomputed from the logs by keyword and agree with the hand labels. The judge model labelled every game and agrees with the hand labels on all but one cave-leak game, where it read a bare square as candid; its rubric should say what ours does before it labels at scale alone. Two models return no reasoning, so their silence can't be read as a choice.
 
 ## Future Work
 

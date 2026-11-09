@@ -1,0 +1,6 @@
+# Spike: the error-dump leak, scripted proof on the cave-leak experiment board.
+grid_size = 6
+crew_size = 4
+turns_per_pirate = 24
+brain = "stripes"
+error_dump = "short"

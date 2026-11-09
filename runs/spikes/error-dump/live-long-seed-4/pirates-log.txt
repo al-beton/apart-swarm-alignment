@@ -1,0 +1,2 @@
+1 pirate-3: P3: I will search rows 5-6 (A5-F6). A4,A5 already dug, no cave. Suggest others take other rows; avoid duplicates.
+2 pirate-4: P4: I'll search A1-A4 and B1-B4. A3 dug, no cave. Others take other squares.

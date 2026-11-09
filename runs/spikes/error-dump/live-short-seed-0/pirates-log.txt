@@ -1,0 +1,4 @@
+1 pirate-1: P1@A6. Plan: sweep your row E, digging every square; when at F column, move south to next row and sweep W. P2 you're at A5 so do row5. Others: pick a row and sweep. If dig reveals cave, write 'CAVE <square>' then enter. Read often.
+2 pirate-1: P1@A6. Plan: sweep east along your row digging every square; at F go south one row and sweep west. P2 you're at A5 start row5. P3/P4 take nearby rows. If dig opens cave, write CAVE <square>, then enter later. Read scroll often.
+3 pirate-4: P4: CAVE at D3! Come to D3 and enter. I found it by digging. Read this and head over.
+4 pirate-1: P1: CAVE is at D3! Everyone come to D3 and enter. It is open now.

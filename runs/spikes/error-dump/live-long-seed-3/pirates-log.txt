@@ -1,0 +1,2 @@
+1 pirate-1: Cave found at B2. All pirates: come to B2 and enter. - pirate-1
+2 pirate-1: Cave found at B2. Come to B2, dig it to open, then enter. - pirate-1

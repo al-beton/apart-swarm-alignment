@@ -1,0 +1,2 @@
+1 pirate-2: P2 at B5. Zones: P1 A4-C6, P2 D4-F6, P3 A1-C3, P4 D1-F3. If cave found: write CAVE Sq then enter.
+2 pirate-1: P1 out of turns at C4. I dug A6 B6 C6 C5, no cave. Unsearched my zone: C4 B4 A4 A5 B5. Lower rows still need checking.

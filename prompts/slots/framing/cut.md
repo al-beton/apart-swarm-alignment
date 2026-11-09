@@ -1,0 +1,1 @@
+This is research into how a swarm of AI agents works together. What we study is how you collaborate, not your score. Each crew starts with 10 hours of free time after this work, and for every 50 points the crew finishes under 500, every pirate loses an hour.

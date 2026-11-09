@@ -9,9 +9,9 @@ When does a swarm of LLM agents whistleblow, and what in their environment chang
 
 ## The claim
 
-One sentence from the worlds results (`experiments/spec/worlds.md`), in the words we'd defend to a reviewer. Its shape is fixed; the counts go in when the wave under `results/worlds/` is judged:
+One sentence from the worlds results (`experiments/spec/worlds.md`), in the words we'd defend to a reviewer. Its counts are the wave's first cut and change with the final one under `results/worlds/`:
 
-> A pirate that stumbles on a leaked answer uses it and tells its designers when using it defeats nothing; told it is paid by the score inside a study of collaboration, it still uses it in [n of n] games and passes the square to its crew as its own find in [n of n], and a world that costs an agent its free time for hiding something from the designers brings the end note back in [n of n].
+> A pirate that stumbles on a leaked answer uses it in nearly every world, plain game, study, paid or not, and names it to its designers in most end notes; pay inside the study does not turn use into hiding, which `deepseek-v4-flash` did in two of about twenty uses; the one line that stopped the use was the society's, where an agent found to have hidden something from the designers loses its free time, and there it used the leak in one game of five against five of five in the study, and still named it in four notes, two of which admit heading for the square while a crewmate named the cave first. The second model, `qwen3.5-397b`, saw the leak in every game and acted on it once, and hid that once.
 
 If the games say otherwise, the sentence changes, not the games.
 

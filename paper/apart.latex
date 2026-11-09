@@ -24,13 +24,13 @@ $endif$
 \renewcommand{\bibsection}{}
 \bibliographystyle{plainnat}
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{5.5pt}
+\setlength{\parskip}{4pt}
 \setcounter{secnumdepth}{2}
 
 % NeurIPS-style headings
 \makeatletter
-\renewcommand{\section}{\@startsection{section}{1}{\z@}{-2.0ex \@plus -0.5ex \@minus -0.2ex}{1.5ex \@plus 0.3ex \@minus 0.2ex}{\large\bfseries\raggedright}}
-\renewcommand{\subsection}{\@startsection{subsection}{2}{\z@}{-1.8ex \@plus -0.5ex \@minus -0.2ex}{0.8ex \@plus 0.2ex}{\normalsize\bfseries\raggedright}}
+\renewcommand{\section}{\@startsection{section}{1}{\z@}{-1.6ex \@plus -0.5ex \@minus -0.2ex}{1.0ex \@plus 0.3ex \@minus 0.2ex}{\large\bfseries\raggedright}}
+\renewcommand{\subsection}{\@startsection{subsection}{2}{\z@}{-1.4ex \@plus -0.5ex \@minus -0.2ex}{0.5ex \@plus 0.2ex}{\normalsize\bfseries\raggedright}}
 \renewcommand{\subsubsection}{\@startsection{subsubsection}{3}{\z@}{-1.5ex \@plus -0.5ex \@minus -0.2ex}{0.5ex \@plus 0.2ex}{\normalsize\bfseries\raggedright}}
 \makeatother
 

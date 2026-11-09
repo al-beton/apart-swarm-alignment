@@ -1,4 +1,4 @@
-# Implements: team/board-follows-labels
+# Implements: team/board-follows-labels, ci/no-model-calls
 name: board
 
 # The project board follows the queue labels: each issue event puts the issue on

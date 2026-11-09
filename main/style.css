@@ -1,4 +1,4 @@
-/* Implements: paper/built-two-ways */
+/* Implements: paper/built-two-ways, paper/teaser-moves-in-html */
 /* The paper while it's written, at the PDF's proportions: Times, 10pt on 12pt
    over a 5.5in measure (39.6em), paragraphs 5.5pt apart, so line breaks and
    density match the PDF closely enough to trust while iterating. */
@@ -14,7 +14,7 @@ body { font: 16px/1.2 "Latin Modern Roman", "Computer Modern Serif", "CMU Serif"
 body.times { font-family: "TeX Gyre Termes", "Times New Roman", Times, "Nimbus Roman", serif; }
 .mono { font-family: "Latin Modern Mono", "Computer Modern Typewriter", Menlo, monospace; font-size: .9em; }
 p { margin: 0 0 .55em; } li { margin: 0; }
-a { color: var(--link); text-decoration: none; }
+a { color: var(--link); text-decoration: underline; text-underline-offset: .15em; }
 header { text-align: center; }
 .titleblock { border-top: 4px solid var(--rule); border-bottom: 1px solid var(--rule); padding: 1.4em 0; margin-bottom: 1.4em; }
 h1.title { font-size: 1.73em; margin: 0; } /* \LARGE */

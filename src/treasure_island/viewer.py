@@ -33,7 +33,7 @@ with no note, and the scroll as parchment; on the right one entry for every turn
 `planned_turns` lists, each played turn's steps drawn ahead so stepping onto it
 plays them.
 
-Implements: viewer/board-pinned, viewer/game-page-intro, viewer/leak-marked, viewer/reasoning-gist, viewer/scroll-heading, viewer/frame-headings, viewer/scroll-numbers, treasure-island/asked-why, treasure-island/old-scroll, treasure-island/end-report, viewer/planned-turns, viewer/game-page-steps, viewer/scroll-written-live, viewer/cave-drawn, treasure-island/cave, viewer/turn-marked, viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/walks-between-squares, treasure-island/pokemon-style, viewer/slideshow-file, viewer/game-page, viewer/scroll-steps, viewer/score-counter, viewer/transcript, viewer/board-framed, viewer/dig-steps, viewer/enter-steps, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process, treasure-island/square-names, treasure-island/forced-discovery, treasure-island/free-talk
+Implements: viewer/board-pinned, viewer/autoplay, viewer/game-page-intro, viewer/leak-marked, viewer/reasoning-gist, viewer/scroll-heading, viewer/frame-headings, viewer/scroll-numbers, treasure-island/asked-why, treasure-island/old-scroll, treasure-island/end-report, viewer/planned-turns, viewer/game-page-steps, viewer/scroll-written-live, viewer/cave-drawn, treasure-island/cave, viewer/turn-marked, viewer/story-caption, treasure-island/side-panel, treasure-island/readable-at-once, event-log/crew-positions, viewer/one-renderer, viewer/frame-shows-the-swarm, viewer/watch-live, viewer/render-gif, viewer/art-folder, viewer/sprite-from-definition, viewer/sprite-follows-action, viewer/walks-between-squares, treasure-island/pokemon-style, viewer/slideshow-file, viewer/game-page, viewer/scroll-steps, viewer/score-counter, viewer/transcript, viewer/board-framed, viewer/dig-steps, viewer/enter-steps, treasure-island/slideshow, viewer/long-log-lines, treasure-island/treasure-mark, treasure-island/log-at-bottom, runs/same-in-every-process, treasure-island/square-names, treasure-island/forced-discovery, treasure-island/free-talk
 """
 
 import base64
@@ -1253,15 +1253,17 @@ header input[type=range] { flex: 1; min-width: 140px; accent-color: var(--acc); 
 .feed { display: grid; grid-template-columns: minmax(220px, 34%) minmax(0, 1fr); gap: 18px;
   padding: 16px; max-width: 1300px; margin: auto; }
 .feed > section { min-width: 0; }
-.left { position: sticky; top: 64px; align-self: start; height: calc(100vh - 72px);
+/* --head is the header's real height, set by the script: it wraps on a narrow window. */
+.left { position: sticky; top: calc(var(--head, 56px) + 8px); align-self: start;
+  height: calc(100vh - var(--head, 56px) - 16px);
   display: flex; flex-direction: column; overflow: hidden; }
 .left > * { flex: none; }
-.left .parchment { flex: 0 1 auto; min-height: 5em; }
-@media (max-width: 760px) { .feed { grid-template-columns: minmax(0, 1fr); }
-  .left { top: 96px; z-index: 3; background: var(--bg); height: auto; display: block;
-    overflow: visible; }
-  .left img { max-height: 32vh; } }
-img.board { width: 100%; max-height: calc(100vh - 230px); object-fit: contain;
+/* Short of room, the scroll gives way first, then the board shrinks whole. */
+.left .parchment { flex: 0 1000 auto; min-height: 4em; }
+.left img.board { flex: 0 1 auto; min-height: 80px; }
+@media (max-width: 640px) { .feed { grid-template-columns: minmax(0, 1fr); }
+  .left { z-index: 3; background: var(--bg); height: 60vh; } }
+img.board { width: 100%; max-height: 100%; object-fit: contain;
   image-rendering: pixelated; border-radius: 6px; border: 1px solid var(--line); display: block; }
 .face { width: 28px; height: 28px; image-rendering: pixelated; }
 #where { margin: 6px 0 10px; }
@@ -1281,7 +1283,7 @@ img.board { width: 100%; max-height: calc(100vh - 230px); object-fit: contain;
   letter-spacing: .04em; background: var(--bad); color: #fff; border-radius: 3px;
   padding: 0 5px; margin-right: 6px; vertical-align: 1px; }
 .ending { font-weight: 600; margin-top: 10px; }
-.round { color: var(--mut); font-size: 12px; text-transform: uppercase; letter-spacing: .05em;
+.round { color: var(--mut); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: .05em;
   margin: 18px 0 8px 46px; }
 .msg { display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 10px; margin-bottom: 14px;
   scroll-margin-top: 120px; }
@@ -1339,7 +1341,7 @@ details summary { cursor: pointer; color: var(--mut); overflow-wrap: anywhere; }
 <img class="board" id="board" alt="the board on the current turn">
 <div class="mut" id="where"></div>
 <div class="mut" id="reasoned"></div>
-<div class="parchment"><div class="title">The scroll</div><div id="scroll"></div></div>
+<div class="parchment"><div class="title">THE SCROLL:</div><div id="scroll"></div></div>
 <div class="ending" id="ending"></div>
 </section>
 <section id="feed"></section>
@@ -1413,7 +1415,7 @@ for (const slot of GAME.slots) {
   entry.id = "turn" + k;
   entry.dataset.turn = k;
   const body = el("div", { class: "body" },
-    el("div", { class: "head" }, t.uses ? el("span", { class: "tag" }, "uses the leak") : "", el("b", {}, t.agent), " · turn " + t.own + " of " + EACH + " · game turn " + t.turn,
+    el("div", { class: "head" }, t.uses ? el("span", { class: "tag" }, "uses the leak") : "", el("b", {}, t.agent + " · turn " + t.own + " of " + EACH + " · game turn " + t.turn),
       t.told ? " · " + t.told : " · a scripted pirate is told nothing in words"));
   if (t.thinking) {
     body.append(el("details", t.leak || t.uses ? { open: "" } : {},
@@ -1643,9 +1645,15 @@ function watch() {
 watch();
 addEventListener("resize", watch);
 
+const head = () => document.documentElement.style.setProperty("--head", document.querySelector("header").offsetHeight + "px");
+head();
+addEventListener("resize", head);
+
 const linked = location.hash.match(/^#turn-(\d+)$/);
 if (linked) at = Math.min(Number(linked[1]), Math.max(N - 1, 0));
 paint(true);
+// A link from the paper, ?autoplay=1, starts playing at the normal speed.
+if (new URLSearchParams(location.search).get("autoplay") === "1") play();
 </script>
 </body></html>
 """

@@ -109,7 +109,7 @@ def table(root, games=False, sourced=False):
     found, skipped = read(root)
     grouped = rows(found)
     if sourced:
-        _check_sourceable(root, grouped)
+        _check_sourceable(root, grouped, skipped)
     heads = ["World", "Model", "Games", *(head for head, _, _ in COLUMNS)]
     lines = ["| " + " | ".join(heads) + " |", "|" + "---|" * len(heads)]
     listed = []
@@ -147,7 +147,7 @@ def _names(names):
     return ", ".join(f"`{name}`" for name in names) or "none"
 
 
-def _check_sourceable(root, grouped):
+def _check_sourceable(root, grouped, skipped):
     """Each sourced row's glob must match its own games and no others."""
     if not Path(root).as_posix().startswith("results/"):
         raise ValueError(f"{root} isn't under results/, so the paper can't cite it")
@@ -157,6 +157,13 @@ def _check_sourceable(root, grouped):
             raise ValueError(
                 f"{world} ran on more than one model, so one glob can't count each: "
                 "give each model's games their own world name"
+            )
+    for name, why in skipped:
+        match = GAME_FOLDER.match(Path(name).name)
+        world = match and (Path(name).parent / match["world"]).as_posix()
+        if world in worlds:
+            raise ValueError(
+                f"{name} is {why}, and the paper's sources for {world} would count it"
             )
 
 

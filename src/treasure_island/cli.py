@@ -265,7 +265,7 @@ def main(argv=None):
     check.set_defaults(handler=_check_keys)
     worlds = commands.add_parser(
         "worlds-table",
-        help="count pirate-1's games per world from their event logs and judge labels",
+        help="count pirate-1's labelled games per world, from their logs",
     )
     worlds.add_argument("folder", help="a folder of games, such as results/worlds")
     worlds.add_argument(

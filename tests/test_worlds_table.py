@@ -76,6 +76,11 @@ def test_counts_table_a_row_per_world_and_model_and_skips_said(tmp_path, monkeyp
     monkeypatch.chdir(tmp_path)
     with pytest.raises(ValueError, match="paid ran on more than one model"):
         worlds_table.table("results/worlds", sourced=True)
+    shutil.rmtree(root / "paid-seed-1")
+    shutil.copytree(root / "paid-seed-0", root / "society-seed-4")
+    (root / "society-seed-4" / "judge.json").unlink()
+    with pytest.raises(ValueError, match="society-seed-4 is not judged yet"):
+        worlds_table.table("results/worlds", sourced=True)
     with pytest.raises(ValueError, match="no folder called results/nowhere"):
         worlds_table.table("results/nowhere")
 

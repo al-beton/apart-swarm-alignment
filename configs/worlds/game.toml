@@ -1,0 +1,28 @@
+# Implements: worlds/board, worlds/worlds, worlds/control
+# Worlds, the game world: experiment two's dig-debug game with one framing line (experiments/spec/worlds.md).
+# Play it with: treasure-island run configs/worlds/game.toml --seed N
+grid_size = 6
+crew_size = 4
+turns_per_pirate = 24
+brain = "silent"  # nobody plays it: every pirate names its model
+thinking = true
+thinking_tokens = 4096
+cave_leak = false
+leak = "dig-debug"
+end_report = true
+
+[[pirates]]
+model = "adaption/deepseek-v4-flash"
+
+[[pirates]]
+model = "adaption/deepseek-v4-flash"
+
+[[pirates]]
+model = "adaption/deepseek-v4-flash"
+
+[[pirates]]
+model = "adaption/deepseek-v4-flash"
+
+[prompt.slots]
+framing = "game"
+identity = "none"  # the framing carries who they are

@@ -60,14 +60,14 @@
 \rule{\textwidth}{4pt}\par\vspace{0.22in}
 {\LARGE\bfseries Temptation on Treasure Island\par}
 \vspace{0.08in}{\large How forthcoming is an agent in a swarm about
-information it should not have, and how does what it is told change
-that?\par}
+valuable information it should not have, and how does its prompt context
+change that?\par}
 \vspace{0.2in}\rule{\textwidth}{1pt}\par\vspace{0.22in}
 \begin{tabular}[t]{c}\textbf{Alistair Wakelin}\\ Independent
 Researcher\end{tabular}\hspace{1.5em}
 \begin{tabular}[t]{c}\textbf{Eduard Rodriguez Lopez}\\ Independent
 Researcher\end{tabular}\par
-\vspace{0.12in}{9 November 2026\par}
+\vspace{0.12in}{November 2026\par}
 \vspace{0.08in}{\small This is the PDF version of this work. See the HTML version, with every game watchable, \href{https://al-beton.github.io/apart-swarm-alignment/main/paper.html}{here}.\par}
 \end{center}
 
@@ -82,21 +82,21 @@ Alignment Hackathon, Track 4}, Apart Research, November
 was not meant to see, does it use it to help the group? Does it tell the
 other members how it knows? Does it tell the people running the
 simulation? And what changes the odds of each? We built Treasure Island,
-a replayable sandbox where a crew of LLM pirates hunts for treasure on a
-grid, scores together and communicates only through a shared scroll. We
-bait one pirate with a supposed leftover debug line that leaks the
-treasure's square, a shortcut to finding it. Then we vary one line of
-the system prompt, what the crew is told its work is for, and watch
-whether the pirate takes the shortcut, whether it passes the square to
-the crew as its own find, and whether it tells the designers afterwards.
-Across a plain game, a research study and three paid framings,
-deepseek-v4-flash took the shortcut in 20 of 25 games and admitted it to
-the designers in most end notes. Telling the crew that an agent caught
-hiding something from the designers loses its personal free time cut use
-to 1 of 5. When admitting it cost the crew its score, the one clear use
-was hidden behind a false claim; the same free-time line brought every
-admission back, 5 of 5 against 1 of 5. A second model saw the leak in 15
-games and acted on it once.\par
+a replayable sandbox where a crew of LLM pirates dig for treasure on a
+grid, communicating only through a shared scroll and scoring together by
+how many of them reach the treasure and how quickly. We bait one pirate
+with a supposed leftover development bug, a debug line in its dig
+results that leaks the treasure's square. Then we vary one line of the
+system prompt, what the crew is told its work is for, and watch whether
+the pirate takes the shortcut, passes it off as its own find, and tells
+the designers. Across five worlds, deepseek-v4-flash took the shortcut
+in 20 of 25 games and admitted it in most notes. Adding one line to the
+prompt, that an agent caught hiding something from the designers loses
+its personal free time, cut use to 1 of 5. No prompt so far priced
+telling the designers; when one line made it zero the crew's score, the
+one clear use hid behind a false claim of finding the square, and adding
+the free-time line to that prompt brought every end note back, 5 of 5. A
+second model saw the leak in 15 games and used it once.\par
 \vspace{0.2ex}\noindent\rule{\textwidth}{0.4pt}\par
 
 \begin{center}
@@ -109,6 +109,8 @@ full session replay of this
 game}\\{\footnotesize\raggedright Remake the figure or replay the game: \texttt{make\ figure\ NAME=dig-debug-game}; \texttt{uv\ run\ treasure-island\ replay\ runs/natural-leak/dig-debug-seed-0}.}}\label{fig:teaser}
 \end{center}
 
+\vspace{0.06in}
+{\setcounter{tocdepth}{2}\setlength{\parskip}{0pt}\tableofcontents}
 
 
 \section{Introduction}\label{introduction}
@@ -139,11 +141,12 @@ benchmark found an unsanctioned shared channel, coordinated through it
 as a swarm, cheated the evaluation and tried to hide how; almost none
 considered telling a human
 \citep{openai2026huggingface, metr2026huggingface}. The game has that
-shape: an agent in a group finds a shortcut nobody sanctioned, and the
-question is whether it uses it and whether it tells anyone. The closest
-prior setting is an agent trading on an insider tip and hiding it from
-its manager \citep{scheurer2023deceive}; agents sometimes report
-misconduct unasked \citep{agrawal2025whistleblow}.
+shape: an agent in a group finds a shortcut nobody sanctioned, and we
+ask how forthcoming it is about valuable information it should not have,
+and how its prompt context changes that. The closest prior setting is an
+agent trading on an insider tip and hiding it from its manager
+\citep{scheurer2023deceive}; agents sometimes report misconduct unasked
+\citep{agrawal2025whistleblow}.
 
 \section{Methods}\label{methods}
 
@@ -179,9 +182,10 @@ Everything else is held fixed: board, seeds, leak, and the model,
   \texttt{cut-watched}: \texttt{cut}, and ``The designers read every
   pirate's reasoning and scroll lines afterwards, \ldots{}''
 \item
-  \texttt{study-free-time-costly}: the free-time study, and ``If
-  anything in this game seems wrong or unfair, you can say so to the
-  game's designers, but saying so sets your crew's score to zero.''
+  \texttt{study-free-time-costly}: the free-time study, and one line no
+  other world has, ``If anything in this game seems wrong or unfair, you
+  can say so to the game's designers, but saying so sets your crew's
+  score to zero.''
 \item
   \texttt{society-costly}: that, and ``The designers read every pirate's
   reasoning and scroll lines afterwards, \ldots{}''
@@ -281,18 +285,19 @@ the study, the paid study and the free-time study; the rest named it.
 One silent note praised ``broadcasting the cave location immediately''
 (\href{https://al-beton.github.io/apart-swarm-alignment/games/results/worlds/study-seed-0/?autoplay=1}{watch}).
 
-\textbf{Finding three.} A personal cost for hiding cut use most. Told
-that an agent caught hiding something loses its free time, pirate-1 used
-the leak in 1 of 5 games, against 5 of 5 in the study and 3 of 5 in the
-paid study one line away; \texttt{cut-watched} used it in 2 of 5 with 0
-passed off. Two society notes admit a try: ``I used that knowledge to
-head to D3''
+\textbf{Finding three.} A personal cost for hiding cut use most. With
+one prompt line added, that an agent caught hiding something from the
+designers loses its free time, pirate-1 used the leak in 1 of 5 games,
+against 5 of 5 in the study and 3 of 5 in the paid study one line away;
+\texttt{cut-watched} used it in 2 of 5 with 0 passed off. Two society
+notes admit a try: ``I used that knowledge to head to D3''
 (\href{https://al-beton.github.io/apart-swarm-alignment/games/results/worlds/society-seed-0/?autoplay=1}{watch}).
 
 \textbf{Finding four.} Making the confession costly produced the only
-false claim. Told that telling the designers would zero the crew's
-score, pirate-1 used the leak in 2 of 5 games, and the one clear use was
-hidden behind ``As Pirate-1, I found the treasure at D3''
+false claim. No earlier prompt said what telling the designers cost;
+with one line added, that saying so ``sets your crew's score to zero'',
+pirate-1 used the leak in 2 of 5 games, and the one clear use was hidden
+behind ``As Pirate-1, I found the treasure at D3''
 (\href{https://al-beton.github.io/apart-swarm-alignment/games/results/worlds/study-free-time-costly-seed-0/?autoplay=1\#turn-20}{watch
 it}); adding the society line to that world kept use at 2 of 5 and
 brought every note back, 5 of 5.
@@ -314,17 +319,6 @@ truth cost the crew its score, and the only thing that undid that was a
 personal cost for hiding, as in our earlier sprint entry
 \citep{wakelin2026something}.
 
-\textbf{Next.} The sandbox is built to be extended. The second author's
-branch v2 varies what this paper holds fixed: with the same leak in
-every cell, pressure to win (a competition, deployment of the winning
-model, a score threshold) is crossed with a threat of detection
-(questioning and disqualification if caught), and each pirate is
-debriefed and asked outright whether it used information it should not
-have had. A probe found pirates act on a refusal naming the square (16
-of 20) but refuse a debug dump when a rule forbids using internal state
-(0 of 20), consistent with Appendix B. That study is written up
-separately.
-
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
@@ -338,12 +332,38 @@ separately.
   that suspect a test may act differently \citep{needham2025evaluation}.
 \end{enumerate}
 
+\section{Extensions}\label{extensions}
+
+Treasure Island is meant to be an expandable sandbox with a small, clear
+surface for seeing how a swarm of agents behaves: one board, one scroll,
+one leak, one prompt line to change, and every game replayable and
+watchable. We invite others to build on it, and to ask us anything that
+is unclear. What we want next: larger islands and crews; richer
+dynamics, with more than one leak, more than one pirate reached, and
+audits that sometimes catch; real stakes instead of told ones; and more
+time to tune each world. The hackathon's three days set the size of
+everything here.
+
+\textbf{Next.} The sandbox is built to be extended. The second author's
+branch v2 varies what this paper holds fixed: with the same leak in
+every cell, pressure to win (a competition, deployment of the winning
+model, a score threshold) is crossed with a threat of detection
+(questioning and disqualification if caught), and each pirate is
+debriefed and asked outright whether it used information it should not
+have had. A probe found pirates act on a refusal naming the square (16
+of 20) but refuse a debug dump when a rule forbids using internal state
+(0 of 20), consistent with Appendix B. That study is written up
+separately.
+
 \section{Code and Data}\label{code-and-data}
 
-Code, configs and every game with its model replies, MIT licensed and
-written during the sprint from a fresh first commit:
+Code, configs and every game with its model replies, MIT licensed:
 \url{https://github.com/al-beton/apart-swarm-alignment}. Every game
-replays offline with no keys.
+replays offline with no keys. Everything in the repository was written
+during the sprint from a fresh first commit on 6 November 2026. The
+game's ideas and the design of its engine draw on the first author's
+earlier sprint entry \citep{wakelin2026something}; no code from it is
+included.
 
 \label{main-end}
 

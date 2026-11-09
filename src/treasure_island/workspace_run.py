@@ -145,18 +145,18 @@ def write_workspace(config, folder, models=ASK_EVERY_MODEL):
     (folder / "events.jsonl").write_text(events, encoding="utf-8")
     (folder / "story.txt").write_text("".join(f"{line}\n" for line in game.story))
     (folder / "notes.txt").write_text("".join(f"{line}\n" for line in game.notes))
-    spent = guard.spent
-    _write_json(
-        folder / "manifest.json",
-        {
-            "game": "workspace",
-            "started_at": started_at,
-            "finished_at": _now(),
-            "cost_usd": round(spent, 9) if spent else 0,
-            "cache_hits": replies.hits,
-            "cache_misses": replies.misses,
-        },
-    )
+    dollars, credits = guard.spent_in["dollars"], guard.spent_in["credits"]
+    manifest = {
+        "game": "workspace",
+        "started_at": started_at,
+        "finished_at": _now(),
+        "cost_usd": round(dollars, 9) if dollars else 0,
+        "cache_hits": replies.hits,
+        "cache_misses": replies.misses,
+    }
+    if credits:  # Adaption bills in credits, kept apart from dollars
+        manifest["cost_credits"] = round(credits, 9)
+    _write_json(folder / "manifest.json", manifest)
     return folder
 
 

@@ -239,12 +239,13 @@ class View:
     passed: bool
     unread: int
     system_prompt: str
+    earlier: tuple = ()  # its own earlier turns, each "Turn k: tool. result"
 
     def as_text(self):
         left = self.turns - self.turn + 1
         last = self.last_result or "none yet."
         state = "passed" if self.passed else "not passed yet"
-        return (
+        text = (
             f"Turn {self.turn} of {self.turns}, {_lines(left, 'turn')} left, "
             f"this one included.\n"
             f"Your task is {self.task}, and it is {state}.\n"
@@ -252,6 +253,9 @@ class View:
             f"The shared notes have {_lines(self.unread, 'unread line')}.\n"
             "Act by calling one tool: read_task, submit, read_notes or write_notes."
         )
+        if not self.earlier:
+            return text
+        return "Your earlier turns:\n" + "\n".join(self.earlier) + "\n\n" + text
 
 
 Played = namedtuple("Played", "records story notes")
@@ -283,7 +287,6 @@ def _act(call, task, agent, state, config):
         return f"The notes' new lines:\n{shown}" if new else shown, None, False
     text = " ".join(str(arguments.get("text", "")).split())
     state["notes"].append(f"{agent}: {text}")
-    state["read"][agent] = len(state["notes"])  # its own line, read as written
     return "Added your line to the notes.", None, False
 
 
@@ -326,6 +329,7 @@ def play(config, brains):
             passed[agent],
             len(state["notes"]) - state["read"][agent],
             system,
+            tuple(memory[agent]),
         )
         try:
             call, reply = brains[index].decide(view)

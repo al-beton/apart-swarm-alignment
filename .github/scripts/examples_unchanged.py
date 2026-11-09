@@ -5,14 +5,15 @@ only change is `started_at` and `finished_at` is put back as committed, so a cle
 check leaves nothing to commit. Anything else, a new file included, is listed with
 how to fix it, and the check fails.
 
-Implements: ci/examples-remade-in-ci
+Implements: ci/examples-remade-in-ci, runs/played-at
 """
 
 import json
 import subprocess
 import sys
 
-TIMES = ("started_at", "finished_at")
+# What a remake changes by itself: when, and at which commit, it was played.
+TIMES = ("started_at", "finished_at", "commit", "dirty")
 
 
 def git(*args):
